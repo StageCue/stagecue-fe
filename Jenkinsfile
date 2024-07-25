@@ -18,9 +18,9 @@ pipeline {
             }
 
             steps {
-                echo 'cloning main branch'
+                echo 'cloning main branch...'
                 git branch: "main",
-                url: "${env.GIT_REPO_URL},"
+                url: "${env.GIT_REPO_URL}",
                 credentialsId: "${env.GIT_CREDENTIALS}"
             }
         }
@@ -32,12 +32,10 @@ pipeline {
 
             steps {
                 echo "cloning release branch..."
-                steps {
-                echo 'cloning git repository, main branch'
-                git branch: "main",
-                url: "${env.GIT_REPO_URL}"
+                git branch: "release",
+                url: "${env.GIT_REPO_URL}",
                 credentialsId: "${env.GIT_CREDENTIALS}"
-            }
+            
         }
 
 
