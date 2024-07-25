@@ -37,7 +37,7 @@ pipeline {
                 credentialsId: "${env.GIT_CREDENTIALS}"
             
         }
-
+        }
 
         stage('Install Dependencies') {
             steps {
