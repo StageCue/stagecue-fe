@@ -20,8 +20,8 @@ pipeline {
             steps {
                 echo 'cloning main branch'
                 git branch: "main",
-                url: ${env.GIT_REPO_URL}
-                credentialsId: ${env.GIT_CREDENTIALS},
+                url: ${env.GIT_REPO_URL},
+                credentialsId: ${env.GIT_CREDENTIALS}
             }
         }
 
