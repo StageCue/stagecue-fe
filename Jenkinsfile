@@ -3,44 +3,24 @@ pipeline {
     environment {
         GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
         GIT_CREDENTIALS = credentials("github_personal_access_token")
-        repository = "beomseokchoi/stagecue-fe"
-        DOCKERHUB_CREDENTIALS = credentials("beomseokchoi/stagecue-fe")
-        
-        dockerImage = ""
     }
 
     agent any
 
     stages {
-        stage('Cloning Github repository: main branch') {
-            when {
-                branch "main"
-            }
+        stage('Cloning Github repository branch') {
 
             steps {
-                echo 'cloning main branch...'
-                git branch: "main",
+                script {
+                    
+                echo 'cloning ${env.BRANCH_NAME} branch...'
+                git branch: "${env.BRANCH_NAME}",
                 url: "${env.GIT_REPO_URL}",
                 credentialsId: "${env.GIT_CREDENTIALS}"
 
-                echo "Cloned successfully  main repository."
+                echo "Cloned successfully ${env.BRANCH_NAME} repository."
+                }
             }
-        }
-
-        stage("Cloning Github repository: release branch") {
-            when {
-                branch "release"
-            }
-
-            steps {
-                echo "cloning release branch..."
-                git branch: "release",
-                url: "${env.GIT_REPO_URL}",
-                credentialsId: "${env.GIT_CREDENTIALS}"
-
-                echo "Cloned successfully release repository."
-            
-        }
         }
 
         stage('Install Dependencies') {
@@ -85,9 +65,7 @@ pipeline {
                 echo 'test: deploy main branch...'
             }
 
-        }
-    
-        
+        }   
     }
 
     post {
