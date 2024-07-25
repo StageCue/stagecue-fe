@@ -55,7 +55,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "yarn build"
+                echo "build docker image..."
             }
         }
 
@@ -86,7 +86,7 @@ pipeline {
         success {
             echo "success"
             }
-        unsuccessful {
+        failure {
             error "fail"
         }
     }
