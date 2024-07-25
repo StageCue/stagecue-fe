@@ -78,15 +78,16 @@ pipeline {
             }
 
         }
-
-        post {
-            success {
-                echo "success"
-                }
-            unsuccessful {
-                error "fail"
-                }
-            }
+    
         
+    }
+
+    post {
+        success {
+            echo "success"
+            }
+        unsuccessful {
+            error "fail"
         }
     }
+}
