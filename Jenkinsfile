@@ -36,7 +36,7 @@ pipeline {
                 echo 'cloning git repository, main branch'
                 git branch: "main",
                 url: ${env.GIT_REPO_URL}
-                credentialsId: ${env.GIT_CREDENTIALS},
+                credentialsId: ${env.GIT_CREDENTIALS}
             }
         }
 
