@@ -23,33 +23,12 @@ pipeline {
             }
         }
 
-        stage('Node.js 설치') {
-            steps {
-                echo "Node.js 설치 중..."
-                sh """
-                curl -sL https://deb.nodesource.com/setup_16.x | bash -
-                apt-get install -y nodejs
-                node -v
-                npm -v
-                """
-            }
-        }
+      
 
          stage('종속성 설치') {
             steps {
-                echo "Yarn 설치 중..."
-                script {
-                    def yarnInstalled = sh(script: "command -v yarn", returnStatus: true)
-                    if (yarnInstalled != 0) {
-                        sh """
-                        curl -o- -L https://yarnpkg.com/install.sh | bash
-                        export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-                        """
-                        env.PATH = "$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$env.PATH"
-                    }
-                }
                 echo "종속성 설치 중..."
-                sh "yarn"
+                yarn command "yarn"
                 echo "종속성을 성공적으로 설치했습니다."
             }
         }
