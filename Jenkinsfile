@@ -23,6 +23,18 @@ pipeline {
             }
         }
 
+        stage('Node.js 설치') {
+            steps {
+                echo "Node.js 설치 중..."
+                sh """
+                curl -sL https://deb.nodesource.com/setup_16.x | bash -
+                apt-get install -y nodejs
+                node -v
+                npm -v
+                """
+            }
+        }
+
          stage('종속성 설치') {
             steps {
                 echo "Yarn 설치 중..."
