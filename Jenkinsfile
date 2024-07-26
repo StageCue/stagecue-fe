@@ -26,16 +26,16 @@ pipeline {
          stage('종속성 설치') {
             steps {
                 echo "Yarn 설치 중..."
-                script {
-                    def yarnInstalled = sh(script: "command -v yarn", returnStatus: true)
-                    if (yarnInstalled != 0) {
-                        sh """
-                        curl -o- -L https://yarnpkg.com/install.sh | bash
-                        export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-                        """
-                        env.PATH = "$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$env.PATH"
-                    }
-                }
+                sh """
+                if ! command -v yarn &> /dev/null
+                then
+                    echo "Yarn을 찾을 수 없습니다. 설치 중..."
+                    curl -o- -L https://yarnpkg.com/install.sh | bash
+                    export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+                else
+                    echo "Yarn이 이미 설치되어 있습니다."
+                fi
+                """
                 echo "종속성 설치 중..."
                 sh "yarn"
                 echo "종속성을 성공적으로 설치했습니다."
