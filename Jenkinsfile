@@ -12,8 +12,8 @@ pipeline {
 
             steps {
                 script {
-                    
-                echo 'cloning ${env.BRANCH_NAME} branch...'
+
+                echo 'cloning git repository...'
                 git branch: "${env.BRANCH_NAME}",
                 url: "${env.GIT_REPO_URL}",
                 credentialsId: "${env.GIT_CREDENTIALS}"
@@ -34,6 +34,8 @@ pipeline {
 
         stage('Build') {
             steps {
+                echo "entering repository directory..."
+                 dir('stagecue-fe') 
                  echo "build application..."
                 sh "yarn build"
 
