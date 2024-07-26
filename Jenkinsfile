@@ -28,7 +28,7 @@ pipeline {
          stage('종속성 설치') {
             steps {
                 echo "종속성 설치 중..."
-                yarn command "yarn"
+                yarn "yarn"
                 echo "종속성을 성공적으로 설치했습니다."
             }
         }
