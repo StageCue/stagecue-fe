@@ -2,7 +2,7 @@ pipeline {
 
     environment {
         GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
-        GIT_CREDENTIALS = credentials("github_jenkins")
+        GIT_CREDENTIALS = credentials("github-jenkins")
 
          
     }
