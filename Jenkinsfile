@@ -3,6 +3,8 @@ pipeline {
     environment {
         GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
         GIT_CREDENTIALS = credentials("github_personal_access_token")
+
+         
     }
 
     agent any
@@ -25,22 +27,22 @@ pipeline {
 
       
 
-         stage('종속성 설치') {
+         stage('Installing dependencies') {
             steps {
-                echo "종속성 설치 중..."
+                echo "installing dependencies..."
                 yarn "install"
-                echo "종속성을 성공적으로 설치했습니다."
+                echo "Installed successfully dependencies"
             }
         }
 
-        stage('Build') {
+        stage('Building application') {
             steps {
-                echo "entering repository directory..."
+                echo "building applicaiton..."
                  dir('stagecue-fe') 
                  echo "build application..."
-                sh "yarn build"
+                yarn "build"
 
-                echo "Build successfully application."
+                echo "Built successfully application."
             }
         }
 
