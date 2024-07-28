@@ -78,10 +78,12 @@ pipeline {
                 script {
                     echo "Pushing Docker Image...."
                     
-                    sh """
-                        echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USER --password-stdin
-                        docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
-                    """
+                        withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh '''
+                            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                            docker push ${env.DOCKER_HUB_REPO}:${env.DOCKER_IMAGE_TAG}
+                        '''
+                    }
                     
                     echo "Pushed Docker image Dockerhub sccessfully."
                 }
