@@ -30,7 +30,7 @@ pipeline {
          stage('Installing dependencies') {
             steps {
                 echo "installing dependencies..."
-                yarn "install"
+                 yarn "install"
                 echo "Installed successfully dependencies"
             }
         }
