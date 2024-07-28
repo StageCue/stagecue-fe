@@ -67,7 +67,7 @@ pipeline {
                                
                 script {
                     echo "build docker image..."
-                    sh "docker build -t ${env.DOCKER_REPO}:${env.DOCKER_IMAGE_TAG} ."
+                    sh "docker build -t ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG} ."
                     echo "Built Docker image successfully."
                 }
             }
@@ -77,7 +77,7 @@ pipeline {
             steps {
                 script {
                     echo "Pushing Docker Image..."
-                    withCredentials([usernamePassword(credentialsId: 'docker-jenkins', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    withCredentials([usernamePassword(credentialsId: "${env.DOCKERHUB_CREDENTIALS}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     sh "
                         docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
                     "
