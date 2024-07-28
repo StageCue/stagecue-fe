@@ -30,6 +30,9 @@ pipeline {
          stage('Installing dependencies') {
             steps {
                 echo "installing dependencies..."
+                 nodejs(nodeJSInstallationName: 'Node 6.x') {
+                    sh 'npm config ls'
+                }
                  yarn "install"
                 echo "Installed successfully dependencies"
             }
