@@ -77,12 +77,12 @@ pipeline {
             steps {
                 script {
                     echo "Pushing Docker Image...."
-                    withCredentials([usernamePassword(credentialsId: env.DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    
                     sh """
-                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        echo $DOCKERHUB_CREDENTIALS | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
                         docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
                     """
-                    }
+                    
                     echo "Pushed Docker image Dockerhub sccessfully."
                 }
 
