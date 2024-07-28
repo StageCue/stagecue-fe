@@ -79,7 +79,7 @@ pipeline {
                     echo "Pushing Docker Image...."
                     
                     sh """
-                        echo $DOCKERHUB_CREDENTIALS | docker login -u $DOCKERHUB_CREDENTIALS_USER --password-stdin
+                        echo $DOCKERHUB_CREDENTIALS_PSW| docker login -u $DOCKERHUB_CREDENTIALS_USER --password-stdin
                         docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
                     """
                     
