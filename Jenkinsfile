@@ -42,22 +42,25 @@ pipeline {
          stage('Installing dependencies') {
             steps {
                 script {
-                echo "installing dependencies..."
-                sh "pwd"
-                yarn "install"
-                echo "Installed successfully dependencies"
+                    echo "installing dependencies..."
+                    sh "pwd"
+                    sh "ls"
+                    yarn "install"
+                    echo "Installed successfully dependencies"
                 }
             }
         }
 
         stage('Building application') {
             steps {
-                echo "building applicaiton..."
-                 dir('stagecue-fe') 
-                 echo "build application..."
-                yarn "build"
+                script {
+                    echo "building applicaiton..."
+                    dir('stagecue-fe') 
+                    echo "build application..."
+                    yarn "build"
 
-                echo "Built successfully application."
+                    echo "Built successfully application."
+                }
             }
         }
 
