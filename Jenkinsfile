@@ -1,11 +1,11 @@
 pipeline {
 
     environment {
-        GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
-        GIT_CREDENTIALS = credentials("github-jenkins")
-        DOCKERHUB_CREDENTIALS = credentials("docker-jenkins")
+       GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
+       GIT_CREDENTIALS = credentials("github-jenkins")
+       DOCKERHUB_CREDENTIALS = credentials("docker-jenkins")
        DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-       DOCKER_HUB_REPO = 'beomseokchoi/stagecue-fe'
+       DOCKERHUB_REPO = 'beomseokchoi/stagecue-fe'
 
     }
 
@@ -19,7 +19,7 @@ pipeline {
     stages {
         stage("Checking Node.js Version") {
             steps {
-                echo "Checking node.js..."
+                echo "checking node.js..."
                 sh "node --version"
             }
         }
@@ -34,7 +34,7 @@ pipeline {
                 url: "${env.GIT_REPO_URL}",
                 credentialsId: "${env.GIT_CREDENTIALS}"
 
-                echo "Cloned successfully ${env.BRANCH_NAME} repository."
+                echo "Cloned ${env.BRANCH_NAME} repository successfully."
                 }
             }
         }
@@ -57,7 +57,7 @@ pipeline {
                     echo "building applicaiton..."
                     echo "build application..."
                     yarn "build"
-                    echo "Built successfully application."
+                    echo "Built application successfully."
                 }
             }
         }
@@ -67,9 +67,32 @@ pipeline {
                                
                 script {
                     echo "build docker image..."
-                    sh "docker build -t ${env.DOCKER_IMAGE}:${env.BRANCH_NAME} ."
-                    echo "Built successfully Docker image."
+                    sh "docker build -t ${env.DOCKER_REPO}:${env.DOCKER_IMAGE_TAG} ."
+                    echo "Built Docker image successfully."
                 }
+            }
+        }
+
+        stage("Pushing Docker Image to Dockerhub"){
+            steps {
+                script {
+                    echo "Pushing Docker Image..."
+                    withCredentials([usernamePassword(credentialsId: 'docker-jenkins', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "
+                        docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
+                    "
+                    }
+                    echo "Pushed Docker image Dockerhub sccessfully."
+                }
+
+            }
+        }
+
+        stage("Cleaning up Docker image") {
+            steps {
+                echo "Cleaning up Docker image..."
+                sh "docker rmi ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
+                echo "Cleaned up successfully Dcoker image"
             }
         }
 
