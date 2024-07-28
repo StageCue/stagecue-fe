@@ -55,10 +55,8 @@ pipeline {
             steps {
                 script {
                     echo "building applicaiton..."
-                    dir('stagecue-fe') 
                     echo "build application..."
                     yarn "build"
-
                     echo "Built successfully application."
                 }
             }
