@@ -16,8 +16,10 @@ pipeline {
 
     stages {
         stage("Checking Node.js Version") {
-            echo "Checking node.js..."
-            sh "node --version"
+            steps {
+                echo "Checking node.js..."
+                sh "node --version"
+            }
         }
 
         stage('Cloning Github repository branch') {
