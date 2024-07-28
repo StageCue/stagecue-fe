@@ -64,9 +64,11 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                               
                 script {
-                    sh "docker build -t ${env.DOCKER_IMAGE}:${env.BRANCH_NAME} ./dist"
-                echo "build docker image..."
+                    echo "build docker image..."
+                    sh "docker build -t ${env.DOCKER_IMAGE}:${env.BRANCH_NAME} ."
+                    echo "Built successfully Docker image."
                 }
             }
         }
