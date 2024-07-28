@@ -41,10 +41,12 @@ pipeline {
 
          stage('Installing dependencies') {
             steps {
+                script {
                 echo "installing dependencies..."
                 sh "pwd"
                 yarn "install"
                 echo "Installed successfully dependencies"
+                }
             }
         }
 
