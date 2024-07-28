@@ -64,25 +64,28 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                               
-                script {
+
                     echo "build docker image..."
                     sh "docker build -t ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG} ."
                     echo "Built Docker image successfully."
                 }
             }
-        }
+        
 
         stage("Pushing Docker Image to Dockerhub"){
+            steps {
+                script {
                 docker.withRegistry("https://registry.hub.docker.com", "docker-jenkins") {
-                    script {
+           
                     echo "Pushing Docker Image...."
                     sh "   docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG} "
                      echo "Pushed Docker image Dockerhub sccessfully."
+                    
                     }
-                    }
-            
-        }
+                }
+            }
+        
+    
 
         stage("Cleaning up Docker image") {
             steps {
