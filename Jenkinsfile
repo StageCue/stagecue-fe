@@ -3,8 +3,10 @@ pipeline {
     environment {
         GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
         GIT_CREDENTIALS = credentials("github-jenkins")
+        DOCKERHUB_CREDENTIALS = credentials("docker-jenkins")
+       DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+       DOCKER_HUB_REPO = 'beomseokchoi/stagecue-fe'
 
-         
     }
 
     agent any
@@ -43,8 +45,6 @@ pipeline {
             steps {
                 script {
                     echo "installing dependencies..."
-                    sh "pwd"
-                    sh "ls"
                     yarn "install"
                     echo "Installed successfully dependencies"
                 }
@@ -64,7 +64,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                script {
+                    sh "docker build -t ${env.DOCKER_IMAGE}:${env.BRANCH_NAME} ./dist"
                 echo "build docker image..."
+                }
             }
         }
 
