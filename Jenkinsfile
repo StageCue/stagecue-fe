@@ -3,7 +3,7 @@ pipeline {
     environment {
        GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
        GIT_CREDENTIALS = credentials("github-jenkins")
-       DOCKERHUB_CREDENTIALS = credentials("docker-jenkins")
+       DOCKERHUB_CREDENTIALS = credentials("dockerhub-jenkins")
        DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
        DOCKERHUB_REPO = 'beomseokchoi/stagecue-fe'
 
@@ -81,6 +81,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                         sh '''
                             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                            
                             docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
                         '''
                     }
