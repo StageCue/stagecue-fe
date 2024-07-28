@@ -3,7 +3,10 @@ pipeline {
     environment {
         GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
         GIT_CREDENTIALS = credentials("github_personal_access_token")
-
+        DOCKER_HUB_CREDENTIALS = credentials("")
+        DOCKER_HUB_REPO = "beomseokchoi/stagecue-fe"
+        DOCKER_IMAGE_NAME = "stagecue-fe"
+        DOCKER_IMAGE_TAG = "${env.BUILD_NUMBER}"
          
     }
 
