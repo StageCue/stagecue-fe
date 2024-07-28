@@ -15,6 +15,11 @@ pipeline {
 
 
     stages {
+        stage("Checking Node.js Version") {
+            echo "Checking node.js..."
+            sh "node --version"
+        }
+
         stage('Cloning Github repository branch') {
 
             steps {
@@ -35,6 +40,7 @@ pipeline {
          stage('Installing dependencies') {
             steps {
                 echo "installing dependencies..."
+                sh "pwd"
                 yarn "install"
                 echo "Installed successfully dependencies"
             }
