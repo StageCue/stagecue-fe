@@ -82,8 +82,7 @@ pipeline {
                     }
                    
                 }
-
-            }
+            
         }
 
         stage("Cleaning up Docker image") {
