@@ -76,8 +76,7 @@ pipeline {
             steps {
                 script {
                 docker.withRegistry("https://registry.hub.docker.com", "dockerhub-jenkins") {
-                    
-                    echo "Pushing Docker Image..."
+                    echo "Pushing Docker Image...."
                     sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
                     echo "Pushed Docker image Dockerhub sccessfully."
                     
