@@ -75,10 +75,11 @@ pipeline {
         stage("Pushing Docker Image to Dockerhub"){
             steps {
                 script {
-                docker.withRegistry("https://docker.io", "dockerhub-jenkins") {
-                    echo "Pushing Docker Image...."
-                    sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
-                    echo "Pushed Docker image Dockerhub sccessfully."
+                    withCredentials((credentialsId:"dockerhub-jenkins", variable: "dockerhubpwd")) {
+                        echo "Pushing Docker Image...."
+                        sh "docker login -u dockerhub-jenkins -p ${dockerhubpwd}"
+                        sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
+                        echo "Pushed Docker image Dockerhub sccessfully."
                     
                     }
                 }
