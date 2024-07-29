@@ -75,8 +75,9 @@ pipeline {
         stage("Pushing Docker Image to Dockerhub"){
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME" passwordVariable: "PASSWORD" )]) {
+                    withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                         echo "Pushing Docker Image...."
+                        echo "username/password : $USERNAME, $PASSWORD"
                         sh "docker login -u $USERNAME -p $PASSWORD"
                         sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
                         echo "Pushed Docker image Dockerhub sccessfully."
