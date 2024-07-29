@@ -3,10 +3,15 @@ pipeline {
     environment {
        GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
        GIT_CREDENTIALS = credentials("github-jenkins")
+
        DOCKERHUB_CREDENTIALS = credentials("dockerhub-jenkins")
        DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
        DOCKERHUB_REPO = 'beomseokchoi/stagecue-fe'
 
+       PROD_SERVER = "129.154.49.243"
+       PROD_USER = "ubuntu"
+       STG_SERVER = "39.118.150.182"
+       STG_USER = "stagecue"       
     }
 
     agent any
@@ -77,11 +82,9 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                         echo "Pushing Docker Image...."
-                        echo "username/password : $USERNAME, $PASSWORD"
                         sh "docker login -u $USERNAME -p $PASSWORD"
                         sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
                         echo "Pushed Docker image Dockerhub sccessfully."
-                    
                     }
                 }
             }
@@ -93,7 +96,7 @@ pipeline {
             steps {
                 echo "Cleaning up Docker image..."
                 sh "docker rmi ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
-                echo "Cleaned up successfully Dcoker image"
+                echo "Cleaned up Docker image successfully."
             }
         }
 
@@ -107,12 +110,20 @@ pipeline {
             }
         }
 
-        stage('main branch: deploly to prod server') {
+        stage('Deplolying to prod server(main branch)') {
             when {
                 branch "main"
             }
             steps {
-                echo 'test: deploy main branch...'
+                sh """
+                      echo 'deploying application to prod server...'
+                      ssh ${env.PROD_USER}@${env.PROD_SERVER} << 'EOF'
+                      docker pull ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
+                      docker run -d --name stagecue-fe -p 80:80 ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
+                      echo "
+                """
+
+
             }
 
         }   
