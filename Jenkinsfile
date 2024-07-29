@@ -115,8 +115,8 @@ pipeline {
                 branch "main"
             }
             steps {
+                echo 'deploying application to prod server...'
                 sh """
-                      echo 'deploying application to prod server...'
                       ssh ${env.PROD_USER}@${env.PROD_SERVER} << 'EOF'
                       
                       docker stop stagecue-fe || true
@@ -124,9 +124,8 @@ pipeline {
 
                       docker pull ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
                       docker run -d --name stagecue-fe -p 80:80 ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
-                      echo "Deployed application successfully on 80 port."
                 """
-
+                  echo "Deployed application successfully on 80 port."
 
             }
 
