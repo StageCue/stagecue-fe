@@ -117,7 +117,7 @@ pipeline {
             steps {
                 sshagent (credentials: ["prod"]) {
                     echo 'deploying application to prod server...'
-                    script {
+                  
                         withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                             sh """
                                 ssh ${PROD_USER}@${PROD_SERVER} << 'EOF'
@@ -126,10 +126,9 @@ pipeline {
                                 echo $PASSWORD | docker login -u $USERNAME --password-stdin
                                 docker pull ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
                                 docker run --platform linux/amd64 -d --name stagecue-fe -p 4000:80 ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
-                                EOF
                             """
                         }
-                    }
+                    
                   
                     echo "Deployed application successfully on 80 port."
                 }
