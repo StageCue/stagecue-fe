@@ -123,9 +123,9 @@ pipeline {
                                 ssh ${PROD_USER}@${PROD_SERVER} << 'EOF'
                                 docker stop stagecue-fe || true
                                 docker rm stagecue-fe || true
-                                 echo $PASSWORD | docker login -u $USERNAME --password-stdin
+                                echo $PASSWORD | docker login -u $USERNAME --password-stdin
                                 docker pull ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
-                                docker run --platform linux/amd64 -d --name stagecue-fe -p 80:80 ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
+                                docker run --platform linux/amd64 -d --name stagecue-fe -p 4000:80 ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
                                 EOF
                             """
                         }
