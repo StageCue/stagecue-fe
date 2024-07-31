@@ -120,13 +120,13 @@ pipeline {
                     script {
                         withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                             sh """
-                                ssh ${env.PROD_USER}@${env.PROD_SERVER} << 'EOF'
-                            
+                                ssh ${PROD_USER}@${PROD_SERVER} << 'EOF'
                                 docker stop stagecue-fe || true
                                 docker rm stagecue-fe || true
-
-                                docker pull ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
-                                docker run -d --name stagecue-fe -p 80:80 ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
+                                 echo $PASSWORD | docker login -u $USERNAME --password-stdin
+                                docker pull ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
+                                docker run -d --name stagecue-fe -p 80:80 ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
+                                EOF
                             """
                         }
                     }
