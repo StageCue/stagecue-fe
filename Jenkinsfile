@@ -12,6 +12,7 @@ pipeline {
        PROD_USER = "ubuntu"
        STG_SERVER = "39.118.150.182"
        STG_USER = "stagecue"       
+        test_text = "qwefqwef"
     }
 
     agent any
