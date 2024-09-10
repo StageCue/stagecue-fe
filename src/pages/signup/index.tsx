@@ -63,13 +63,27 @@ const Signup = () => {
 
 export default Signup;
 
-const SignupContainer = styled.div``;
+const SignupContainer = styled.div`
+  height: 100%;
+  min-height: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
-const Title = styled.div``;
+const Title = styled.div`
+  margin-bottom: 85px;
+`;
 
-const SignupForm = styled.form``;
+const SignupForm = styled.form`
+  margin-bottom: 32px;
+`;
 
-const Inputs = styled.div``;
+const Inputs = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+`;
 
 const InputWrapper = styled.div`
   display: flex;
@@ -78,6 +92,7 @@ const InputWrapper = styled.div`
 `;
 
 const Input = styled.input`
+  width: 340px;
   padding: 12px 16px;
   border-radius: 10px;
 `;

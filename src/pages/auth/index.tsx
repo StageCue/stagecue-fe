@@ -1,6 +1,13 @@
 import styled from "styled-components";
+import Button from "../../components/buttons/button";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
+  const navigate = useNavigate();
+
+  const handleLoginEmailClick = () => {
+    navigate("/login");
+  };
   return (
     <AuthContainer>
       <CenterTextWrapper>
@@ -19,8 +26,15 @@ const Auth = () => {
         <div>구글계정으로 시작</div>
       </GettingStartSNSWrapper>
       <GettingStartEmailWrapper>
-        <JoinWithEmailBtn>이메일로 시작하기</JoinWithEmailBtn>
-        <FindAccountBtn>계정이 기억나지 않으시나요?</FindAccountBtn>
+        <Button
+          variation="text"
+          type="primary"
+          height={30}
+          width={150}
+          onClick={handleLoginEmailClick}
+        >
+          이메일로 시작하기
+        </Button>
       </GettingStartEmailWrapper>
     </AuthContainer>
   );
@@ -97,25 +111,4 @@ const GettingStartEmailWrapper = styled.div`
   gap: 12px;
   width: 162px;
   height: 68px;
-`;
-
-const JoinWithEmailBtn = styled.div`
-  height: 28px;
-  text-align: center;
-  line-height: 142.9%;
-  letter-spacing: 1.45%;
-  font-weight: var(--font-semibold);
-  color: var(--color-blue);
-  cursor: pointer;
-`;
-
-const FindAccountBtn = styled.div`
-  height: 20px;
-  text-align: center;
-  font-weight: var(--font-semibold);
-  color: var(--color-gray);
-  line-height: 142.9%;
-  letter-spacing: 1.45%;
-  font-size: 14px;
-  cursor: pointer;
 `;

@@ -53,6 +53,7 @@ html, body {
 --color-gray16: #f4f4f5;
 --color-gray17: #d6d6d8;
 --color-gray18: #bfc0c2;
+--color-gray19: #DCDCDC;
 
 
 --font-bold: 700;

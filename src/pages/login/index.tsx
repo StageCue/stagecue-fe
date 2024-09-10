@@ -33,7 +33,10 @@ const Login = () => {
         </Inputs>
         <LoginBtn type="submit">로그인</LoginBtn>
       </LoginForm>
-      <Divider />
+      <Divider>
+        <Line />
+        <Text>또는</Text>
+      </Divider>
       <JoinWithEmailBtn>이메일로 회원가입</JoinWithEmailBtn>
       <ForgotPasswordBtn>비밀번호를 잊으셨나요?</ForgotPasswordBtn>
     </LoginContainer>
@@ -81,7 +84,41 @@ const LoginBtn = styled.button`
   height: 48px;
 `;
 
-const Divider = styled.div``;
+const Divider = styled.div`
+  width: 338px;
+  height: 20px;
+  position: relative;
+  margin: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Line = styled.div`
+  width: 338px;
+  height: 1px;
+  background-color: var(--color-gray19);
+`;
+
+const Text = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+  width: 41px;
+  height: 20px;
+  font-size: 14px;
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
+  color: var(--color-gray19);
+  text-align: center;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const JoinWithEmailBtn = styled.div``;
 

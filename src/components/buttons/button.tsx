@@ -11,6 +11,7 @@ interface ButtonProps {
   disabled?: boolean;
   fontSize?: number;
   padding?: string;
+  onClick?: () => void;
 }
 
 const Button = ({
@@ -23,6 +24,7 @@ const Button = ({
   height = 48,
   fontSize = 16,
   padding = "12px 28px",
+  onClick,
 }: ButtonProps) => {
   return (
     <ButtonContainer
@@ -34,6 +36,7 @@ const Button = ({
       $height={height}
       $fontSize={fontSize}
       $padding={padding}
+      onClick={onClick}
     >
       {children}
     </ButtonContainer>
