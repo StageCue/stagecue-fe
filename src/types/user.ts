@@ -9,5 +9,24 @@ export interface SignupInputs {
   email: string;
   phoneNumber: string;
   password: string;
+  certCode: string;
+  confirmPassword: string;
+  allAgreed: boolean;
+  ageCheck: boolean;
+  agreeServicePolicy: boolean;
+  agreePrivatePolicy: boolean;
+}
+
+export interface ForgotAccountInputs {
+  phoneNumber: string;
+  certCode: string;
+}
+
+export interface ForgotPasswordInput {
+  email: string;
+}
+
+export interface ResetPasswordInputs {
+  password: string;
   confirmPassword: string;
 }
