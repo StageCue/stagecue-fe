@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { LoginInputs } from "../../types/user";
+import Button from "../../components/buttons/button";
 
 const Login = () => {
   const { register, handleSubmit } = useForm<LoginInputs>();
@@ -20,6 +21,7 @@ const Login = () => {
               {...register("email", {
                 required: true,
               })}
+              placeholder="이메일을 입력해주세요"
             />
           </InputWrapper>
           <InputWrapper>
@@ -28,17 +30,41 @@ const Login = () => {
               {...register("password", {
                 required: true,
               })}
+              placeholder="비밀번호를 입력해주세요"
             />
+            <CheckboxInputWrapper>
+              <CheckboxInput />
+              <CheckboxLabel>로그인 유지</CheckboxLabel>
+            </CheckboxInputWrapper>
           </InputWrapper>
         </Inputs>
-        <LoginBtn type="submit">로그인</LoginBtn>
+        <Button variation="solid" btnClass="primary" type="submit" width={340}>
+          로그인
+        </Button>
       </LoginForm>
       <Divider>
         <Line />
         <Text>또는</Text>
       </Divider>
-      <JoinWithEmailBtn>이메일로 회원가입</JoinWithEmailBtn>
-      <ForgotPasswordBtn>비밀번호를 잊으셨나요?</ForgotPasswordBtn>
+      <BottomBtnsWrapper>
+        <Button
+          variation="outlined"
+          btnClass="secondary"
+          width={340}
+          fontSize={15}
+        >
+          이메일로 회원가입
+        </Button>
+        <Button
+          variation="text"
+          btnClass="assistive"
+          width={150}
+          height={28}
+          fontSize={14}
+        >
+          비밀번호를 잊으셨나요?
+        </Button>
+      </BottomBtnsWrapper>
     </LoginContainer>
   );
 };
@@ -54,16 +80,23 @@ const LoginContainer = styled.div`
 `;
 
 const Title = styled.div`
-  padding: 85px 0;
+  padding: 95px 0;
+  font-weight: var(--font-bold);
+  font-size: 28px;
+  line-height: 135.8%;
+  letter-spacing: -2.36%;
+  color: #000000;
 `;
 
-const LoginForm = styled.form``;
+const LoginForm = styled.form`
+  margin-bottom: 24px;
+`;
 
 const Inputs = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  margin-bottom: 8px;
+  margin-bottom: 48px;
 `;
 
 const InputWrapper = styled.div`
@@ -74,14 +107,49 @@ const InputWrapper = styled.div`
 
 const Input = styled.input`
   padding: 12px 16px;
+  width: 340px;
   border-radius: 10px;
+  border: 1px solid #70737c;
+  outline: none;
+  height: 48px;
+
+  ::placeholder {
+    color: #171719;
+    line-height: 150%;
+    letter-spacing: 0.57%;
+    font-size: 16px;
+  }
 `;
 
-const Label = styled.div``;
+const CheckboxInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 8px;
+`;
 
-const LoginBtn = styled.button`
-  width: 340px;
-  height: 48px;
+const CheckboxInput = styled.div`
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #70737c;
+  border-radius: 3px;
+`;
+
+const CheckboxLabel = styled.label`
+  font-weight: var(--font-semibold);
+  font-size: 14px;
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
+  color: #37383c;
+  height: 18px;
+`;
+
+const Label = styled.div`
+  color: #171719;
+  font-weight: var(--font-semibold);
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
+  font-size: 14px;
 `;
 
 const Divider = styled.div`
@@ -97,7 +165,7 @@ const Divider = styled.div`
 const Line = styled.div`
   width: 338px;
   height: 1px;
-  background-color: var(--color-gray19);
+  background-color: #dcdcdc;
 `;
 
 const Text = styled.div`
@@ -120,6 +188,9 @@ const Text = styled.div`
   align-items: center;
 `;
 
-const JoinWithEmailBtn = styled.div``;
-
-const ForgotPasswordBtn = styled.div``;
+const BottomBtnsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+`;

@@ -57,6 +57,7 @@ html, body {
 
 
 --font-bold: 700;
+--font-regular: 500;
 --font-semibold: 600;
 
 

@@ -65,7 +65,7 @@ const TitleWrapper = styled.div`
 `;
 
 const Title = styled.div`
-  color: var(--color-black);
+  color: #000000;
   font-weight: var(--font-bold);
   font-size: 28px;
   line-height: 135.8%;

@@ -2,14 +2,14 @@ import styled from "styled-components";
 import Button from "../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
 
-const Auth = () => {
+const Starting = () => {
   const navigate = useNavigate();
 
-  const handleLoginEmailClick = () => {
+  const handleWithEmailClick = () => {
     navigate("/login");
   };
   return (
-    <AuthContainer>
+    <StartingContainer>
       <CenterTextWrapper>
         <ServiceName>
           <SubText>일상 속 특별한 무대</SubText>
@@ -20,29 +20,29 @@ const Auth = () => {
           <Text>스테이지큐에서 당신의 숨겨둔 재능을 펼쳐보세요</Text>
         </Description>
       </CenterTextWrapper>
-      <GettingStartSNSWrapper>
-        <div>카카오로 시작</div>
-        <div>네이버로 시작</div>
-        <div>구글계정으로 시작</div>
-      </GettingStartSNSWrapper>
-      <GettingStartEmailWrapper>
+      <SocialLoginWrapper>
+        <WithKaKaoBtn>카카오로 시작하기</WithKaKaoBtn>
+        <WithNaverBtn>네이버 계정으로 시작하기</WithNaverBtn>
+        <WithGoogleBtn>구글 계정으로 시작하기</WithGoogleBtn>
+      </SocialLoginWrapper>
+      <WithEmailWrapper>
         <Button
           variation="text"
           type="primary"
           height={30}
           width={150}
-          onClick={handleLoginEmailClick}
+          onClick={handleWithEmailClick}
         >
           이메일로 시작하기
         </Button>
-      </GettingStartEmailWrapper>
-    </AuthContainer>
+      </WithEmailWrapper>
+    </StartingContainer>
   );
 };
 
-export default Auth;
+export default Starting;
 
-const AuthContainer = styled.div`
+const StartingContainer = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -68,6 +68,7 @@ const ServiceName = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-bottom: 16px;
 `;
 
 const SubText = styled.div`
@@ -76,7 +77,8 @@ const SubText = styled.div`
   line-height: 144.5%;
   letter-spacing: -0.02%;
   font-size: 18px;
-  color: var(--color-black);
+  font-weight: var(--font-regular);
+  color: #000000;
 `;
 
 const MainText = styled.div`
@@ -92,6 +94,7 @@ const Description = styled.div`
   width: 309px;
   height: 52px;
   text-align: center;
+  font-weight: var(--font-regular);
 `;
 
 const Text = styled.div`
@@ -101,14 +104,57 @@ const Text = styled.div`
   color: var(--color-black);
 `;
 
-const GettingStartSNSWrapper = styled.div`
-  padding-bottom: 56px;
-`;
-
-const GettingStartEmailWrapper = styled.div`
+const WithEmailWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 162px;
   height: 68px;
+`;
+
+const SocialLoginWrapper = styled.div`
+  padding-bottom: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const WithKaKaoBtn = styled.div`
+  width: 340px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: #fee500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: var(--font-semibold);
+  line-height: 22px;
+  color: #363636;
+`;
+
+const WithNaverBtn = styled.div`
+  width: 340px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: #03c75a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: var(--font-semibold);
+  line-height: 22px;
+  color: #ffffff;
+`;
+
+const WithGoogleBtn = styled.div`
+  width: 340px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: var(--font-semibold);
+  line-height: 22px;
+  color: #363636;
+  border: 1px solid #70737c;
 `;
