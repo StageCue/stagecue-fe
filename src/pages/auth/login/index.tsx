@@ -1,13 +1,23 @@
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { LoginInputs } from "../../types/user";
-import Button from "../../components/buttons/button";
+import { LoginInputs } from "../../../types/user";
+import Button from "../../../components/buttons/button";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<LoginInputs>();
 
   const onSubmitLogin = (data: LoginInputs) => {
     console.log(data);
+  };
+
+  const handleSignupClick = () => {
+    navigate("/signup");
+  };
+
+  const handleForgotPasswordClick = () => {
+    navigate("/forgotpassword");
   };
 
   return (
@@ -52,6 +62,7 @@ const Login = () => {
           btnClass="secondary"
           width={340}
           fontSize={15}
+          onClick={handleSignupClick}
         >
           이메일로 회원가입
         </Button>
@@ -61,6 +72,7 @@ const Login = () => {
           width={150}
           height={28}
           fontSize={14}
+          onClick={handleForgotPasswordClick}
         >
           비밀번호를 잊으셨나요?
         </Button>
@@ -80,7 +92,8 @@ const LoginContainer = styled.div`
 `;
 
 const Title = styled.div`
-  padding: 95px 0;
+  margin-top: 95px;
+  margin-bottom: 85px;
   font-weight: var(--font-bold);
   font-size: 28px;
   line-height: 135.8%;
@@ -108,10 +121,10 @@ const InputWrapper = styled.div`
 const Input = styled.input`
   padding: 12px 16px;
   width: 340px;
+  height: 48px;
   border-radius: 10px;
   border: 1px solid #70737c;
   outline: none;
-  height: 48px;
 
   ::placeholder {
     color: #171719;

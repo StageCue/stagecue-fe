@@ -8,6 +8,10 @@ const Starting = () => {
   const handleWithEmailClick = () => {
     navigate("/login");
   };
+
+  const handleForgotAccont = () => {
+    navigate("/forgotaccount");
+  };
   return (
     <StartingContainer>
       <CenterTextWrapper>
@@ -28,12 +32,23 @@ const Starting = () => {
       <WithEmailWrapper>
         <Button
           variation="text"
-          type="primary"
+          btnClass="primary"
           height={30}
           width={150}
           onClick={handleWithEmailClick}
         >
           이메일로 시작하기
+        </Button>
+        <Button
+          variation="text"
+          btnClass="assistive"
+          width={162}
+          height={28}
+          fontSize={14}
+          padding="16px 0"
+          onClick={handleForgotAccont}
+        >
+          계정이 기억나지 않으시나요?
         </Button>
       </WithEmailWrapper>
     </StartingContainer>

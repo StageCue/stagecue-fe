@@ -4,7 +4,7 @@ import styled from "styled-components";
 interface IconButtonProps {
   children: React.ReactNode;
   size: number;
-  type: "normal" | "background" | "outlined" | "solid";
+  variation: "normal" | "background" | "outlined" | "solid";
   disabled?: boolean;
   pushBadge?: boolean;
 }
@@ -12,11 +12,15 @@ interface IconButtonProps {
 const IconButton = ({
   children,
   size,
-  type = "normal",
+  variation = "normal",
   disabled = false,
 }: IconButtonProps) => {
   return (
-    <IconButtonContainer $size={size} $type={type} disabled={disabled}>
+    <IconButtonContainer
+      $size={size}
+      $variation={variation}
+      disabled={disabled}
+    >
       {children}
       <Badge />
     </IconButtonContainer>
@@ -37,7 +41,7 @@ const Badge = styled.div`
 
 const IconButtonContainer = styled.button<{
   $size: number;
-  $type: "normal" | "background" | "outlined" | "solid";
+  $variation: "normal" | "background" | "outlined" | "solid";
 }>`
   padding: 8px;
 
@@ -45,26 +49,26 @@ const IconButtonContainer = styled.button<{
   position: relative;
 
   /* type */
-  background-color: ${({ $type }) => {
-    if ($type === "normal") {
+  background-color: ${({ $variation }) => {
+    if ($variation === "normal") {
       return "var(--color-white)";
-    } else if ($type === "background") {
+    } else if ($variation === "background") {
       return "var(--color-gray13)";
-    } else if ($type === "outlined") {
+    } else if ($variation === "outlined") {
       return "var(--color-white)";
-    } else if ($type === "solid") {
+    } else if ($variation === "solid") {
       return "var(--color-blue7)";
     }
   }};
 
-  border: ${({ $type }) => {
-    if ($type === "normal") {
+  border: ${({ $variation }) => {
+    if ($variation === "normal") {
       return "none";
-    } else if ($type === "background") {
+    } else if ($variation === "background") {
       return "none";
-    } else if ($type === "outlined") {
+    } else if ($variation === "outlined") {
       return "1px solid var(--color-gray13)";
-    } else if ($type === "solid") {
+    } else if ($variation === "solid") {
       return "none";
     }
   }};
@@ -76,27 +80,27 @@ const IconButtonContainer = styled.button<{
   /* disabled */
   &:disabled {
     svg {
-      stroke: ${({ $type }) => {
-        if ($type === "normal") {
+      stroke: ${({ $variation }) => {
+        if ($variation === "normal") {
           return "var(--color-gray14)";
-        } else if ($type === "background") {
+        } else if ($variation === "background") {
           return "var(--color-gray12)";
-        } else if ($type === "outlined") {
+        } else if ($variation === "outlined") {
           return "1px solid var(--color-gray13)";
-        } else if ($type === "solid") {
+        } else if ($variation === "solid") {
           return "none";
         }
       }};
     }
 
-    background-color: ${({ $type }) => {
-      if ($type === "normal") {
+    background-color: ${({ $variation }) => {
+      if ($variation === "normal") {
         return "none";
-      } else if ($type === "background") {
+      } else if ($variation === "background") {
         return "var(--color-gray15)";
-      } else if ($type === "outlined") {
+      } else if ($variation === "outlined") {
         return "none";
-      } else if ($type === "solid") {
+      } else if ($variation === "solid") {
         return "var(--color-gray17)";
       }
     }};
@@ -104,14 +108,14 @@ const IconButtonContainer = styled.button<{
 
   /* hovered */
   &:hover {
-    background-color: ${({ $type }) => {
-      if ($type === "normal") {
+    background-color: ${({ $variation }) => {
+      if ($variation === "normal") {
         return "var(--color-gray12)";
-      } else if ($type === "background") {
+      } else if ($variation === "background") {
         return "var(--color-gray13)";
-      } else if ($type === "outlined") {
+      } else if ($variation === "outlined") {
         return "var(--color-gray13)";
-      } else if ($type === "solid") {
+      } else if ($variation === "solid") {
         return "var(--color-blue7)";
       }
     }};
@@ -119,14 +123,14 @@ const IconButtonContainer = styled.button<{
 
   /* focused */
   &:focus {
-    background-color: ${({ $type }) => {
-      if ($type === "normal") {
+    background-color: ${({ $variation }) => {
+      if ($variation === "normal") {
         return "var(--color-gray13)";
-      } else if ($type === "background") {
+      } else if ($variation === "background") {
         return "var(--color-gray13)";
-      } else if ($type === "outlined") {
+      } else if ($variation === "outlined") {
         return "var(--color-gray13)";
-      } else if ($type === "solid") {
+      } else if ($variation === "solid") {
         return "var(--color-blue7)";
       }
     }};
@@ -134,14 +138,14 @@ const IconButtonContainer = styled.button<{
 
   /* pressed */
   &:active {
-    background-color: ${({ $type }) => {
-      if ($type === "normal") {
+    background-color: ${({ $variation }) => {
+      if ($variation === "normal") {
         return "var(--color-gray12)";
-      } else if ($type === "background") {
+      } else if ($variation === "background") {
         return "var(--color-gray13)";
-      } else if ($type === "outlined") {
+      } else if ($variation === "outlined") {
         return "var(--color-gray13)";
-      } else if ($type === "solid") {
+      } else if ($variation === "solid") {
         return "var(--color-blue7)";
       }
     }};

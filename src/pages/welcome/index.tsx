@@ -38,7 +38,7 @@ const Welcome = () => {
           </TextWrapper>
         </UserTypeBox>
       </SelectWrapper>
-      <Button variation="solid" type="primary" width={340} height={48}>
+      <Button variation="solid" btnClass="primary" width={340} height={48}>
         다음
       </Button>
     </WelcomeContainer>
@@ -56,6 +56,7 @@ const WelcomeContainer = styled.div`
 `;
 
 const TitleWrapper = styled.div`
+  margin-top: 162px;
   margin-bottom: 66px;
   display: flex;
   flex-direction: column;
@@ -73,6 +74,7 @@ const Title = styled.div`
 `;
 
 const Subtitle = styled.div`
+  color: #000000;
   font-size: 16px;
   line-height: 150%;
   letter-spacing: 0.57%;
@@ -112,7 +114,7 @@ const UserTypeBox = styled.div<{ $isSelected: boolean }>`
   align-items: center;
   gap: 32px;
   border: ${({ $isSelected }) =>
-    $isSelected ? `1px solid var(--color-blue)` : `var(--color-gray)`};
+    $isSelected ? `1px solid var(--color-blue)` : "1px solid #37383C"};
   cursor: pointer;
   background-color: ${({ $isSelected }) =>
     $isSelected ? `var(--color-blue9)` : `var(--color-white)`};
