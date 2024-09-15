@@ -8,7 +8,8 @@ import Starting from "./pages/starting";
 import ForgotAccount from "./pages/auth/forgotAccount";
 import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
-import Home from "./pages/post/search";
+import Search from "./pages/post/search";
+import Home from "./pages/home";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/starting" element={<Starting />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
