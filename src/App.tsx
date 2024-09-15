@@ -8,7 +8,7 @@ import Starting from "./pages/starting";
 import ForgotAccount from "./pages/auth/forgotAccount";
 import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
-import Home from "./pages/home";
+import Home from "./pages/post/search";
 
 function App() {
   return (
