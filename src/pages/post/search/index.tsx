@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import ChevronDownSVG from "../../assets/icons/chevron_down.svg?react";
-import ChevronDownSSVG from "../../assets/icons/chebron_down_s.svg?react";
-import RadioSVG from "../../assets/icons/radio.svg?react";
-import RadioCheckedSVG from "../../assets/icons/radio_checked.svg?react";
-import Button from "../../../components/buttons/button";
+import ChevronDownSVG from "@assets/icons/chevron_down.svg?react";
+import ChevronDownSSVG from "@assets/icons/chebron_down_s.svg?react";
+import RadioSVG from "@assets/icons/radio.svg?react";
+import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
+import Button from "@components/buttons/button";
 
 type genreType = "연극" | "뮤지컬" | "댄스";
 type zoneType =

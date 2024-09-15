@@ -67,6 +67,8 @@ html, body {
 
 
 
+
+
 `;
 
 export default GlobalStyle;
