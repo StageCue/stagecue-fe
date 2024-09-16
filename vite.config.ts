@@ -17,4 +17,13 @@ export default defineConfig({
       { find: "@api", replacement: resolve("src/api") },
     ],
   },
+  server: {
+    proxy: {
+      "/v1": {
+        target: "http://stag-api.stagecue.co.kr",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });

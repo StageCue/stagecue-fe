@@ -4,19 +4,21 @@ import { SignupInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useEffect, useState } from "react";
-import { format } from "path";
+import { requestCellPhoneCertCode } from "@/api/auth";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [isSentCertCode, setIsSendCertCode] = useState(false);
+  const [isSentCertCode, setIsSendCertCode] = useState<boolean>(false);
   const [certTime, setCertTime] = useState<number>(300);
-  const [certCode, setCertCode] = useState("");
+  const [certCode, setCertCode] = useState<string>("");
+  const [isCertificated, setIsCertificagted] = useState<false>(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    setValue,
     trigger,
   } = useForm<SignupInputs>({ mode: "all" });
 
@@ -24,16 +26,32 @@ const Signup = () => {
     emailValue,
     nameValue,
     phoneNumberValue,
+    certificated,
     passwordValue,
     confirmPasswordValue,
-  ] = watch(["email", "name", "phoneNumber", "password", "confirmPassword"]);
+  ] = watch([
+    "email",
+    "name",
+    "phoneNumber",
+    "certificated",
+    "password",
+    "confirmPassword",
+  ]);
+
+  console.log(certificated);
 
   const onSubmitSignup = (data: SignupInputs) => {
     console.log(data);
     navigate("/welcome");
   };
 
-  const handleSendCertClick = () => {
+  const handleSendCertClick = async () => {
+    const isCodeSent = await requestCellPhoneCertCode({
+      cell: phoneNumberValue,
+    });
+
+    console.log(isCodeSent);
+
     if (isSentCertCode) {
       setCertTime(300);
     }
@@ -42,6 +60,10 @@ const Signup = () => {
 
   const handleCertInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCertCode(event.target.value);
+  };
+
+  const handleVerifyCertCodeClick = () => {
+    setValue("certificated", true);
   };
 
   const formatTime = (time: number) => {
@@ -154,6 +176,7 @@ const Signup = () => {
                 height={48}
                 fontSize={16}
                 padding="12px 28px"
+                onClick={handleVerifyCertCodeClick}
               >
                 인증확인
               </Button>
@@ -412,3 +435,5 @@ const Timer = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
+const HiddenCertInput = styled.input``;
