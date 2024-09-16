@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
-const Header = () => {
-  return <HeaderContainer>Header</HeaderContainer>;
+const AuthHeader = () => {
+  return <AuthHeaderContainer>Header</AuthHeaderContainer>;
 };
 
-export default Header;
+export default AuthHeader;
 
-const HeaderContainer = styled.div`
+const AuthHeaderContainer = styled.div`
   width: 100%;
   height: 70px;
   padding: 17px;

@@ -75,6 +75,7 @@ const ButtonContainer = styled.button<{
   letter-spacing: ${({ $letterSpacing }) => `${$letterSpacing}%`};
   justify-content: center;
   align-items: center;
+  padding: ${({ $padding }) => `${$padding}`};
 
   /* variation & type */
 
