@@ -5,6 +5,9 @@ import { useState } from "react";
 import ApplyHistory from "./components/applyHistory";
 import Scraps from "./components/scraps";
 import SettingProfile from "./components/settingProfile";
+import EditAccount from "./components/editAccount";
+import ResetPassword from "./components/resetPassword";
+import DeleteAccount from "./components/deleteAccount";
 
 export type mypageMenuType =
   | "my stage"
@@ -35,9 +38,9 @@ const MyPage = () => {
         {selectedMenu === "배우지원 현황" && <ApplyHistory />}
         {selectedMenu === "공고 스크랩 리스트" && <Scraps />}
         {selectedMenu === "프로필 관리" && <SettingProfile />}
-        {selectedMenu === "기본정보 변경" && <Mystage />}
-        {selectedMenu === "비밀번호 재설정" && <Mystage />}
-        {selectedMenu === "계정 탈퇴" && <Mystage />}
+        {selectedMenu === "기본정보 변경" && <EditAccount />}
+        {selectedMenu === "비밀번호 재설정" && <ResetPassword />}
+        {selectedMenu === "계정 탈퇴" && <DeleteAccount />}
       </ContentColumn>
     </MyPageContainer>
   );
