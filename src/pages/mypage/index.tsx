@@ -3,7 +3,8 @@ import Menu from "./components/menu/menu";
 import Mystage from "./components/mystage";
 import { useState } from "react";
 import ApplyHistory from "./components/applyHistory";
-import Scraps from "./components/Scraps";
+import Scraps from "./components/scraps";
+import SettingProfile from "./components/settingProfile";
 
 export type mypageMenuType =
   | "my stage"
@@ -33,7 +34,7 @@ const MyPage = () => {
         {selectedMenu === "my stage" && <Mystage />}
         {selectedMenu === "배우지원 현황" && <ApplyHistory />}
         {selectedMenu === "공고 스크랩 리스트" && <Scraps />}
-        {selectedMenu === "프로필 관리" && <Mystage />}
+        {selectedMenu === "프로필 관리" && <SettingProfile />}
         {selectedMenu === "기본정보 변경" && <Mystage />}
         {selectedMenu === "비밀번호 재설정" && <Mystage />}
         {selectedMenu === "계정 탈퇴" && <Mystage />}
@@ -62,6 +63,7 @@ const MenuColumn = styled.div`
 `;
 
 const ContentColumn = styled.div`
+  width: 100%;
   margin-top: 20px;
   margin-left: 235px;
 `;
