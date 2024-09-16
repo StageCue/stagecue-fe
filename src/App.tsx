@@ -10,6 +10,7 @@ import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import Search from "./pages/post/search";
 import Home from "./pages/home";
+import MyPage from "./pages/mypage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/welcome" element={<Welcome />} />
+          <Route path="/mypage" element={<MyPage />} />
           <Route path="/forgotAccount" element={<ForgotAccount />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
