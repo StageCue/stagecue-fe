@@ -13,11 +13,11 @@ const Login = () => {
   };
 
   const handleSignupClick = () => {
-    navigate("/signup");
+    navigate("/auth/signup");
   };
 
   const handleForgotPasswordClick = () => {
-    navigate("/forgotpassword");
+    navigate("/auth/forgotpassword");
   };
 
   return (

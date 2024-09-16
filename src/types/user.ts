@@ -7,9 +7,10 @@ export interface LoginInputs {
 
 export interface SignupInputs {
   email: string;
+  name: string;
   phoneNumber: string;
   password: string;
-  certCode: string;
+  certificated: boolean;
   confirmPassword: string;
   allAgreed: boolean;
   ageCheck: boolean;

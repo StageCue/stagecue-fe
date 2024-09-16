@@ -2,11 +2,12 @@ import axios from "axios";
 
 interface RequestPrams {
   method: "GET" | "POST" | "PUT" | "DELETE";
-  url: string;
+  endpoint: string;
   data?: object;
 }
 
-const request = async ({ method, url, data }: RequestPrams) => {
+const request = async ({ method, endpoint, data }: RequestPrams) => {
+  const url = `http://stag-api.stagecue.co.kr/${endpoint}`;
   return await axios({ method, url, data })
     .then((res) => {
       return res;

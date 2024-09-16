@@ -13,6 +13,8 @@ export default defineConfig({
       { find: "@", replacement: resolve("src") },
       { find: "@components", replacement: resolve("src/components") },
       { find: "@assets", replacement: resolve("src/assets") },
+      { find: "@pages", replacement: resolve("src/pages") },
+      { find: "@api", replacement: resolve("src/api") },
     ],
   },
 });
