@@ -11,7 +11,7 @@ export type bizMenuOption =
 
 const Biz = () => {
   const [selectedOption, setSelectedOption] =
-    useState<bizMenuOption>("내 극단 관리");
+    useState<bizMenuOption>("지원자 관리");
 
   const handleOptionClick = (option: bizMenuOption) => {
     setSelectedOption(option);
