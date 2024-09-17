@@ -13,6 +13,8 @@ import Home from "./pages/home";
 import MyPage from "./pages/mypage";
 import DefaultLayout from "./components/layout/default";
 import AuthLayout from "./components/layout/auth";
+import Biz from "./pages/biz";
+import BizLayout from "./components/layout/biz";
 
 function App() {
   return (
@@ -31,6 +33,9 @@ function App() {
           <Route path="forgotAccount" element={<ForgotAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
           <Route path="resetpassword" element={<ResetPassword />} />
+        </Route>
+        <Route path="/biz" element={<BizLayout />}>
+          <Route index element={<Biz />} />
         </Route>
       </Routes>
     </AppContainer>

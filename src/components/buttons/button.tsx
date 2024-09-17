@@ -11,6 +11,7 @@ interface ButtonProps {
   height?: number;
   disabled?: boolean;
   fontSize?: number;
+  fontWeight?: string;
   lineHeight?: number;
   letterSpacing?: number;
   padding?: string;
@@ -28,6 +29,7 @@ const Button = ({
   width = 97,
   height = 48,
   fontSize = 16,
+  fontWeight = `var(--font-semibold)`,
   padding = "12px 28px",
   letterSpacing = 0.57,
   lineHeight = 150,
@@ -43,6 +45,7 @@ const Button = ({
       $width={width}
       $height={height}
       $fontSize={fontSize}
+      $fontWeight={fontWeight}
       $letterSpacing={letterSpacing}
       $lineHeight={lineHeight}
       $padding={padding}
@@ -62,6 +65,7 @@ const ButtonContainer = styled.button<{
   $width: number;
   $height: number;
   $fontSize: number;
+  $fontWeight: string;
   $padding: string;
   $letterSpacing: number;
   $lineHeight: number;
@@ -69,7 +73,7 @@ const ButtonContainer = styled.button<{
   cursor: pointer;
   border-radius: 10px;
   display: flex;
-  font-weight: var(--font-semibold);
+  font-weight: ${({ $fontWeight }) => $fontWeight};
   font-size: ${({ $fontSize }) => $fontSize};
   line-height: ${({ $lineHeight }) => `${$lineHeight}%`};
   letter-spacing: ${({ $letterSpacing }) => `${$letterSpacing}%`};

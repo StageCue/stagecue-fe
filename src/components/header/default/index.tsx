@@ -14,6 +14,10 @@ const DefaultHeader = () => {
     navigate("/auth/login");
   };
 
+  const handleBizClick = () => {
+    navigate("/biz");
+  };
+
   return (
     <DefaultHeaderContainer>
       <LeftSideWrapper>
@@ -40,6 +44,7 @@ const DefaultHeader = () => {
           height={32}
           padding="7px 14px"
           fontSize={13}
+          onClick={handleBizClick}
         >
           극단주 서비스
         </Button>
@@ -86,5 +91,3 @@ const PostPageBtn = styled.div`
   color: #171719;
   cursor: pointer;
 `;
-
-const AuthPageBtn = styled.div``;
