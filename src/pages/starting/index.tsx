@@ -35,8 +35,10 @@ const Starting = () => {
           variation="text"
           btnClass="primary"
           height={30}
-          width={150}
+          width={104}
           onClick={handleWithEmailClick}
+          fontSize={14}
+          padding="0px"
         >
           이메일로 시작하기
         </Button>
@@ -126,6 +128,7 @@ const WithEmailWrapper = styled.div`
   gap: 12px;
   width: 162px;
   height: 68px;
+  align-items: center;
 `;
 
 const SocialLoginWrapper = styled.div`

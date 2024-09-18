@@ -39,7 +39,7 @@ const Input = styled.input`
   line-height: 150%;
   letter-spacing: 0.57%;
 
-  ::placeholder {
+  &::placeholder {
     color: #e0e0e2;
   }
 `;

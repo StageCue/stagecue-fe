@@ -23,7 +23,6 @@ function App() {
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
-          <Route path="starting" element={<Starting />} />
           <Route path="mypage" element={<MyPage />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>

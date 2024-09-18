@@ -116,7 +116,7 @@ const ButtonContainer = styled.button<{
     if ($variation === "solid" && $btnClass === "primary") {
       return "var(--color-white)";
     } else if ($variation === "outlined" && $btnClass === "primary") {
-      return "var(--color-blue)";
+      return "#B81716";
     } else if ($variation === "outlined" && $btnClass === "secondary") {
       return "#B81716";
     } else if ($variation === "outlined" && $btnClass === "assistive") {
@@ -250,7 +250,7 @@ const ButtonContainer = styled.button<{
       } else if ($variation === "outlined" && $btnClass === "assistive") {
         return "var(--color-gray4)";
       } else if ($variation === "text" && $btnClass === "primary") {
-        return "var(--color-blue2)";
+        return "#fcf3f3";
       } else if ($variation === "text" && $btnClass === "assistive") {
         return "var(--color-gray4)";
       }
@@ -266,7 +266,7 @@ const ButtonContainer = styled.button<{
       } else if ($variation === "outlined" && $btnClass === "assistive") {
         return "var(--color-black2)";
       } else if ($variation === "text" && $btnClass === "primary") {
-        return "var(--color-blue)";
+        return "#B81716";
       } else if ($variation === "text" && $btnClass === "assistive") {
         return "var(--color-gray9)";
       }
@@ -301,7 +301,7 @@ const ButtonContainer = styled.button<{
       } else if ($variation === "outlined" && $btnClass === "assistive") {
         return "var(--color-gray7)";
       } else if ($variation === "text" && $btnClass === "primary") {
-        return "var(--color-blue4)";
+        return "#f9ecec";
       } else if ($variation === "text" && $btnClass === "assistive") {
         return "var(--color-gray7)";
       }
@@ -317,7 +317,7 @@ const ButtonContainer = styled.button<{
       } else if ($variation === "outlined" && $btnClass === "assistive") {
         return "var(--color-black2)";
       } else if ($variation === "text" && $btnClass === "primary") {
-        return "var(--color-blue)";
+        return "#B81716";
       } else if ($variation === "text" && $btnClass === "assistive") {
         return "var(--color-gray2)";
       }
@@ -350,7 +350,7 @@ const ButtonContainer = styled.button<{
       } else if ($variation === "outlined" && $btnClass === "assistive") {
         return "var(--color-gray8)";
       } else if ($variation === "text" && $btnClass === "primary") {
-        return "var(--color-blue6)";
+        return "#f6e3e3";
       } else if ($variation === "text" && $btnClass === "assistive") {
         return "var(--color-gray8)";
       }
@@ -366,7 +366,7 @@ const ButtonContainer = styled.button<{
       } else if ($variation === "outlined" && $btnClass === "assistive") {
         return "var(--color-black2)";
       } else if ($variation === "text" && $btnClass === "primary") {
-        return "var(--color-blue)";
+        return "#B81716";
       } else if ($variation === "text" && $btnClass === "assistive") {
         return "var(--color-gray11)";
       }
