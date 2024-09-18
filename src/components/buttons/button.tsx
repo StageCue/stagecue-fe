@@ -88,11 +88,11 @@ const ButtonContainer = styled.button<{
     if ($variation === "solid" && $btnClass === "primary") {
       return "none";
     } else if ($variation === "outlined" && $btnClass === "primary") {
-      return "1px solid #70737C";
+      return "1px solid #B81716";
     } else if ($variation === "outlined" && $btnClass === "secondary") {
-      return "1px solid var(--color-gray)";
+      return "1px solid #e0e0e2";
     } else if ($variation === "outlined" && $btnClass === "assistive") {
-      return "1px solid var(--color-gray)";
+      return "1px solid #e0e0e2";
     } else if ($variation === "text") {
       return "none";
     }
@@ -102,11 +102,11 @@ const ButtonContainer = styled.button<{
     if ($variation === "solid" && $btnClass === "primary") {
       return "#B81716";
     } else if ($variation === "outlined" && $btnClass === "primary") {
-      return "var(--color-white)";
+      return "white";
     } else if ($variation === "outlined" && $btnClass === "secondary") {
-      return "var(--color-white)";
+      return "white";
     } else if ($variation === "outlined" && $btnClass === "assistive") {
-      return "var(--color-white)";
+      return "white";
     } else if ($variation === "text") {
       return "transparent";
     }
@@ -130,6 +130,55 @@ const ButtonContainer = styled.button<{
 
   /* disabled */
   &:disabled {
+    cursor: default;
+    border: ${({ $variation, $btnClass }) => {
+      if ($variation === "solid" && $btnClass === "primary") {
+        return "none";
+      } else if ($variation === "outlined" && $btnClass === "primary") {
+        return "1px solid var(--color-gray2)";
+      } else if ($variation === "outlined" && $btnClass === "secondary") {
+        return "1px solid var(--color-gray2)";
+      } else if ($variation === "outlined" && $btnClass === "assistive") {
+        return "1px solid var(--color-gray2)";
+      } else if ($variation === "text") {
+        return "none";
+      }
+    }};
+
+    background-color: ${({ $variation, $btnClass }) => {
+      if ($variation === "solid" && $btnClass === "primary") {
+        return "var(--color-gray2)";
+      } else if ($variation === "outlined" && $btnClass === "primary") {
+        return "var(--color-white)";
+      } else if ($variation === "outlined" && $btnClass === "secondary") {
+        return "var(--color-white)";
+      } else if ($variation === "outlined" && $btnClass === "assistive") {
+        return "var(--color-white)";
+      } else if ($variation === "text") {
+        return "none";
+      }
+    }};
+
+    color: ${({ $variation, $btnClass }) => {
+      if ($variation === "solid" && $btnClass === "primary") {
+        return "var(--color-gray)";
+      } else if ($variation === "outlined" && $btnClass === "primary") {
+        return "var(--color-gray2)";
+      } else if ($variation === "outlined" && $btnClass === "secondary") {
+        return "var(--color-gray2)";
+      } else if ($variation === "outlined" && $btnClass === "assistive") {
+        return "var(--color-gray2)";
+      } else if ($variation === "text" && $btnClass === "primary") {
+        return "var(--color-gray2)";
+      } else if ($variation === "text" && $btnClass === "assistive") {
+        return "var(--color-gray2)";
+      }
+    }};
+  }
+
+  /* disabled+hover */
+  &:disabled:hover {
+    cursor: default;
     border: ${({ $variation, $btnClass }) => {
       if ($variation === "solid" && $btnClass === "primary") {
         return "none";

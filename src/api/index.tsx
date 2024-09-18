@@ -1,16 +1,31 @@
 import axios from "axios";
 
 interface RequestPrams {
-  method: "GET" | "POST" | "PUT" | "DELETE";
+  method: "get" | "post" | "put" | "delete";
   endpoint: string;
   data?: object;
+  header?: object;
 }
 
-const request = async ({ method, endpoint, data }: RequestPrams) => {
-  const url = `http://stag-api.stagecue.co.kr/${endpoint}`;
-  return await axios({ method, url, data })
+const request = async ({
+  method,
+  endpoint,
+  data,
+  header = {},
+}: RequestPrams) => {
+  const url = `https://stag-api.stagecue.co.kr/${endpoint}`;
+  return await axios({
+    method,
+    url,
+    data,
+    withCredentials: false,
+    headers: {
+      "Content-Type": "application/json",
+      ...header,
+    },
+  })
     .then((res) => {
-      return res;
+      return res.data;
     })
     .catch((error) => {
       console.log(error);

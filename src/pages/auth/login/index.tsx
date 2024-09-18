@@ -3,13 +3,15 @@ import styled from "styled-components";
 import { LoginInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
+import { requestLogin } from "@/api/auth";
 
 const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<LoginInputs>();
 
-  const onSubmitLogin = (data: LoginInputs) => {
+  const onSubmitLogin = async (data: LoginInputs) => {
     console.log(data);
+    const res = await requestLogin(data);
   };
 
   const handleSignupClick = () => {

@@ -11,8 +11,9 @@ export interface SignupInputs {
   phoneNumber: string;
   password: string;
   certificated: boolean;
+  birthday: string;
+  gender: string;
   confirmPassword: string;
-  allAgreed: boolean;
   ageCheck: boolean;
   agreeServicePolicy: boolean;
   agreePrivatePolicy: boolean;

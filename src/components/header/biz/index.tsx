@@ -27,6 +27,7 @@ const BizHeaderContainer = styled.div`
   justify-content: space-between;
   border-bottom: 1px solid #e1e2e4;
   background-color: white;
+  z-index: 400;
 `;
 
 const LeftSideWrapper = styled.div`

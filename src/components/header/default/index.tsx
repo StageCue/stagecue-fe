@@ -11,7 +11,7 @@ const DefaultHeader = () => {
   };
 
   const handleLoginClick = () => {
-    navigate("/auth/login");
+    navigate("/auth/starting");
   };
 
   const handleBizClick = () => {
@@ -64,6 +64,7 @@ const DefaultHeaderContainer = styled.div`
   align-items: center;
   position: fixed;
   justify-content: space-between;
+  z-index: 400;
 `;
 
 const LeftSideWrapper = styled.div`

@@ -6,12 +6,13 @@ const Starting = () => {
   const navigate = useNavigate();
 
   const handleWithEmailClick = () => {
-    navigate("/login");
+    navigate("/auth/login");
   };
 
   const handleForgotAccont = () => {
-    navigate("/forgotaccount");
+    navigate("/auth/forgotaccount");
   };
+
   return (
     <StartingContainer>
       <CenterTextWrapper>

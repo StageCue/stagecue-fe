@@ -24,12 +24,13 @@ function App() {
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
           <Route path="starting" element={<Starting />} />
-          <Route path="welcome" element={<Welcome />} />
           <Route path="mypage" element={<MyPage />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
+          <Route path="starting" element={<Starting />} />
           <Route path="signup" element={<Signup />} />
+          <Route path="welcome" element={<Welcome />} />
+          <Route path="login" element={<Login />} />
           <Route path="forgotAccount" element={<ForgotAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
           <Route path="resetpassword" element={<ResetPassword />} />

@@ -2,12 +2,19 @@ import styled from "styled-components";
 import Button from "../../components/buttons/button";
 import { useState } from "react";
 import { UserType } from "../../types/user";
+import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
+  const navigate = useNavigate();
+
   const [selectedUserType, setSelectedUserType] = useState<UserType>();
 
   const handleUserTypeClick = (type: UserType) => {
     setSelectedUserType(type);
+  };
+
+  const handleNextClick = () => {
+    navigate("/");
   };
 
   return (
@@ -38,7 +45,14 @@ const Welcome = () => {
           </TextWrapper>
         </UserTypeBox>
       </SelectWrapper>
-      <Button variation="solid" btnClass="primary" width={340} height={48}>
+      <Button
+        variation="solid"
+        btnClass="primary"
+        width={340}
+        height={48}
+        disabled={!selectedUserType}
+        onClick={handleNextClick}
+      >
         다음
       </Button>
     </WelcomeContainer>
@@ -114,7 +128,7 @@ const UserTypeBox = styled.div<{ $isSelected: boolean }>`
   align-items: center;
   gap: 32px;
   border: ${({ $isSelected }) =>
-    $isSelected ? `1px solid var(--color-blue)` : "1px solid #37383C"};
+    $isSelected ? `1px solid #B81716` : "1px solid #c7c7c8"};
   cursor: pointer;
   background-color: ${({ $isSelected }) =>
     $isSelected ? `var(--color-blue9)` : `var(--color-white)`};
@@ -123,5 +137,5 @@ const UserTypeBox = styled.div<{ $isSelected: boolean }>`
 const Image = styled.div`
   width: 80px;
   height: 80px;
-  background-color: var(--color-gray);
+  background-color: #d9d9d9;
 `;
