@@ -1,9 +1,18 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const AuthHeader = () => {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/");
+  };
   return (
     <AuthHeaderContainer>
-      <Logo src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg" />
+      <Logo
+        src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg"
+        onClick={handleLogoClick}
+      />
     </AuthHeaderContainer>
   );
 };
@@ -25,4 +34,5 @@ const AuthHeaderContainer = styled.div`
 
 const Logo = styled.img`
   width: 66px;
+  cursor: pointer;
 `;

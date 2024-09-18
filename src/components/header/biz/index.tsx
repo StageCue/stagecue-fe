@@ -1,11 +1,20 @@
 import styled from "styled-components";
 import CaretDownSVG from "@assets/icons/caret_down.svg?react";
+import { useNavigate } from "react-router-dom";
 
 const BizHeader = () => {
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    navigate("/");
+  };
   return (
     <BizHeaderContainer>
       <LeftSideWrapper>
-        <Logo src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg" />
+        <Logo
+          src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg"
+          onClick={handleLogoClick}
+        />
         <Title>극단주 서비스</Title>
       </LeftSideWrapper>
       <RightSideWrapper>
@@ -62,4 +71,5 @@ const AuthMenuBtn = styled.div`
 
 const Logo = styled.img`
   width: 66px;
+  cursor: pointer;
 `;
