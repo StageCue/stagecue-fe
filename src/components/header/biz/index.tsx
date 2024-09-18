@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import CaretDownSVG from "@assets/icons/caret_down.svg?react";
+
 const BizHeader = () => {
   return (
     <BizHeaderContainer>
       <LeftSideWrapper>
-        <Logo />
+        <Logo src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg" />
         <Title>극단주 서비스</Title>
       </LeftSideWrapper>
       <RightSideWrapper>
@@ -19,7 +20,7 @@ export default BizHeader;
 
 const BizHeaderContainer = styled.div`
   width: 100%;
-  height: 70px;
+  height: 60px;
   padding: 14px 24px;
   display: flex;
   align-items: center;
@@ -43,12 +44,6 @@ const RightSideWrapper = styled.div`
   gap: 4px;
 `;
 
-const Logo = styled.div`
-  width: 65.92px;
-  height: 25.6px;
-  background-color: red;
-`;
-
 const Title = styled.div`
   font-weight: var(--var-semibold);
   font-size: 18px;
@@ -63,4 +58,8 @@ const AuthMenuBtn = styled.div`
   line-height: 146.7%;
   letter-spacing: 0.96%;
   color: #1e1e1e;
+`;
+
+const Logo = styled.img`
+  width: 66px;
 `;

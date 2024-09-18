@@ -21,7 +21,7 @@ const DefaultHeader = () => {
   return (
     <DefaultHeaderContainer>
       <LeftSideWrapper>
-        <Logo />
+        <Logo src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg" />
         <PostPageBtn onClick={handlePostPageClick}>모집공고</PostPageBtn>
       </LeftSideWrapper>
       <RightSideWrapper>
@@ -57,19 +57,21 @@ export default DefaultHeader;
 
 const DefaultHeaderContainer = styled.div`
   width: 100%;
-  height: 70px;
+  height: 60px;
   padding: 14px 190px;
-  background-color: #f7f7f7;
+  background-color: white;
   display: flex;
   align-items: center;
   position: fixed;
   justify-content: space-between;
   z-index: 400;
+  border-bottom: 1px solid #e1e2e4;
 `;
 
 const LeftSideWrapper = styled.div`
   display: flex;
   gap: 40px;
+  align-items: center;
 `;
 
 const RightSideWrapper = styled.div`
@@ -78,10 +80,8 @@ const RightSideWrapper = styled.div`
   align-items: center;
 `;
 
-const Logo = styled.div`
-  width: 65.92px;
-  height: 25.6px;
-  background-color: red;
+const Logo = styled.img`
+  width: 66px;
 `;
 
 const PostPageBtn = styled.div`
