@@ -4,14 +4,20 @@ import { LoginInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
 import { requestLogin } from "@/api/auth";
+import useSessionStore from "@/store";
 
 const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<LoginInputs>();
+  const sessionStore = useSessionStore();
 
   const onSubmitLogin = async (data: LoginInputs) => {
-    console.log(data);
     const res = await requestLogin(data);
+
+    if (res.code === "SUCCESS") {
+      sessionStore.loginSession();
+      navigate("/");
+    }
   };
 
   const handleSignupClick = () => {

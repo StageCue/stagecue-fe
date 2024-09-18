@@ -15,15 +15,7 @@ export default defineConfig({
       { find: "@assets", replacement: resolve("src/assets") },
       { find: "@pages", replacement: resolve("src/pages") },
       { find: "@api", replacement: resolve("src/api") },
+      { find: "@store", replacement: resolve("src/store") },
     ],
   },
-  // server: {
-  //   proxy: {
-  //     "/v1": {
-  //       target: "https://stag-api.stagecue.co.kr",
-  //       changeOrigin: true,
-  //       secure: false,
-  //     },
-  //   },
-  // },
 });

@@ -26,8 +26,8 @@ export const requestLogin = async (data: ReqLoginParams) => {
     endpoint: "v1/auth/login",
     data,
   });
-  console.log(res);
-  const [accessToken] = res.data;
+
+  const { accessToken } = res.result;
   axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   return res;
 };
