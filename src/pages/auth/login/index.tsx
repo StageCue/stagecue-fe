@@ -8,8 +8,10 @@ import useSessionStore from "@/store";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit } = useForm<LoginInputs>();
+  const { register, handleSubmit, watch } = useForm<LoginInputs>();
   const sessionStore = useSessionStore();
+
+  const [emailValue, passwordValue] = watch(["email", "password"]);
 
   const onSubmitLogin = async (data: LoginInputs) => {
     const res = await requestLogin(data);
@@ -40,6 +42,7 @@ const Login = () => {
                 required: true,
               })}
               placeholder="이메일을 입력해주세요"
+              $isDirty={Boolean(emailValue)}
             />
           </InputWrapper>
           <InputWrapper>
@@ -49,6 +52,7 @@ const Login = () => {
                 required: true,
               })}
               placeholder="비밀번호를 입력해주세요"
+              $isDirty={Boolean(passwordValue)}
             />
             <CheckboxInputWrapper>
               <CheckboxInput />
@@ -56,7 +60,13 @@ const Login = () => {
             </CheckboxInputWrapper>
           </InputWrapper>
         </Inputs>
-        <Button variation="solid" btnClass="primary" type="submit" width={340}>
+        <Button
+          variation="solid"
+          btnClass="primary"
+          type="submit"
+          width={340}
+          disabled={!emailValue || !passwordValue}
+        >
           로그인
         </Button>
       </LoginForm>
@@ -77,10 +87,11 @@ const Login = () => {
         <Button
           variation="text"
           btnClass="assistive"
-          width={150}
+          width={134}
           height={28}
           fontSize={14}
           onClick={handleForgotPasswordClick}
+          padding="0px"
         >
           비밀번호를 잊으셨나요?
         </Button>
@@ -126,16 +137,17 @@ const InputWrapper = styled.div`
   gap: 8px;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ $isDirty: boolean }>`
   padding: 12px 16px;
   width: 340px;
   height: 48px;
   border-radius: 10px;
-  border: 1px solid #70737c;
+  border: ${({ $isDirty }) =>
+    $isDirty ? "1px solid #70737c" : "1px solid #dadada"};
   outline: none;
 
-  ::placeholder {
-    color: #171719;
+  &::placeholder {
+    color: #dadada;
     line-height: 150%;
     letter-spacing: 0.57%;
     font-size: 16px;
@@ -161,7 +173,7 @@ const CheckboxLabel = styled.label`
   font-size: 14px;
   line-height: 142.9%;
   letter-spacing: 1.45%;
-  color: #37383c;
+  color: #858688;
   height: 18px;
 `;
 

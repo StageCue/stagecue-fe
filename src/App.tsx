@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
-import Layout from "./components/layout/auth";
 import Login from "./pages/auth/login";
 import Welcome from "./pages/welcome";
 import Signup from "./pages/auth/signup";
