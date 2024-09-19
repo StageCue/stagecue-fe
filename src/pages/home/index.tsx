@@ -20,6 +20,7 @@ const Home = () => {
 export default Home;
 
 const HomeContainer = styled.div`
+  width: 1440px;
   height: 100%;
   min-height: inherit;
   display: flex;
