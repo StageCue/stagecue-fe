@@ -1,5 +1,10 @@
 import Button from "@/components/buttons/button";
 import styled from "styled-components";
+import CalendarSVG from "@assets/icons/calendar_xs.svg?react";
+import LinkSVG from "@assets/icons/link.svg?react";
+import LocationSVG from "@assets/icons/location.svg?react";
+import PersonSVG from "@assets/icons/person.svg?react";
+import MailSVG from "@assets/icons/mail.svg?react";
 
 const ManageTroupe = () => {
   return (
@@ -29,10 +34,51 @@ const ManageTroupe = () => {
           <TextColumn>
             <TextTitleWrapper>
               <Title>대충 그냥 긴 극단이름예시</Title>
-              <FollowerWrapper></FollowerWrapper>
+              <FollowerWrapper>
+                <FollowerText>팔로워</FollowerText>
+                <FollowerValue>1K</FollowerValue>
+              </FollowerWrapper>
             </TextTitleWrapper>
+            <Description>소개 내용</Description>
           </TextColumn>
-          <SummaryColumn></SummaryColumn>
+          <SummaryColumn>
+            <SummaryPropertyWrapper>
+              <Property>
+                <CalendarSVG />
+                극단 설립일
+              </Property>
+              <Value>2018. 07. 25</Value>
+            </SummaryPropertyWrapper>
+            <SummaryPropertyWrapper>
+              <Property>
+                <LinkSVG />
+                극단 웹사이트
+              </Property>
+              <Value>2018. 07. 25</Value>
+            </SummaryPropertyWrapper>
+            <SummaryPropertyWrapper>
+              <Property>
+                <LocationSVG />
+                극단 위치
+              </Property>
+              <Value>2018. 07. 25</Value>
+            </SummaryPropertyWrapper>
+            <Divider />
+            <SummaryPropertyWrapper>
+              <Property>
+                <PersonSVG />
+                담당자 연락처
+              </Property>
+              <Value>2018. 07. 25</Value>
+            </SummaryPropertyWrapper>
+            <SummaryPropertyWrapper>
+              <Property>
+                <MailSVG />
+                극단 이메일
+              </Property>
+              <Value>2018. 07. 25</Value>
+            </SummaryPropertyWrapper>
+          </SummaryColumn>
         </ContentWrapper>
       </Content>
     </ManageTroupeContainer>
@@ -84,13 +130,22 @@ const ButtonWapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
+  width: 1100px;
   display: flex;
   gap: 35px;
 `;
 
-const TextColumn = styled.div``;
+const TextColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 716px;
+`;
 
-const TextTitleWrapper = styled.div``;
+const TextTitleWrapper = styled.div`
+  display: flex;
+  gap: 40px;
+`;
 
 const Title = styled.div`
   font-weight: var(--font-bold);
@@ -99,10 +154,63 @@ const Title = styled.div`
   letter-spacing: -2.36%;
 `;
 
-const FollowerWrapper = styled.div``;
+const FollowerWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
 
-const FollowerText = styled.div``;
+const FollowerText = styled.div`
+  font-size: 14px;
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
+  color: #000000;
+`;
 
-const FollowerValue = styled.div``;
+const FollowerValue = styled.div`
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  color: #000000;
+  font-weight: var(--font-bold);
+`;
 
-const SummaryColumn = styled.div``;
+const SummaryColumn = styled.div`
+  width: 301px;
+  min-height: 368px;
+  border: 1px solid #e0e0e2;
+  padding: 24px 22px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const Description = styled.div`
+  width: 700px;
+  min-height: 286px;
+  word-break: break-all;
+  font-size: 16px;
+`;
+
+const SummaryPropertyWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 40px;
+`;
+
+const Property = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const Value = styled.div`
+  margin-left: 24px;
+`;
+
+const Divider = styled.div`
+  width: 255px;
+  height: 1px;
+  background-color: #f4eaf3;
+`;
