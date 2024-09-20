@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import Footer from "@components/footer";
 import { Outlet } from "react-router-dom";
 import DefaultHeader from "@/components/header/default";
+import DefaultFooter from "@/components/footer/default";
 
 const DefaultLayout = () => {
   return (
@@ -10,7 +10,7 @@ const DefaultLayout = () => {
       <Body>
         <Outlet />
       </Body>
-      <Footer />
+      <DefaultFooter />
     </DefaultLayoutContainer>
   );
 };

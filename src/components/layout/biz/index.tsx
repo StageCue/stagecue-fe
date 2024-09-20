@@ -1,3 +1,4 @@
+import DefaultFooter from "@/components/footer/default";
 import BizHeader from "@/components/header/biz";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
@@ -9,6 +10,7 @@ const BizLayout = () => {
       <Body>
         <Outlet />
       </Body>
+      <DefaultFooter />
     </BizLayoutContainer>
   );
 };
