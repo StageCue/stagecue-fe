@@ -3,6 +3,8 @@ import Sidemenu from "./components/sidemenu";
 import { useState } from "react";
 import CreateTroupe from "./components/createTroupe";
 import Applicant from "./components/applicant";
+import ManagePost from "./components/managePost";
+import ManageTroupe from "./components/manageTroupe";
 
 export type bizMenuOption =
   | "지원자 관리"
@@ -24,8 +26,9 @@ const Biz = () => {
         onOptionClick={handleOptionClick}
       />
       <Content>
-        {selectedOption === "내 극단 관리" && <CreateTroupe />}
+        {selectedOption === "내 극단 관리" && <ManageTroupe />}
         {selectedOption === "지원자 관리" && <Applicant />}
+        {selectedOption === "공고 관리" && <ManagePost />}
       </Content>
     </BizContainer>
   );

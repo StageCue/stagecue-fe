@@ -1,12 +1,15 @@
 import styled from "styled-components";
 import SearchSVG from "@assets/icons/search.svg?react";
+import TimeSVG from "@assets/icons/time.svg?react";
+import CalendarSVG from "@assets/icons/calendar_s.svg?react";
+import PencilSVG from "@assets/icons/pencil.svg?react";
+import TrashSVG from "@assets/icons/trash.svg?react";
+
 import { useState } from "react";
 import Button from "@/components/buttons/button";
 import Table from "./components/table";
-import PassSVG from "@assets/icons/pass.svg?react";
-import FailSVG from "@assets/icons/fail.svg?react";
 
-const Applicant = () => {
+const ManagePost = () => {
   const [selectedFilter, setSelectedFilter] = useState("전체");
 
   const handleFilterClick = (filter: string) => {
@@ -16,13 +19,14 @@ const Applicant = () => {
   const handlePassClick = () => {};
 
   const handleFailClick = () => {};
+
   return (
-    <ApplicantContainer>
+    <ManagePostContainer>
       <TitleWrapper>
-        <Title>지원자 관리</Title>
+        <Title>공고 관리</Title>
         <Searchbar>
           <SearchSVG />
-          <SearchInput placeholder="지원자명, 공고명으로 검색" />
+          <SearchInput placeholder="공고명으로 검색" />
         </Searchbar>
       </TitleWrapper>
       <FilterWrapper>
@@ -35,27 +39,59 @@ const Applicant = () => {
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("서류합격")}
-            $isSelected={selectedFilter === "서류합격"}
+            onClick={() => handleFilterClick("임시저장")}
+            $isSelected={selectedFilter === "임시저장"}
           >
-            서류합격
+            임시저장
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("최종합격")}
-            $isSelected={selectedFilter === "최종합격"}
+            onClick={() => handleFilterClick("모집중")}
+            $isSelected={selectedFilter === "모집중"}
           >
-            최종합격
+            모집중
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("불합격")}
-            $isSelected={selectedFilter === "불합격"}
+            onClick={() => handleFilterClick("모집종료")}
+            $isSelected={selectedFilter === "모집종료"}
           >
-            불합격
+            모집종료
           </Option>
         </Filters>
         <ButtonsWrapper>
+          <Button
+            variation="outlined"
+            btnClass="assistive"
+            onClick={handlePassClick}
+            width={109}
+            height={32}
+            fontSize={13}
+            lineHeight={138.5}
+            letterSpacing={1.94}
+            padding="8px 14px"
+          >
+            <IconWrapper>
+              <TimeSVG />
+            </IconWrapper>
+            마감일 변경
+          </Button>
+          <Button
+            variation="outlined"
+            btnClass="assistive"
+            onClick={handlePassClick}
+            width={98}
+            height={32}
+            fontSize={13}
+            lineHeight={138.5}
+            letterSpacing={1.94}
+            padding="8px 14px"
+          >
+            <IconWrapper>
+              <CalendarSVG />
+            </IconWrapper>
+            공고 마감
+          </Button>
           <Button
             variation="outlined"
             btnClass="assistive"
@@ -68,9 +104,9 @@ const Applicant = () => {
             padding="8px 14px"
           >
             <IconWrapper>
-              <PassSVG />
+              <PencilSVG />
             </IconWrapper>
-            합격
+            수정
           </Button>
           <Button
             variation="outlined"
@@ -84,20 +120,20 @@ const Applicant = () => {
             padding="8px 14px"
           >
             <IconWrapper>
-              <FailSVG />
+              <TrashSVG />
             </IconWrapper>
-            반려
+            삭제
           </Button>
         </ButtonsWrapper>
       </FilterWrapper>
       <Table />
-    </ApplicantContainer>
+    </ManagePostContainer>
   );
 };
 
-export default Applicant;
+export default ManagePost;
 
-const ApplicantContainer = styled.div`
+const ManagePostContainer = styled.div`
   width: 100%;
   padding: 24px 40px;
 `;
