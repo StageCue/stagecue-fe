@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import Footer from "@components/footer";
 import { Outlet } from "react-router-dom";
 import AuthHeader from "@/components/header/auth";
+import Footer from "@/components/footer/auth";
 
 const AuthLayout = () => {
   return (

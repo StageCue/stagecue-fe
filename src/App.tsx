@@ -14,6 +14,7 @@ import DefaultLayout from "./components/layout/default";
 import AuthLayout from "./components/layout/auth";
 import Biz from "./pages/biz";
 import BizLayout from "./components/layout/biz";
+import Detail from "./pages/post/detail";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
           <Route path="mypage" element={<MyPage />} />
+          <Route path="post" element={<Detail />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="starting" element={<Starting />} />
