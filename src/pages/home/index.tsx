@@ -7,11 +7,19 @@ import { requestCasts } from "@/api/cast";
 import AdsSlide from "./components/adsSlide";
 import StageCue from "./components/stageCue";
 import { requestNotices } from "@/api/notice";
+import { requestBanners } from "@/api/ads";
 
 const Home = () => {
   const [newestCasts, setNewestCasts] = useState([]);
   const [popularCasts, setPopularCast] = useState([]);
   const [notices, setNotices] = useState([]);
+  const [banners, setBanners] = useState([]);
+
+  const getBanners = async () => {
+    const { banners } = await requestBanners();
+
+    setBanners(banners);
+  };
 
   const getNewestCasts = async () => {
     const { casts } = await requestCasts({
@@ -34,12 +42,13 @@ const Home = () => {
   };
 
   const getNotices = async () => {
-    const { notices } = await requestNotices();
+    const { items } = await requestNotices();
 
-    setNotices(notices);
+    setNotices(items);
   };
 
   useEffect(() => {
+    getBanners();
     getNewestCasts();
     getPopularCasts();
     getNotices();
@@ -48,7 +57,7 @@ const Home = () => {
   return (
     <HomeContainer>
       <SlideWrapper>
-        <AdsSlide />
+        <AdsSlide banners={banners} />
       </SlideWrapper>
       <NewPost casts={newestCasts} />
       <ThemePost />

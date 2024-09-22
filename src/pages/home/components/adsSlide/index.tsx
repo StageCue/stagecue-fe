@@ -2,12 +2,15 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import styled from "styled-components";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
-
 import "swiper/css";
+
+interface AdsSlideContainer {
+  banners: any[];
+}
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
-const AdsSlide = () => {
+const AdsSlide = ({ banners }: AdsSlideContainer) => {
   return (
     <Swiper
       direction="horizontal"

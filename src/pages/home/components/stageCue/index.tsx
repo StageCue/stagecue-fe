@@ -7,6 +7,7 @@ interface StageCueProps {
 }
 
 const StageCue = ({ notices }: StageCueProps) => {
+  console.log(notices);
   return (
     <StageCueContainer>
       <Notice>
