@@ -5,6 +5,11 @@ import Button from "../../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
 import { requestLogin } from "@/api/auth";
 import useSessionStore from "@/store";
+import HideSVG from "@assets/icons/hide.svg?react";
+import ShowSVG from "@assets/icons/show.svg?react";
+import CheckboxSVG from "@assets/icons/checkbox.svg?react";
+import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
+import { useState } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,11 +17,13 @@ const Login = () => {
   const sessionStore = useSessionStore();
 
   const [emailValue, passwordValue] = watch(["email", "password"]);
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
+  const [isAutoLogin, setIsAutoLogin] = useState(false);
 
   const onSubmitLogin = async (data: LoginInputs) => {
     const res = await requestLogin(data);
 
-    if (res.code === "SUCCESS") {
+    if (res.accessToken) {
       sessionStore.loginSession();
       navigate("/");
     }
@@ -28,6 +35,14 @@ const Login = () => {
 
   const handleForgotPasswordClick = () => {
     navigate("/auth/forgotpassword");
+  };
+
+  const handleHidePasswordClick = () => {
+    setIsPasswordHidden((prev) => !prev);
+  };
+
+  const handleAutoLoginClick = () => {
+    setIsAutoLogin((prev) => !prev);
   };
 
   return (
@@ -47,16 +62,21 @@ const Login = () => {
           </InputWrapper>
           <InputWrapper>
             <Label>비밀번호</Label>
-            <Input
-              {...register("password", {
-                required: true,
-              })}
-              placeholder="비밀번호를 입력해주세요"
-              $isDirty={Boolean(passwordValue)}
-            />
-            <CheckboxInputWrapper>
-              <CheckboxInput />
-              <CheckboxLabel>로그인 유지</CheckboxLabel>
+            <PasswordInputWrapper $isDirty={Boolean(passwordValue)}>
+              <PasswordInput
+                {...register("password", {
+                  required: true,
+                })}
+                placeholder="비밀번호를 입력해주세요"
+                type={isPasswordHidden ? "password" : "text"}
+              />
+              <PasswordIconWrapper onClick={handleHidePasswordClick}>
+                {isPasswordHidden ? <HideSVG /> : <ShowSVG />}
+              </PasswordIconWrapper>
+            </PasswordInputWrapper>
+            <CheckboxInputWrapper onClick={handleAutoLoginClick}>
+              {isAutoLogin ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
+              <CheckboxLabel>로그인 유지하기</CheckboxLabel>
             </CheckboxInputWrapper>
           </InputWrapper>
         </Inputs>
@@ -145,6 +165,11 @@ const Input = styled.input<{ $isDirty: boolean }>`
   border: ${({ $isDirty }) =>
     $isDirty ? "1px solid #70737c" : "1px solid #dadada"};
   outline: none;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  color: #171719;
+  font-weight: var(--font-regular);
 
   &::placeholder {
     color: #dadada;
@@ -157,23 +182,16 @@ const Input = styled.input<{ $isDirty: boolean }>`
 const CheckboxInputWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 1px;
   margin-top: 8px;
 `;
 
-const CheckboxInput = styled.div`
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid #70737c;
-  border-radius: 3px;
-`;
-
 const CheckboxLabel = styled.label`
-  font-weight: var(--font-semibold);
+  font-weight: var(--font-regular);
   font-size: 14px;
   line-height: 142.9%;
   letter-spacing: 1.45%;
-  color: #858688;
+  color: #171719;
   height: 18px;
 `;
 
@@ -226,4 +244,42 @@ const BottomBtnsWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 16px;
+`;
+
+const PasswordInputWrapper = styled.div<{ $isDirty: boolean }>`
+  border-radius: 10px;
+  width: 340px;
+  height: 48px;
+  border: ${({ $isDirty }) =>
+    $isDirty ? "1px solid #70737c" : "1px solid #dadada"};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+`;
+
+const PasswordInput = styled.input`
+  border: none;
+  outline: none;
+
+  width: 272px;
+
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  color: #171719;
+  font-weight: var(--font-regular);
+
+  &::placeholder {
+    color: #dadada;
+    line-height: 150%;
+    letter-spacing: 0.57%;
+    font-size: 16px;
+  }
+`;
+
+const PasswordIconWrapper = styled.div`
+  cursor: pointer;
 `;

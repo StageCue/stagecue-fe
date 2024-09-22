@@ -26,6 +26,7 @@ const FooterContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-top: 1px solid #e1e2e4;
 `;
 
 const LeftSideWrapper = styled.div``;

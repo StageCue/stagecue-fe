@@ -1,6 +1,12 @@
 import styled from "styled-components";
+import { Cast } from "../newPost";
+import RankedCasts from "../rankedCasts";
 
-const PopularPost = () => {
+interface PopularPostProps {
+  casts: Cast[];
+}
+
+const PopularPost = ({ casts }: PopularPostProps) => {
   return (
     <PopularPostContainer>
       <TitleWrapper>
@@ -10,6 +16,9 @@ const PopularPost = () => {
           <Higliting />
         </Title>
       </TitleWrapper>
+      <Casts>
+        <RankedCasts casts={casts} />
+      </Casts>
     </PopularPostContainer>
   );
 };
@@ -56,3 +65,5 @@ const Higliting = styled.div`
   background-color: #ff9303;
   z-index: -10;
 `;
+
+const Casts = styled.div``;

@@ -1,7 +1,22 @@
 import styled from "styled-components";
 import ChevronRightSVG from "@/assets/icons/chevron_right_red_s.svg?react";
 import Button from "@/components/buttons/button";
-const NewPost = () => {
+import Cast from "../cast";
+
+export interface Cast {
+  castId: number;
+  thumbnail: string;
+  castTitle: string;
+  artworkName: string;
+  practiceLocation: string;
+  isScrapping: boolean;
+}
+
+interface NewPostProps {
+  casts: Cast[];
+}
+
+const NewPost = ({ casts }: NewPostProps) => {
   return (
     <NewPostContainer>
       <TitleWrapper>
@@ -9,11 +24,39 @@ const NewPost = () => {
           <Strong>새로 등록된 공고</Strong>를 확인해보세요!
           <Higliting />
         </Title>
-        <Button variation="text" btnClass="primary" width={110} height={32}>
+        <Button
+          variation="text"
+          btnClass="primary"
+          width={110}
+          height={32}
+          padding="4px 7px"
+        >
           공고 더보기
           <ChevronRightSVG />
         </Button>
       </TitleWrapper>
+      <Casts>
+        {casts.map(
+          ({
+            castId,
+            thumbnail,
+            castTitle,
+            artworkName,
+            practiceLocation,
+            isScrapping,
+          }) => (
+            <Cast
+              key={castId}
+              castId={castId}
+              thumbnail={thumbnail}
+              castTitle={castTitle}
+              artworkName={artworkName}
+              practiceLocation={practiceLocation}
+              isScrapping={isScrapping}
+            />
+          )
+        )}
+      </Casts>
     </NewPostContainer>
   );
 };
@@ -59,4 +102,8 @@ const Higliting = styled.div`
   height: 4px;
   background-color: #ff9303;
   z-index: -10;
+`;
+
+const Casts = styled.div`
+  min-height: 394px;
 `;

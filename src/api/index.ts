@@ -13,7 +13,7 @@ const request = async ({
   data,
   header = {},
 }: RequestPrams) => {
-  const url = `https://stag-api.stagecue.co.kr/${endpoint}`;
+  const url = `/v1/${endpoint}`;
   return await axios({
     method,
     url,

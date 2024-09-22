@@ -1,8 +1,12 @@
 import styled from "styled-components";
 import ChevronLeftSVG from "@/assets/icons/chevron_left.svg?react";
 import ChevronRightSVG from "@/assets/icons/chevron_right.svg?react";
+import ThemeSlide from "../themeSlide";
+import { useRef } from "react";
 
 const ThemePost = () => {
+  const swiperRef = useRef<any>(null); // Ref for accessing Swiper instance
+
   return (
     <ThemePostContainer>
       <TitleWrapper>
@@ -11,14 +15,15 @@ const ThemePost = () => {
           <Higliting />
         </Title>
         <PaginatorWrapper>
-          <PrevBtn>
+          <PrevBtn onClick={() => swiperRef.current?.slidePrev()}>
             <ChevronLeftSVG />
           </PrevBtn>
-          <NextBtn>
+          <NextBtn onClick={() => swiperRef.current?.slideNext()}>
             <ChevronRightSVG />
           </NextBtn>
         </PaginatorWrapper>
       </TitleWrapper>
+      <ThemeSlide swiperRef={swiperRef} />
     </ThemePostContainer>
   );
 };

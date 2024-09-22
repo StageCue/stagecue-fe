@@ -23,11 +23,11 @@ interface ReqLoginParams {
 export const requestLogin = async (data: ReqLoginParams) => {
   const res = await request({
     method: "post",
-    endpoint: "v1/auth/login",
+    endpoint: "auth/login",
     data,
   });
 
-  const { accessToken } = res.result;
+  const { accessToken } = res;
   axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   return res;
 };

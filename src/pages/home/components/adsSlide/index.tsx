@@ -7,7 +7,7 @@ import "swiper/css";
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
-const Slide = () => {
+const AdsSlide = () => {
   return (
     <Swiper
       direction="horizontal"
@@ -42,7 +42,7 @@ const Slide = () => {
   );
 };
 
-export default Slide;
+export default AdsSlide;
 
 const SlideDiv = styled.div`
   height: 240px;

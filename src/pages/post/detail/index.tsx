@@ -82,6 +82,7 @@ const DetailContainer = styled.div`
   min-height: inherit;
   display: flex;
   margin-top: 60px;
+  margin-bottom: 100px;
 `;
 
 const ContentWrapper = styled.div`
