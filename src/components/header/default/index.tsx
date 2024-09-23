@@ -65,7 +65,7 @@ const DefaultHeader = () => {
               fontSize={13}
               onClick={handleMymenuClick}
             >
-              범석님
+              {sessionStore.username}님
               <IconWrapper>
                 <ChevronDownSVG />
               </IconWrapper>

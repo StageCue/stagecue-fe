@@ -1,15 +1,16 @@
 import styled from "styled-components";
-import { Cast } from "../newPost";
 import { useEffect, useState } from "react";
+import { CastDetail } from "../popularPost";
+import LocationSVG from "@assets/icons/location.svg?react";
 
 interface RankedCastsProps {
-  casts: Cast[];
+  casts: CastDetail[];
 }
 
 const RankedCasts = ({ casts }: RankedCastsProps) => {
-  const [selectedCast, setSelectedCast] = useState<Cast>();
+  const [selectedCast, setSelectedCast] = useState<CastDetail>();
 
-  const handleThumbnailClick = (cast: Cast) => {
+  const handleThumbnailClick = (cast: CastDetail) => {
     setSelectedCast(cast);
   };
 
@@ -20,25 +21,49 @@ const RankedCasts = ({ casts }: RankedCastsProps) => {
     <RankedCastsContainer>
       <ThumbnailWrapper>
         <SelectedThumbnail
-          src={`https://s3.stagecue.co.kr/stagecue/${selectedCast?.thumbnail}`}
+          src={`https://s3.stagecue.co.kr/stagecue/${selectedCast?.thumbnailUrl}`}
         />
       </ThumbnailWrapper>
       <RightSideWrapper>
         <SummaryWrapper>
           <TitleWrapper>
-            <TroupeName>업템포극단</TroupeName>
-            <CastTitle>{selectedCast?.castTitle}</CastTitle>
+            <TroupeName>{selectedCast?.troupeName}</TroupeName>
+            <CastTitle>{selectedCast?.title}</CastTitle>
             <ArtworkName>{selectedCast?.artworkName}</ArtworkName>
           </TitleWrapper>
-          <Summary />
+          <Summary>
+            <SummaryRow>
+              <PropertyWrapper>
+                <Property>지원 가능 배역</Property>
+                <Value>
+                  {selectedCast?.recruitingParts.map((part) => (
+                    <Chip>{part}</Chip>
+                  ))}
+                </Value>
+              </PropertyWrapper>
+              <PropertyWrapper>
+                <Property>연습 위치</Property>
+                <Value>
+                  <LocationSVG />
+                  <LocationText>{selectedCast?.practiceAddress}</LocationText>
+                </Value>
+              </PropertyWrapper>
+            </SummaryRow>
+            <SummaryRow>
+              <PropertyWrapper>
+                <Property>극단소개</Property>
+                <Value>{selectedCast?.troupeIntroduce}</Value>
+              </PropertyWrapper>
+            </SummaryRow>
+          </Summary>
         </SummaryWrapper>
         <Thumbnails>
           {casts.map((cast) => (
             <Thumbnail
-              key={cast.castId}
-              src={`https://s3.stagecue.co.kr/stagecue/${cast.thumbnail}`}
+              key={cast.id}
+              src={`https://s3.stagecue.co.kr/stagecue/${cast.thumbnailUrl}`}
               onClick={() => handleThumbnailClick(cast)}
-              $isSelected={cast.castId === selectedCast?.castId}
+              $isSelected={cast.id === selectedCast?.id}
             />
           ))}
         </Thumbnails>
@@ -122,6 +147,9 @@ const Summary = styled.div`
   padding: 20px;
   border-radius: 12px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
 
 const Thumbnails = styled.div`
@@ -135,4 +163,52 @@ const Thumbnail = styled.img<{ $isSelected: boolean }>`
   height: 198px;
   border: ${({ $isSelected }) => ($isSelected ? "2px solid #B81716" : "none")};
   cursor: pointer;
+`;
+
+const SummaryRow = styled.div`
+  width: 671px;
+  height: 62px;
+  display: flex;
+  gap: 12px;
+`;
+
+const PropertyWrapper = styled.div`
+  min-width: 276px;
+  height: 62px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Property = styled.div`
+  color: #171719;
+  font-weight: var(--font-semibold);
+  font-size: 18px;
+  line-height: 144.5%;
+  letter-spacing: -0.02%;
+`;
+
+const Value = styled.div`
+  display: flex;
+  gap: 4px;
+  color: #858688;
+`;
+
+const Chip = styled.div`
+  min-width: 49px;
+  height: 28px;
+  padding: 4px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f4f5;
+  color: #818184;
+  border-radius: 40px;
+`;
+
+const LocationText = styled.div`
+  font-size: 14px;
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
+  color: #858688;
 `;

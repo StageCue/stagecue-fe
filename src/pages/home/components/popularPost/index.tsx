@@ -1,9 +1,19 @@
 import styled from "styled-components";
-import { Cast } from "../newPost";
 import RankedCasts from "../rankedCasts";
 
+export interface CastDetail {
+  id: 0;
+  title: string;
+  artworkName: string;
+  recruitingParts: string[];
+  practiceAddress: string;
+  troupeName: string;
+  troupeIntroduce: string;
+  thumbnailUrl: string;
+}
+
 interface PopularPostProps {
-  casts: Cast[];
+  casts: CastDetail[];
 }
 
 const PopularPost = ({ casts }: PopularPostProps) => {
