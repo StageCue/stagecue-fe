@@ -1,7 +1,12 @@
 import styled from "styled-components";
 import LocationSVG from "@assets/icons/location_lg.svg?react";
 
-const LocationInfo = () => {
+interface LocationInfoProps {
+  address: string;
+  addressDetail: string;
+}
+
+const LocationInfo = ({ address, addressDetail }: LocationInfoProps) => {
   return (
     <LocationInfoContainer>
       <InfoWrapper>
@@ -18,7 +23,9 @@ const LocationInfo = () => {
               <PhoneNumber>02-1234-5677</PhoneNumber>
             </TextRow>
             <TextRow>
-              <Address>서울 관악구 관천로 58 지하1층</Address>
+              <Address>
+                {address} {addressDetail}
+              </Address>
             </TextRow>
           </TextWrapper>
         </LocationData>

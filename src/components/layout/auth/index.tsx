@@ -1,9 +1,16 @@
 import styled from "styled-components";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import AuthHeader from "@/components/header/auth";
 import Footer from "@/components/footer/auth";
+import { useEffect } from "react";
 
 const AuthLayout = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <AuthLayoutContainer>
       <AuthHeader />

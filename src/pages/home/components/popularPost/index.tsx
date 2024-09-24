@@ -2,7 +2,7 @@ import styled from "styled-components";
 import RankedCasts from "../rankedCasts";
 
 export interface CastDetail {
-  id: 0;
+  id: number;
   title: string;
   artworkName: string;
   recruitingParts: string[];

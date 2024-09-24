@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import LocationSVG from "@/assets/icons/location.svg?react";
+import { useNavigate } from "react-router-dom";
 
 interface CastProps {
   castId: number;
@@ -18,8 +19,14 @@ const Cast = ({
   isScrapping,
   thumbnail,
 }: CastProps) => {
+  const navigate = useNavigate();
+
+  const handleCastClick = () => {
+    navigate(`/casts/${castId}`);
+  };
+
   return (
-    <CastContainer>
+    <CastContainer onClick={handleCastClick}>
       <Poster src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`} />
       <TextWrapper>
         <Title>{castTitle}</Title>
@@ -41,6 +48,7 @@ const CastContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  cursor: pointer;
 `;
 
 const Poster = styled.img`

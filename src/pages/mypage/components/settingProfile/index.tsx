@@ -48,7 +48,7 @@ const SettingProfile = () => {
           나의 프로필과 경력을 매력적으로 작성 후 공고에 지원해보세요!
         </SubText>
         <Description>
-          정성스러운 프로필은 극단주들에게 더 어필이 될거에요:)
+          정성스러운 프로필은 극단주들에게 더 어필이 될거에요
         </Description>
       </NoProfile>
     </SettingProfileContainer>

@@ -1,7 +1,37 @@
 import styled from "styled-components";
 import LocationSVG from "@assets/icons/location_lg.svg?react";
 
-const PracticeInfo = () => {
+interface PracticeInfoProps {
+  start: string;
+  end: string;
+  address: string;
+  addressDetail: string;
+  daysOfWeek: number;
+}
+
+const PracticeInfo = ({
+  start,
+  end,
+  address,
+  addressDetail,
+  daysOfWeek,
+}: PracticeInfoProps) => {
+  const parseDaysFromBinary = (decimalNumber: number) => {
+    const binaryString = decimalNumber.toString(2).padStart(7, "0");
+
+    const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
+
+    const activeDays = [];
+
+    for (let i = 0; i < binaryString.length; i++) {
+      if (binaryString[i] === "1") {
+        activeDays.push(daysOfWeek[i]);
+      }
+    }
+
+    return activeDays.join(", ");
+  };
+
   return (
     <PracticeInfoContainer>
       <InfoWrapper>
@@ -9,14 +39,16 @@ const PracticeInfo = () => {
           <Dot />
           연습 기간
         </Property>
-        <TextValue>2024.07.16~2024.07.25</TextValue>
+        <TextValue>
+          {start}~{end}
+        </TextValue>
       </InfoWrapper>
       <InfoWrapper>
         <Property>
           <Dot />
           연습 요일
         </Property>
-        <TextValue>매주 월, 화, 수</TextValue>
+        <TextValue>매주 {parseDaysFromBinary(daysOfWeek)}</TextValue>
       </InfoWrapper>
       <InfoWrapper>
         <Property>
@@ -32,7 +64,9 @@ const PracticeInfo = () => {
               <PhoneNumber>02-1234-5677</PhoneNumber>
             </TextRow>
             <TextRow>
-              <Address>서울 관악구 관천로 58 지하1층</Address>
+              <Address>
+                {address} {addressDetail}
+              </Address>
             </TextRow>
           </TextWrapper>
         </LocationData>

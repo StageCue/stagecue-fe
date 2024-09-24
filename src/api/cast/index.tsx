@@ -35,3 +35,11 @@ export const requestCastsDetailList = async (
   });
   return res;
 };
+
+export const requestCastDetail = async (id: string) => {
+  const res = await request({
+    method: "get",
+    endpoint: `casts/${id}`,
+  });
+  return res;
+};

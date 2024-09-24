@@ -24,7 +24,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
           <Route path="mypage" element={<MyPage />} />
-          <Route path="post" element={<Detail />} />
+          <Route path="casts/:id" element={<Detail />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="starting" element={<Starting />} />

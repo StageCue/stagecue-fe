@@ -1,18 +1,68 @@
 import styled from "styled-components";
 import ChevronRightSVG from "@assets/icons/chevron_right.svg?react";
 import BookmarkSVG from "@assets/icons/bookmark.svg?react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BasicInfo from "../components/basicInfo";
 import LocationInfo from "../components/locationInfo";
 import PracticeInfo from "../components/practiceInfo";
 import Application from "../components/application";
+import { requestCastDetail } from "@/api/cast";
+import { useParams } from "react-router-dom";
+import PostImageSlide from "../components/slide";
+import { requestProfileList } from "@/api/profile";
+
+interface CastDetail {
+  castTitle: string;
+  introduce: string;
+  troupeName: string;
+  troupeLogoImage: string;
+  recruitImages: string[];
+  monthlyFee: number;
+  practice: {
+    dateStart: string;
+    dateEnd: string;
+    address: string;
+    addressDetail: string;
+    daysOfWeek: number;
+  };
+  stage: {
+    dateStart: string;
+    dateEnd: string;
+    address: string;
+    addressDetail: string;
+  };
+  recruitingParts: string;
+}
 
 const Detail = () => {
+  const { id } = useParams();
+  const [castDetail, setCastDetail] = useState<CastDetail>();
   const [selectedTab, setSelectedTab] = useState("공연 기본 정보");
 
   const handleTabClick = (option: string) => {
     setSelectedTab(option);
   };
+
+  const getCastDetail = async () => {
+    if (id) {
+      const cast = await requestCastDetail(id);
+      console.log(cast);
+
+      setCastDetail(cast);
+    }
+  };
+
+  const getProfileList = async () => {
+    const res = await requestProfileList();
+
+    console.log(res);
+  };
+
+  useEffect(() => {
+    getCastDetail();
+    getProfileList();
+  }, []);
+
   return (
     <DetailContainer>
       <ContentWrapper>
@@ -24,19 +74,21 @@ const Detail = () => {
                 <BookmarkSVG />
               </BookmarkWrapper>
             </DdayWrapper>
-            <Title>업템포 극단과 함께할 배우들을 모집합니다.</Title>
+            <Title>{castDetail?.castTitle}</Title>
           </TitleWrapper>
           <Divider />
           <TroupeWrapper>
-            <TroupeLogo />
+            <TroupeLogo
+              src={`https://s3.stagecue.co.kr/stagecue${castDetail?.troupeLogoImage}`}
+            />
             <TroupeName>
-              업템포극단
+              {castDetail?.troupeName}
               <IconWrapper>
                 <ChevronRightSVG />
               </IconWrapper>
             </TroupeName>
           </TroupeWrapper>
-          <PostImageSlide />
+          {castDetail && <PostImageSlide images={castDetail?.recruitImages} />}
         </Header>
         <Content>
           <ContentTab>
@@ -62,11 +114,34 @@ const Detail = () => {
               {selectedTab === "연습 장소 정보" && <SelectedBorder />}
             </Option>
           </ContentTab>
-          <ContentBody>
-            {selectedTab === "공연 기본 정보" && <BasicInfo />}
-            {selectedTab === "공연 위치 정보" && <LocationInfo />}
-            {selectedTab === "연습 장소 정보" && <PracticeInfo />}
-          </ContentBody>
+          {castDetail && (
+            <ContentBody>
+              {selectedTab === "공연 기본 정보" && (
+                <BasicInfo
+                  introduce={castDetail.introduce}
+                  start={castDetail.stage.dateStart}
+                  end={castDetail.stage.dateEnd}
+                  monthlyFee={castDetail.monthlyFee}
+                  recruitingParts={castDetail.recruitingParts}
+                />
+              )}
+              {selectedTab === "공연 위치 정보" && (
+                <LocationInfo
+                  address={castDetail.stage.address}
+                  addressDetail={castDetail.stage.addressDetail}
+                />
+              )}
+              {selectedTab === "연습 장소 정보" && (
+                <PracticeInfo
+                  start={castDetail.practice.dateStart}
+                  end={castDetail.practice.dateEnd}
+                  address={castDetail.practice.address}
+                  addressDetail={castDetail.practice.addressDetail}
+                  daysOfWeek={castDetail.practice.daysOfWeek}
+                />
+              )}
+            </ContentBody>
+          )}
         </Content>
       </ContentWrapper>
       <Application />
@@ -143,10 +218,9 @@ const TroupeWrapper = styled.div`
   gap: 10px;
 `;
 
-const TroupeLogo = styled.div`
+const TroupeLogo = styled.img`
   width: 40px;
   height: 40px;
-  background-color: black;
   border-radius: 8px;
 `;
 
@@ -163,13 +237,6 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
   height: 32px;
-`;
-
-const PostImageSlide = styled.div`
-  width: 270px;
-  height: 405px;
-  background-color: black;
-  border-radius: 8px;
 `;
 
 const Divider = styled.div`

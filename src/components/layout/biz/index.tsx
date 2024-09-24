@@ -1,9 +1,16 @@
 import DefaultFooter from "@/components/footer/default";
 import BizHeader from "@/components/header/biz";
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 const BizLayout = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <BizLayoutContainer>
       <BizHeader />

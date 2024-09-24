@@ -2,16 +2,24 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { CastDetail } from "../popularPost";
 import LocationSVG from "@assets/icons/location.svg?react";
+import Button from "@/components/buttons/button";
+import ArrowRightSVG from "@assets/icons/arrow_right_red.svg?react";
+import { useNavigate } from "react-router-dom";
 
 interface RankedCastsProps {
   casts: CastDetail[];
 }
 
 const RankedCasts = ({ casts }: RankedCastsProps) => {
+  const navigate = useNavigate();
   const [selectedCast, setSelectedCast] = useState<CastDetail>();
 
   const handleThumbnailClick = (cast: CastDetail) => {
     setSelectedCast(cast);
+  };
+
+  const handleClickDetail = (id?: number) => {
+    navigate(`/casts/${id}`);
   };
 
   useEffect(() => {
@@ -48,6 +56,18 @@ const RankedCasts = ({ casts }: RankedCastsProps) => {
                   <LocationText>{selectedCast?.practiceAddress}</LocationText>
                 </Value>
               </PropertyWrapper>
+              <Button
+                variation="outlined"
+                btnClass="primary"
+                padding="7px 14px"
+                width={94}
+                height={32}
+                fontSize={13}
+                onClick={() => handleClickDetail(selectedCast?.id)}
+              >
+                상세보기
+                <ArrowRightSVG />
+              </Button>
             </SummaryRow>
             <SummaryRow>
               <PropertyWrapper>

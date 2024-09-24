@@ -1,9 +1,16 @@
 import styled from "styled-components";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import DefaultHeader from "@/components/header/default";
 import DefaultFooter from "@/components/footer/default";
+import { useEffect } from "react";
 
 const DefaultLayout = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <DefaultLayoutContainer>
       <DefaultHeader />
