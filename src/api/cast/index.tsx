@@ -16,6 +16,11 @@ interface ReqCastsDetailListParams {
   offset: string;
 }
 
+interface ReqApplyCast {
+  castId: string;
+  profileId: string;
+}
+
 export const requestCasts = async (data: ReqCastsParams) => {
   const { limit = "10", offset = "0", orderBy = "0" } = data;
   const res = await request({
@@ -40,6 +45,14 @@ export const requestCastDetail = async (id: string) => {
   const res = await request({
     method: "get",
     endpoint: `casts/${id}`,
+  });
+  return res;
+};
+
+export const requestApplyCast = async ({ castId, profileId }: ReqApplyCast) => {
+  const res = await request({
+    method: "post",
+    endpoint: `casts/${castId}/apply?profileId=${profileId}`,
   });
   return res;
 };

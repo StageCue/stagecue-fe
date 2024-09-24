@@ -1,28 +1,64 @@
 import styled from "styled-components";
-import RadioSVG from "@assets/icons/radio.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
-import { useState } from "react";
+import RadioSVG from "@assets/icons/radio.svg?react";
+import { useEffect, useState } from "react";
 import Button from "@/components/buttons/button";
+import { requestApplyCast } from "@/api/cast";
+import { requestProfileList } from "@/api/profile";
+import { useNavigate } from "react-router-dom";
 
-const Application = () => {
-  const [checkedProfile, setCheckedProfile] = useState("");
+interface ApplicationProps {
+  castId: string;
+}
+
+const Application = ({ castId }: ApplicationProps) => {
+  const navigate = useNavigate();
+  const [checkedProfileId, setCheckedProfileId] = useState<number>();
+  const [profiles, setProfiles] = useState([]);
+
+  const handleCheckboxClick = (id: number) => {
+    if (checkedProfileId === id) {
+      setCheckedProfileId(0);
+    } else {
+      setCheckedProfileId(id);
+    }
+  };
+
+  const getProfileList = async () => {
+    const res = await requestProfileList();
+    setProfiles(res.profiles);
+  };
+
+  const handleApplyClick = async ({ castId, profileId }) => {
+    const res = await requestApplyCast({ castId, profileId });
+    navigate("/casts/applied");
+  };
+
+  useEffect(() => {
+    getProfileList();
+  }, []);
+
   return (
     <ApplicationContainer $top={top}>
       <ProfilesWrapper>
         <ProfilesTitle>지원 프로필</ProfilesTitle>
         <Profiles>
-          <Profile>
-            <CheckboxColumn>
-              <RadioCheckedSVG />
-            </CheckboxColumn>
-            <TextColumn>
-              <ProfileTitle>프로필 제목</ProfileTitle>
-              <UpdateDate>2023.07.18 작성</UpdateDate>
-            </TextColumn>
-            <ButtonColumn>
-              <DetailButton>상세</DetailButton>
-            </ButtonColumn>
-          </Profile>
+          {profiles?.map(({ id, title, dateCreated }) => (
+            <Profile key={id}>
+              <CheckboxColumn>
+                <CheckboxWrapper onClick={() => handleCheckboxClick(id)}>
+                  {checkedProfileId === id ? <RadioCheckedSVG /> : <RadioSVG />}
+                </CheckboxWrapper>
+              </CheckboxColumn>
+              <TextColumn>
+                <ProfileTitle>{title}</ProfileTitle>
+                <UpdateDate>{dateCreated}</UpdateDate>
+              </TextColumn>
+              <ButtonColumn>
+                <DetailButton>상세</DetailButton>
+              </ButtonColumn>
+            </Profile>
+          ))}
         </Profiles>
       </ProfilesWrapper>
       <Button
@@ -33,6 +69,9 @@ const Application = () => {
         fontSize={16}
         letterSpacing={0.57}
         lineHeight={150}
+        onClick={() =>
+          handleApplyClick({ castId, profileId: checkedProfileId })
+        }
       >
         지원하기
       </Button>
@@ -82,6 +121,10 @@ const Profile = styled.div`
 `;
 
 const CheckboxColumn = styled.div``;
+
+const CheckboxWrapper = styled.div`
+  cursor: pointer;
+`;
 
 const TextColumn = styled.div`
   width: 204px;

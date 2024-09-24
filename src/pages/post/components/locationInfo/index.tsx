@@ -1,12 +1,32 @@
 import styled from "styled-components";
 import LocationSVG from "@assets/icons/location_lg.svg?react";
+import { useEffect, useState } from "react";
+import { requestStaticMap } from "@/api/raster";
 
 interface LocationInfoProps {
   address: string;
   addressDetail: string;
+  lat: number;
+  lng: number;
 }
 
-const LocationInfo = ({ address, addressDetail }: LocationInfoProps) => {
+const LocationInfo = ({
+  address,
+  addressDetail,
+  lat,
+  lng,
+}: LocationInfoProps) => {
+  const [map, setMap] = useState();
+
+  const getMap = async () => {
+    const res = await requestStaticMap({ lat, lng });
+    console.log(res);
+  };
+
+  useEffect(() => {
+    getMap();
+  }, []);
+
   return (
     <LocationInfoContainer>
       <InfoWrapper>
@@ -29,6 +49,9 @@ const LocationInfo = ({ address, addressDetail }: LocationInfoProps) => {
             </TextRow>
           </TextWrapper>
         </LocationData>
+        <Map
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=300&h=300&center=${lat},${lng}&level=16&X-NCP-APIGW-API-KEY-ID={7sn0mkl4n4}`}
+        />
       </InfoWrapper>
     </LocationInfoContainer>
   );
@@ -110,3 +133,5 @@ const Address = styled.div`
   letter-spacing: 1.45%;
   color: #858688;
 `;
+
+const Map = styled.img``;

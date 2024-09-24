@@ -36,5 +36,5 @@ const BizLayoutContainer = styled.div`
 const Body = styled.div`
   height: 100%;
   min-height: calc(100vh - 100px);
-  padding-top: 70px;
+  padding-top: 60px;
 `;

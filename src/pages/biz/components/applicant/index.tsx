@@ -1,13 +1,15 @@
 import styled from "styled-components";
 import SearchSVG from "@assets/icons/search.svg?react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@/components/buttons/button";
 import Table from "./components/table";
 import PassSVG from "@assets/icons/pass.svg?react";
 import FailSVG from "@assets/icons/fail.svg?react";
+import { requestApplications } from "@/api/biz";
 
 const Applicant = () => {
   const [selectedFilter, setSelectedFilter] = useState("전체");
+  const [applications, setApplications] = useState([]);
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilter(filter);
@@ -16,6 +18,16 @@ const Applicant = () => {
   const handlePassClick = () => {};
 
   const handleFailClick = () => {};
+
+  const getApplications = async () => {
+    const res = await requestApplications({ limit: "10", offset: "0" });
+    console.log(res, "res");
+  };
+
+  useEffect(() => {
+    getApplications();
+  }, []);
+
   return (
     <ApplicantContainer>
       <TitleWrapper>
@@ -98,7 +110,7 @@ const Applicant = () => {
 export default Applicant;
 
 const ApplicantContainer = styled.div`
-  width: 100%;
+  width: 1180px;
   padding: 24px 40px;
 `;
 

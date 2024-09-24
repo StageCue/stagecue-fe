@@ -55,9 +55,7 @@ const Home = () => {
 
   return (
     <HomeContainer>
-      <SlideWrapper>
-        <AdsSlide banners={banners} />
-      </SlideWrapper>
+      <AdsSlide banners={banners} />
       <NewPost casts={newestCasts} />
       <ThemePost />
       <PopularPost casts={popularCasts} />
@@ -76,10 +74,5 @@ const HomeContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 24px 189.5px 100px 189.5px;
-`;
-
-const SlideWrapper = styled.div`
-  width: 190vw;
-
-  margin: 24px 0;
+  width: 1440px;
 `;

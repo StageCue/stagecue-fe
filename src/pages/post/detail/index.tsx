@@ -9,7 +9,6 @@ import Application from "../components/application";
 import { requestCastDetail } from "@/api/cast";
 import { useParams } from "react-router-dom";
 import PostImageSlide from "../components/slide";
-import { requestProfileList } from "@/api/profile";
 
 interface CastDetail {
   castTitle: string;
@@ -24,12 +23,16 @@ interface CastDetail {
     address: string;
     addressDetail: string;
     daysOfWeek: number;
+    lat: number;
+    lng: number;
   };
   stage: {
     dateStart: string;
     dateEnd: string;
     address: string;
     addressDetail: string;
+    lat: number;
+    lng: number;
   };
   recruitingParts: string;
 }
@@ -46,21 +49,13 @@ const Detail = () => {
   const getCastDetail = async () => {
     if (id) {
       const cast = await requestCastDetail(id);
-      console.log(cast);
 
       setCastDetail(cast);
     }
   };
 
-  const getProfileList = async () => {
-    const res = await requestProfileList();
-
-    console.log(res);
-  };
-
   useEffect(() => {
     getCastDetail();
-    getProfileList();
   }, []);
 
   return (
@@ -129,6 +124,8 @@ const Detail = () => {
                 <LocationInfo
                   address={castDetail.stage.address}
                   addressDetail={castDetail.stage.addressDetail}
+                  lat={castDetail.stage.lat}
+                  lng={castDetail.stage.lng}
                 />
               )}
               {selectedTab === "연습 장소 정보" && (
@@ -138,13 +135,15 @@ const Detail = () => {
                   address={castDetail.practice.address}
                   addressDetail={castDetail.practice.addressDetail}
                   daysOfWeek={castDetail.practice.daysOfWeek}
+                  lat={castDetail.practice.lat}
+                  lng={castDetail.practice.lng}
                 />
               )}
             </ContentBody>
           )}
         </Content>
       </ContentWrapper>
-      <Application />
+      <Application castId={id!} />
     </DetailContainer>
   );
 };

@@ -15,6 +15,7 @@ import AuthLayout from "./components/layout/auth";
 import Biz from "./pages/biz";
 import BizLayout from "./components/layout/biz";
 import Detail from "./pages/post/detail";
+import Applied from "./pages/post/applied";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="search" element={<Search />} />
           <Route path="mypage" element={<MyPage />} />
           <Route path="casts/:id" element={<Detail />} />
+          <Route path="casts/applied" element={<Applied />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="starting" element={<Starting />} />

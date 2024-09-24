@@ -26,8 +26,8 @@ const Biz = () => {
         onOptionClick={handleOptionClick}
       />
       <Content>
-        {selectedOption === "내 극단 관리" && <ManageTroupe />}
         {selectedOption === "지원자 관리" && <Applicant />}
+        {selectedOption === "내 극단 관리" && <ManageTroupe />}
         {selectedOption === "공고 관리" && <ManagePost />}
       </Content>
     </BizContainer>
