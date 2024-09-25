@@ -140,7 +140,7 @@ pipeline {
         stage("Check Running Docker Containers") {
             steps {
                 echo "Checking for running Docker containers..."
-                sh "docker ps"
+                sh "docker ps -a"
             }
         }
     }
