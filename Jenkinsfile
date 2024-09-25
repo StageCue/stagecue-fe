@@ -10,7 +10,7 @@ pipeline {
 
        PROD_SERVER = "129.154.49.243"
        PROD_USER = "ubuntu"
-       STG_SERVER = "39.118.150.182"
+       STG_SERVER = "146.56.113.170"
        STG_USER = "stagecue"       
         test_text = "qwefqwef"
     }
