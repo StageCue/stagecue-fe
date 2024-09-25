@@ -3,7 +3,7 @@ import Menu from "./components/menu/menu";
 import Mystage from "./components/mystage";
 import { useState } from "react";
 import ApplyHistory from "./components/applyHistory";
-import Scraps from "./components/scraps";
+// import Scraps from "./components/scraps";
 import SettingProfile from "./components/settingProfile";
 import EditAccount from "./components/editAccount";
 import ResetPassword from "./components/resetPassword";
@@ -36,7 +36,7 @@ const MyPage = () => {
       <ContentColumn>
         {selectedMenu === "my stage" && <Mystage />}
         {selectedMenu === "배우지원 현황" && <ApplyHistory />}
-        {selectedMenu === "공고 스크랩 리스트" && <Scraps />}
+        {selectedMenu === "공고 스크랩 리스트" && null}
         {selectedMenu === "프로필 관리" && <SettingProfile />}
         {selectedMenu === "기본정보 변경" && <EditAccount />}
         {selectedMenu === "비밀번호 재설정" && <ResetPassword />}
