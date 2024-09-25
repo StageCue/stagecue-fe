@@ -1,7 +1,25 @@
+import { requestCasts } from "@/api/cast";
 import Button from "@/components/buttons/button";
+import Cast from "@/pages/home/components/cast";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Applied = () => {
+  const [popularCasts, setPopularCast] = useState([]);
+
+  const getNewestCasts = async () => {
+    const { casts } = await requestCasts({
+      limit: "4",
+      offset: "0",
+      orderBy: "newest",
+    });
+
+    setPopularCast(casts);
+  };
+
+  useEffect(() => {
+    getNewestCasts();
+  });
   return (
     <AppliedContainer>
       <SuccessBox>
@@ -14,7 +32,34 @@ const Applied = () => {
           공고 둘러보기
         </Button>
       </SuccessBox>
-      <CastsWrapper></CastsWrapper>
+      <CastsWrapper>
+        <TextWrapper>
+          <TitleText>이번주 인기 공고</TitleText>
+          <ShowAll>전체보기</ShowAll>
+        </TextWrapper>
+        <Casts>
+          {popularCasts.map(
+            ({
+              castId,
+              thumbnail,
+              castTitle,
+              artworkName,
+              practiceLocation,
+              isScrapping,
+            }) => (
+              <Cast
+                key={castId}
+                castId={castId}
+                thumbnail={thumbnail}
+                castTitle={castTitle}
+                artworkName={artworkName}
+                practiceLocation={practiceLocation}
+                isScrapping={isScrapping}
+              />
+            )
+          )}
+        </Casts>
+      </CastsWrapper>
     </AppliedContainer>
   );
 };
@@ -29,6 +74,7 @@ const AppliedContainer = styled.div`
   flex-direction: column;
   margin-top: 60px;
   margin-bottom: 100px;
+  gap: 80px;
 `;
 
 const SuccessBox = styled.div`
@@ -68,3 +114,29 @@ const SubText = styled.div`
 `;
 
 const CastsWrapper = styled.div``;
+
+const TextWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const TitleText = styled.div`
+  font-weight: var(--font-semibold);
+  font-size: 22px;
+  letter-spacing: -1.94px;
+  line-height: 136.4%;
+  color: #000000;
+`;
+
+const ShowAll = styled.div`
+  font-weight: var(--font-medium);
+  font-size: 16px;
+  letter-spacing: 0.57%;
+  line-height: 162.5%;
+  color: #171719;
+`;
+
+const Casts = styled.div`
+  min-height: 394px;
+  margin-top: 20px;
+`;
