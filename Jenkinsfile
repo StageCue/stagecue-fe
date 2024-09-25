@@ -118,7 +118,7 @@ pipeline {
                                 docker rm stagecue-fe || true
                                 echo $PASSWORD | docker login -u $USERNAME --password-stdin
                                 docker pull ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
-                                docker run --platform linux/amd64 -d --name stagecue-fe -p 4000:80 ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
+                                docker run --name stagecue-fe -p 4000:80 ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
                             """
                         }
                     
