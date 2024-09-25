@@ -91,15 +91,7 @@ pipeline {
             }
         }
         
-    
 
-        stage("Cleaning up Docker image") {
-            steps {
-                echo "Cleaning up Docker image..."
-                sh "docker rmi ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
-                echo "Cleaned up Docker image successfully."
-            }
-        }
 
 
         stage('release branch: deploy to stage server') {
@@ -136,6 +128,21 @@ pipeline {
             }
 
         }   
+
+        stage("Cleaning up Docker image") {
+            steps {
+                echo "Cleaning up Docker image..."
+                sh "docker rmi ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
+                echo "Cleaned up Docker image successfully."
+            }
+        }
+
+        stage("Check Running Docker Containers") {
+            steps {
+                echo "Checking for running Docker containers..."
+                sh "docker ps"
+            }
+        }
     }
 
     post {
