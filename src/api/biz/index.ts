@@ -1,6 +1,6 @@
 import request from "..";
 
-interface requestApplicationsParams {
+interface ReqApplicationsParams {
   limit: string;
   offset: string;
   gender?: string;
@@ -11,10 +11,15 @@ interface requestApplicationsParams {
   query?: string;
 }
 
+interface ReqChangingApplyState {
+  applyIds: string;
+  applyStatus: string;
+}
+
 export const requestApplications = ({
   limit,
   offset,
-}: requestApplicationsParams) => {
+}: ReqApplicationsParams) => {
   const res = request({
     method: "get",
     endpoint: `biz/recruits/applications?limit=${limit}&offset=${offset}`,
@@ -22,8 +27,13 @@ export const requestApplications = ({
   return res;
 };
 
-// export const requestChangingApplyState = () => {
-//   const res = request({
-
-//   })
-// }
+export const requestChangingApplyState = ({
+  applyIds,
+  applyStatus,
+}: ReqChangingApplyState) => {
+  const res = request({
+    method: "put",
+    endpoint: `biz/recruits/applications?applyIds=${applyIds}&applyStatus=${applyStatus}`,
+  });
+  return res;
+};

@@ -4,17 +4,39 @@ import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import StarSVG from "@assets/icons/star.svg?react";
 import CaretSVG from "@assets/icons/caret_down.svg?react";
 import { useState } from "react";
-import NoApplicant from "./components/noApplicant";
+// import NoApplicant from "./components/noApplicant";
 import RadioSVG from "@assets/icons/radio_s.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
 
-const Table = () => {
+interface TableProps {
+  applications: {
+    applyId: number;
+    profileId: number;
+    recruitId: number;
+    isFavorite: boolean;
+    performerName: string;
+    age: number;
+    gender: "MALE" | "FEMALE";
+    recruitTitle: string;
+    applyDate: string;
+    applyStatus: string;
+  }[];
+  onClickCheckbox: (id: number) => void;
+  selectedApplyIds: number[];
+}
+
+const Table = ({
+  applications,
+  onClickCheckbox,
+  selectedApplyIds,
+}: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isGenderFilterShowing, setIsGenderFilterShowing] = useState(false);
   const [selectedGender, setSelectedGender] = useState("남성");
 
   const handleCheckboxClick = () => {
     setIsCheckedAll((prev) => !prev);
+    applications.map(({ applyId }) => onClickCheckbox(applyId));
   };
 
   const handleGenderColumnClick = () => {
@@ -27,6 +49,21 @@ const Table = () => {
   ) => {
     event.stopPropagation();
     setSelectedGender(gender);
+  };
+
+  const parseApplyStatus = (status: string) => {
+    switch (status) {
+      case "APPLIED":
+        return "지원완료";
+      case "DOCUMENT_PASSED":
+        return "서류합격";
+      case "FINAL_ACCEPTED":
+        return "최종합격";
+      case "REJECTED":
+        return "불합격";
+      case "CANCELED":
+        return "지원취소";
+    }
   };
 
   return (
@@ -97,22 +134,30 @@ const Table = () => {
         </StateColumn>
       </Header>
       <Body>
-        <Row>
-          <CheckboxInRow>
-            <CheckIconWrapper>
-              <CheckboxSVG />
-            </CheckIconWrapper>
-            <StarIconWrapper>
-              <StarSVG />
-            </StarIconWrapper>
-          </CheckboxInRow>
-          <Name>홍길동</Name>
-          <Age>28</Age>
-          <Gender>남</Gender>
-          <PostTitle>[연습실보유] 레미제라블 12기 공고</PostTitle>
-          <Date>2024-08-14</Date>
-          <State>서류합격</State>
-        </Row>
+        {applications.map(
+          ({ applyId, age, gender, recruitTitle, applyDate, applyStatus }) => (
+            <Row key={applyId}>
+              <CheckboxInRow>
+                <CheckIconWrapper onClick={() => onClickCheckbox(applyId)}>
+                  {selectedApplyIds.includes(applyId) ? (
+                    <CheckboxCheckedSVG />
+                  ) : (
+                    <CheckboxSVG />
+                  )}
+                </CheckIconWrapper>
+                <StarIconWrapper>
+                  <StarSVG />
+                </StarIconWrapper>
+              </CheckboxInRow>
+              <Name>홍길동</Name>
+              <Age>{age}</Age>
+              <Gender>{gender === "MALE" ? "남" : "여"}</Gender>
+              <PostTitle>{recruitTitle}</PostTitle>
+              <Date>{applyDate}</Date>
+              <State>{parseApplyStatus(applyStatus)}</State>
+            </Row>
+          )
+        )}
       </Body>
     </TableContainer>
   );
@@ -312,6 +357,7 @@ const State = styled.div`
 `;
 
 const CheckIconWrapper = styled.div`
+  cursor: pointer;
   rect {
     stroke: #e0e0e2;
   }

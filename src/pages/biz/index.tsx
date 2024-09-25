@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Sidemenu from "./components/sidemenu";
 import { useState } from "react";
-import CreateTroupe from "./components/createTroupe";
+// import CreateTroupe from "./components/createTroupe";
 import Applicant from "./components/applicant";
 import ManagePost from "./components/managePost";
 import ManageTroupe from "./components/manageTroupe";

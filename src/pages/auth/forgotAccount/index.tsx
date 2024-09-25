@@ -4,7 +4,7 @@ import { ForgotAccountInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 
 const ForgotAccount = () => {
-  const { register, handleSubmit } = useForm<ForgotAccountInputs>();
+  const { register } = useForm<ForgotAccountInputs>();
 
   return (
     <ForgotAccountContainer>
@@ -12,7 +12,7 @@ const ForgotAccount = () => {
         <Title>계정 찾기</Title>
         <Description>회원 가입시 인증했던 전화번호를 입력해주세요.</Description>
       </TitleWrapper>
-      <Form onSubmit={handleSubmit()}>
+      <Form>
         <InputWrapper>
           <Label>휴대폰번호</Label>
           <ShortInputWrapper>

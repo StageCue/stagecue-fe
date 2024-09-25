@@ -5,28 +5,66 @@ import Button from "@/components/buttons/button";
 import Table from "./components/table";
 import PassSVG from "@assets/icons/pass.svg?react";
 import FailSVG from "@assets/icons/fail.svg?react";
-import { requestApplications } from "@/api/biz";
+import { requestApplications, requestChangingApplyState } from "@/api/biz";
 
 const Applicant = () => {
   const [selectedFilter, setSelectedFilter] = useState("전체");
   const [applications, setApplications] = useState([]);
+  const [selectedApplyIds, setSelectedApplyIds] = useState<number[]>([]);
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilter(filter);
   };
 
-  const handlePassClick = () => {};
+  // 임시 applied 로직!!
+  const handlePassClick = async () => {
+    const requestStatus = (status: string) => {
+      switch (status) {
+        case "APPLIED":
+          return "DOCUMENT_PASSED";
+        case "DOCUMENT_PASSED":
+          return "FINAL_ACCEPTED";
+        default:
+          return "";
+      }
+    };
+    const applyStatus = requestStatus("APPLIED");
+    await requestChangingApplyState({
+      applyIds: `${selectedApplyIds}`,
+      applyStatus,
+    });
+    setSelectedApplyIds([]);
+    getApplications();
+  };
 
-  const handleFailClick = () => {};
+  const handleFailClick = async () => {
+    await requestChangingApplyState({
+      applyIds: `${selectedApplyIds}`,
+      applyStatus: "REJECTED",
+    });
+  };
 
   const getApplications = async () => {
     const res = await requestApplications({ limit: "10", offset: "0" });
-    console.log(res, "res");
+    setApplications(res.applications);
+  };
+
+  const handleCheckboxClick = (id: number) => {
+    if (selectedApplyIds.includes(id)) {
+      setSelectedApplyIds((prev) => {
+        const newArray = prev.filter((applyId) => applyId !== id);
+        return newArray;
+      });
+    } else {
+      setSelectedApplyIds([...selectedApplyIds, id]);
+    }
   };
 
   useEffect(() => {
     getApplications();
   }, []);
+
+  console.log(selectedApplyIds);
 
   return (
     <ApplicantContainer>
@@ -102,7 +140,11 @@ const Applicant = () => {
           </Button>
         </ButtonsWrapper>
       </FilterWrapper>
-      <Table />
+      <Table
+        applications={applications}
+        onClickCheckbox={(id: number) => handleCheckboxClick(id)}
+        selectedApplyIds={selectedApplyIds}
+      />
     </ApplicantContainer>
   );
 };

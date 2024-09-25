@@ -7,6 +7,8 @@ interface PracticeInfoProps {
   address: string;
   addressDetail: string;
   daysOfWeek: number;
+  lat: number;
+  lng: number;
 }
 
 const PracticeInfo = ({
@@ -15,6 +17,8 @@ const PracticeInfo = ({
   address,
   addressDetail,
   daysOfWeek,
+  lat,
+  lng,
 }: PracticeInfoProps) => {
   const parseDaysFromBinary = (decimalNumber: number) => {
     const binaryString = decimalNumber.toString(2).padStart(7, "0");
@@ -70,6 +74,9 @@ const PracticeInfo = ({
             </TextRow>
           </TextWrapper>
         </LocationData>
+        <Map
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=633&h=452&center=${lng},${lat}&level=16&scale=2&X-NCP-APIGW-API-KEY-ID=7sn0mkl4n4`}
+        />
       </InfoWrapper>
     </PracticeInfoContainer>
   );
@@ -160,3 +167,5 @@ const Address = styled.div`
   letter-spacing: 1.45%;
   color: #858688;
 `;
+
+const Map = styled.img``;

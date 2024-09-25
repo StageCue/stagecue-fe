@@ -4,13 +4,13 @@ import styled from "styled-components";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 
-interface AdsSlideContainer {
-  banners: any[];
-}
+// interface AdsSlideContainer {
+//   banners: any[];
+// }
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
-const AdsSlide = ({ banners }: AdsSlideContainer) => {
+const AdsSlide = () => {
   return (
     <AdsSlideContainer>
       <Swiper

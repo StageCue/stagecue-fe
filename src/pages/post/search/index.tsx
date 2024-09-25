@@ -1,4 +1,10 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styled from "styled-components";
 import ChevronDownSVG from "@assets/icons/chevron_down.svg?react";
 import ChevronDownSSVG from "@assets/icons/chebron_down_s.svg?react";
@@ -21,9 +27,9 @@ type dayPickerType = "전체요일" | "주말" | "평일" | "";
 type dayType = "월" | "화" | "수" | "목" | "금" | "토" | "일";
 
 const Search = () => {
-  const minThumbRef = useRef();
-  const maxThumbRef = useRef();
-  const rangeRef = useRef();
+  const minThumbRef = useRef<MutableRefObject<HTMLDivElement | null>>();
+  const maxThumbRef = useRef<MutableRefObject<HTMLDivElement | null>>();
+  const rangeRef = useRef<MutableRefObject<HTMLDivElement | null>>();
 
   const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
   const [selectedZone, setSelectedZone] = useState(["전체지역"]);
@@ -35,7 +41,7 @@ const Search = () => {
 
   const [isAppliedZone, setIsAppliedZone] = useState<boolean>(false);
   const [isAppliedDay, setIsAppliedDay] = useState<boolean>(false);
-  const [isAppliedCost, setIsAppliedCost] = useState<boolean>(false);
+  const [isAppliedCost] = useState<boolean>(false);
 
   const [isGenreMenuShowing, setIsGenreMenuShowing] = useState<boolean>(false);
   const [isZoneFilterShowing, setIsZoneFilterShowing] =
@@ -149,9 +155,9 @@ const Search = () => {
     updateThumbsAndRange(selectedMaxCost, formattedValue);
   };
 
-  const handleMinCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
+  // const handleMinCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
-  const handleMaxCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
+  // const handleMaxCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
   useEffect(() => {
     if (selectedDayPicker === "주말") {
@@ -200,9 +206,11 @@ const Search = () => {
     const minPercent = ((parseInt(minCost) - 10000) / (500000 - 10000)) * 100;
     const maxPercent = ((parseInt(maxCost) - 10000) / (500000 - 10000)) * 100;
 
-    if (minThumbRef.current) minThumbRef.current.style.left = `${minPercent}%`;
-    if (maxThumbRef.current) maxThumbRef.current.style.left = `${maxPercent}%`;
-    if (rangeRef.current) {
+    if (minThumbRef.current instanceof HTMLDivElement)
+      minThumbRef.current.style.left = `${minPercent}%`;
+    if (maxThumbRef.current instanceof HTMLDivElement)
+      maxThumbRef.current.style.left = `${maxPercent}%`;
+    if (rangeRef.current instanceof HTMLDivElement) {
       rangeRef.current.style.left = `${minPercent}%`;
       rangeRef.current.style.right = `${100 - maxPercent}%`;
     }

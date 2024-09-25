@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import LocationSVG from "@assets/icons/location_lg.svg?react";
-import { useEffect, useState } from "react";
-import { requestStaticMap } from "@/api/raster";
 
 interface LocationInfoProps {
   address: string;
@@ -16,16 +14,17 @@ const LocationInfo = ({
   lat,
   lng,
 }: LocationInfoProps) => {
-  const [map, setMap] = useState();
+  // const [map, setMap] = useState();
 
-  const getMap = async () => {
-    const res = await requestStaticMap({ lat, lng });
-    console.log(res);
-  };
+  // console.log(lat, lng);
+  // const getMap = async () => {
+  //   const res = await requestStaticMap({ lat, lng });
+  //   console.log("map", res);
+  // };
 
-  useEffect(() => {
-    getMap();
-  }, []);
+  // useEffect(() => {
+  //   getMap();
+  // }, []);
 
   return (
     <LocationInfoContainer>
@@ -50,7 +49,7 @@ const LocationInfo = ({
           </TextWrapper>
         </LocationData>
         <Map
-          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=300&h=300&center=${lat},${lng}&level=16&X-NCP-APIGW-API-KEY-ID={7sn0mkl4n4}`}
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=633&h=452&center=${lng},${lat}&level=16&scale=2&X-NCP-APIGW-API-KEY-ID=7sn0mkl4n4`}
         />
       </InfoWrapper>
     </LocationInfoContainer>

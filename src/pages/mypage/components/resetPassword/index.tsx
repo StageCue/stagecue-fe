@@ -4,11 +4,7 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
 const ResetPassword = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ResetPasswordInputs>();
+  const { register, handleSubmit } = useForm<ResetPasswordInputs>();
 
   const onSubmitNewPassword = (data: ResetPasswordInputs) => {
     console.log(data);

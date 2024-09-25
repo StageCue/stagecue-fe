@@ -6,10 +6,15 @@ import Cast1SVG from "@assets/images/themeCast1.svg";
 import Cast2SVG from "@assets/images/themeCast2.svg";
 
 import "swiper/css";
+import { MutableRefObject } from "react";
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
-const ThemeSlide = ({ swiperRef }) => {
+interface ThemeSlideProps {
+  swiperRef: MutableRefObject<SwiperCore | null>;
+}
+
+const ThemeSlide = ({ swiperRef }: ThemeSlideProps) => {
   return (
     <ThemeSlideContainer>
       <Swiper

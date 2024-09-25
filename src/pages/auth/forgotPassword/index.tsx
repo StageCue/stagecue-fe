@@ -4,7 +4,7 @@ import { ForgotPasswordInput } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 
 const ForgotPassword = () => {
-  const { register, handleSubmit } = useForm<ForgotPasswordInput>();
+  const { register } = useForm<ForgotPasswordInput>();
 
   return (
     <ResetPasswordContainer>
@@ -14,7 +14,7 @@ const ForgotPassword = () => {
           비밀번호 재설정을 진행할 계정의 이메일을 입력해주세요.
         </Description>
       </TitleWrapper>
-      <Form onSubmit={handleSubmit()}>
+      <Form>
         <InputWrapper>
           <Label>이메일</Label>
           <Input

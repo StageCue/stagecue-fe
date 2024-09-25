@@ -16,7 +16,7 @@ const Cast = ({
   castTitle,
   artworkName,
   practiceLocation,
-  isScrapping,
+  // isScrapping,
   thumbnail,
 }: CastProps) => {
   const navigate = useNavigate();

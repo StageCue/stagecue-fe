@@ -4,30 +4,30 @@ import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import StarSVG from "@assets/icons/star.svg?react";
 import CaretSVG from "@assets/icons/caret_down.svg?react";
 import { useState } from "react";
-import NoPost from "./components/noPost";
-import RadioSVG from "@assets/icons/radio_s.svg?react";
-import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
+// import NoPost from "./components/noPost";
+// import RadioSVG from "@assets/icons/radio_s.svg?react";
+// import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
 
 const Table = () => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
-  const [isGenderFilterShowing, setIsGenderFilterShowing] = useState(false);
-  const [selectedGender, setSelectedGender] = useState("남성");
+  // const [isGenderFilterShowing, setIsGenderFilterShowing] = useState(false);
+  // const [selectedGender, setSelectedGender] = useState("남성");
 
   const handleCheckboxClick = () => {
     setIsCheckedAll((prev) => !prev);
   };
 
-  const handleGenderColumnClick = () => {
-    setIsGenderFilterShowing((prev) => !prev);
-  };
+  // const handleGenderColumnClick = () => {
+  //   setIsGenderFilterShowing((prev) => !prev);
+  // };
 
-  const handleGenderFilterClick = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>,
-    gender: string
-  ) => {
-    event.stopPropagation();
-    setSelectedGender(gender);
-  };
+  // const handleGenderFilterClick = (
+  //   event: React.MouseEvent<HTMLElement, MouseEvent>,
+  //   gender: string
+  // ) => {
+  //   event.stopPropagation();
+  //   setSelectedGender(gender);
+  // };
 
   return (
     <TableContainer>
@@ -127,30 +127,30 @@ const StarWrapper = styled.div`
 
 const CaretWrapper = styled.div``;
 
-const NameColumn = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100px;
-  height: 36px;
-  cursor: pointer;
-`;
+// const NameColumn = styled.div`
+//   display: flex;
+//   align-items: center;
+//   width: 100px;
+//   height: 36px;
+//   cursor: pointer;
+// `;
 
-const AgeColumn = styled.div`
-  display: flex;
-  align-items: center;
-  width: 80px;
-  height: 36px;
-  cursor: pointer;
-`;
+// const AgeColumn = styled.div`
+//   display: flex;
+//   align-items: center;
+//   width: 80px;
+//   height: 36px;
+//   cursor: pointer;
+// `;
 
-const GenderColumn = styled.div`
-  display: flex;
-  align-items: center;
-  width: 80px;
-  height: 36px;
-  position: relative;
-  cursor: pointer;
-`;
+// const GenderColumn = styled.div`
+//   display: flex;
+//   align-items: center;
+//   width: 80px;
+//   height: 36px;
+//   position: relative;
+//   cursor: pointer;
+// `;
 
 const PostTitleColumn = styled.div`
   display: flex;

@@ -19,11 +19,11 @@ interface RegisterTroupeInputs {
 const RegisterTroupe = () => {
   const {
     register,
-    handleSubmit,
-    formState: { errors },
+    // handleSubmit,
+    // formState: { errors },
     watch,
-    setValue,
-    trigger,
+    // setValue,
+    // trigger,
   } = useForm<RegisterTroupeInputs>({ mode: "all" });
 
   const [descriptionValue] = watch(["description"]);

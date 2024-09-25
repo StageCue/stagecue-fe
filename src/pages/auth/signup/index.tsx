@@ -8,14 +8,14 @@ import { requestCellPhoneCertCode, requestSignup } from "@/api/auth";
 import CheckboxSVG from "@assets/icons/checkbox.svg?react";
 import CheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
-import CalendarSVG from "@assets/icons/calendar.svg?react";
+// import CalendarSVG from "@assets/icons/calendar.svg?react";
 
 const Signup = () => {
   const navigate = useNavigate();
   const [isSentCertCode, setIsSendCertCode] = useState<boolean>(false);
   const [certTime, setCertTime] = useState<number>(300);
   const [certCode, setCertCode] = useState<string>("");
-  const [isCertificated, setIsCertificagted] = useState<false>(false);
+  // const [isCertificated, setIsCertificagted] = useState<false>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isAllAgree, setIsAllAgree] = useState(false);
 
@@ -291,7 +291,7 @@ const Signup = () => {
                 <CertInput
                   name="certCode"
                   type="text"
-                  onChange={handleCertInputChange}
+                  onChange={(event) => handleCertInputChange(event)}
                   disabled={!isSentCertCode}
                   placeholder={isSentCertCode ? "" : "인증번호를 입력해주세요"}
                   $isSentCode={isSentCertCode}
@@ -632,8 +632,8 @@ const CertInputWrapper = styled.div<{
 `;
 
 const CertInput = styled.input<{
-  $isError: boolean;
-  $isDirty: boolean;
+  // $isError: boolean;
+  // $isDirty: boolean;
   $isSentCode: boolean;
 }>`
   width: ${({ $isSentCode }) => ($isSentCode ? "133px" : "188px")};

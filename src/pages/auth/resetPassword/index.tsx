@@ -7,7 +7,7 @@ const ResetPassword = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
   } = useForm<ResetPasswordInputs>();
 
   const onSubmitNewPassword = (data: ResetPasswordInputs) => {

@@ -29,8 +29,14 @@ const Application = ({ castId }: ApplicationProps) => {
     setProfiles(res.profiles);
   };
 
-  const handleApplyClick = async ({ castId, profileId }) => {
-    const res = await requestApplyCast({ castId, profileId });
+  const handleApplyClick = async ({
+    castId,
+    profileId,
+  }: {
+    castId: string;
+    profileId: string;
+  }) => {
+    await requestApplyCast({ castId, profileId });
     navigate("/casts/applied");
   };
 
@@ -39,7 +45,7 @@ const Application = ({ castId }: ApplicationProps) => {
   }, []);
 
   return (
-    <ApplicationContainer $top={top}>
+    <ApplicationContainer>
       <ProfilesWrapper>
         <ProfilesTitle>지원 프로필</ProfilesTitle>
         <Profiles>
@@ -70,7 +76,7 @@ const Application = ({ castId }: ApplicationProps) => {
         letterSpacing={0.57}
         lineHeight={150}
         onClick={() =>
-          handleApplyClick({ castId, profileId: checkedProfileId })
+          handleApplyClick({ castId, profileId: `${checkedProfileId}` })
         }
       >
         지원하기
@@ -81,7 +87,7 @@ const Application = ({ castId }: ApplicationProps) => {
 
 export default Application;
 
-const ApplicationContainer = styled.div<{ $top: number }>`
+const ApplicationContainer = styled.div`
   position: sticky;
   width: 340px;
   height: 248px;
