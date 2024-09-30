@@ -1,8 +1,29 @@
 import styled from "styled-components";
 import NoScrappedSVG from "@assets/images/noscrappedd.svg?react";
 import Button from "@/components/buttons/button";
+import { useEffect, useState } from "react";
+import { requestCastsStatus } from "@/api/users";
+
+interface CastStatus {
+  accepted: number;
+  applied: number;
+  passed: number;
+  rejected: number;
+}
 
 const Mystage = () => {
+  const [castsStatus, setCastStatus] = useState<CastStatus>();
+
+  const getCastsStatus = async () => {
+    const res = await requestCastsStatus();
+
+    setCastStatus(res);
+  };
+
+  useEffect(() => {
+    getCastsStatus();
+  }, []);
+
   return (
     <MystageContainer>
       <MyStage>
@@ -10,22 +31,22 @@ const Mystage = () => {
         <Dashboard>
           <MyStageItem>
             <ItemName>지원 완료</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.applied}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>서류 통과</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.accepted}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>최종 합격</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.passed}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>불합격</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.rejected}</Value>
           </MyStageItem>
         </Dashboard>
       </MyStage>

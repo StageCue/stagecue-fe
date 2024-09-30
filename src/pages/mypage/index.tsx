@@ -8,6 +8,7 @@ import SettingProfile from "./components/settingProfile";
 import EditAccount from "./components/editAccount";
 import ResetPassword from "./components/resetPassword";
 import DeleteAccount from "./components/deleteAccount";
+import useSessionStore from "@/store";
 
 export type mypageMenuType =
   | "my stage"
@@ -20,17 +21,16 @@ export type mypageMenuType =
 
 const MyPage = () => {
   const [selectedMenu, setSelectedMenu] = useState<mypageMenuType>("my stage");
+  const { username } = useSessionStore();
 
   const handleOptionClick = (option: mypageMenuType) => {
     setSelectedMenu(option);
   };
 
-  console.log(selectedMenu);
-
   return (
     <MyPageContainer>
       <MenuColumn>
-        <Username>서예지님</Username>
+        <Username>{username}님</Username>
         <Menu selectedMenu={selectedMenu} onClick={handleOptionClick} />
       </MenuColumn>
       <ContentColumn>

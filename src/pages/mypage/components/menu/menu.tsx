@@ -92,6 +92,12 @@ const Option = styled.div<{ $isSelected: boolean }>`
   line-height: 146.7%;
   letter-spacing: 0.96%;
   color: ${({ $isSelected }) => ($isSelected ? "#b81716" : "black")};
-  background-color: ${({ $isSelected }) => ($isSelected ? "#989ba2" : "white")};
+  background-color: white;
   border-radius: 5px;
+  font-weight: ${({ $isSelected }) =>
+    $isSelected ? "var(--font-semibold)" : "var(--font-regular)"};
+
+  &:hover {
+    background-color: #f6f6f6;
+  }
 `;

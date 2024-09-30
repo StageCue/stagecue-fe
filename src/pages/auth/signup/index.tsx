@@ -320,7 +320,9 @@ const Signup = () => {
                     name="certCode"
                     type="text"
                     onChange={(event) => handleCertInputChange(event)}
-                    disabled={!isSentCertCode}
+                    disabled={
+                      !isSentCertCode || (isSentCertCode && certificatedValue)
+                    }
                     placeholder={
                       isSentCertCode ? "" : "인증번호를 입력해주세요"
                     }
@@ -331,7 +333,7 @@ const Signup = () => {
                 <Button
                   variation="solid"
                   btnClass="primary"
-                  disabled={certCode.length === 0}
+                  disabled={certCode.length === 0 || certificatedValue}
                   width={112}
                   height={48}
                   fontSize={16}
