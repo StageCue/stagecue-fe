@@ -12,12 +12,17 @@ interface ReqSignupParams {
 }
 
 interface ReqCellPhoneCertCode {
-  cell: string;
+  phoneNumber: string;
 }
 
 interface ReqLoginParams {
   email: string;
   password: string;
+}
+
+interface ReqVerifySignupParams {
+  phoneNumber: string;
+  token: string;
 }
 
 export const requestLogin = async (data: ReqLoginParams) => {
@@ -32,10 +37,12 @@ export const requestLogin = async (data: ReqLoginParams) => {
   return res;
 };
 
+export const requestRefreshSession = async () => {};
+
 export const requestSignup = async (data: ReqSignupParams) => {
   const res = await request({
     method: "post",
-    endpoint: "v1/auth/register",
+    endpoint: "auth/register",
     data,
     header: { "Auth-Register-Token": "4d2146b8-cdec-4402-8943-35d447539a96" },
   });
@@ -49,8 +56,17 @@ export const requestSignup = async (data: ReqSignupParams) => {
 export const requestCellPhoneCertCode = async (data: ReqCellPhoneCertCode) => {
   const res = await request({
     method: "post",
-    endpoint: "v1/auth/register-cell",
+    endpoint: "auth/claim-signup-verification",
     data,
+  });
+  return res;
+};
+
+export const requestVerifySignup = async (data: ReqVerifySignupParams) => {
+  const { phoneNumber, token } = data;
+  const res = await request({
+    method: "get",
+    endpoint: `auth/verify-signup?phoneNumber=${phoneNumber}&token=${token}`,
   });
   return res;
 };

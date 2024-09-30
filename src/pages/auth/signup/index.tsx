@@ -4,7 +4,11 @@ import { SignupInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { requestCellPhoneCertCode, requestSignup } from "@/api/auth";
+import {
+  requestCellPhoneCertCode,
+  requestSignup,
+  requestVerifySignup,
+} from "@/api/auth";
 import CheckboxSVG from "@assets/icons/checkbox.svg?react";
 import CheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
@@ -12,7 +16,7 @@ import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [isSentCertCode, setIsSendCertCode] = useState<boolean>(false);
+  const [isSentCertCode, setIsSentCertCode] = useState<boolean>(false);
   const [certTime, setCertTime] = useState<number>(300);
   const [certCode, setCertCode] = useState<string>("");
   // const [isCertificated, setIsCertificagted] = useState<false>(false);
@@ -25,6 +29,7 @@ const Signup = () => {
     formState: { errors },
     watch,
     setValue,
+    setError,
     trigger,
   } = useForm<SignupInputs>({ mode: "all" });
 
@@ -79,8 +84,6 @@ const Signup = () => {
   ]);
 
   const onSubmitSignup = async (data: SignupInputs) => {
-    setValue("certificated", true);
-
     const { email, name, phoneNumber, password, birthday, gender } = data;
 
     const userData = {
@@ -93,7 +96,7 @@ const Signup = () => {
       terms: true,
     };
     const res = await requestSignup(userData);
-
+    console.log("signup", res);
     if (res.data) {
       navigate("/welcome");
     }
@@ -105,15 +108,13 @@ const Signup = () => {
 
   const handleSendCertClick = async () => {
     const isCodeSent = await requestCellPhoneCertCode({
-      cell: phoneNumberValue,
+      phoneNumber: phoneNumberValue,
     });
 
-    console.log(isCodeSent);
-
-    if (isSentCertCode) {
+    if (isCodeSent) {
       setCertTime(300);
+      setIsSentCertCode(true);
     }
-    setIsSendCertCode(true);
   };
 
   const handleAllAgreeClick = () => {
@@ -132,9 +133,9 @@ const Signup = () => {
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const rawValue = event.target.value.replace(/\D/g, ""); // 원시 데이터를 위한 숫자만 추출
-    setPhoneNumber(formatPhoneNumber(event.target.value)); // 포맷된 번호를 상태로 설정
-    setValue("phoneNumber", rawValue); // 폼에 원시 값을 설정
+    const rawValue = event.target.value.replace(/\D/g, "");
+    setPhoneNumber(formatPhoneNumber(event.target.value));
+    setValue("phoneNumber", rawValue);
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -174,15 +175,40 @@ const Signup = () => {
     setCertCode(event.target.value);
   };
 
-  const handleVerifyCertCodeClick = () => {
-    ("");
-    setValue("certificated", true);
+  const handleVerifyCertCodeClick = async () => {
+    const res = await requestVerifySignup({
+      phoneNumber: phoneNumberValue,
+      token: certCode,
+    });
+
+    console.log(res);
+
+    if (res) {
+      setValue("certificated", true);
+    } else {
+      setError("certificated", {
+        type: "verify",
+        message: "인증번호를 확인해주세요.",
+      });
+    }
   };
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  };
+
+  const validateConfrimPassword = (confirmPassword: string) => {
+    if (confirmPassword === passwordValue) {
+      return true;
+    } else {
+      setError("confirmPassword", {
+        type: "confirmPassword",
+        message: "비밀번호가 일치하지 않습니다.",
+      });
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -197,7 +223,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (certTime === 0) {
-      setIsSendCertCode(false);
+      setIsSentCertCode(false);
     }
   }, [certTime]);
 
@@ -207,6 +233,7 @@ const Signup = () => {
     }
   }, [ageCheckValue, agreePrivatePolicyValue, agreeServicePolicyValue]);
 
+  console.log(errors.password);
   return (
     <SignupContainer>
       <Title>회원가입</Title>
@@ -252,7 +279,7 @@ const Signup = () => {
               휴대폰번호
               <RequiedRedDot />
             </RequiredLabel>
-            <ShortInputWrapper>
+            <PhoneNumberInputWrapper>
               <ShortInput
                 {...register("phoneNumber", {
                   required: true,
@@ -281,35 +308,41 @@ const Signup = () => {
               >
                 {isSentCertCode ? "인증번호 재전송" : "인증번호 받기"}
               </Button>
-            </ShortInputWrapper>
+            </PhoneNumberInputWrapper>
             <ShortInputWrapper>
-              <CertInputWrapper
-                $isError={false}
-                $isDirty={isSentCertCode}
-                $isDisabled={!isSentCertCode}
-              >
-                <CertInput
-                  name="certCode"
-                  type="text"
-                  onChange={(event) => handleCertInputChange(event)}
-                  disabled={!isSentCertCode}
-                  placeholder={isSentCertCode ? "" : "인증번호를 입력해주세요"}
-                  $isSentCode={isSentCertCode}
-                />
-                {isSentCertCode && <Timer>{formatTime(certTime)}</Timer>}
-              </CertInputWrapper>
-              <Button
-                variation="solid"
-                btnClass="primary"
-                disabled={certCode.length === 0}
-                width={112}
-                height={48}
-                fontSize={16}
-                padding="12px 28px"
-                onClick={handleVerifyCertCodeClick}
-              >
-                인증확인
-              </Button>
+              <VerifyWrapper>
+                <CertInputWrapper
+                  $isError={false}
+                  $isDirty={isSentCertCode}
+                  $isDisabled={!isSentCertCode}
+                >
+                  <CertInput
+                    name="certCode"
+                    type="text"
+                    onChange={(event) => handleCertInputChange(event)}
+                    disabled={!isSentCertCode}
+                    placeholder={
+                      isSentCertCode ? "" : "인증번호를 입력해주세요"
+                    }
+                    $isSentCode={isSentCertCode}
+                  />
+                  {isSentCertCode && <Timer>{formatTime(certTime)}</Timer>}
+                </CertInputWrapper>
+                <Button
+                  variation="solid"
+                  btnClass="primary"
+                  disabled={certCode.length === 0}
+                  width={112}
+                  height={48}
+                  fontSize={16}
+                  padding="12px 28px"
+                  onClick={handleVerifyCertCodeClick}
+                >
+                  인증확인
+                </Button>
+              </VerifyWrapper>
+              <InputError>{errors.certificated?.message}</InputError>
+              {certificatedValue && <SuccessCert>인증되었습니다.</SuccessCert>}
             </ShortInputWrapper>
           </InputWrapper>
           <InputWrapper>
@@ -353,15 +386,16 @@ const Signup = () => {
             <Input
               {...register("password", {
                 required: true,
-                minLength: 8,
-                maxLength: 24,
+                pattern:
+                  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\[\]{};':"\\|,.<>\/?]).{8,24}$/,
               })}
               placeholder="비밀번호를 입력해주세요"
-              $isError={Boolean(errors.password?.message)}
+              $isError={Boolean(errors.password)}
               $isDirty={Boolean(passwordValue)}
               onBlur={() => trigger("password")}
+              type="password"
             />
-            <ValidationGuide>
+            <ValidationGuide $isError={Boolean(errors.password)}>
               영문 대소문자, 숫자, 특수문자를 포함해 8~24자로 입력해주세요.
             </ValidationGuide>
           </InputWrapper>
@@ -373,11 +407,13 @@ const Signup = () => {
             <Input
               {...register("confirmPassword", {
                 required: true,
+                validate: (value) => validateConfrimPassword(value),
               })}
               placeholder="비밀번호를 다시 한번 입력해주세요"
-              $isError={Boolean(errors.confirmPassword?.message)}
+              $isError={Boolean(errors.confirmPassword)}
               $isDirty={Boolean(confirmPasswordValue)}
               onBlur={() => trigger("confirmPassword")}
+              type="password"
             />
           </InputWrapper>
           <AgreeWrapper>
@@ -436,7 +472,7 @@ const Signup = () => {
         </Button>
         <CheckboxInput
           type="checkbox"
-          {...register("certificated", { required: true, value: true })}
+          {...register("certificated", { required: true, value: false })}
         />
         <CheckboxInput
           type="checkbox"
@@ -489,8 +525,12 @@ const InputWrapper = styled.div`
   gap: 8px;
 `;
 
-const ShortInputWrapper = styled.div`
+const PhoneNumberInputWrapper = styled.div`
   display: flex;
+  gap: 8px;
+`;
+
+const ShortInputWrapper = styled.div`
   gap: 8px;
 `;
 
@@ -565,11 +605,11 @@ const RequiedRedDot = styled.div`
   top: -2px;
 `;
 
-const ValidationGuide = styled.div`
+const ValidationGuide = styled.div<{ $isError: boolean }>`
   width: 340px;
   height: 36px;
   margin-top: 8px;
-  color: #c7c7c8;
+  color: ${({ $isError }) => ($isError ? "#FF4242" : "#c7c7c8")};
   font-size: 13px;
   line-height: 138%.5;
   letter-spacing: 1.94%;
@@ -740,3 +780,17 @@ const CheckboxLabel = styled.div`
 `;
 
 const IconWrapper = styled.div``;
+
+const SuccessCert = styled.div`
+  color: #00bf40;
+  font-size: 13px;
+  font-weight: var(--font-regular);
+  letter-spacing: 1.94%;
+  letter-spacing: 138.5%;
+  margin-top: 8px;
+`;
+
+const VerifyWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+`;

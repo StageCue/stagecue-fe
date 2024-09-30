@@ -25,6 +25,7 @@ const request = async ({
     },
   })
     .then((res) => {
+      console.log("res", res);
       return res.data;
     })
     .catch((error) => {

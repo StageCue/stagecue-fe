@@ -50,7 +50,7 @@ const ForgotAccountContainer = styled.div`
 `;
 
 const TitleWrapper = styled.div`
-  margin-top: 251px;
+  margin-top: 219px;
   display: flex;
   flex-direction: column;
   gap: 13px;

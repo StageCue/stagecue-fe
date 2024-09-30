@@ -129,6 +129,7 @@ const LoginContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 159px;
 `;
 
 const Title = styled.div`
