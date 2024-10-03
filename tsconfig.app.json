@@ -27,7 +27,8 @@
       "@/*": ["*"],
       "@pages/*": ["pages/*"],
       "@components/*": ["components/*"],
-      "@assets/*": ["assets/*"]
+      "@assets/*": ["assets/*"],
+      "@api/*": ["api/*"]
     }
   },
   "include": ["src", "custom.d.ts"]

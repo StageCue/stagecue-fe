@@ -1,12 +1,17 @@
 import styled from "styled-components";
 import ChevronRightSVG from "@assets/icons/chevron_right.svg?react";
 import BookmarkSVG from "@assets/icons/bookmark.svg?react";
+import BookmarkFilledSVG from "@assets/icons/bookmark_filled.svg?react";
 import { useEffect, useState } from "react";
 import BasicInfo from "../components/basicInfo";
 import LocationInfo from "../components/locationInfo";
 import PracticeInfo from "../components/practiceInfo";
 import Application from "../components/application";
-import { requestCastDetail } from "@/api/cast";
+import {
+  requestCastDetail,
+  requestDeleteScrapCast,
+  requestScrapCast,
+} from "@/api/cast";
 import { useParams } from "react-router-dom";
 import PostImageSlide from "../components/slide";
 
@@ -41,9 +46,22 @@ const Detail = () => {
   const { id } = useParams();
   const [castDetail, setCastDetail] = useState<CastDetail>();
   const [selectedTab, setSelectedTab] = useState("공연 기본 정보");
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const handleTabClick = (option: string) => {
     setSelectedTab(option);
+  };
+
+  const handleBookmarkClick = async () => {
+    if (isBookmarked) {
+      const res = await requestDeleteScrapCast(id!);
+      console.log(res);
+      setIsBookmarked(false);
+    } else {
+      const res = await requestScrapCast(id!);
+      console.log(res);
+      setIsBookmarked(true);
+    }
   };
 
   const getCastDetail = async () => {
@@ -53,6 +71,8 @@ const Detail = () => {
       setCastDetail(cast);
     }
   };
+
+  const getIsBookmarked = async () => {};
 
   useEffect(() => {
     getCastDetail();
@@ -65,8 +85,8 @@ const Detail = () => {
           <TitleWrapper>
             <DdayWrapper>
               <Dday>D-12</Dday>
-              <BookmarkWrapper>
-                <BookmarkSVG />
+              <BookmarkWrapper onClick={handleBookmarkClick}>
+                {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
               </BookmarkWrapper>
             </DdayWrapper>
             <Title>{castDetail?.castTitle}</Title>
@@ -273,4 +293,6 @@ const ContentBody = styled.div`
   width: 689px;
 `;
 
-const BookmarkWrapper = styled.div``;
+const BookmarkWrapper = styled.div`
+  cursor: pointer;
+`;

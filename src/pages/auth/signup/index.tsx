@@ -12,16 +12,19 @@ import {
 import CheckboxSVG from "@assets/icons/checkbox.svg?react";
 import CheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
+import useSessionStore from "@/store";
 // import CalendarSVG from "@assets/icons/calendar.svg?react";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const sessionStore = useSessionStore();
   const [isSentCertCode, setIsSentCertCode] = useState<boolean>(false);
   const [certTime, setCertTime] = useState<number>(300);
   const [certCode, setCertCode] = useState<string>("");
   // const [isCertificated, setIsCertificagted] = useState<false>(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isAllAgree, setIsAllAgree] = useState(false);
+  const [registerToken, setRegisterToken] = useState("");
 
   const {
     register,
@@ -95,9 +98,11 @@ const Signup = () => {
       gender,
       terms: true,
     };
-    const res = await requestSignup(userData);
-    console.log("signup", res);
-    if (res.data) {
+    const res = await requestSignup(userData, registerToken);
+
+    if (res) {
+      sessionStore.loginSession();
+      sessionStore.setUsername(res.username);
       navigate("/welcome");
     }
   };
@@ -107,14 +112,12 @@ const Signup = () => {
   };
 
   const handleSendCertClick = async () => {
-    const isCodeSent = await requestCellPhoneCertCode({
+    const res = await requestCellPhoneCertCode({
       phoneNumber: phoneNumberValue,
     });
 
-    if (isCodeSent) {
-      setCertTime(300);
-      setIsSentCertCode(true);
-    }
+    setCertTime(300);
+    setIsSentCertCode(true);
   };
 
   const handleAllAgreeClick = () => {
@@ -181,10 +184,9 @@ const Signup = () => {
       token: certCode,
     });
 
-    console.log(res);
-
     if (res) {
       setValue("certificated", true);
+      setRegisterToken(res.token);
     } else {
       setError("certificated", {
         type: "verify",
@@ -233,7 +235,6 @@ const Signup = () => {
     }
   }, [ageCheckValue, agreePrivatePolicyValue, agreeServicePolicyValue]);
 
-  console.log(errors.password);
   return (
     <SignupContainer>
       <Title>회원가입</Title>
@@ -301,6 +302,7 @@ const Signup = () => {
                 width={140}
                 padding="12px 20px"
                 fontSize={15}
+                type="button"
                 disabled={
                   Boolean(!phoneNumberValue) || Boolean(errors.phoneNumber)
                 }
@@ -320,15 +322,15 @@ const Signup = () => {
                     name="certCode"
                     type="text"
                     onChange={(event) => handleCertInputChange(event)}
-                    disabled={
-                      !isSentCertCode || (isSentCertCode && certificatedValue)
-                    }
+                    disabled={!isSentCertCode}
                     placeholder={
                       isSentCertCode ? "" : "인증번호를 입력해주세요"
                     }
                     $isSentCode={isSentCertCode}
                   />
-                  {isSentCertCode && <Timer>{formatTime(certTime)}</Timer>}
+                  {isSentCertCode && !certificatedValue ? (
+                    <Timer>{formatTime(certTime)}</Timer>
+                  ) : null}
                 </CertInputWrapper>
                 <Button
                   variation="solid"
@@ -339,6 +341,7 @@ const Signup = () => {
                   fontSize={16}
                   padding="12px 28px"
                   onClick={handleVerifyCertCodeClick}
+                  type="button"
                 >
                   인증확인
                 </Button>
@@ -367,14 +370,14 @@ const Signup = () => {
             <Label>성별</Label>
             <GenderButtonWrapper>
               <GenderButton
-                onClick={() => handleGenderClick("male")}
-                $isSelected={genderValue === "male"}
+                onClick={() => handleGenderClick("MALE")}
+                $isSelected={genderValue === "MALE"}
               >
                 남성
               </GenderButton>
               <GenderButton
-                onClick={() => handleGenderClick("female")}
-                $isSelected={genderValue === "female"}
+                onClick={() => handleGenderClick("FEMALE")}
+                $isSelected={genderValue === "FEMALE"}
               >
                 여성
               </GenderButton>
@@ -789,10 +792,10 @@ const SuccessCert = styled.div`
   font-weight: var(--font-regular);
   letter-spacing: 1.94%;
   letter-spacing: 138.5%;
-  margin-top: 8px;
 `;
 
 const VerifyWrapper = styled.div`
   display: flex;
   gap: 8px;
+  margin-bottom: 8px;
 `;

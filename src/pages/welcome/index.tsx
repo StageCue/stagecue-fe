@@ -3,6 +3,7 @@ import Button from "../../components/buttons/button";
 import { useState } from "react";
 import { UserType } from "../../types/user";
 import { useNavigate } from "react-router-dom";
+import { requestChangeUserType } from "@/api/users";
 
 const Welcome = () => {
   const navigate = useNavigate();
@@ -13,8 +14,14 @@ const Welcome = () => {
     setSelectedUserType(type);
   };
 
-  const handleNextClick = () => {
-    navigate("/");
+  const handleNextClick = async () => {
+    if (selectedUserType) {
+      const res = await requestChangeUserType({ userType: selectedUserType });
+      console.log("type", res);
+      if (res.status === 0) {
+        navigate("/");
+      }
+    }
   };
 
   return (
@@ -25,8 +32,8 @@ const Welcome = () => {
       </TitleWrapper>
       <SelectWrapper>
         <UserTypeBox
-          onClick={() => handleUserTypeClick("member")}
-          $isSelected={selectedUserType === "member"}
+          onClick={() => handleUserTypeClick("PERFORMER")}
+          $isSelected={selectedUserType === "PERFORMER"}
         >
           <Image />
           <TextWrapper>
@@ -35,8 +42,8 @@ const Welcome = () => {
           </TextWrapper>
         </UserTypeBox>
         <UserTypeBox
-          onClick={() => handleUserTypeClick("owner")}
-          $isSelected={selectedUserType === "owner"}
+          onClick={() => handleUserTypeClick("TROUPE")}
+          $isSelected={selectedUserType === "TROUPE"}
         >
           <Image />
           <TextWrapper>

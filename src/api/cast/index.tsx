@@ -56,3 +56,21 @@ export const requestApplyCast = async ({ castId, profileId }: ReqApplyCast) => {
   });
   return res;
 };
+
+export const requestScrapCast = async (castId: string) => {
+  const res = await request({
+    method: "post",
+    endpoint: `casts/${castId}/scrap`,
+  });
+
+  return res;
+};
+
+export const requestDeleteScrapCast = async (castId: string) => {
+  const res = await request({
+    method: "delete",
+    endpoint: `casts/${castId}/scrap`,
+  });
+
+  return res;
+};

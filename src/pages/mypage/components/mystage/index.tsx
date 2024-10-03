@@ -2,9 +2,11 @@ import styled from "styled-components";
 import NoScrappedSVG from "@assets/images/noscrappedd.svg?react";
 import Button from "@/components/buttons/button";
 import { useEffect, useState } from "react";
-import { requestCastsStatus } from "@/api/users";
+import { requestCastsStatus, requestScraps } from "@/api/users";
+import { requestCasts } from "@/api/cast";
+import Cast from "@/pages/home/components/cast";
 
-interface CastStatus {
+export interface CastStatus {
   accepted: number;
   applied: number;
   passed: number;
@@ -13,6 +15,8 @@ interface CastStatus {
 
 const Mystage = () => {
   const [castsStatus, setCastStatus] = useState<CastStatus>();
+  const [popularCasts, setPopularCast] = useState([]);
+  const [scraps, setScraps] = useState([]);
 
   const getCastsStatus = async () => {
     const res = await requestCastsStatus();
@@ -20,14 +24,37 @@ const Mystage = () => {
     setCastStatus(res);
   };
 
+  const getPopularCasts = async () => {
+    const { casts } = await requestCasts({
+      limit: "4",
+      offset: "0",
+      orderBy: "newest",
+    });
+
+    setPopularCast(casts);
+  };
+
+  const getScrappedCasts = async () => {
+    const { casts } = await requestScraps({
+      limit: 3,
+      offset: 0,
+    });
+
+    setScraps(casts);
+  };
+
   useEffect(() => {
     getCastsStatus();
+    getPopularCasts();
+    getScrappedCasts();
   }, []);
 
   return (
     <MystageContainer>
       <MyStage>
-        <ItemTitle>My Stage</ItemTitle>
+        <ItemTitleWrapper>
+          <ItemTitle>My Stage</ItemTitle>
+        </ItemTitleWrapper>
         <Dashboard>
           <MyStageItem>
             <ItemName>지원 완료</ItemName>
@@ -36,12 +63,12 @@ const Mystage = () => {
           <Divider />
           <MyStageItem>
             <ItemName>서류 통과</ItemName>
-            <Value>{castsStatus?.accepted}</Value>
+            <Value>{castsStatus?.passed}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>최종 합격</ItemName>
-            <Value>{castsStatus?.passed}</Value>
+            <Value>{castsStatus?.accepted}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
@@ -51,24 +78,75 @@ const Mystage = () => {
         </Dashboard>
       </MyStage>
       <ScrappedPost>
-        <ItemTitle>스크랩한 공고</ItemTitle>
-        <NoSavedPost>
-          <NoScrappedSVG />
-          <TextWrapper>
-            <Text>아직 스크랩한 공고가 없어요.</Text>
-            <SubText>관심있는 공고를 스크랩 해보세요!</SubText>
-          </TextWrapper>
-          <Button variation="solid" btnClass="primary" width={296}>
-            공고 찾아보기
-          </Button>
-        </NoSavedPost>
-      </ScrappedPost>
-      <PopularPost>
         <ItemTitleWrapper>
-          <ItemTitle>이번주 인기공고</ItemTitle>
-          <ShowAll>전체보기</ShowAll>
+          <ItemTitle>스크랩한 공고</ItemTitle>
         </ItemTitleWrapper>
-      </PopularPost>
+        {scraps.length === 0 ? (
+          <NoSavedPost>
+            <NoScrappedSVG />
+            <TextWrapper>
+              <Text>아직 스크랩한 공고가 없어요.</Text>
+              <SubText>관심있는 공고를 스크랩 해보세요!</SubText>
+            </TextWrapper>
+            <Button variation="solid" btnClass="primary" width={296}>
+              공고 찾아보기
+            </Button>
+          </NoSavedPost>
+        ) : (
+          <Scraps>
+            {scraps.map(
+              ({
+                castId,
+                imageUrl,
+                castTitle,
+                artworkName,
+                practiceLocation,
+                isScrapping,
+              }) => (
+                <Cast
+                  key={castId}
+                  castId={castId}
+                  thumbnail={imageUrl}
+                  castTitle={castTitle}
+                  artworkName={artworkName}
+                  practiceLocation={practiceLocation}
+                  isScrapping={isScrapping}
+                />
+              )
+            )}
+          </Scraps>
+        )}
+      </ScrappedPost>
+      {scraps.length === 0 && (
+        <PopularPost>
+          <ItemTitleWrapper>
+            <ItemTitle>이번주 인기공고</ItemTitle>
+            <ShowAll>전체보기</ShowAll>
+          </ItemTitleWrapper>
+          <Casts>
+            {popularCasts.map(
+              ({
+                castId,
+                thumbnail,
+                castTitle,
+                artworkName,
+                practiceLocation,
+                isScrapping,
+              }) => (
+                <Cast
+                  key={castId}
+                  castId={castId}
+                  thumbnail={thumbnail}
+                  castTitle={castTitle}
+                  artworkName={artworkName}
+                  practiceLocation={practiceLocation}
+                  isScrapping={isScrapping}
+                />
+              )
+            )}
+          </Casts>
+        </PopularPost>
+      )}
     </MystageContainer>
   );
 };
@@ -86,7 +164,6 @@ const ItemTitle = styled.div`
   font-weight: var(--font-semibold);
   line-height: 136.4%;
   letter-spacing: -1.94%;
-  margin-bottom: 20px;
 `;
 
 const MyStage = styled.div``;
@@ -173,6 +250,7 @@ const ItemTitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 const ShowAll = styled.div`
@@ -182,4 +260,15 @@ const ShowAll = styled.div`
   color: 171719;
   font-weight: var(--font-medium);
   cursor: pointer;
+`;
+
+const Casts = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  row-gap: 40px;
+`;
+
+const Scraps = styled.div`
+  display: flex;
+  gap: 20px;
 `;

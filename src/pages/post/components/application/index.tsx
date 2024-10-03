@@ -3,9 +3,9 @@ import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
 import RadioSVG from "@assets/icons/radio.svg?react";
 import { useEffect, useState } from "react";
 import Button from "@/components/buttons/button";
-import { requestApplyCast } from "@/api/cast";
-import { requestProfileList } from "@/api/profile";
+import { requestApplyCast } from "@api/cast";
 import { useNavigate } from "react-router-dom";
+import { requestProfileList } from "@/api/users";
 
 interface ApplicationProps {
   castId: string;
@@ -43,6 +43,8 @@ const Application = ({ castId }: ApplicationProps) => {
   useEffect(() => {
     getProfileList();
   }, []);
+
+  console.log(profiles);
 
   return (
     <ApplicationContainer>

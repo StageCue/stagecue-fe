@@ -66,9 +66,9 @@ const MenuColumn = styled.div`
 `;
 
 const ContentColumn = styled.div`
-  width: 100%;
   margin-top: 20px;
   margin-left: 235px;
+  width: 685px;
 `;
 
 const Username = styled.div`

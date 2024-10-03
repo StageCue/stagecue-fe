@@ -39,15 +39,18 @@ export const requestLogin = async (data: ReqLoginParams) => {
 
 export const requestRefreshSession = async () => {};
 
-export const requestSignup = async (data: ReqSignupParams) => {
+export const requestSignup = async (
+  data: ReqSignupParams,
+  registerToken: string
+) => {
   const res = await request({
     method: "post",
-    endpoint: "auth/register",
+    endpoint: "auth/signup",
     data,
-    header: { "Auth-Register-Token": "4d2146b8-cdec-4402-8943-35d447539a96" },
+    header: { "Auth-Signup-Token": `${registerToken}` },
   });
 
-  const [accessToken] = res.data;
+  const { accessToken } = res;
   axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
   return res;

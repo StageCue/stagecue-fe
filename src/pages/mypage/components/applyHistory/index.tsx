@@ -1,15 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import ChevronDownSVG from "@/assets/icons/chebron_down_s.svg?react";
-import DotdotdotSVG from "@/assets/images/dotdotdot.svg?react";
-import Button from "@/components/buttons/button";
+import { requestCancelApply, requestCastsStatus } from "@/api/users";
+import ApplyList from "./components/applyList";
+import { CastStatus } from "../mystage";
 
-type applyPhaseType = "지원 완료" | "서류 통과" | "최종 합격" | "불합격";
+export type applyPhaseType =
+  | "APPLIED"
+  | "DOCUMENT_PASSED"
+  | "FINAL_ACCEPTED"
+  | "REJECTED";
 type filterType = "전체" | "열람" | "미열람" | "지원취소";
 
 const ApplyHistory = () => {
-  const [selectedPhase, setSelectedPhase] =
-    useState<applyPhaseType>("지원 완료");
+  const [castsStatus, setCastStatus] = useState<CastStatus>();
+  const [selectedPhase, setSelectedPhase] = useState<applyPhaseType>("APPLIED");
   const [selectedFilter, setSelectedFilter] = useState<filterType>("전체");
   const [isFilterMenuShowing, setIsFilterMenuShowing] =
     useState<boolean>(false);
@@ -27,47 +32,70 @@ const ApplyHistory = () => {
     setIsFilterMenuShowing((curr) => !curr);
   };
 
+  const parsePhase = (status: applyPhaseType) => {
+    switch (status) {
+      case "APPLIED":
+        return "지원 완료";
+      case "DOCUMENT_PASSED":
+        return "서류 통과";
+      case "FINAL_ACCEPTED":
+        return "최종 합격";
+      case "REJECTED":
+        return "불합격";
+    }
+  };
+
+  const getCastsStatus = async () => {
+    const res = await requestCastsStatus();
+
+    setCastStatus(res);
+  };
+
+  useEffect(() => {
+    getCastsStatus();
+  });
+
   return (
     <ApplyHistoryContainer>
       <ApplyDashboard>
         <ItemTitle>지원 현황</ItemTitle>
         <Dashboard>
           <ApplyPhase
-            onClick={() => handlePhaseClick("지원 완료")}
-            $isSelected={selectedPhase === "지원 완료"}
+            onClick={() => handlePhaseClick("APPLIED")}
+            $isSelected={selectedPhase === "APPLIED"}
           >
             <ItemName>지원 완료</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.applied}</Value>
           </ApplyPhase>
           <Divider />
           <ApplyPhase
-            onClick={() => handlePhaseClick("서류 통과")}
-            $isSelected={selectedPhase === "서류 통과"}
+            onClick={() => handlePhaseClick("DOCUMENT_PASSED")}
+            $isSelected={selectedPhase === "DOCUMENT_PASSED"}
           >
             <ItemName>서류 통과</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.passed}</Value>
           </ApplyPhase>
           <Divider />
           <ApplyPhase
-            onClick={() => handlePhaseClick("최종 합격")}
-            $isSelected={selectedPhase === "최종 합격"}
+            onClick={() => handlePhaseClick("FINAL_ACCEPTED")}
+            $isSelected={selectedPhase === "FINAL_ACCEPTED"}
           >
             <ItemName>최종 합격</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.accepted}</Value>
           </ApplyPhase>
           <Divider />
           <ApplyPhase
-            onClick={() => handlePhaseClick("불합격")}
-            $isSelected={selectedPhase === "불합격"}
+            onClick={() => handlePhaseClick("REJECTED")}
+            $isSelected={selectedPhase === "REJECTED"}
           >
             <ItemName>불합격</ItemName>
-            <Value>3</Value>
+            <Value>{castsStatus?.rejected}</Value>
           </ApplyPhase>
         </Dashboard>
       </ApplyDashboard>
-      <ApplyList>
+      <ApplyListWrapper>
         <TitleWrapper>
-          <ItemTitle>{selectedPhase}</ItemTitle>
+          <ItemTitle>{parsePhase(selectedPhase)}</ItemTitle>
           <FilterBtnWrapper>
             <FilterBtn onClick={handleFilterBtnClick}>
               {selectedFilter} <ChevronDownSVG />
@@ -86,17 +114,8 @@ const ApplyHistory = () => {
             )}
           </FilterBtnWrapper>
         </TitleWrapper>
-        <NoApplyHistory>
-          <DotdotdotSVG />
-          <TextWrapper>
-            <Text>아직 지원한 공고가 없어요.</Text>
-            <SubText>다양한 공고들을 둘러볼까요?</SubText>
-          </TextWrapper>
-          <Button variation="solid" btnClass="primary" width={296}>
-            공고 찾아보기
-          </Button>
-        </NoApplyHistory>
-      </ApplyList>
+        <ApplyList status={selectedPhase} />
+      </ApplyListWrapper>
     </ApplyHistoryContainer>
   );
 };
@@ -137,7 +156,7 @@ const ApplyPhase = styled.div<{ $isSelected: boolean }>`
   justify-content: center;
   align-items: center;
   gap: 8px;
-  background-color: ${({ $isSelected }) => ($isSelected ? "#007AFF" : "white")};
+  background-color: ${({ $isSelected }) => ($isSelected ? "#f0f7ff" : "white")};
   color: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#171719")};
   border-radius: 12px;
   cursor: pointer;
@@ -164,7 +183,7 @@ const Divider = styled.div`
   margin: 0px 12px;
 `;
 
-const ApplyList = styled.div``;
+const ApplyListWrapper = styled.div``;
 
 const TitleWrapper = styled.div`
   margin-bottom: 20px;
@@ -222,36 +241,4 @@ const Option = styled.div`
   line-height: 142.9%;
   letter-spacing: 1.45%;
   cursor: pointer;
-`;
-
-const NoApplyHistory = styled.div`
-  width: 685px;
-  height: 248px;
-  padding: 28px 0;
-  background-color: #f7f7f8;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-`;
-
-const TextWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Text = styled.div`
-  font-weight: var(--font-semibold);
-  font-size: 18px;
-  letter-spacing: -0.02%;
-  line-height: 144.5%;
-`;
-
-const SubText = styled.div`
-  font-weight: var(--font-regular);
-  font-size: 15px;
-  letter-spacing: 0.96%;
-  line-height: 146.7%;
 `;

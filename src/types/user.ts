@@ -1,4 +1,4 @@
-export type UserType = "member" | "owner";
+export type UserType = "ADMIN" | "PERFORMER" | "TROUPE";
 
 export interface LoginInputs {
   email: string;
