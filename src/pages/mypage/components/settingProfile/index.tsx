@@ -4,14 +4,20 @@ import NoScrappedSVG from "@assets/images/noscrappedd.svg?react";
 import { useEffect, useState } from "react";
 import Profile from "./components/profile";
 import { requestProfileList } from "@api/users";
+import { useNavigate } from "react-router-dom";
 
 const SettingProfile = () => {
+  const navigate = useNavigate();
   const [profiles, setProfiles] = useState([]);
 
   const getProfiles = async () => {
     const res = await requestProfileList();
 
     setProfiles(res.profiles);
+  };
+
+  const handleProfileClick = (id: number) => {
+    navigate(`profiles/${id}`);
   };
 
   useEffect(() => {
@@ -49,6 +55,7 @@ const SettingProfile = () => {
               weight={weight}
               thumbnail={thumbnail}
               isDefault={isDefault}
+              onClick={() => handleProfileClick(id)}
             />
           )
         )}

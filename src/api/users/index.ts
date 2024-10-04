@@ -76,3 +76,12 @@ export const requestProfileList = async () => {
 
   return res;
 };
+
+export const requestProfileDetail = async (profileId: string) => {
+  const res = await request({
+    method: "get",
+    endpoint: `users/profiles/${profileId}`,
+  });
+
+  return res;
+};

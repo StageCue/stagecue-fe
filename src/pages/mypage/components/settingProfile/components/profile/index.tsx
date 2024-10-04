@@ -11,6 +11,7 @@ interface ProfileProps {
   weight: number;
   thumbnail: string;
   isDefault: boolean;
+  onClick: () => void;
 }
 
 const Profile = ({
@@ -23,6 +24,7 @@ const Profile = ({
   weight,
   thumbnail,
   isDefault,
+  onClick,
 }: ProfileProps) => {
   return (
     <ProfileContainer>
@@ -49,7 +51,7 @@ const Profile = ({
           </ItemWrapper>
         </SummaryWrapper>
       </ProfileSummary>
-      <ShowDetailBtn>
+      <ShowDetailBtn onClick={onClick}>
         <ChevronRightSVG />
       </ShowDetailBtn>
     </ProfileContainer>

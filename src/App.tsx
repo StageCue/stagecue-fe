@@ -16,6 +16,7 @@ import Biz from "./pages/biz";
 import BizLayout from "./components/layout/biz";
 import Detail from "./pages/post/detail";
 import Applied from "./pages/post/applied";
+import ProfileDetail from "./pages/mypage/components/settingProfile/components/profileDetail";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
           <Route path="mypage" element={<MyPage />} />
+          <Route path="mypage/profiles/:id" element={<ProfileDetail />} />
           <Route path="casts/:id" element={<Detail />} />
           <Route path="casts/applied" element={<Applied />} />
         </Route>
