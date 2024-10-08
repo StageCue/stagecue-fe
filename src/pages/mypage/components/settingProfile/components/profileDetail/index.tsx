@@ -2,21 +2,22 @@ import { requestProfileDetail } from "@/api/users";
 import Button from "@/components/buttons/button";
 import useSessionStore from "@/store";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import SlashSVG from "@assets/icons/slash.svg?react";
 import MailSVG from "@assets/icons/mail_lg.svg?react";
 import MobileSVG from "@assets/icons/mobile.svg?react";
 
-interface ProfileDetailData {
+export interface ProfileDetailData {
   birthday: string;
   dateCreated: string;
   duration: string;
-  experience: {
+  experiences: {
     artworkName: string;
     artworkPart: string;
     troupe: string;
     startDate: string;
+    endDate: string;
   }[];
   height: number;
   weight: number;
@@ -28,14 +29,18 @@ interface ProfileDetailData {
 }
 
 const ProfileDetail = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const sessionStore = useSessionStore();
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
-    console.log(res);
     setDetail(res);
+  };
+
+  const handleClickEdit = () => {
+    navigate("form");
   };
 
   const calculateKoreanAge = (birthDateString: string) => {
@@ -72,6 +77,7 @@ const ProfileDetail = () => {
             btnClass="primary"
             width={97}
             height={48}
+            onClick={handleClickEdit}
           >
             수정
           </Button>
@@ -123,6 +129,25 @@ const ProfileDetail = () => {
           </Information>
           <Information>
             <InformationTitle>경력 (총 개월)</InformationTitle>
+            <DataWrapper>
+              {detail?.experiences.map((exp) => (
+                <ExpRow>
+                  <RoleAndPeriod>
+                    <Role>{exp.artworkPart}</Role>
+                    <Period>
+                      {exp.startDate} - {exp.endDate}
+                    </Period>
+                  </RoleAndPeriod>
+                  <ArtWork>{exp.artworkName}</ArtWork>
+                </ExpRow>
+              ))}
+            </DataWrapper>
+          </Information>
+          <Information>
+            <InformationTitle>자기 소개</InformationTitle>
+            <DataWrapper>
+              <Introduce>{detail?.introduce}</Introduce>
+            </DataWrapper>
           </Information>
         </Body>
       </ProfileBodyWrapper>
@@ -135,6 +160,7 @@ export default ProfileDetail;
 const ProfileDetailContainer = styled.div`
   width: 100%;
   height: 100%;
+  margin-bottom: 100px;
 `;
 
 const ProfileHeaderWrapper = styled.div`
@@ -284,7 +310,7 @@ const ValueWrapper = styled.div`
 `;
 
 const Unit = styled.div`
-  font-weight: var(--fontmedium);
+  font-weight: var(--font-medium);
   letter-spacing: 0.96%;
   line-height: 146.7%;
   color: #171719;
@@ -296,3 +322,42 @@ const Value = styled.div`
   letter-spacing: 0.96%;
   color: #171719;
 `;
+
+const ExpRow = styled.div`
+  display: flex;
+  gap: 20px;
+  align-items: center;
+`;
+
+const RoleAndPeriod = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Role = styled.div`
+  padding-right: 12px;
+  font-weight: var(--font-medium);
+  font-size: 15px;
+  line-height: 146.7%;
+  letter-spacing: 0.96%;
+  border-right: 1px solid #f4f4f5;
+`;
+
+const Period = styled.div`
+  margin-left: 12px;
+  font-size: 15px;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.96%;
+  letter-spacing: 146.7%;
+  color: #858688;
+`;
+
+const ArtWork = styled.div`
+  font-weight: var(--font-semibold);
+  font-size: 17px;
+  letter-spacing: 0%;
+  line-height: 141.2%;
+  color: #171719;
+`;
+
+const Introduce = styled.div``;

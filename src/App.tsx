@@ -17,6 +17,7 @@ import BizLayout from "./components/layout/biz";
 import Detail from "./pages/post/detail";
 import Applied from "./pages/post/applied";
 import ProfileDetail from "./pages/mypage/components/settingProfile/components/profileDetail";
+import ProfileForm from "./pages/mypage/components/settingProfile/components/profileForm";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="search" element={<Search />} />
           <Route path="mypage" element={<MyPage />} />
           <Route path="mypage/profiles/:id" element={<ProfileDetail />} />
+          <Route path="mypage/profiles/:id/form" element={<ProfileForm />} />
           <Route path="casts/:id" element={<Detail />} />
           <Route path="casts/applied" element={<Applied />} />
         </Route>
