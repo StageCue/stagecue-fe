@@ -11,6 +11,25 @@ import { requestProfileDetail } from "@/api/users";
 import { ProfileDetailData } from "../profileDetail";
 import useSessionStore from "@/store";
 
+interface ProfileInput {
+  birthday: string;
+  experiences: ExpInput[];
+  height: number;
+  weight: number;
+  introduce: string;
+  title: string;
+  images: { url: string }[];
+  thumbnail: string;
+}
+
+interface ExpInput {
+  artworkName: string;
+  artworkPart: string;
+  troupe: string;
+  startDate: string;
+  endDate: string;
+}
+
 const ProfileForm = () => {
   const sessionStore = useSessionStore();
   const { id } = useParams();
@@ -18,12 +37,57 @@ const ProfileForm = () => {
   const [isEditPersonalInfo, setIsEditPersonalInfo] = useState<boolean>(false);
   const [isEditIntroduce, setIsEditIntroduce] = useState<boolean>(false);
   const [selectedExpId, setSelectedExpId] = useState();
+  const [isAddExp, setIsAddExp] = useState<boolean>(false);
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm<ProfileInput>();
+  const {
+    register: expRegister,
+    handleSubmit: handleExpSubmit,
+    watch: expWatch,
+  } = useForm<ExpInput>();
 
-  const getProfileDetail = async () => {
-    const res = await requestProfileDetail(id!);
+  const [
+    birthdayValue,
+    weightValue,
+    heightValue,
+    introduceValue,
+    experiencesValue,
+    thumbnailValue,
+    imagesValue,
+  ] = watch([
+    "birthday",
+    "weight",
+    "height",
+    "introduce",
+    "experiences",
+    "thumbnail",
+    "images",
+  ]);
+  const [
+    artworkNameValue,
+    artworkPartValue,
+    troupeValue,
+    startDateValue,
+    endDateValue,
+  ] = expWatch([
+    "artworkName",
+    "artworkPart",
+    "troupe",
+    "startDate",
+    "endDate",
+  ]);
+
+  const getProfileDetail = async (id: string) => {
+    const res = await requestProfileDetail(id);
+    console.log(res);
     setDetail(res);
+    setValue("birthday", res.birthday);
+    setValue("weight", res.weight);
+    setValue("height", res.height);
+    setValue("introduce", res.introduce);
+    setValue("experiences", res.experiences);
+    setValue("thumbnail", res.thumbnail);
+    setValue("images", res.images);
   };
 
   const handleInfoEditClick = (section: string) => {
@@ -34,8 +98,30 @@ const ProfileForm = () => {
     }
   };
 
+  const handleSaveExpClick = () => {
+    setValue("experiences", [
+      ...experiencesValue,
+      {
+        artworkName: artworkNameValue,
+        artworkPart: artworkPartValue,
+        troupe: troupeValue,
+        startDate: startDateValue,
+        endDate: endDateValue,
+      },
+    ]);
+    setIsAddExp(false);
+  };
+
+  const handleAddExpClick = () => {
+    setIsAddExp(true);
+  };
+
+  const handleCancleAddExpClick = () => {
+    setIsAddExp(false);
+  };
+
   useEffect(() => {
-    getProfileDetail();
+    getProfileDetail(id!);
   }, [id]);
 
   return (
@@ -73,7 +159,7 @@ const ProfileForm = () => {
                   <DataRows>
                     <DataRow>
                       <Property>생년월일</Property>
-                      <Value>{detail?.birthday}</Value>
+                      <Value>{birthdayValue}</Value>
                     </DataRow>
                     <DataRow>
                       <Property>이름</Property>
@@ -84,7 +170,7 @@ const ProfileForm = () => {
                       <HeightAndWeight>
                         <ValueWrapper>
                           {!isEditPersonalInfo ? (
-                            <Value>{detail?.height}</Value>
+                            <Value>{heightValue}</Value>
                           ) : (
                             <BodyInfoInput
                               {...register("height", { required: true })}
@@ -98,7 +184,7 @@ const ProfileForm = () => {
                       <HeightAndWeight>
                         <ValueWrapper>
                           {!isEditPersonalInfo ? (
-                            <Value>{detail?.weight}</Value>
+                            <Value>{weightValue}</Value>
                           ) : (
                             <BodyInfoInput
                               {...register("weight", {
@@ -199,9 +285,14 @@ const ProfileForm = () => {
               )}
             </WithButtonTitleWrapper>
             {isEditIntroduce ? (
-              <IntroduceInput />
+              <IntroduceInput
+                {...register("introduce", {
+                  required: true,
+                })}
+                placeholder="자기소개서 내용을 작성해주세요 (최대 3000자)"
+              />
             ) : (
-              <IntroduceBox>{detail?.introduce}</IntroduceBox>
+              <IntroduceBox>{introduceValue}</IntroduceBox>
             )}
           </InformationWrapper>
           <InformationWrapper>
@@ -224,12 +315,14 @@ const ProfileForm = () => {
                 fontSize={15}
                 letterSpacing={0.96}
                 lineHeight={146.7}
+                disabled={isAddExp}
+                onClick={handleAddExpClick}
               >
                 경력추가
               </Button>
             </WithButtonTitleWrapper>
             <ExpGrid>
-              {detail?.experiences.map((exp) => (
+              {experiencesValue?.map((exp) => (
                 <ExpBox>
                   <ExpDataWrapper>
                     <DataRow>
@@ -261,6 +354,100 @@ const ProfileForm = () => {
                   </ExpIconsWrapper>
                 </ExpBox>
               ))}
+              {isAddExp && (
+                <ExpFormBox>
+                  <FormLabel>
+                    <DataRows>
+                      <DataRow>
+                        <FormLabel>
+                          작품제목
+                          <RequiredWrapper>
+                            <RequiredSVG />
+                          </RequiredWrapper>
+                        </FormLabel>
+                        <ExpTextInput
+                          {...expRegister("artworkName", { required: true })}
+                          placeholder="작품제목을 입력해주세요."
+                        />
+                      </DataRow>
+                      <DataRow>
+                        <FormLabel>
+                          배역
+                          <RequiredWrapper>
+                            <RequiredSVG />
+                          </RequiredWrapper>
+                        </FormLabel>
+                        <ExpTextInput
+                          {...expRegister("artworkPart", { required: true })}
+                          placeholder="맡은 배역을 입력해주세요. 예) 주연"
+                        />
+                      </DataRow>
+                      <DataRow>
+                        <FormLabel>
+                          극단
+                          <RequiredWrapper>
+                            <RequiredSVG />
+                          </RequiredWrapper>
+                        </FormLabel>
+                        <ExpTextInput
+                          {...expRegister("troupe", { required: true })}
+                          placeholder="활동한 극단 이름을 입력해주세요."
+                        />
+                      </DataRow>
+                      <DataRow>
+                        <FormLabel>
+                          기간
+                          <RequiredWrapper>
+                            <RequiredSVG />
+                          </RequiredWrapper>
+                        </FormLabel>
+                        <ExpDateInput
+                          {...expRegister("startDate", { required: true })}
+                          placeholder="YYYY.MM"
+                          type="month"
+                        />
+                        ~
+                        <ExpDateInput
+                          {...expRegister("endDate", { required: true })}
+                          placeholder="YYYY.MM"
+                          type="month"
+                        />
+                      </DataRow>
+                    </DataRows>
+                  </FormLabel>
+                  <ExpBtnsWrapper>
+                    <Button
+                      variation="outlined"
+                      btnClass="assistive"
+                      width={53}
+                      height={32}
+                      padding="7px 14px"
+                      fontSize={13}
+                      fontWeight="var(--font-medium)"
+                      lineHeight={138.5}
+                      letterSpacing={1.94}
+                      onClick={handleCancleAddExpClick}
+                    >
+                      취소
+                    </Button>
+                    <Button
+                      variation="solid"
+                      btnClass="primary"
+                      width={53}
+                      height={32}
+                      padding="7px 14px"
+                      fontSize={13}
+                      fontWeight="var(--font-medium)"
+                      lineHeight={138.5}
+                      letterSpacing={1.94}
+                      onClick={handleSaveExpClick}
+                      type="button"
+                    >
+                      저장
+                    </Button>
+                  </ExpBtnsWrapper>
+                </ExpFormBox>
+              )}
             </ExpGrid>
           </InformationWrapper>
           <InformationWrapper>
@@ -268,7 +455,7 @@ const ProfileForm = () => {
               <InfoTitle>이미지</InfoTitle>
             </InfoTitleWrapper>
             <ImagesBox>
-              {detail?.images.map(({ url }) => (
+              {imagesValue?.map(({ url }) => (
                 <Image src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
               ))}
             </ImagesBox>
@@ -423,7 +610,7 @@ const Property = styled.div`
 `;
 
 const Value = styled.div`
-  font-weight: var(--font-semibold);
+  font-weight: var(--font-medium);
   letter-spacing: 0.96%;
   line-height: 146.7%;
   font-size: 15px;
@@ -500,7 +687,6 @@ const ExpBox = styled.div`
   padding: 16px;
   border-radius: 12px;
   border: 1px solid #f4f4f5;
-  display: grid;
   display: flex;
   justify-content: space-between;
 `;
@@ -572,6 +758,72 @@ const IntroduceInput = styled.textarea`
     color: #dadada;
     letter-spacing: 0.57%;
     line-height: 150%;
-    color: #171719;
+    color: #dadada;
   }
+`;
+
+const ExpFormBox = styled.div`
+  width: 452px;
+  height: 168px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #f4f4f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+`;
+
+const FormLabel = styled.div`
+  position: relative;
+  color: #858688;
+  font-size: 15px;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.96%;
+  line-height: 146.7%;
+  min-width: 54px;
+`;
+
+const ExpTextInput = styled.input`
+  width: 232px;
+  height: 22px;
+  outline: none;
+  border: none;
+  font-weight: var(--font-medium);
+  font-size: 15px;
+  letter-spacing: 0.96%;
+  line-height: 146.7%;
+  color: #171719;
+
+  &::placeholder {
+    font-weight: var(--font-medium);
+    font-size: 15px;
+    letter-spacing: 0.96%;
+    line-height: 146.7%;
+    color: #e3e3e4;
+  }
+`;
+
+const ExpDateInput = styled.input`
+  width: 105px;
+  height: 22px;
+  outline: none;
+  border: none;
+  font-weight: var(--font-medium);
+  font-size: 15px;
+  letter-spacing: 0.96%;
+  line-height: 146.7%;
+  color: #171719;
+
+  &::placeholder {
+    font-weight: var(--font-medium);
+    font-size: 15px;
+    letter-spacing: 0.96%;
+    line-height: 146.7%;
+    color: #e3e3e4;
+  }
+`;
+
+const ExpBtnsWrapper = styled.div`
+  display: flex;
+  gap: 4px;
 `;
