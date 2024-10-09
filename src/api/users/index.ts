@@ -20,6 +20,22 @@ interface ReqAppliedCastsParams {
     | "CANCEL";
 }
 
+interface ReqChangeProfileData {
+  title: string;
+  height: number;
+  weight: number;
+  introduce: string;
+  thumbnail: string;
+  images: string[];
+  experiences: {
+    artworkName: string;
+    artworkPart: string;
+    troupe: string;
+    startDate: string;
+    endDate: string;
+  }[];
+}
+
 export const requestCastsStatus = async () => {
   const res = await request({
     method: "get",
@@ -81,6 +97,19 @@ export const requestProfileDetail = async (profileId: string) => {
   const res = await request({
     method: "get",
     endpoint: `users/profiles/${profileId}`,
+  });
+
+  return res;
+};
+
+export const requestSaveProfile = async (
+  data: ReqChangeProfileData,
+  profileId: string
+) => {
+  const res = await request({
+    method: "put",
+    endpoint: `users/profiles/${profileId}`,
+    data,
   });
 
   return res;

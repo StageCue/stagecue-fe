@@ -7,7 +7,7 @@ import EditSVG from "@assets/icons/edit.svg?react";
 import RequiredSVG from "@assets/icons/required_orange.svg?react";
 import TrashSVG from "@assets/icons/trash_lg.svg?react";
 import { useParams } from "react-router-dom";
-import { requestProfileDetail } from "@/api/users";
+import { requestProfileDetail, requestSaveProfile } from "@/api/users";
 import { ProfileDetailData } from "../profileDetail";
 import useSessionStore from "@/store";
 
@@ -18,7 +18,7 @@ interface ProfileInput {
   weight: number;
   introduce: string;
   title: string;
-  images: { url: string }[];
+  images: string[];
   thumbnail: string;
 }
 
@@ -47,6 +47,7 @@ const ProfileForm = () => {
   } = useForm<ExpInput>();
 
   const [
+    titleValue,
     birthdayValue,
     weightValue,
     heightValue,
@@ -55,6 +56,7 @@ const ProfileForm = () => {
     thumbnailValue,
     imagesValue,
   ] = watch([
+    "title",
     "birthday",
     "weight",
     "height",
@@ -63,6 +65,7 @@ const ProfileForm = () => {
     "thumbnail",
     "images",
   ]);
+
   const [
     artworkNameValue,
     artworkPartValue,
@@ -77,17 +80,22 @@ const ProfileForm = () => {
     "endDate",
   ]);
 
+  const parseImagesUrl = (images: { url: string }[]) => {
+    return images.map(({ url }) => url);
+  };
+
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
     console.log(res);
     setDetail(res);
+    setValue("title", res.title);
     setValue("birthday", res.birthday);
     setValue("weight", res.weight);
     setValue("height", res.height);
     setValue("introduce", res.introduce);
     setValue("experiences", res.experiences);
     setValue("thumbnail", res.thumbnail);
-    setValue("images", res.images);
+    setValue("images", parseImagesUrl(res.images));
   };
 
   const handleInfoEditClick = (section: string) => {
@@ -112,6 +120,18 @@ const ProfileForm = () => {
     setIsAddExp(false);
   };
 
+  const handleSaveClick = (section: "personalInfo" | "introduce") => {
+    if (section === "personalInfo") {
+      setIsEditPersonalInfo(false);
+    } else if (section === "introduce") {
+      setIsEditIntroduce(false);
+    }
+  };
+
+  const handleEditExpClick = (id: number) => {};
+
+  const handleDeleteExpClick = (id: number) => {};
+
   const handleAddExpClick = () => {
     setIsAddExp(true);
   };
@@ -120,21 +140,30 @@ const ProfileForm = () => {
     setIsAddExp(false);
   };
 
+  const onSubmitProfile = async (data: ProfileInput) => {
+    console.log(data);
+    const res = await requestSaveProfile(data, id!);
+    console.log(res);
+  };
+
   useEffect(() => {
     getProfileDetail(id!);
   }, [id]);
 
   return (
     <ProfileFormContainer>
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmitProfile)}>
         <ProfileHeaderWrapper>
           <TitleWrapper>
-            <TitleInput />
+            <TitleInput
+              {...register("title", { required: true, value: titleValue })}
+            />
             <Button
               variation="solid"
               btnClass="primary"
               width={180}
               height={48}
+              type="submit"
             >
               프로필 저장
             </Button>
@@ -209,6 +238,8 @@ const ProfileForm = () => {
                       fontSize={13}
                       lineHeight={138.5}
                       letterSpacing={1.94}
+                      onClick={() => handleSaveClick("personalInfo")}
+                      type="button"
                     >
                       저장
                     </Button>
@@ -455,8 +486,8 @@ const ProfileForm = () => {
               <InfoTitle>이미지</InfoTitle>
             </InfoTitleWrapper>
             <ImagesBox>
-              {imagesValue?.map(({ url }) => (
-                <Image src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+              {imagesValue?.map((imgUrl) => (
+                <Image src={`https://s3.stagecue.co.kr/stagecue/${imgUrl}`} />
               ))}
             </ImagesBox>
           </InformationWrapper>
@@ -735,7 +766,23 @@ const Image = styled.img`
 `;
 
 const BodyInfoInput = styled.input`
-  width: 40px;
+  width: 50px;
+  height: 22px;
+  border: none;
+  outline: none;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.96%;
+  line-height: 146.7%;
+  font-size: 15px;
+  color: #171719;
+
+  &::placeholder {
+    font-weight: var(--font-medium);
+    letter-spacing: 0.96%;
+    line-height: 146.7%;
+    font-size: 15px;
+    color: #dadada;
+  }
 `;
 
 const IntroduceInput = styled.textarea`
