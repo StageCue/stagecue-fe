@@ -1,15 +1,70 @@
+import {
+  requestChangeEmail,
+  requestChangeEmailToken,
+  requestVerifyEmailToken,
+} from "@/api/users";
 import Button from "@/components/buttons/button";
+import useSessionStore from "@/store";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
 type accountDataType = "이메일" | "휴대폰 번호";
 
 const EditAccount = () => {
   const [selectedData, setSelectedData] = useState<accountDataType>("이메일");
+  const sessionStore = useSessionStore();
+  const [isChangeMail, setIsChangeMail] = useState(false);
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [requestEmailToken, setRequestEmailToken] = useState("");
+  const [updateEmailToken, setUpdateEmailToken] = useState("");
+  const [isVerifiedCode, setIsVerifiedCode] = useState(false);
+
+  const {
+    register: emailRegister,
+    handleSubmit: emailHandleSubmit,
+    watch: emailWatch,
+  } = useForm();
+
+  const [emailValue, isVerifiedValue, codeValue] = emailWatch([
+    "email",
+    "verified",
+    "code",
+  ]);
 
   const handleChipClick = (data: accountDataType) => {
     setSelectedData(data);
   };
+
+  const handleChangeMailClick = () => {
+    if (isChangeMail) {
+      setIsChangeMail(false);
+      setIsCodeSent(false);
+    } else {
+      setIsChangeMail(true);
+    }
+  };
+
+  const handleSendEmailCodeClick = async () => {
+    const { requestToken } = await requestChangeEmailToken(emailValue);
+    setRequestEmailToken(requestToken);
+    setIsCodeSent(true);
+  };
+
+  const handleVerifyEmailCodeClick = async () => {
+    const res = await requestVerifyEmailToken(requestEmailToken, codeValue);
+    console.log(res);
+    if (res.updateToken) {
+      setUpdateEmailToken(res.updateToken);
+      setIsVerifiedCode(true);
+    }
+  };
+
+  const handleChangeEmailClick = async () => {
+    const res = await requestChangeEmail(updateEmailToken);
+    console.log(res);
+  };
+
   return (
     <EditAccountContainer>
       <Title>기본정보 변경</Title>
@@ -39,17 +94,55 @@ const EditAccount = () => {
           <Form>
             <Inputs>
               <ShortInputWrapper>
-                <ShortInput />
-                <Button variation="outlined" btnClass="primary" width={116}>
-                  취소
+                <CurrentEamil>{sessionStore.email}</CurrentEamil>
+                <Button
+                  variation="outlined"
+                  btnClass="primary"
+                  width={116}
+                  fontSize={15}
+                  lineHeight={150}
+                  letterSpacing={0.57}
+                  onClick={handleChangeMailClick}
+                >
+                  {isChangeMail ? "취소" : "메일 변경"}
                 </Button>
               </ShortInputWrapper>
-              <ShortInputWrapper>
-                <ShortInput placeholder="변경할 이메일을 입력하세요." />
-                <Button variation="outlined" btnClass="primary" width={116}>
-                  전송
-                </Button>
-              </ShortInputWrapper>
+              {isChangeMail && (
+                <ShortInputWrapper>
+                  <ShortInput
+                    {...emailRegister("email", { required: true })}
+                    placeholder="변경할 이메일을 입력하세요."
+                  />
+                  <Button
+                    variation="outlined"
+                    btnClass="primary"
+                    width={116}
+                    fontSize={15}
+                    lineHeight={150}
+                    letterSpacing={0.57}
+                    type="button"
+                    onClick={handleSendEmailCodeClick}
+                  >
+                    전송
+                  </Button>
+                </ShortInputWrapper>
+              )}
+              {isCodeSent && (
+                <VerifyInputWrapper>
+                  <VerifyInput {...emailRegister("code")} />
+                  <Button
+                    variation="text"
+                    btnClass="primary"
+                    width={56}
+                    height={24}
+                    fontSize={15}
+                    padding="0px"
+                    onClick={handleVerifyEmailCodeClick}
+                  >
+                    인증확인
+                  </Button>
+                </VerifyInputWrapper>
+              )}
             </Inputs>
             <Button
               type="submit"
@@ -172,6 +265,22 @@ const ShortInputWrapper = styled.div`
   gap: 8px;
 `;
 
+const CurrentEamil = styled.div`
+  padding: 12px 16px;
+  width: 231px;
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid #dadada;
+  outline: none;
+  display: flex;
+  align-items: center;
+  color: #dadada;
+  font-weight: var(--font-regular);
+  font-size: 16px;
+  letter-spacing: 0.57%;
+  line-height: 150%;
+`;
+
 const ShortInput = styled.input`
   padding: 12px 16px;
   width: 231px;
@@ -190,4 +299,28 @@ const ShortInput = styled.input`
 
 const EditPhonNumberWrapper = styled.div`
   width: 355px;
+`;
+
+const VerifyInputWrapper = styled.div`
+  width: 355px;
+  height: 48px;
+  padding: 12px 16px;
+  display: flex;
+  border: 1px solid #70737c;
+  gap: 12px;
+  border-radius: 10px;
+`;
+
+const VerifyInput = styled.input`
+  width: 255px;
+  height: 24px;
+  border: none;
+  outline: none;
+
+  ::placeholder {
+    color: #171719;
+    line-height: 150%;
+    letter-spacing: 0.57%;
+    font-size: 16px;
+  }
 `;

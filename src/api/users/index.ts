@@ -114,3 +114,32 @@ export const requestSaveProfile = async (
 
   return res;
 };
+
+export const requestChangeEmailToken = async (email: string) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/change-email?email=${email}`,
+  });
+
+  return res;
+};
+
+export const requestVerifyEmailToken = async (token: string, code: string) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/change-email?email=${code}`,
+    header: { "Change-Email-Request-Token": `${token}` },
+  });
+
+  return res;
+};
+
+export const requestChangeEmail = async (token: string) => {
+  const res = await request({
+    method: "put",
+    endpoint: "users/change-email",
+    header: { "Change-Email-Update-Token": `${token}` },
+  });
+
+  return res;
+};

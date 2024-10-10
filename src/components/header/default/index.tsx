@@ -35,7 +35,7 @@ const DefaultHeader = () => {
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
     clearUserSessionStorage();
-    window.location.reload();
+    navigate("/");
   };
 
   const handleMyStageClick = () => {

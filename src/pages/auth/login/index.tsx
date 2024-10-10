@@ -26,6 +26,7 @@ const Login = () => {
     if (res.accessToken) {
       sessionStore.loginSession();
       sessionStore.setUsername(res.username);
+      sessionStore.setEmail(emailValue);
       navigate("/");
     }
   };
