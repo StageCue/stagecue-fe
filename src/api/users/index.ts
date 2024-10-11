@@ -127,7 +127,7 @@ export const requestChangeEmailToken = async (email: string) => {
 export const requestVerifyEmailToken = async (token: string, code: string) => {
   const res = await request({
     method: "post",
-    endpoint: `users/change-email?email=${code}`,
+    endpoint: `users/change-email-verify?code=${code}`,
     header: { "Change-Email-Request-Token": `${token}` },
   });
 
@@ -139,6 +139,35 @@ export const requestChangeEmail = async (token: string) => {
     method: "put",
     endpoint: "users/change-email",
     header: { "Change-Email-Update-Token": `${token}` },
+  });
+
+  return res;
+};
+
+export const requestChangePhoneToken = async (number: string) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/change-cell?cell=${number}`,
+  });
+
+  return res;
+};
+
+export const requestVerifyPhoneToken = async (token: string, code: string) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/change-cell-verify?code=${code}`,
+    header: { "Change-Cell-Request-Token": `${token}` },
+  });
+
+  return res;
+};
+
+export const requestChangePhone = async (token: string) => {
+  const res = await request({
+    method: "put",
+    endpoint: "users/change-cell",
+    header: { "Change-Cell-Update-Token": `${token}` },
   });
 
   return res;

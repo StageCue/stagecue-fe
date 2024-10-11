@@ -12,6 +12,7 @@ interface SessionAction {
   loginSession: () => void;
   setUsername: (useranme: string) => void;
   setEmail: (email: string) => void;
+  setPhoneNumber: (number: string) => void;
 }
 
 const defaultState: SessionState = {
@@ -30,6 +31,8 @@ const useSessionStore = create(
       setUsername: (username: string) =>
         set((state) => ({ ...state, username })),
       setEmail: (email: string) => set((state) => ({ ...state, email })),
+      setPhoneNumber: (number: string) =>
+        set((state) => ({ ...state, number })),
     }),
     { name: "userSessionStorage" }
   )

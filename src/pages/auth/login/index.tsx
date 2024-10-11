@@ -27,6 +27,7 @@ const Login = () => {
       sessionStore.loginSession();
       sessionStore.setUsername(res.username);
       sessionStore.setEmail(emailValue);
+      sessionStore.setPhoneNumber(res.phoneNumber);
       navigate("/");
     }
   };
