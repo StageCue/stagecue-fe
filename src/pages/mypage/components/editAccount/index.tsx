@@ -1,6 +1,7 @@
 import {
   requestChangeEmail,
   requestChangeEmailToken,
+  requestChangePhone,
   requestChangePhoneToken,
   requestVerifyEmailToken,
   requestVerifyPhoneToken,
@@ -21,12 +22,14 @@ const EditAccount = () => {
   const [requestEmailToken, setRequestEmailToken] = useState("");
   const [updateEmailToken, setUpdateEmailToken] = useState("");
   const [isVerifiedCode, setIsVerifiedCode] = useState(false);
+  const [isErrorEmailVerify, setIsErrorEmailVerify] = useState(false);
 
   const [isChangeNumber, setIsChangeNumber] = useState(false);
   const [isPhoneCodeSent, setIsPhoneCodeSent] = useState(false);
   const [requestPhoneToken, setRequestPhoneToken] = useState("");
   const [updatePhoneToken, setUpdatePhoneToken] = useState("");
   const [isVerifiedPhoneCode, setIsVerifiedPhoneCode] = useState(false);
+  const [isErrorPhoneVerify, setIsErrorPhoneVerify] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const {
@@ -56,6 +59,24 @@ const EditAccount = () => {
 
   const handleChipClick = (data: accountDataType) => {
     setSelectedData(data);
+    resetStates();
+  };
+
+  const resetStates = () => {
+    setIsChangeMail(false);
+    setIsCodeSent(false);
+    setRequestEmailToken("");
+    setUpdateEmailToken("");
+    setIsVerifiedCode(false);
+    setIsErrorEmailVerify(false);
+
+    setIsChangeNumber(false);
+    setIsPhoneCodeSent(false);
+    setRequestPhoneToken("");
+    setUpdatePhoneToken("");
+    setIsVerifiedPhoneCode(false);
+    setIsErrorPhoneVerify(false);
+    setPhoneNumber("");
   };
 
   const handleChangeMailClick = () => {
@@ -101,6 +122,9 @@ const EditAccount = () => {
     if (res.updateToken) {
       setUpdateEmailToken(res.updateToken);
       setIsVerifiedCode(true);
+      setIsErrorEmailVerify(false);
+    } else {
+      setIsErrorEmailVerify(true);
     }
   };
 
@@ -110,12 +134,18 @@ const EditAccount = () => {
     if (res.updateToken) {
       setUpdatePhoneToken(res.updateToken);
       setIsVerifiedPhoneCode(true);
+      setIsErrorPhoneVerify(false);
+    } else {
+      setIsErrorPhoneVerify(true);
     }
   };
 
-  const handleChangeEmailClick = async () => {
+  const handleEmailSubmitClick = async () => {
     const res = await requestChangeEmail(updateEmailToken);
-    console.log(res);
+  };
+
+  const handlePhoneSubmitClick = async () => {
+    const res = await requestChangePhone(updatePhoneToken);
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -233,9 +263,10 @@ const EditAccount = () => {
                     </Button>
                   </VerifyInputWrapper>
                   <Message $isSuccess={isVerifiedCode}>
-                    {isVerifiedCode
-                      ? "인증되었습니다."
-                      : "올바르지 않은 인증번호입니다. 인증번호를 확인해주세요."}
+                    {isErrorEmailVerify &&
+                      !isVerifiedCode &&
+                      "올바르지 않은 인증번호입니다. 인증번호를 확인해주세요."}
+                    {isVerifiedCode && "인증되었습니다."}
                   </Message>
                 </WithMessageWrapper>
               )}
@@ -245,7 +276,7 @@ const EditAccount = () => {
               variation="solid"
               btnClass="primary"
               width={340}
-              onClick={handleChangeEmailClick}
+              onClick={handleEmailSubmitClick}
               disabled={!isVerifiedCode}
             >
               변경완료
@@ -275,9 +306,7 @@ const EditAccount = () => {
                   <ShortInput
                     {...phoneRegister("phoneNumber", {
                       required: true,
-                      pattern: {
-                        value: /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/,
-                      },
+                      pattern: /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/,
                     })}
                     placeholder="변경할 번호를 입력하세요."
                     onChange={handlePhoneNumberChange}
@@ -288,15 +317,16 @@ const EditAccount = () => {
                       variation="outlined"
                       btnClass="assistive"
                       width={140}
-                      fontSize={15}
+                      fontSize={14}
                       lineHeight={150}
                       letterSpacing={0.57}
                       fontWeight="var(--font-medium)"
+                      padding="13px 22px"
                       type="button"
                       onClick={handleSendPhoneCodeClick}
                       disabled={false}
                     >
-                      인증번호 재전송
+                      재전송
                     </Button>
                   ) : (
                     <Button
@@ -317,37 +347,41 @@ const EditAccount = () => {
                   )}
                 </ShortInputWrapper>
               )}
-              <WithMessageWrapper>
-                <VerifyInputWrapper
-                  $isDirty={phoneCodeValue}
-                  $isError={!isVerifiedPhoneCode}
-                >
-                  <VerifyInput {...phoneRegister("code")} />
-                  <Button
-                    variation="text"
-                    btnClass="primary"
-                    width={56}
-                    height={24}
-                    fontSize={15}
-                    padding="0px"
-                    onClick={handleVerifyPhoneCodeClick}
-                    disabled={!phoneCodeValue}
+              {isPhoneCodeSent && (
+                <WithMessageWrapper>
+                  <VerifyInputWrapper
+                    $isDirty={phoneCodeValue}
+                    $isError={isErrorPhoneVerify}
                   >
-                    인증확인
-                  </Button>
-                </VerifyInputWrapper>
-                <Message $isSuccess={isVerifiedPhoneCode}>
-                  {isVerifiedPhoneCode
-                    ? "인증되었습니다."
-                    : "올바르지 않은 인증번호입니다. 인증번호를 확인해주세요."}
-                </Message>
-              </WithMessageWrapper>
+                    <VerifyInput {...phoneRegister("code")} />
+                    <Button
+                      variation="text"
+                      btnClass="primary"
+                      width={56}
+                      height={24}
+                      fontSize={15}
+                      padding="0px"
+                      onClick={handleVerifyPhoneCodeClick}
+                      disabled={!phoneCodeValue}
+                    >
+                      인증확인
+                    </Button>
+                  </VerifyInputWrapper>
+                  <Message $isSuccess={isVerifiedPhoneCode}>
+                    {isErrorPhoneVerify &&
+                      !isVerifiedPhoneCode &&
+                      "올바르지 않은 인증번호입니다. 인증번호를 확인해주세요."}
+                    {isVerifiedPhoneCode && "인증되었습니다."}
+                  </Message>
+                </WithMessageWrapper>
+              )}
             </Inputs>
             <Button
               type="submit"
               variation="solid"
               btnClass="primary"
               width={340}
+              onClick={handlePhoneSubmitClick}
             >
               변경완료
             </Button>
