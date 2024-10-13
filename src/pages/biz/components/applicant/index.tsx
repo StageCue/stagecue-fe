@@ -7,18 +7,27 @@ import PassSVG from "@assets/icons/pass.svg?react";
 import FailSVG from "@assets/icons/fail.svg?react";
 import { requestApplications, requestChangingApplyState } from "@/api/biz";
 
+type ApplyStatus =
+  | "APPLIED"
+  | "DOCUMENT_PASSED"
+  | "FINAL_ACCEPTED"
+  | "REJECTED"
+  | "CANCEL"
+  | "전체"
+  | "미열람";
+
 const Applicant = () => {
-  const [selectedFilter, setSelectedFilter] = useState("전체");
+  const [selectedFilter, setSelectedFilter] = useState<ApplyStatus>("전체");
   const [applications, setApplications] = useState([]);
   const [selectedApplyIds, setSelectedApplyIds] = useState<number[]>([]);
 
-  const handleFilterClick = (filter: string) => {
+  const handleFilterClick = (filter: ApplyStatus) => {
     setSelectedFilter(filter);
   };
 
   // 임시 applied 로직!!
   const handlePassClick = async () => {
-    const requestStatus = (status: string) => {
+    const requestStatus = (status: ApplyStatus) => {
       switch (status) {
         case "APPLIED":
           return "DOCUMENT_PASSED";
@@ -46,7 +55,11 @@ const Applicant = () => {
 
   const getApplications = async () => {
     const res = await requestApplications({ limit: "10", offset: "0" });
-    setApplications(res.applications);
+    console.log(res.applications);
+
+    if (res.applications) {
+      setApplications(res.applications);
+    }
   };
 
   const handleCheckboxClick = (id: number) => {
@@ -60,11 +73,17 @@ const Applicant = () => {
     }
   };
 
+  const filterByApplyStatus = (status: ApplyStatus) => {
+    const filteredArray = applications.filter(
+      (application) => application["applyStatus"] === status
+    );
+
+    return filteredArray;
+  };
+
   useEffect(() => {
     getApplications();
   }, []);
-
-  console.log(selectedApplyIds);
 
   return (
     <ApplicantContainer>
@@ -81,28 +100,35 @@ const Applicant = () => {
             onClick={() => handleFilterClick("전체")}
             $isSelected={selectedFilter === "전체"}
           >
-            전체
+            전체 ({applications.length})
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("서류합격")}
-            $isSelected={selectedFilter === "서류합격"}
+            onClick={() => handleFilterClick("미열람")}
+            $isSelected={selectedFilter === "미열람"}
           >
-            서류합격
+            미열람
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("최종합격")}
-            $isSelected={selectedFilter === "최종합격"}
+            onClick={() => handleFilterClick("DOCUMENT_PASSED")}
+            $isSelected={selectedFilter === "DOCUMENT_PASSED"}
           >
-            최종합격
+            서류합격 ({filterByApplyStatus("DOCUMENT_PASSED").length})
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("불합격")}
-            $isSelected={selectedFilter === "불합격"}
+            onClick={() => handleFilterClick("FINAL_ACCEPTED")}
+            $isSelected={selectedFilter === "FINAL_ACCEPTED"}
           >
-            불합격
+            최종합격 ({filterByApplyStatus("FINAL_ACCEPTED").length})
+          </Option>
+          <FilterDivider />
+          <Option
+            onClick={() => handleFilterClick("REJECTED")}
+            $isSelected={selectedFilter === "REJECTED"}
+          >
+            불합격({filterByApplyStatus("REJECTED").length})
           </Option>
         </Filters>
         <ButtonsWrapper>
@@ -141,7 +167,11 @@ const Applicant = () => {
         </ButtonsWrapper>
       </FilterWrapper>
       <Table
-        applications={applications}
+        applications={
+          selectedFilter === "전체"
+            ? applications
+            : filterByApplyStatus(selectedFilter)
+        }
         onClickCheckbox={(id: number) => handleCheckboxClick(id)}
         selectedApplyIds={selectedApplyIds}
       />
@@ -200,7 +230,7 @@ const FilterWrapper = styled.div`
 `;
 
 const Filters = styled.div`
-  width: 440px;
+  width: 550px;
   height: 40px;
   border-radius: 8px;
   border: 1px solid #e1e2e4;

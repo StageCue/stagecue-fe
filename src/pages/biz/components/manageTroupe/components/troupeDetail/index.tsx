@@ -1,19 +1,4 @@
-import Button from "@/components/buttons/button";
-import styled from "styled-components";
-import CalendarSVG from "@assets/icons/calendar_xs.svg?react";
-import LinkSVG from "@assets/icons/link.svg?react";
-import LocationSVG from "@assets/icons/location.svg?react";
-import PersonSVG from "@assets/icons/person.svg?react";
-import MailSVG from "@assets/icons/mail.svg?react";
-import { useState } from "react";
-
-const ManageTroupe = () => {
-  const [isEditTroupe, setIsEditTroupe] = useState(false);
-
-  const handleEditTroupe = () => {
-    setIsEditTroupe(true);
-  };
-
+const TroupeDetail = () => {
   return (
     <ManageTroupeContainer>
       <CoverImageWrapper>
@@ -93,7 +78,7 @@ const ManageTroupe = () => {
   );
 };
 
-export default ManageTroupe;
+export default TroupeDetail;
 
 const ManageTroupeContainer = styled.div`
   padding: 24px 40px;
