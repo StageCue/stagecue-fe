@@ -103,7 +103,7 @@ const Signup = () => {
     if (res) {
       sessionStore.loginSession();
       sessionStore.setUsername(res.username);
-      navigate("/welcome");
+      navigate("/auth/welcome");
     }
   };
 

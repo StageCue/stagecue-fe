@@ -36,6 +36,11 @@ interface ReqChangeProfileData {
   }[];
 }
 
+interface ReqChangePasswordBody {
+  password: string;
+  confirmPassword: string;
+}
+
 export const requestCastsStatus = async () => {
   const res = await request({
     method: "get",
@@ -168,6 +173,63 @@ export const requestChangePhone = async (token: string) => {
     method: "put",
     endpoint: "users/change-cell",
     header: { "Change-Cell-Update-Token": `${token}` },
+  });
+
+  return res;
+};
+
+export const requestConfrimCurrentPassword = async (password: string) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/change-password?password=${password}`,
+  });
+
+  return res;
+};
+
+export const requestChangePassword = async (
+  data: ReqChangePasswordBody,
+  token: string
+) => {
+  const res = await request({
+    method: "put",
+    endpoint: "users/change-password",
+    data,
+    header: { "Change-Password-Update-Token": `${token}` },
+  });
+  return res;
+};
+
+export const requestDeleteAccountToken = async (email: string) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/delete-account?email=${email}`,
+  });
+
+  return res;
+};
+
+export const requestVerifyDeleteAccount = async (
+  token: string,
+  code: string
+) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/delete-account-verify?code=${code}`,
+    header: { "Delete-Account-Request-Token": `${token}` },
+  });
+
+  return res;
+};
+
+export const requestDeleteAccount = async (
+  isAgreed: boolean,
+  token: string
+) => {
+  const res = await request({
+    method: "put",
+    endpoint: `users/delete-account?agreed=${isAgreed}`,
+    header: { "Delete-Account-Update-Token": `${token}` },
   });
 
   return res;

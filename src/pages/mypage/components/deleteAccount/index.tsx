@@ -3,12 +3,79 @@ import styled from "styled-components";
 import RadioSVG from "@/assets/icons/radio.svg?react";
 import RadioCheckedSVG from "@/assets/icons/radio_checked.svg?react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  requestDeleteAccount,
+  requestDeleteAccountToken,
+  requestVerifyDeleteAccount,
+} from "@/api/users";
+
+interface DeleteAccountInputs {
+  email: string;
+  code: string;
+  isAgreed: boolean;
+}
 
 const DeleteAccount = () => {
-  const [isAgreed, setIsAgreed] = useState<boolean>(false);
+  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [emailRequestToken, setEmailRequestToken] = useState("");
+  const [deleteUpdateToken, setDeleteUpdateToken] = useState("");
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    clearErrors,
+    setError,
+    formState: { errors, dirtyFields },
+    setValue,
+  } = useForm<DeleteAccountInputs>();
 
   const handleCheckboxClick = () => {
-    setIsAgreed((curr) => !curr);
+    if (isVerified) {
+      const isAgreed = getValues("isAgreed");
+      if (isAgreed) {
+        setValue("isAgreed", false);
+      } else {
+        setValue("isAgreed", true);
+      }
+    }
+  };
+
+  const handleSendEmailClick = async () => {
+    const email = getValues("email");
+    console.log(email);
+    const { requestToken } = await requestDeleteAccountToken(email);
+
+    if (requestToken) {
+      setEmailRequestToken(requestToken);
+      setIsCodeSent(true);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    const code = getValues("code");
+    const res = await requestVerifyDeleteAccount(emailRequestToken, code);
+
+    if (res.updateToken) {
+      setDeleteUpdateToken(res.updateToken);
+      setIsVerified(true);
+      clearErrors("code");
+    } else {
+      setError("code", {
+        type: "verify",
+        message: "인증번호가 일치하지 않습니다.",
+      });
+    }
+  };
+
+  const onSubmitDeleteAccout = async () => {
+    const res = await requestDeleteAccount(
+      getValues("isAgreed"),
+      deleteUpdateToken
+    );
+
+    return res;
   };
 
   return (
@@ -42,21 +109,80 @@ const DeleteAccount = () => {
         <Article>본인 확인</Article>
         <Description>본인 확인을 위해 이메일 인증을 완료해주세요.</Description>
       </Paragraph>
-      <Form>
-        <Label>이메일</Label>
-        <ShortInputWrapper>
-          <ShortInput />
-          <Button variation="outlined" btnClass="primary" width={116}>
-            전송
-          </Button>
-        </ShortInputWrapper>
+      <Form onSubmit={handleSubmit(onSubmitDeleteAccout)}>
+        <Inputs>
+          <Label>이메일</Label>
+          <ShortInputWrapper>
+            <ShortInput
+              $isDirty={Boolean(dirtyFields.email)}
+              {...register("email", { required: true })}
+              placeholder="사용중인 이메일을 입력하세요."
+            />
+            {isCodeSent ? (
+              <Button
+                variation="outlined"
+                btnClass="assistive"
+                width={116}
+                onClick={handleSendEmailClick}
+                disabled={!dirtyFields.email}
+                type="button"
+              >
+                재전송
+              </Button>
+            ) : (
+              <Button
+                variation="solid"
+                btnClass="primary"
+                width={116}
+                onClick={handleSendEmailClick}
+                disabled={!dirtyFields.email}
+                type="button"
+              >
+                전송
+              </Button>
+            )}
+          </ShortInputWrapper>
+          {isCodeSent && (
+            <WithMessageWrapper>
+              <VerifyInputWrapper
+                $isDirty={Boolean(dirtyFields.code)}
+                $isError={!isVerified && Boolean(dirtyFields.code)}
+              >
+                <VerifyInput {...register("code")} />
+                <Button
+                  variation="text"
+                  btnClass="primary"
+                  width={56}
+                  height={24}
+                  fontSize={15}
+                  padding="0px"
+                  onClick={handleVerifyEmail}
+                  disabled={!dirtyFields.code}
+                >
+                  인증확인
+                </Button>
+              </VerifyInputWrapper>
+              <Message $isSuccess={isVerified}>
+                {errors.code &&
+                  !isVerified &&
+                  "올바르지 않은 인증번호입니다. 인증번호를 확인해주세요."}
+                {isVerified && "인증되었습니다."}
+              </Message>
+            </WithMessageWrapper>
+          )}
+        </Inputs>
         <CheckboxInputWrapper onClick={handleCheckboxClick}>
-          {isAgreed ? <RadioCheckedSVG /> : <RadioSVG />}
+          {getValues("isAgreed") ? <RadioCheckedSVG /> : <RadioSVG />}
           <CheckboxLabel>
             안내 사항을 모두 확인했으며, 이에 동의합니다.
           </CheckboxLabel>
         </CheckboxInputWrapper>
-        <Button variation="solid" btnClass="primary" width={340}>
+        <Button
+          variation="solid"
+          btnClass="primary"
+          width={340}
+          disabled={!isVerified}
+        >
           탈퇴하기
         </Button>
       </Form>
@@ -131,7 +257,6 @@ const Label = styled.div`
   font-size: 14px;
   letter-spacing: 1.45%;
   line-height: 142.9%;
-  margin-bottom: 12px;
 `;
 
 const ShortInputWrapper = styled.div`
@@ -139,12 +264,13 @@ const ShortInputWrapper = styled.div`
   gap: 8px;
 `;
 
-const ShortInput = styled.input`
+const ShortInput = styled.input<{ $isDirty: boolean }>`
   padding: 12px 16px;
   width: 231px;
   height: 48px;
   border-radius: 10px;
-  border: 1px solid #70737c;
+  border: ${({ $isDirty }) =>
+    $isDirty ? "1px solid #000000" : "1px solid #e0e0E2"};
   outline: none;
 
   ::placeholder {
@@ -161,6 +287,8 @@ const CheckboxInputWrapper = styled.div`
   margin-top: 106.33px;
   gap: 4px;
   margin-bottom: 34px;
+  width: fit-content;
+  cursor: pointer;
 `;
 
 const CheckboxLabel = styled.div`
@@ -169,4 +297,56 @@ const CheckboxLabel = styled.div`
   font-size: 15px;
   line-height: 160%;
   letter-spacing: 0.96%;
+`;
+
+const VerifyInputWrapper = styled.div<{
+  $isDirty: boolean;
+  $isError: boolean;
+}>`
+  width: 355px;
+  height: 48px;
+  padding: 12px 16px;
+  display: flex;
+  border: ${({ $isDirty, $isError }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0E2"};
+  gap: 12px;
+  border-radius: 10px;
+`;
+
+const VerifyInput = styled.input`
+  width: 255px;
+  height: 24px;
+  border: none;
+  outline: none;
+
+  ::placeholder {
+    color: #171719;
+    line-height: 150%;
+    letter-spacing: 0.57%;
+    font-size: 16px;
+  }
+`;
+
+const WithMessageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Message = styled.div<{ $isSuccess: boolean }>`
+  font-weight: var(--font-regular);
+  font-size: 13px;
+  letter-spacing: 1.94%;
+  line-height: 138.5%;
+  color: ${({ $isSuccess }) => ($isSuccess ? "#00bf40;" : "#FF4242")};
+`;
+
+const Inputs = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;

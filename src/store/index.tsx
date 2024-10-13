@@ -5,6 +5,7 @@ interface SessionState {
   isLoggined: boolean;
   username: string | null;
   email: string | null;
+  phoneNumber: string | null;
 }
 
 interface SessionAction {
@@ -12,13 +13,14 @@ interface SessionAction {
   loginSession: () => void;
   setUsername: (useranme: string) => void;
   setEmail: (email: string) => void;
-  setPhoneNumber: (number: string) => void;
+  setPhoneNumber: (phoneNumber: string) => void;
 }
 
 const defaultState: SessionState = {
   isLoggined: false,
   username: null,
   email: null,
+  phoneNumber: null,
 };
 
 const useSessionStore = create(
@@ -31,8 +33,8 @@ const useSessionStore = create(
       setUsername: (username: string) =>
         set((state) => ({ ...state, username })),
       setEmail: (email: string) => set((state) => ({ ...state, email })),
-      setPhoneNumber: (number: string) =>
-        set((state) => ({ ...state, number })),
+      setPhoneNumber: (phoneNumber: string) =>
+        set((state) => ({ ...state, phoneNumber })),
     }),
     { name: "userSessionStorage" }
   )

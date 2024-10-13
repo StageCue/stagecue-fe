@@ -188,7 +188,7 @@ const EditAccount = () => {
           <Description>
             지원한 이력이 있는 경우, 지원 정보에도 변경된 메일이 적용됩니다.
           </Description>
-          <Form>
+          <Form onSubmit={emailHandleSubmit(handleEmailSubmitClick)}>
             <Inputs>
               <ShortInputWrapper>
                 <CurrentValue>{sessionStore.email}</CurrentValue>
@@ -276,7 +276,6 @@ const EditAccount = () => {
               variation="solid"
               btnClass="primary"
               width={340}
-              onClick={handleEmailSubmitClick}
               disabled={!isVerifiedCode}
             >
               변경완료
@@ -288,10 +287,10 @@ const EditAccount = () => {
         <EditPhonNumberWrapper>
           <Text>휴대폰 번호</Text>
           <Description>인증번호는 SMS로 전송됩니다.</Description>
-          <Form>
+          <Form onSubmit={phoneHandleSubmit(handlePhoneSubmitClick)}>
             <Inputs>
               <ShortInputWrapper>
-                <CurrentValue>010-1234-5678</CurrentValue>
+                <CurrentValue>{sessionStore.phoneNumber}</CurrentValue>
                 <Button
                   variation="outlined"
                   btnClass="primary"
