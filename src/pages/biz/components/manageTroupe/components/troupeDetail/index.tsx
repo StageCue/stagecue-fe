@@ -1,6 +1,18 @@
-const TroupeDetail = () => {
+import styled from "styled-components";
+import CalendarSVG from "@assets/icons/calendar_xs.svg?react";
+import LinkSVG from "@assets/icons/link.svg?react";
+import LocationSVG from "@assets/icons/location.svg?react";
+import PersonSVG from "@assets/icons/person.svg?react";
+import MailSVG from "@assets/icons/mail.svg?react";
+import Button from "@/components/buttons/button";
+
+interface TroupeDetailInterface {
+  onClick: () => void;
+}
+
+const TroupeDetail = ({ onClick }: TroupeDetailInterface) => {
   return (
-    <ManageTroupeContainer>
+    <TroupeDetailContainer>
       <CoverImageWrapper>
         <CoverImageWrapper>
           <Cover />
@@ -18,7 +30,7 @@ const TroupeDetail = () => {
             height={40}
             fontSize={15}
             padding="9px 20px"
-            onClick={handleEditTroupe}
+            onClick={onClick}
           >
             극단 정보 수정
           </Button>
@@ -74,13 +86,13 @@ const TroupeDetail = () => {
           </SummaryColumn>
         </ContentWrapper>
       </Content>
-    </ManageTroupeContainer>
+    </TroupeDetailContainer>
   );
 };
 
 export default TroupeDetail;
 
-const ManageTroupeContainer = styled.div`
+const TroupeDetailContainer = styled.div`
   padding: 24px 40px;
 `;
 
