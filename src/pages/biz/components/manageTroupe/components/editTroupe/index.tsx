@@ -3,6 +3,14 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
 import TipSVG from "@assets/icons/tip.svg?react";
+import CompanySVG from "@assets/icons/company.svg?react";
+import { ChangeEvent, useRef, useState } from "react";
+import {
+  requestUploadCover,
+  requestUploadLogo,
+  requestUploadRegistration,
+} from "@/api/biz";
+import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
 
 interface EditTroupeInputs {
   name: string;
@@ -25,32 +33,77 @@ const EditTroupe = () => {
     handleSubmit,
     formState: { errors, dirtyFields },
     watch,
-    // setValue,
+    setValue,
     // trigger,
+    getValues,
   } = useForm<EditTroupeInputs>({ mode: "all" });
 
+  const inputLogoFileRef = useRef<HTMLInputElement | null>(null);
+
+  const [logoFile, setLogoFile] = useState<string>();
+  const [logoPreview, setLogoPreview] = useState<string>();
+  const [coverFile, setCoverFile] = useState<string>();
+  const [registrationFile, setRegistrationFile] = useState<string>();
+
   const [descriptionValue] = watch(["description"]);
+
+  const handleTroupeImageInputClick = () => {
+    if (inputLogoFileRef.current) {
+      inputLogoFileRef.current.click();
+    }
+  };
+
+  const onSubmitEdit = (data: EditTroupeInputs) => {
+    requestUploadFiles();
+  };
+
+  const requestUploadFiles = async () => {
+    if (logoFile) {
+      const url = await requestUploadLogo({ file: logoFile });
+      setValue("logoImage", url);
+    }
+    if (coverFile) {
+      const url = await requestUploadCover({ file: coverFile });
+      setValue("coverImage", url);
+    }
+    if (registrationFile) {
+      requestUploadRegistration({ file: registrationFile });
+    }
+  };
+
+  const handleLogoFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      const binaryLogo = await convertFileToBinaryData(file);
+      const url = convertFileToURL(file);
+      setLogoFile(binaryLogo);
+      setLogoPreview(url);
+    }
+  };
+
   return (
     <EditTroupeContainer>
-      <TitleWrapper>
-        <Title>
-          <Text>극단 소개 등록</Text>
-          <SubText>
-            <RedDot /> 표시는 필수 입력 항목입니다.
-          </SubText>
-        </Title>
-        <Button
-          variation="solid"
-          btnClass="primary"
-          width={67}
-          height={40}
-          fontSize={15}
-          padding="9px 20px"
-        >
-          저장
-        </Button>
-      </TitleWrapper>
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmitEdit)}>
+        <TitleWrapper>
+          <Title>
+            <Text>극단 소개 등록</Text>
+            <SubText>
+              <RedDot /> 표시는 필수 입력 항목입니다.
+            </SubText>
+          </Title>
+          <Button
+            variation="solid"
+            btnClass="primary"
+            width={67}
+            height={40}
+            fontSize={15}
+            padding="9px 20px"
+            type="submit"
+          >
+            저장
+          </Button>
+        </TitleWrapper>
         <ImageFileInputs>
           <ImageFileInputWrapper>
             <LabelWrapper>
@@ -61,6 +114,32 @@ const EditTroupe = () => {
               <TipSVG />
             </LabelWrapper>
             <FileGuide>극단 프로필을 설정해보세요.</FileGuide>
+            {logoPreview ? (
+              <PreviewImage src={logoPreview} />
+            ) : (
+              <PreviewEmptyWrapper>
+                <CompanySVG />
+              </PreviewEmptyWrapper>
+            )}
+            <FileInput
+              type="file"
+              {...register("logoImage", { required: true })}
+              ref={inputLogoFileRef}
+              accept="image/*"
+              onChange={handleLogoFileChange}
+            />
+            <Button
+              variation="outlined"
+              btnClass="assistive"
+              padding="7px 19px"
+              width={88}
+              height={32}
+              fontSize={13}
+              fontWeight={"var(--font-medium)"}
+              onClick={handleTroupeImageInputClick}
+            >
+              파일선택
+            </Button>
           </ImageFileInputWrapper>
           <ImageFileInputWrapper>
             <LabelWrapper>
@@ -76,15 +155,26 @@ const EditTroupe = () => {
               극단명
               <RequiedRedDot />
             </RequiredLabel>
-            <HalfInput {...register("name", { required: true })} />
+            <HalfInput
+              {...register("name", { required: true })}
+              type="text"
+              $isDirty={Boolean(dirtyFields.email)}
+              $isError={Boolean(errors.name)}
+            />
           </InputWrapper>
           <InputWrapper>
             <RequiredLabel>
               설립일자
               <RequiedRedDot />
             </RequiredLabel>
-            <WithIconInputWrapper>
-              <WithIconHalfInput />
+            <WithIconInputWrapper
+              $isDirty={Boolean(dirtyFields.publishDate)}
+              $isError={Boolean(errors.publishDate)}
+            >
+              <WithIconHalfInput
+                {...register("publishDate", { required: true })}
+                type="date"
+              />
               <CalendarSVG />
             </WithIconInputWrapper>
           </InputWrapper>
@@ -94,7 +184,10 @@ const EditTroupe = () => {
             극단소개
             <RequiedRedDot />
           </RequiredLabel>
-          <TextAreaWrapper>
+          <TextAreaWrapper
+            $isDirty={Boolean(dirtyFields.description)}
+            $isError={Boolean(errors.description)}
+          >
             <TextAreaInput
               {...register("description", { required: true, maxLength: 3000 })}
               placeholder="극단 소개글을 입력해주세요"
@@ -108,11 +201,21 @@ const EditTroupe = () => {
             <RequiedRedDot />
           </RequiredLabel>
           <FakeInput>클릭해서 주소를 검색해주세요.</FakeInput>
-          <Input />
+          <Input
+            {...register("addressDetail")}
+            type="text"
+            $isDirty={Boolean(dirtyFields.addressDetail)}
+            $isError={Boolean(errors.addressDetail)}
+          />
         </InputWrapper>
         <InputWrapper>
           <Label>사업자 등록 번호</Label>
-          <Input />
+          <Input
+            {...register("registrationNumber")}
+            type="text"
+            $isDirty={Boolean(dirtyFields.registrationNumber)}
+            $isError={Boolean(errors.registrationNumber)}
+          />
         </InputWrapper>
         <InputWrapper>
           <Label>사업자 등록증</Label>
@@ -140,26 +243,42 @@ const EditTroupe = () => {
               담당자 이름
               <RequiedRedDot />
             </RequiredLabel>
-            <HalfInput />
+            <HalfInput
+              {...register("picName", { required: true })}
+              $isDirty={Boolean(dirtyFields.picName)}
+              $isError={Boolean(errors.picName)}
+            />
           </InputWrapper>
           <InputWrapper>
             <RequiredLabel>
               담당자 연락처
               <RequiedRedDot />
             </RequiredLabel>
-            <HalfInput />
+            <HalfInput
+              {...register("picCell", { required: true })}
+              $isDirty={Boolean(dirtyFields.picCell)}
+              $isError={Boolean(errors.picCell)}
+            />
           </InputWrapper>
         </TwoInputWrapper>
         <InputWrapper>
           <Label>극단 이메일</Label>
-          <Input />
+          <Input
+            {...register("email")}
+            $isDirty={Boolean(dirtyFields.email)}
+            $isError={Boolean(errors.email)}
+          />
           <FileGuide>
             유저 문의, 답변 등에 사용할 극단 공식 이메일 정보를 입력해주세요
           </FileGuide>
         </InputWrapper>
         <InputWrapper>
           <Label>극단 웹사이트</Label>
-          <Input />
+          <Input
+            {...register("website")}
+            $isDirty={Boolean(dirtyFields.website)}
+            $isError={Boolean(errors.website)}
+          />
           <FileGuide>
             홈페이지, SNS 페이지, Youtube등 극단정보가 담긴 홍보 웹사이트 정보를
             입력해주세요.
@@ -271,7 +390,10 @@ const FakeInput = styled.div`
   color: #dadada;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{
+  $isDirty: boolean;
+  $isError: boolean;
+}>`
   width: 692px;
   height: 48px;
   padding: 12px 16px;
@@ -280,7 +402,12 @@ const Input = styled.input`
   line-height: 162.5%;
   letter-spacing: 0.57%;
   color: #171719;
-  border: 1px solid #e0e0e2;
+  border: ${({ $isDirty, $isError }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0E2"};
   outline: none;
 
   ::placeholder {
@@ -315,7 +442,7 @@ const WithBtnInput = styled.input`
   }
 `;
 
-const HalfInput = styled.input`
+const HalfInput = styled.input<{ $isDirty: boolean; $isError: boolean }>`
   width: 340px;
   height: 48px;
   padding: 12px 16px;
@@ -324,7 +451,12 @@ const HalfInput = styled.input`
   line-height: 162.5%;
   letter-spacing: 0.57%;
   color: #171719;
-  border: 1px solid #e0e0e2;
+  border: ${({ $isDirty, $isError }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0E2"};
   outline: none;
 
   ::placeholder {
@@ -335,14 +467,22 @@ const HalfInput = styled.input`
   }
 `;
 
-const WithIconInputWrapper = styled.div`
+const WithIconInputWrapper = styled.div<{
+  $isDirty: boolean;
+  $isError: boolean;
+}>`
   width: 340px;
   height: 48px;
   padding: 12px 16px;
   border-radius: 10px;
   display: flex;
   gap: 12px;
-  border: 1px solid #e0e0e2;
+  border: ${({ $isDirty, $isError }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0E2"};
 `;
 
 const WithIconHalfInput = styled.input`
@@ -352,7 +492,10 @@ const WithIconHalfInput = styled.input`
   outline: none;
 `;
 
-const TextAreaWrapper = styled.div`
+const TextAreaWrapper = styled.div<{
+  $isDirty: boolean;
+  $isError: boolean;
+}>`
   width: 692px;
   height: 200px;
   border: 1px solid #e0e0e2;
@@ -415,4 +558,20 @@ const LabelWrapper = styled.div`
   gap: 8px;
   align-items: center;
   width: 160px;
+`;
+
+const PreviewEmptyWrapper = styled.div`
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+`;
+
+const PreviewImage = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+`;
+
+const FileInput = styled.input`
+  display: none;
 `;
