@@ -6,11 +6,17 @@ import TipSVG from "@assets/icons/tip.svg?react";
 import CompanySVG from "@assets/icons/company.svg?react";
 import { ChangeEvent, useRef, useState } from "react";
 import {
+  requestEditTroupe,
   requestUploadCover,
   requestUploadLogo,
   requestUploadRegistration,
 } from "@/api/biz";
-import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
+import {
+  convertFileToBinaryData,
+  convertFileToURL,
+  seperateFileNameFromPath,
+} from "@/utils/file";
+import { useDaumPostcodePopup } from "react-daum-postcode";
 
 interface EditTroupeInputs {
   name: string;
@@ -19,12 +25,13 @@ interface EditTroupeInputs {
   address: string;
   addressDetail: string;
   registrationNumber: string;
+  registrationFile: string;
   picName: string;
   picCell: string;
   email: string;
   website: string;
-  logoImage: string;
-  coverImage: string;
+  logoImg: string;
+  coverImg: string;
 }
 
 const EditTroupe = () => {
@@ -38,34 +45,57 @@ const EditTroupe = () => {
     getValues,
   } = useForm<EditTroupeInputs>({ mode: "all" });
 
+  const open = useDaumPostcodePopup();
+
   const inputLogoFileRef = useRef<HTMLInputElement | null>(null);
+  const inputCoverFileRef = useRef<HTMLInputElement | null>(null);
+  const inputRegistrationFileRef = useRef<HTMLInputElement | null>(null);
 
   const [logoFile, setLogoFile] = useState<string>();
   const [logoPreview, setLogoPreview] = useState<string>();
   const [coverFile, setCoverFile] = useState<string>();
   const [registrationFile, setRegistrationFile] = useState<string>();
+  const [regstratironFileName, setRegistrationFileName] = useState<string>();
 
-  const [descriptionValue] = watch(["description"]);
+  const [descriptionValue, addressValue] = watch(["description", "address"]);
 
-  const handleTroupeImageInputClick = () => {
+  const handleLogoInputClick = () => {
     if (inputLogoFileRef.current) {
       inputLogoFileRef.current.click();
     }
   };
 
-  const onSubmitEdit = (data: EditTroupeInputs) => {
-    requestUploadFiles();
+  const handleCoverInputClick = () => {
+    if (inputCoverFileRef.current) {
+      inputCoverFileRef.current.click();
+    }
+  };
+
+  const handleRegistrationInputClick = () => {
+    if (inputRegistrationFileRef.current) {
+      inputRegistrationFileRef.current.click();
+    }
+  };
+
+  const onSubmitEdit = async (data: EditTroupeInputs) => {
+    await requestUploadFiles();
+
+    const res = await requestEditTroupe(data);
+
+    console.log(res);
   };
 
   const requestUploadFiles = async () => {
     if (logoFile) {
       const url = await requestUploadLogo({ file: logoFile });
-      setValue("logoImage", url);
+      setValue("logoImg", url);
     }
+
     if (coverFile) {
       const url = await requestUploadCover({ file: coverFile });
-      setValue("coverImage", url);
+      setValue("coverImg", url);
     }
+
     if (registrationFile) {
       requestUploadRegistration({ file: registrationFile });
     }
@@ -75,11 +105,59 @@ const EditTroupe = () => {
     const file = event.target.files?.[0];
 
     if (file) {
-      const binaryLogo = await convertFileToBinaryData(file);
+      const binaryFile = await convertFileToBinaryData(file);
       const url = convertFileToURL(file);
-      setLogoFile(binaryLogo);
+      setLogoFile(binaryFile);
       setLogoPreview(url);
     }
+  };
+
+  const handleCoverFileChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const binaryFile = await convertFileToBinaryData(file);
+
+      setCoverFile(binaryFile);
+    }
+  };
+
+  const handleRegistrationFileChange = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    const path = event.target.value;
+
+    if (file) {
+      const binaryFile = await convertFileToBinaryData(file);
+      const fileName = seperateFileNameFromPath(path);
+      console.log(fileName);
+      setRegistrationFile(binaryFile);
+      setRegistrationFileName(fileName);
+    }
+  };
+
+  const handleAddressComplete = (data: any) => {
+    let fullAddress = data.address;
+    let extraAddress = "";
+
+    if (data.addressType === "R") {
+      if (data.bname !== "") {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== "") {
+        extraAddress +=
+          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      }
+      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+    }
+
+    setValue("address", fullAddress);
+  };
+
+  const handleAddressInputClick = () => {
+    open({ onComplete: handleAddressComplete });
   };
 
   return (
@@ -123,7 +201,7 @@ const EditTroupe = () => {
             )}
             <FileInput
               type="file"
-              {...register("logoImage", { required: true })}
+              {...register("logoImg", { required: true })}
               ref={inputLogoFileRef}
               accept="image/*"
               onChange={handleLogoFileChange}
@@ -136,7 +214,7 @@ const EditTroupe = () => {
               height={32}
               fontSize={13}
               fontWeight={"var(--font-medium)"}
-              onClick={handleTroupeImageInputClick}
+              onClick={handleLogoInputClick}
             >
               파일선택
             </Button>
@@ -146,7 +224,26 @@ const EditTroupe = () => {
               <Label>커버 이미지</Label>
               <TipSVG />
             </LabelWrapper>
-            <FileGuide>극단 프로필을 설정해보세요.</FileGuide>
+            <FileGuide>극단을 표현하는 이미지를 설정해보세요.</FileGuide>
+            <FileInput
+              type="file"
+              {...register("coverImg")}
+              ref={inputCoverFileRef}
+              accept="image/*"
+              onChange={handleCoverFileChange}
+            />
+            <Button
+              variation="outlined"
+              btnClass="assistive"
+              padding="7px 19px"
+              width={88}
+              height={32}
+              fontSize={13}
+              fontWeight={"var(--font-medium)"}
+              onClick={handleCoverInputClick}
+            >
+              파일선택
+            </Button>
           </ImageFileInputWrapper>
         </ImageFileInputs>
         <TwoInputWrapper>
@@ -200,7 +297,12 @@ const EditTroupe = () => {
             극단 위치
             <RequiedRedDot />
           </RequiredLabel>
-          <FakeInput>클릭해서 주소를 검색해주세요.</FakeInput>
+          <FakeInput
+            onClick={handleAddressInputClick}
+            $isDirty={Boolean(addressValue)}
+          >
+            {addressValue || "클릭해서 주소를 검색해주세요."}
+          </FakeInput>
           <Input
             {...register("addressDetail")}
             type="text"
@@ -220,7 +322,16 @@ const EditTroupe = () => {
         <InputWrapper>
           <Label>사업자 등록증</Label>
           <WithBtnInputWrapper>
-            <WithBtnInput />
+            <FakeWithBtnInput $isFileUploaded={Boolean(registrationFile)}>
+              {regstratironFileName}
+            </FakeWithBtnInput>
+            <FileInput
+              type="file"
+              {...register("registrationFile")}
+              ref={inputRegistrationFileRef}
+              accept="image/*, .pdf"
+              onChange={handleRegistrationFileChange}
+            />
             <Button
               variation="outlined"
               btnClass="primary"
@@ -230,6 +341,7 @@ const EditTroupe = () => {
               padding="12px 0px"
               letterSpacing={0.57}
               lineHeight={150}
+              onClick={handleRegistrationInputClick}
             >
               파일 선택
             </Button>
@@ -378,7 +490,7 @@ const InputWrapper = styled.div`
   gap: 8px;
 `;
 
-const FakeInput = styled.div`
+const FakeInput = styled.div<{ $isDirty: boolean }>`
   width: 692px;
   height: 48px;
   padding: 12px 16px;
@@ -386,8 +498,9 @@ const FakeInput = styled.div`
   font-size: 16px;
   line-height: 162.5%;
   letter-spacing: 0.57%;
-  border: 1px solid #e0e0e2;
-  color: #dadada;
+  border: ${({ $isDirty }) =>
+    $isDirty ? "1px solid #000000" : "1px solid #e0e0E2"};
+  color: ${({ $isDirty }) => ($isDirty ? "#171719;" : "#dadada;")};
 `;
 
 const Input = styled.input<{
@@ -423,7 +536,7 @@ const WithBtnInputWrapper = styled.div`
   gap: 12px;
 `;
 
-const WithBtnInput = styled.input`
+const FakeWithBtnInput = styled.div<{ $isFileUploaded: boolean }>`
   width: 520px;
   height: 48px;
   padding: 12px 16px;
@@ -431,15 +544,10 @@ const WithBtnInput = styled.input`
   font-size: 16px;
   line-height: 162.5%;
   letter-spacing: 0.57%;
-  color: #171719;
-  border: 1px solid #e0e0e2;
-
-  ::placeholder {
-    color: #dadada;
-    font-size: 16px;
-    line-height: 162.5%;
-    letter-spacing: 0.57%;
-  }
+  color: ${({ $isFileUploaded }) =>
+    $isFileUploaded ? "#171719;" : "#dadada;"};
+  border: ${({ $isFileUploaded }) =>
+    $isFileUploaded ? "1px solid #000000;" : "1px solid #e0e0e2;"};
 `;
 
 const HalfInput = styled.input<{ $isDirty: boolean; $isError: boolean }>`

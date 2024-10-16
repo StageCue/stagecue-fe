@@ -20,6 +20,22 @@ interface ReqUploadImage {
   file: string;
 }
 
+interface ReqEditTroupeData {
+  logoImg: string;
+  coverImg: string;
+  name: string;
+  publishDate: string;
+  description: string;
+  address: string;
+  addressDetail: string;
+  registrationNumber: string;
+  registrationFile: string;
+  picName: string;
+  picCell: string;
+  email: string;
+  website: string;
+}
+
 export const requestApplications = ({
   limit,
   offset,
@@ -66,6 +82,16 @@ export const requestUploadRegistration = (data: ReqUploadImage) => {
   const res = request({
     method: "put",
     endpoint: "biz/troupes/info/upload-registration",
+    data,
+  });
+
+  return res;
+};
+
+export const requestEditTroupe = (data: ReqEditTroupeData) => {
+  const res = request({
+    method: "put",
+    endpoint: "biz/troupes/info",
     data,
   });
 
