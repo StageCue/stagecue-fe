@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import TroupeDetail from "./components/troupeDetail";
-import EditTroupe from "./components/\beditTroupe";
+import EditTroupe from "./components/editTroupe";
 import { requestTroupeInfo } from "@/api/biz";
 import Button from "@/components/buttons/button";
-import { useNavigate } from "react-router-dom";
 
 export interface TroupeInfo {
   name: "string";
