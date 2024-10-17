@@ -5,12 +5,14 @@ import LocationSVG from "@assets/icons/location.svg?react";
 import PersonSVG from "@assets/icons/person.svg?react";
 import MailSVG from "@assets/icons/mail.svg?react";
 import Button from "@/components/buttons/button";
+import { TroupeInfo } from "../..";
 
 interface TroupeDetailInterface {
   onClick: () => void;
+  troupe: TroupeInfo;
 }
 
-const TroupeDetail = ({ onClick }: TroupeDetailInterface) => {
+const TroupeDetail = ({ onClick, troupe }: TroupeDetailInterface) => {
   return (
     <TroupeDetailContainer>
       <CoverImageWrapper>
@@ -38,10 +40,10 @@ const TroupeDetail = ({ onClick }: TroupeDetailInterface) => {
         <ContentWrapper>
           <TextColumn>
             <TextTitleWrapper>
-              <Title>대충 그냥 긴 극단이름예시</Title>
+              <Title>{troupe.name}</Title>
               <FollowerWrapper>
                 <FollowerText>팔로워</FollowerText>
-                <FollowerValue>1K</FollowerValue>
+                <FollowerValue>{troupe.followerCount}</FollowerValue>
               </FollowerWrapper>
             </TextTitleWrapper>
             <Description>소개 내용</Description>
@@ -52,21 +54,21 @@ const TroupeDetail = ({ onClick }: TroupeDetailInterface) => {
                 <CalendarSVG />
                 극단 설립일
               </Property>
-              <Value>2018. 07. 25</Value>
+              <Value>{troupe.publishDate}</Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
                 <LinkSVG />
                 극단 웹사이트
               </Property>
-              <Value>2018. 07. 25</Value>
+              <Value>{troupe.website}</Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
                 <LocationSVG />
                 극단 위치
               </Property>
-              <Value>2018. 07. 25</Value>
+              <Value>{troupe.address}</Value>
             </SummaryPropertyWrapper>
             <Divider />
             <SummaryPropertyWrapper>
@@ -74,14 +76,14 @@ const TroupeDetail = ({ onClick }: TroupeDetailInterface) => {
                 <PersonSVG />
                 담당자 연락처
               </Property>
-              <Value>2018. 07. 25</Value>
+              <Value>{troupe.picCell}</Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
                 <MailSVG />
                 극단 이메일
               </Property>
-              <Value>2018. 07. 25</Value>
+              <Value>{troupe.email}</Value>
             </SummaryPropertyWrapper>
           </SummaryColumn>
         </ContentWrapper>

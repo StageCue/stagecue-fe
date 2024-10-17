@@ -4,11 +4,26 @@ import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import StarSVG from "@assets/icons/star.svg?react";
 import CaretSVG from "@assets/icons/caret_down.svg?react";
 import { useState } from "react";
-// import NoPost from "./components/noPost";
+import RecruitRow from "./components/recruitRow";
+import NoPost from "./components/noPost";
 // import RadioSVG from "@assets/icons/radio_s.svg?react";
 // import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
 
-const Table = () => {
+interface Recruit {
+  id: number;
+  isFavorite: boolean;
+  title: string;
+  applyCount: number;
+  status: string;
+  recruitEnd: string;
+}
+
+interface TableProps {
+  recruits: Recruit[];
+  onClickCreateRecruit: () => void;
+}
+
+const Table = ({ recruits, onClickCreateRecruit }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   // const [isGenderFilterShowing, setIsGenderFilterShowing] = useState(false);
   // const [selectedGender, setSelectedGender] = useState("남성");
@@ -61,20 +76,20 @@ const Table = () => {
         </StateColumn>
       </Header>
       <Body>
-        <Row>
-          <CheckboxInRow>
-            <CheckIconWrapper>
-              <CheckboxSVG />
-            </CheckIconWrapper>
-            <StarIconWrapper>
-              <StarSVG />
-            </StarIconWrapper>
-          </CheckboxInRow>
-          <PostTitle>[연습실보유] 레미제라블 12기 공고</PostTitle>
-          <Applicant>24건</Applicant>
-          <Date>2024-08-14</Date>
-          <State>모집중</State>
-        </Row>
+        {/* {recruits?.map(
+          ({ title, id, isFavorite, applyCount, recruitEnd, status }) => (
+            <RecruitRow
+              key={id}
+              title={title}
+              id={id}
+              applyCount={applyCount}
+              recruitEnd={recruitEnd}
+              status={status}
+              isFavorite={isFavorite}
+            />
+          )
+        )} */}
+        <NoPost onClick={onClickCreateRecruit} />
       </Body>
     </TableContainer>
   );
@@ -198,53 +213,4 @@ const Row = styled.div`
   display: flex;
   padding: 6px 24px;
   gap: 16px;
-`;
-
-const CheckboxInRow = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 68px;
-  height: 36px;
-  padding: 8px;
-`;
-
-const PostTitle = styled.div`
-  display: flex;
-  align-items: center;
-  width: 564px;
-  height: 36px;
-`;
-
-const Applicant = styled.div`
-  display: flex;
-  align-items: center;
-  width: 120px;
-  height: 36px;
-`;
-
-const Date = styled.div`
-  display: flex;
-  align-items: center;
-  width: 120px;
-  height: 36px;
-`;
-
-const State = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100px;
-  height: 36px;
-`;
-
-const CheckIconWrapper = styled.div`
-  rect {
-    stroke: #e0e0e2;
-  }
-`;
-
-const StarIconWrapper = styled.div`
-  rect {
-    fill: #e0e0e2;
-  }
 `;

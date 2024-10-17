@@ -1,13 +1,11 @@
 import Button from "@/components/buttons/button";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-const NoPost = () => {
-  const navigate = useNavigate();
+interface NoPostProps {
+  onClick: () => void;
+}
 
-  const handleUploadPostClick = () => {
-    navigate("/biz/uploadpost");
-  };
+const NoPost = ({ onClick }: NoPostProps) => {
   return (
     <NoPostContainer>
       <TextWrapper>
@@ -23,7 +21,7 @@ const NoPost = () => {
         lineHeight={146.7}
         letterSpacing={0.96}
         padding="9px 20px"
-        onClick={handleUploadPostClick}
+        onClick={onClick}
       >
         모집 공고 올리기
       </Button>
@@ -43,7 +41,12 @@ const NoPostContainer = styled.div`
   gap: 24px;
 `;
 
-const TextWrapper = styled.div``;
+const TextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Text = styled.div`
   font-size: 16px;

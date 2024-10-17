@@ -4,9 +4,10 @@ import styled from "styled-components";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
 import TipSVG from "@assets/icons/tip.svg?react";
 import CompanySVG from "@assets/icons/company.svg?react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   requestEditTroupe,
+  requestTroupeEditInfo,
   requestUploadCover,
   requestUploadLogo,
   requestUploadRegistration,
@@ -17,6 +18,10 @@ import {
   seperateFileNameFromPath,
 } from "@/utils/file";
 import { useDaumPostcodePopup } from "react-daum-postcode";
+
+interface EditTroupeProps {
+  isInitial: boolean;
+}
 
 interface EditTroupeInputs {
   name: string;
@@ -34,7 +39,7 @@ interface EditTroupeInputs {
   coverImg: string;
 }
 
-const EditTroupe = () => {
+const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   const {
     register,
     handleSubmit,
@@ -59,6 +64,8 @@ const EditTroupe = () => {
 
   const [descriptionValue, addressValue] = watch(["description", "address"]);
 
+  const [editData, setEditData] = useState();
+
   const handleLogoInputClick = () => {
     if (inputLogoFileRef.current) {
       inputLogoFileRef.current.click();
@@ -81,8 +88,6 @@ const EditTroupe = () => {
     await requestUploadFiles();
 
     const res = await requestEditTroupe(data);
-
-    console.log(res);
   };
 
   const requestUploadFiles = async () => {
@@ -160,6 +165,44 @@ const EditTroupe = () => {
     open({ onComplete: handleAddressComplete });
   };
 
+  const getTroupeFormData = async () => {
+    const res = await requestTroupeEditInfo();
+
+    setEditData(res);
+    console.log(res);
+    const logoUrl = res.logImg;
+    const coverImg = res.coverImg;
+    const name = res.name;
+    const publishDate = res.publishDate;
+    const address = res.address;
+    const addressDetail = res.addressDetail;
+    const registrationNumber = res.regsistrationNumber;
+    const registrationFile = res.registrationFile;
+    const picName = res.picName;
+    const picCell = res.picCell;
+    const email = res.email;
+    const website = res.website;
+
+    setLogoPreview(`https://s3.stagecue.co.kr/stagecue${logoUrl}`);
+    setValue("name", name);
+    setValue("publishDate", publishDate.split("T")[0]);
+    setValue("address", address);
+    setValue("addressDetail", addressDetail);
+    setValue("registrationFile", registrationFile);
+    setValue("registrationNumber", registrationNumber);
+    setValue("website", website);
+    setValue("email", email);
+    setValue("picName", picName);
+    setValue("picCell", picCell);
+  };
+
+  useEffect(() => {
+    console.log(isInitial);
+    if (!isInitial) {
+      getTroupeFormData();
+    }
+  }, [isInitial]);
+
   return (
     <EditTroupeContainer>
       <Form onSubmit={handleSubmit(onSubmitEdit)}>
@@ -215,6 +258,7 @@ const EditTroupe = () => {
               fontSize={13}
               fontWeight={"var(--font-medium)"}
               onClick={handleLogoInputClick}
+              type="button"
             >
               파일선택
             </Button>
@@ -241,6 +285,7 @@ const EditTroupe = () => {
               fontSize={13}
               fontWeight={"var(--font-medium)"}
               onClick={handleCoverInputClick}
+              type="button"
             >
               파일선택
             </Button>
@@ -342,6 +387,7 @@ const EditTroupe = () => {
               letterSpacing={0.57}
               lineHeight={150}
               onClick={handleRegistrationInputClick}
+              type="button"
             >
               파일 선택
             </Button>

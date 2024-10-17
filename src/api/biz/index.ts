@@ -36,6 +36,11 @@ interface ReqEditTroupeData {
   website: string;
 }
 
+interface ReqRecruitsParams {
+  limit: number;
+  offset: number;
+}
+
 export const requestApplications = ({
   limit,
   offset,
@@ -93,6 +98,33 @@ export const requestEditTroupe = (data: ReqEditTroupeData) => {
     method: "put",
     endpoint: "biz/troupes/info",
     data,
+  });
+
+  return res;
+};
+
+export const requestTroupeInfo = () => {
+  const res = request({
+    method: "get",
+    endpoint: "biz/troupes/info",
+  });
+
+  return res;
+};
+
+export const requestTroupeEditInfo = () => {
+  const res = request({
+    method: "get",
+    endpoint: "biz/troupes/info/edit",
+  });
+
+  return res;
+};
+
+export const requestRecruits = ({ limit, offset }: ReqRecruitsParams) => {
+  const res = request({
+    method: "get",
+    endpoint: `biz/recruits?limit=${limit}&offset=${offset}`,
   });
 
   return res;
