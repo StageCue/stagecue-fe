@@ -1,6 +1,7 @@
 import Button from "@/components/buttons/button";
 import styled from "styled-components";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
+import CaretDownSVG from "@assets/icons/caret_down.svg?react";
 import { useForm } from "react-hook-form";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import DeleteSVG from "@assets/icons/delete_circle.svg?react";
@@ -47,11 +48,30 @@ const EditRecruit = () => {
     []
   );
 
+  const [isDaySelectOpen, setIsDaySelectOpen] = useState(false);
+  const [practiceDays, setPracticeDays] = useState([
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+  ]);
+
+  const [daysText, setDaysText] = useState("선택해주세요.");
+
+  const days = ["월", "화", "수", "목", "금", "토", "일"];
+
   const [introduceValue, addressValue, partsValue] = watch([
     "introduce",
     "practice.address",
     "recruitingParts",
   ]);
+
+  const handleDayInputClick = () => {
+    setIsDaySelectOpen((prev) => !prev);
+  };
 
   const handlePartsKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing) return;
@@ -102,7 +122,45 @@ const EditRecruit = () => {
     open({ onComplete: (data) => handleAddressComplete(data, input) });
   };
 
-  console.log(addressValue);
+  const handleDayClick = (index: number) => {
+    setPracticeDays((prevDays) => {
+      const updatedDays = [...prevDays];
+      updatedDays[index] = updatedDays[index] === "0" ? "1" : "0";
+      return updatedDays;
+    });
+  };
+
+  const handleDayResetClick = () => {
+    setPracticeDays(["0", "0", "0", "0", "0", "0", "0"]);
+  };
+
+  const getActiveDays = (daysArray: string[]): string => {
+    const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
+
+    return daysArray
+      .map((day, index) => (day === "1" ? daysOfWeek[index] : null))
+      .filter(Boolean)
+      .join(", ");
+  };
+
+  const daysArrayToDecimal = (daysArray: string[]): number => {
+    const binaryString = daysArray.join("");
+    return parseInt(binaryString, 2);
+  };
+
+  const handleApplyDayClick = () => {
+    const activeDays = getActiveDays(practiceDays);
+    console.log(activeDays);
+
+    if (activeDays) {
+      setDaysText(`매주 / ${activeDays}`);
+    } else {
+      setDaysText("선택해주세요.");
+    }
+
+    setValue("practice.dayOfWeek", daysArrayToDecimal(practiceDays));
+    setIsDaySelectOpen(false);
+  };
 
   return (
     <EditRecruitContainer>
@@ -223,8 +281,53 @@ const EditRecruit = () => {
               <RequiedRedDot />
             </RequiredLabel>
             <WithIconInputWrapper $isDirty={false} $isError={false}>
-              <WithIconHalfInput />
-              <CalendarSVG />
+              {daysText}
+              <IconWrapper onClick={handleDayInputClick}>
+                <CaretDownSVG />
+              </IconWrapper>
+              {isDaySelectOpen && (
+                <DaySelector>
+                  <DaysWrapper>
+                    {days.map((day, index) => (
+                      <Day
+                        $isSelected={practiceDays[index] === "1"}
+                        key={day}
+                        onClick={() => handleDayClick(index)}
+                      >
+                        {day}
+                      </Day>
+                    ))}
+                  </DaysWrapper>
+                  <SelelctorActionWrapper>
+                    <Button
+                      variation="text"
+                      btnClass="assistive"
+                      width={38}
+                      height={28}
+                      padding="0px"
+                      fontSize={14}
+                      lineHeight={142.9}
+                      letterSpacing={1.45}
+                      onClick={handleDayResetClick}
+                    >
+                      초기화
+                    </Button>
+                    <Button
+                      variation="text"
+                      btnClass="primary"
+                      width={25}
+                      height={28}
+                      padding="0px"
+                      fontSize={14}
+                      lineHeight={142.9}
+                      letterSpacing={1.45}
+                      onClick={handleApplyDayClick}
+                    >
+                      적용
+                    </Button>
+                  </SelelctorActionWrapper>
+                </DaySelector>
+              )}
             </WithIconInputWrapper>
           </InputWrapper>
         </PairInputWrapper>
@@ -479,11 +582,14 @@ const WithIconInputWrapper = styled.div<{
   $isDirty: boolean;
   $isError: boolean;
 }>`
+  position: relative;
   width: 340px;
   height: 48px;
   padding: 12px 16px;
   border-radius: 10px;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
   border: ${({ $isDirty, $isError }) =>
     $isError
@@ -646,4 +752,55 @@ const DeleteIconWrapper = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
+`;
+
+const IconWrapper = styled.div``;
+
+const DaySelector = styled.div`
+  position: absolute;
+  width: 340px;
+  height: 108px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  background-color: white;
+  bottom: -111px;
+  left: 0;
+  border-radius: 10px;
+`;
+
+const DaysWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 300px;
+  height: 32px;
+`;
+
+const Day = styled.div<{ $isSelected: boolean }>`
+  width: 40px;
+  height: 32px;
+  border: ${({ $isSelected }) =>
+    $isSelected ? "1px solid #B81716" : "1px solid #e1e2e4"};
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: var(--font-semibold);
+  line-height: 138.5%;
+  letter-spacing: 1.94%;
+  color: ${({ $isSelected }) =>
+    $isSelected ? " #B81716" : "1px solid #171719"};
+  cursor: pointer;
+  z-index: 200;
+`;
+
+const SelelctorActionWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
 `;
