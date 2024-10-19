@@ -64,8 +64,6 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
 
   const [descriptionValue, addressValue] = watch(["description", "address"]);
 
-  const [editData, setEditData] = useState();
-
   const handleLogoInputClick = () => {
     if (inputLogoFileRef.current) {
       inputLogoFileRef.current.click();
@@ -168,8 +166,6 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   const getTroupeFormData = async () => {
     const res = await requestTroupeEditInfo();
 
-    setEditData(res);
-    console.log(res);
     const logoUrl = res.logImg;
     const coverImg = res.coverImg;
     const name = res.name;
@@ -197,7 +193,6 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   };
 
   useEffect(() => {
-    console.log(isInitial);
     if (!isInitial) {
       getTroupeFormData();
     }
