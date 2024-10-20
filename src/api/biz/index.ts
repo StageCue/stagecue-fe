@@ -177,3 +177,9 @@ export const requestUploadRecruitImage = (data: ReqUploadImage) => {
 
   return res;
 };
+
+export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
+  const res = request({ method: "post", endpoint: "biz/recruits", data });
+
+  return res;
+};

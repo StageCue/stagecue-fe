@@ -12,6 +12,7 @@ import DeleteSVG from "@assets/icons/delete_circle.svg?react";
 import { ChangeEvent, useRef, useState } from "react";
 import { generateId } from "@/utils/dev";
 import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
+import { requestCreateRecruit, requestUploadRecruitImage } from "@/api/biz";
 
 interface EditRecruitInputs {
   title: string;
@@ -87,7 +88,27 @@ const EditRecruit = () => {
     "category",
   ]);
 
-  const onSubmitEditRecruit = () => {};
+  const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
+    await requestUploadImageFiles();
+
+    const res = await requestCreateRecruit(data);
+
+    console.log(res);
+  };
+
+  const requestUploadImageFiles = async () => {
+    try {
+      const urls = await Promise.all(
+        imageFileArray.map(async (item) => {
+          const url = await requestUploadRecruitImage({ file: item.file });
+          return url;
+        })
+      );
+      setValue("recruitImages", urls);
+    } catch (error) {
+      console.error("Error uploading images:", error);
+    }
+  };
 
   const handleDayInputClick = () => {
     setIsDaySelectOpen((prev) => !prev);
@@ -221,6 +242,9 @@ const EditRecruit = () => {
 
   const handleMontlyFeeRadioClick = (isMontlyFee: boolean) => {
     setIsMontlyFee(isMontlyFee);
+    if (!isMontlyFee) {
+      setValue("monthlyFee", 0);
+    }
   };
 
   return (
