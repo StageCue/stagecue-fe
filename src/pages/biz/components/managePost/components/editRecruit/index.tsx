@@ -2,11 +2,14 @@ import Button from "@/components/buttons/button";
 import styled from "styled-components";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
 import CaretDownSVG from "@assets/icons/caret_down.svg?react";
+import PlusSVG from "@assets/icons/plus_circle.svg?react";
+import MinusSVG from "@assets/icons/minus.svg?react";
 import { useForm } from "react-hook-form";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import DeleteSVG from "@assets/icons/delete_circle.svg?react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { generateId } from "@/utils/dev";
+import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
 
 interface EditRecruitInputs {
   title: string;
@@ -42,13 +45,22 @@ const EditRecruit = () => {
     setValue,
   } = useForm<EditRecruitInputs>();
 
+  const inputImageFileRef = useRef<HTMLInputElement | null>(null);
+
   const open = useDaumPostcodePopup();
   const [part, setPart] = useState<string>("");
   const [partsArray, setPartsArray] = useState<{ value: string; id: string }[]>(
     []
   );
+  const [imageUrlArray, setImageUrlArray] = useState<
+    { url: string; id: string }[]
+  >([]);
+  const [imageFileArray, setImageFileArray] = useState<
+    { file: string; id: string }[]
+  >([]);
 
   const [isDaySelectOpen, setIsDaySelectOpen] = useState(false);
+  const [isCategorySelectOpen, setIsCategorySelectOpen] = useState(false);
   const [practiceDays, setPracticeDays] = useState([
     "0",
     "0",
@@ -58,19 +70,28 @@ const EditRecruit = () => {
     "0",
     "0",
   ]);
+  const category = ["연극", "뮤지컬", "드라마"];
 
   const [daysText, setDaysText] = useState("선택해주세요.");
+  const [categoryText, setCategoryText] = useState("선택해주세요.");
 
   const days = ["월", "화", "수", "목", "금", "토", "일"];
 
-  const [introduceValue, addressValue, partsValue] = watch([
+  const [introduceValue, addressValue, partsValue, categoryValue] = watch([
     "introduce",
     "practice.address",
     "recruitingParts",
+    "category",
   ]);
+
+  const onSubmitEditRecruit = () => {};
 
   const handleDayInputClick = () => {
     setIsDaySelectOpen((prev) => !prev);
+  };
+
+  const handleCategoryInputClick = () => {
+    setIsCategorySelectOpen((prev) => !prev);
   };
 
   const handlePartsKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -130,6 +151,12 @@ const EditRecruit = () => {
     });
   };
 
+  const handleCategoryClick = (category: string) => {
+    setValue("category", category);
+    setCategoryText(category);
+    setIsCategorySelectOpen(false);
+  };
+
   const handleDayResetClick = () => {
     setPracticeDays(["0", "0", "0", "0", "0", "0", "0"]);
   };
@@ -162,9 +189,36 @@ const EditRecruit = () => {
     setIsDaySelectOpen(false);
   };
 
+  const handleAddImageClick = () => {
+    if (inputImageFileRef.current) {
+      inputImageFileRef.current.click();
+    }
+  };
+
+  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      const binaryFile = await convertFileToBinaryData(file);
+      const url = convertFileToURL(file);
+
+      const id = generateId();
+
+      setImageUrlArray((prev) => [...prev, { url, id }]);
+      setImageFileArray((prev) => [...prev, { file: binaryFile, id }]);
+    }
+  };
+
+  const handleDeleteImageClick = (id: string) => {
+    setImageUrlArray((prevArray) => prevArray.filter((item) => item.id !== id));
+    setImageFileArray((prevArray) =>
+      prevArray.filter((item) => item.id !== id)
+    );
+  };
+
   return (
     <EditRecruitContainer>
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmitEditRecruit)}>
         <TitleWrapper>
           <Title>
             <Text>새 모집 공고 올리기</Text>
@@ -260,6 +314,30 @@ const EditRecruit = () => {
         </InputWrapper>
         <InputWrapper>
           <Label>공고 관련 이미지</Label>
+          <Images>
+            {imageUrlArray.map(({ url, id }) => (
+              <ImageWrapper key={id}>
+                <RecruitImage src={url} />
+                <AbsoluteIconWrapper onClick={() => handleDeleteImageClick(id)}>
+                  <MinusSVG />
+                </AbsoluteIconWrapper>
+              </ImageWrapper>
+            ))}
+            {imageUrlArray.length < 4 && (
+              <>
+                <FileInput
+                  ref={inputImageFileRef}
+                  type="file"
+                  onChange={handleImageChange}
+                />
+                <AddImageInput onClick={handleAddImageClick}>
+                  <IconWrapper>
+                    <PlusSVG />
+                  </IconWrapper>
+                </AddImageInput>
+              </>
+            )}
+          </Images>
         </InputWrapper>
         <PairInputWrapper>
           <InputWrapper>
@@ -362,7 +440,21 @@ const EditRecruit = () => {
               카테고리
               <RequiedRedDot />
             </RequiredLabel>
-            <ShortInput $isDirty={false} $isError={false} />
+            <WithIconShortInputWrapper $isDirty={false} $isError={false}>
+              {categoryText}
+              <IconWrapper onClick={handleCategoryInputClick}>
+                <CaretDownSVG />
+              </IconWrapper>
+              {isCategorySelectOpen && (
+                <CategorySelector>
+                  {category.map((item) => (
+                    <Category onClick={() => handleCategoryClick(item)}>
+                      {item}
+                    </Category>
+                  ))}
+                </CategorySelector>
+              )}
+            </WithIconShortInputWrapper>
           </InputWrapper>
           <InputWrapper>
             <RequiredLabel>
@@ -599,6 +691,27 @@ const WithIconInputWrapper = styled.div<{
       : "1px solid #e0e0E2"};
 `;
 
+const WithIconShortInputWrapper = styled.div<{
+  $isDirty: boolean;
+  $isError: boolean;
+}>`
+  position: relative;
+  width: 220px;
+  height: 48px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: ${({ $isDirty, $isError }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0E2"};
+`;
+
 const WithIconHalfInput = styled.input`
   width: 272px;
   height: 24px;
@@ -623,34 +736,6 @@ const Divider = styled.div`
   width: 100%;
   height: 1px;
   background-color: #e0e0e2;
-`;
-
-const ShortInput = styled.div<{
-  $isDirty: boolean;
-  $isError: boolean;
-}>`
-  width: 220px;
-  height: 48px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 16px;
-  line-height: 162.5%;
-  letter-spacing: 0.57%;
-  color: #171719;
-  border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
-  outline: none;
-
-  ::placeholder {
-    color: #dadada;
-    font-size: 16px;
-    line-height: 162.5%;
-    letter-spacing: 0.57%;
-  }
 `;
 
 const MiddleInput = styled.input<{
@@ -754,7 +839,9 @@ const DeleteIconWrapper = styled.div`
   align-items: center;
 `;
 
-const IconWrapper = styled.div``;
+const IconWrapper = styled.div`
+  cursor: pointer;
+`;
 
 const DaySelector = styled.div`
   position: absolute;
@@ -803,4 +890,78 @@ const SelelctorActionWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+`;
+
+const CategorySelector = styled.div`
+  position: absolute;
+  width: 220px;
+  height: 124px;
+  border-radius: 10px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  z-index: 200;
+  left: 0;
+  bottom: -128px;
+`;
+
+const Category = styled.div`
+  width: 188px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
+  color: #858688;
+  cursor: pointer;
+`;
+
+const AddImageInput = styled.div`
+  width: 160px;
+  height: 240px;
+  border-radius: 8px;
+  background-color: #f4f4f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const Images = styled.div`
+  width: 692px;
+  height: 240px;
+  display: flex;
+  gap: 17px;
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+`;
+
+const RecruitImage = styled.img`
+  width: 160px;
+  height: 240px;
+  border-radius: 8px;
+`;
+
+const AbsoluteIconWrapper = styled.div`
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  background-color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 `;

@@ -41,6 +41,31 @@ interface ReqRecruitsParams {
   offset: number;
 }
 
+interface ReqEditRecruitParams {
+  title: string;
+  introduce: string;
+  recruitEnd: string;
+  recruitingParts: string[];
+  monthlyFee: number;
+  artworkName: string;
+  category: string;
+  recruitStatus: string;
+  recruitImages: string[];
+  practice: {
+    start: string;
+    end: string;
+    dayOfWeek: number;
+    address: string;
+    addressDetail: string;
+  };
+  stage: {
+    start: string;
+    end: string;
+    address: string;
+    addressDetail: string;
+  };
+}
+
 export const requestApplications = ({
   limit,
   offset,
@@ -125,6 +150,29 @@ export const requestRecruits = ({ limit, offset }: ReqRecruitsParams) => {
   const res = request({
     method: "get",
     endpoint: `biz/recruits?limit=${limit}&offset=${offset}`,
+  });
+
+  return res;
+};
+
+export const requestEditRecruit = (
+  data: ReqEditRecruitParams,
+  recruitId: string
+) => {
+  const res = request({
+    method: "put",
+    endpoint: `biz/recruits?recruitId=${recruitId}`,
+    data,
+  });
+
+  return res;
+};
+
+export const requestUploadRecruitImage = (data: ReqUploadImage) => {
+  const res = request({
+    method: "put",
+    endpoint: "biz/recruits/images",
+    data,
   });
 
   return res;
