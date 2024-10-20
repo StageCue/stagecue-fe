@@ -4,6 +4,8 @@ import CalendarSVG from "@assets/icons/calendar.svg?react";
 import CaretDownSVG from "@assets/icons/caret_down.svg?react";
 import PlusSVG from "@assets/icons/plus_circle.svg?react";
 import MinusSVG from "@assets/icons/minus.svg?react";
+import RadioSVG from "@assets/icons/radio.svg?react";
+import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
 import { useForm } from "react-hook-form";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import DeleteSVG from "@assets/icons/delete_circle.svg?react";
@@ -49,6 +51,7 @@ const EditRecruit = () => {
 
   const open = useDaumPostcodePopup();
   const [part, setPart] = useState<string>("");
+  const [isMontlyFee, setIsMontlyFee] = useState<boolean>(false);
   const [partsArray, setPartsArray] = useState<{ value: string; id: string }[]>(
     []
   );
@@ -214,6 +217,10 @@ const EditRecruit = () => {
     setImageFileArray((prevArray) =>
       prevArray.filter((item) => item.id !== id)
     );
+  };
+
+  const handleMontlyFeeRadioClick = (isMontlyFee: boolean) => {
+    setIsMontlyFee(isMontlyFee);
   };
 
   return (
@@ -431,6 +438,24 @@ const EditRecruit = () => {
             월회비
             <RequiedRedDot />
           </RequiredLabel>
+
+          <RadioInputs>
+            <RadioInputWrapper onClick={() => handleMontlyFeeRadioClick(false)}>
+              {!isMontlyFee ? <RadioCheckedSVG /> : <RadioSVG />}
+              회비가 없어요
+            </RadioInputWrapper>
+            <WithTextInputWrapper>
+              <RadioInputWrapper
+                onClick={() => handleMontlyFeeRadioClick(true)}
+              >
+                {isMontlyFee ? <RadioCheckedSVG /> : <RadioSVG />}
+                회비가 있어요
+              </RadioInputWrapper>
+              <FeeInputWrapper $isDirty={false} $isError={false}>
+                <FeeInput />원
+              </FeeInputWrapper>
+            </WithTextInputWrapper>
+          </RadioInputs>
         </InputWrapper>
         <Divider />
         <MiddleTitle>작품정보</MiddleTitle>
@@ -964,4 +989,54 @@ const AbsoluteIconWrapper = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+`;
+
+const RadioInputs = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const RadioInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+`;
+
+const WithTextInputWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const FeeInputWrapper = styled.div<{ $isDirty: boolean; $isError: boolean }>`
+  width: 120px;
+  height: 48px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  color: ${({ $isDirty }) => ($isDirty ? " #171719;" : " #e0e0E2")};
+  border: ${({ $isDirty, $isError }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0E2"};
+
+  display: flex;
+  gap: 5px;
+`;
+
+const FeeInput = styled.input`
+  width: 70px;
+  height: 24px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  color: #171719;
+  text-align: end;
 `;
