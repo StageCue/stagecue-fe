@@ -43,6 +43,7 @@ const DefaultHeader = () => {
     setIsMymenuShowing(false);
   };
 
+  console.log(sessionStore.username);
   return (
     <DefaultHeaderContainer>
       <LeftSideWrapper>

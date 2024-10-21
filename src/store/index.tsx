@@ -8,12 +8,15 @@ interface SessionState {
   phoneNumber: string | null;
 }
 
+interface LoginParams {
+  username: string;
+  email: string;
+  phoneNumber: string;
+}
+
 interface SessionAction {
   logoutSession: () => void;
-  loginSession: () => void;
-  setUsername: (useranme: string) => void;
-  setEmail: (email: string) => void;
-  setPhoneNumber: (phoneNumber: string) => void;
+  loginSession: ({ username, email, phoneNumber }: LoginParams) => void;
 }
 
 const defaultState: SessionState = {
@@ -27,14 +30,28 @@ const useSessionStore = create(
   persist<SessionState & SessionAction>(
     (set) => ({
       ...defaultState,
-      logoutSession: () =>
-        set((state) => ({ ...state, isLoggined: false, username: null })),
-      loginSession: () => set((state) => ({ ...state, isLoggined: true })),
-      setUsername: (username: string) =>
-        set((state) => ({ ...state, username })),
-      setEmail: (email: string) => set((state) => ({ ...state, email })),
-      setPhoneNumber: (phoneNumber: string) =>
-        set((state) => ({ ...state, phoneNumber })),
+      logoutSession: () => {
+        set(() => ({
+          isLoggined: false,
+          username: null,
+          email: null,
+          phoneNumber: null,
+        }));
+        localStorage.clear();
+      },
+
+      loginSession: ({ username, phoneNumber, email }: LoginParams) => {
+        const accessToken = localStorage.getItem("accessToken");
+        if (accessToken) {
+          set((state) => ({
+            ...state,
+            isLoggined: true,
+            username,
+            phoneNumber,
+            email,
+          }));
+        }
+      },
     }),
     { name: "userSessionStorage" }
   )
