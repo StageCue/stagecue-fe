@@ -9,10 +9,15 @@ import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
 import { useForm } from "react-hook-form";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import DeleteSVG from "@assets/icons/delete_circle.svg?react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/dev";
 import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
 import { requestCreateRecruit, requestUploadRecruitImage } from "@/api/biz";
+
+interface EditRecruitProps {
+  isInitial: boolean;
+  id?: string;
+}
 
 interface EditRecruitInputs {
   title: string;
@@ -39,7 +44,7 @@ interface EditRecruitInputs {
   };
 }
 
-const EditRecruit = () => {
+const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
   const {
     register,
     handleSubmit,
@@ -246,6 +251,14 @@ const EditRecruit = () => {
       setValue("monthlyFee", 0);
     }
   };
+
+  const getRecruitFormData = async (id: string) => {};
+
+  useEffect(() => {
+    if (!isInitial) {
+      getRecruitFormData(id!);
+    }
+  }, [isInitial]);
 
   return (
     <EditRecruitContainer>
