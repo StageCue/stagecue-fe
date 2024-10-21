@@ -29,6 +29,7 @@ function App() {
           <Route path="mypage" element={<MyPage />} />
           <Route path="mypage/profiles/:id" element={<ProfileDetail />} />
           <Route path="mypage/profiles/:id/form" element={<ProfileForm />} />
+          <Route path="casts" element={<Search />} />
           <Route path="casts/:id" element={<Detail />} />
           <Route path="casts/applied" element={<Applied />} />
         </Route>

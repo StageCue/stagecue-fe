@@ -11,6 +11,8 @@ import ChevronDownSSVG from "@assets/icons/chebron_down_s.svg?react";
 import RadioSVG from "@assets/icons/radio.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
 import Button from "@components/buttons/button";
+import { requestCasts } from "@/api/cast";
+import Cast from "@/pages/home/components/cast";
 
 type genreType = "연극" | "뮤지컬" | "댄스";
 type zoneType =
@@ -31,17 +33,43 @@ const Search = () => {
   const maxThumbRef = useRef<MutableRefObject<HTMLDivElement | null>>();
   const rangeRef = useRef<MutableRefObject<HTMLDivElement | null>>();
 
+  const [casts, setCasts] = useState([]);
+
   const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
   const [selectedZone, setSelectedZone] = useState(["전체지역"]);
   const [selectedDayPicker, setSelectedDayPicker] =
     useState<dayPickerType>("주말");
+
   const [selectedDay, setSelectedDay] = useState<dayType[]>(["토", "일"]);
+  const [practiceDays, setPracticeDays] = useState([
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+  ]);
+
   const [selectedMinCost, setSelectedMinCost] = useState<string>("10,000");
   const [selectedMaxCost, setSelectedMaxCost] = useState<string>("500,000");
 
   const [isAppliedZone, setIsAppliedZone] = useState<boolean>(false);
   const [isAppliedDay, setIsAppliedDay] = useState<boolean>(false);
   const [isAppliedCost] = useState<boolean>(false);
+
+  const [appliedZone, setAppliedZone] = useState<string[]>(["전체지역"]);
+  const [appliedDay, setAppliedDay] = useState<string[]>([
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "1",
+  ]);
+
+  const [AppliedCost, setAppliedCost] = useState();
 
   const [isGenreMenuShowing, setIsGenreMenuShowing] = useState<boolean>(false);
   const [isZoneFilterShowing, setIsZoneFilterShowing] =
@@ -71,19 +99,47 @@ const Search = () => {
   };
 
   const handleGenreButtonClick = () => {
-    setIsGenreMenuShowing((curr: boolean) => !curr);
+    setIsGenreMenuShowing((curr: boolean) => {
+      if (!curr) {
+        setIsZoneFilterShowing(false);
+        setIsCostFilterShowing(false);
+        setIsDayFilterShowing(false);
+      }
+      return !curr;
+    });
   };
 
   const handleZoneButtonClick = () => {
-    setIsZoneFilterShowing((curr: boolean) => !curr);
+    setIsZoneFilterShowing((curr: boolean) => {
+      if (!curr) {
+        setIsGenreMenuShowing(false);
+        setIsCostFilterShowing(false);
+        setIsDayFilterShowing(false);
+      }
+      return !curr;
+    });
   };
 
   const handleDayButtonClick = () => {
-    setIsDayFilterShowing((curr: boolean) => !curr);
+    setIsDayFilterShowing((curr: boolean) => {
+      if (!curr) {
+        setIsZoneFilterShowing(false);
+        setIsCostFilterShowing(false);
+        setIsGenreMenuShowing(false);
+      }
+      return !curr;
+    });
   };
 
   const handleCostButtonClick = () => {
-    setIsCostFilterShowing((curr: boolean) => !curr);
+    setIsCostFilterShowing((curr: boolean) => {
+      if (!curr) {
+        setIsGenreMenuShowing(false);
+        setIsZoneFilterShowing(false);
+        setIsDayFilterShowing(false);
+      }
+      return !curr;
+    });
   };
 
   const handleZoneClick = (option: zoneType) => {
@@ -110,23 +166,26 @@ const Search = () => {
   const handleResetDayClick = () => {
     setSelectedDay(["토", "일"]);
     setIsAppliedDay(false);
+    setPracticeDays();
   };
 
   const handleApplyZoneClick = () => {
     setIsZoneFilterShowing(false);
     setIsAppliedZone(true);
+    setAppliedZone([...selectedZone]);
   };
 
   const handleApplyDayClick = () => {
     setIsDayFilterShowing(false);
     setIsAppliedDay(true);
+    setAppliedDay([...practiceDays]);
   };
 
   const handleClickDayPicker = (option: dayPickerType) => {
     setSelectedDayPicker(option);
   };
 
-  const handleDayClick = (option: dayType) => {
+  const handleDayClick = (option: dayType, index: number) => {
     setSelectedDay((prev) => {
       if (prev.includes(option)) {
         const newSelectedDay = prev.filter((day) => day !== option);
@@ -134,6 +193,12 @@ const Search = () => {
       } else {
         return [...prev, option];
       }
+    });
+
+    setPracticeDays((prevDays) => {
+      const updatedDays = [...prevDays];
+      updatedDays[index] = updatedDays[index] === "0" ? "1" : "0";
+      return updatedDays;
     });
   };
 
@@ -216,8 +281,34 @@ const Search = () => {
     }
   };
 
+  const getCasts = async () => {
+    const res = await requestCasts({
+      offset: "0",
+      limit: "16",
+      category: parsingCategory(selectedGenre),
+      zone,
+    });
+
+    setCasts(res.casts);
+  };
+
+  const parsingCategory = (category: string) => {
+    switch (category) {
+      case "연극":
+        return "TEATRE";
+      case "뮤지컬":
+        return "MUSICAL";
+      case "댄스":
+        return "DANCE";
+    }
+  };
+
+  useEffect(() => {
+    getCasts();
+  }, [selectedDay, selectedZone, selectedGenre, appliedDay]);
+
   return (
-    <HomeContainer>
+    <SearchContainer>
       <GenreWrapper>
         <SelectedGenre>{selectedGenre}</SelectedGenre>
         <SelectGenreBtn onClick={handleGenreButtonClick}>
@@ -236,9 +327,9 @@ const Search = () => {
       </GenreWrapper>
       <FilterWrapper>
         <ZoneFilterBtn onClick={handleZoneButtonClick} $isDirty={isAppliedZone}>
-          {selectedZone[0] === "전체지역"
+          {appliedZone[0] === "전체지역"
             ? "연습지역"
-            : `${selectedZone[0]} 외 ${selectedZone.length}`}
+            : `${appliedZone[0]} 외 ${appliedZone.length}`}
           <ChevronDownSSVG />
         </ZoneFilterBtn>
         <DayFilterBtn onClick={handleDayButtonClick} $isDirty={isAppliedDay}>
@@ -272,6 +363,7 @@ const Search = () => {
               letterSpacing={138.5}
               lineHeight={1.94}
               onClick={handleApplyZoneClick}
+              padding="7px 14px"
             >
               적용
             </Button>
@@ -297,10 +389,10 @@ const Search = () => {
               ))}
             </DayPickers>
             <Days>
-              {daysOptions.map((option) => (
+              {daysOptions.map((option, index) => (
                 <Day
                   key={option}
-                  onClick={() => handleDayClick(option)}
+                  onClick={() => handleDayClick(option, index)}
                   $isSelected={selectedDay.includes(option)}
                 >
                   {option}
@@ -318,6 +410,7 @@ const Search = () => {
               fontSize={13}
               letterSpacing={138.5}
               lineHeight={1.94}
+              padding="7px 14px"
               onClick={handleApplyDayClick}
             >
               적용
@@ -372,13 +465,35 @@ const Search = () => {
           </Filters>
         </FilterMenu>
       </FilterWrapper>
-    </HomeContainer>
+      <CastGrid>
+        {casts?.map(
+          ({
+            castId,
+            castTitle,
+            artworkName,
+            practiceLocation,
+            isScrapping,
+            thumbnail,
+          }) => (
+            <Cast
+              castId={castId}
+              castTitle={castTitle}
+              artworkName={artworkName}
+              practiceLocation={practiceLocation}
+              isScrapping={isScrapping}
+              thumbnail={thumbnail}
+            />
+          )
+        )}
+      </CastGrid>
+    </SearchContainer>
   );
 };
 
 export default Search;
 
-const HomeContainer = styled.div`
+const SearchContainer = styled.div`
+  width: 920px;
   height: 100%;
   min-height: inherit;
   display: flex;
@@ -445,7 +560,7 @@ const GenreOption = styled.div`
   letter-spacing: 0.57%;
 
   &:hover {
-    background-color: #007aff;
+    background-color: #fbf1f1;
     color: #b81716;
   }
 `;
@@ -456,6 +571,7 @@ const FilterWrapper = styled.div`
   align-items: center;
   gap: 6px;
   width: 100%;
+  margin-bottom: 40px;
 `;
 
 const ZoneFilterBtn = styled.div<{ $isDirty: boolean }>`
@@ -468,12 +584,8 @@ const ZoneFilterBtn = styled.div<{ $isDirty: boolean }>`
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  background-color: ${({ $isDirty }) => ($isDirty ? "black" : "white")};
-  color: ${({ $isDirty }) => ($isDirty ? "white" : "#171719")};
-
-  rect {
-    fill: ${({ $isDirty }) => ($isDirty ? "white" : "#171719")};
-  }
+  background-color: ${({ $isDirty }) => ($isDirty ? "#f4f4f5" : "white")};
+  color: #171719;
 `;
 
 const DayFilterBtn = styled.div<{ $isDirty: boolean }>`
@@ -486,12 +598,8 @@ const DayFilterBtn = styled.div<{ $isDirty: boolean }>`
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  background-color: ${({ $isDirty }) => ($isDirty ? "black" : "white")};
-  color: ${({ $isDirty }) => ($isDirty ? "white" : "#171719")};
-
-  rect {
-    fill: ${({ $isDirty }) => ($isDirty ? "white" : "#171719")};
-  }
+  background-color: ${({ $isDirty }) => ($isDirty ? "#f4f4f5" : "white")};
+  color: #171719;
 `;
 
 const CostFilterBtn = styled.div<{ $isDirty: boolean }>`
@@ -504,12 +612,8 @@ const CostFilterBtn = styled.div<{ $isDirty: boolean }>`
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  background-color: ${({ $isDirty }) => ($isDirty ? "black" : "white")};
-  color: ${({ $isDirty }) => ($isDirty ? "white" : "#171719")};
-
-  rect {
-    fill: ${({ $isDirty }) => ($isDirty ? "white" : "#171719")};
-  }
+  background-color: ${({ $isDirty }) => ($isDirty ? "#f4f4f5" : "white")};
+  color: #171719;
 `;
 
 const FilterMenu = styled.div<{ $isShowing: boolean }>`
@@ -539,8 +643,8 @@ const Chip = styled.div<{ $isSelected: boolean }>`
   border-radius: 1000px;
   border: ${({ $isSelected }) =>
     $isSelected ? "1px solid #B81716;" : "1px solid #70737c"};
-  background-color: ${({ $isSelected }) =>
-    $isSelected ? "#B81716" : "1px solid "};
+  background-color: ${({ $isSelected }) => ($isSelected ? "#f9ecec" : "white")};
+  color: ${({ $isSelected }) => ($isSelected ? "#B81716;" : "#171719")};
 
   display: flex;
   align-items: center;
@@ -761,4 +865,12 @@ const MaxThumb = styled.div`
   border-radius: 50%;
   right: 25%;
   transform: translate(15px, -10px);
+`;
+
+const CastGrid = styled.div`
+  display: grid;
+  width: 920px;
+  row-gap: 40px;
+  column-gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
 `;

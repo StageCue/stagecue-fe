@@ -13,7 +13,7 @@ const DefaultHeader = () => {
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
   const handlePostPageClick = () => {
-    navigate("/post");
+    navigate("/casts");
   };
 
   const handleLoginClick = () => {

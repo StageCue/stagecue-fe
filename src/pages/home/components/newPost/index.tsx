@@ -36,7 +36,7 @@ const NewPost = ({ casts }: NewPostProps) => {
         </Button>
       </TitleWrapper>
       <Casts>
-        {casts.map(
+        {casts?.map(
           ({
             castId,
             thumbnail,
