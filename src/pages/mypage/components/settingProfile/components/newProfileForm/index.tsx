@@ -1,14 +1,13 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import Button from "@/components/buttons/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SlashSVG from "@assets/icons/slash.svg?react";
 import EditSVG from "@assets/icons/edit.svg?react";
 import RequiredSVG from "@assets/icons/required_orange.svg?react";
 import TrashSVG from "@assets/icons/trash_lg.svg?react";
 import { useNavigate, useParams } from "react-router-dom";
-import { requestProfileDetail, requestSaveProfile } from "@/api/users";
-import { ProfileDetailData } from "../profileDetail";
+import { requestCreateProfile } from "@/api/users";
 import useSessionStore from "@/store";
 import ModalPortal from "@/components/modal/portal";
 import SubmitModal from "../modals/submitModal";
@@ -33,11 +32,9 @@ interface ExpInput {
   endDate: string;
 }
 
-const ProfileForm = () => {
+const NewProfileForm = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
-  const { id } = useParams();
-  const [detail, setDetail] = useState<ProfileDetailData>();
   const [isEditPersonalInfo, setIsEditPersonalInfo] = useState<boolean>(false);
   const [isEditIntroduce, setIsEditIntroduce] = useState<boolean>(false);
   const [selectedExpId, setSelectedExpId] = useState();
@@ -84,24 +81,6 @@ const ProfileForm = () => {
     "startDate",
     "endDate",
   ]);
-
-  const parseImagesUrl = (images: { url: string }[]) => {
-    return images.map(({ url }) => url);
-  };
-
-  const getProfileDetail = async (id: string) => {
-    const res = await requestProfileDetail(id);
-    console.log(res);
-    setDetail(res);
-    setValue("title", res.title);
-    setValue("birthday", res.birthday);
-    setValue("weight", res.weight);
-    setValue("height", res.height);
-    setValue("introduce", res.introduce);
-    setValue("experiences", res.experiences);
-    setValue("thumbnail", res.thumbnail);
-    setValue("images", parseImagesUrl(res.images));
-  };
 
   const handleInfoEditClick = (section: string) => {
     if (section === "personalInfo") {
@@ -151,16 +130,14 @@ const ProfileForm = () => {
 
   const handleConfirmClick = async (data: ProfileInput) => {
     setIsSubmitModalOpen(false);
-    const res = await requestSaveProfile({ ...data, isDefault: true }, id!);
-    console.log(res);
-    navigate(`/mypage/profiles/${id}`);
+    const res = await requestCreateProfile({ ...data, isDefault: true });
+    navigate(`/mypage/profiles/${res.id}`);
   };
 
   const handleCloseClick = async (data: ProfileInput) => {
     setIsSubmitModalOpen(false);
-    const res = await requestSaveProfile({ ...data, isDefault: false }, id!);
-    console.log(res);
-    navigate(`/mypage/profiles/${id}`);
+    const res = await requestCreateProfile({ ...data, isDefault: false });
+    navigate(`/mypage/profiles/${res.id}`);
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -172,12 +149,8 @@ const ProfileForm = () => {
     return value;
   };
 
-  useEffect(() => {
-    getProfileDetail(id!);
-  }, [id]);
-
   return (
-    <ProfileFormContainer>
+    <NewProfileFormContainer>
       {isSubmitModalOpen && (
         <ModalPortal>
           <SubmitModal
@@ -213,7 +186,7 @@ const ProfileForm = () => {
             <InfoBox>
               <BasicInfoWrapper>
                 <ThumbnailWrapper
-                  src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`}
+                //   src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`}
                 />
                 <PersonalInfoBox>
                   <EditIconAbsWrapper
@@ -254,7 +227,6 @@ const ProfileForm = () => {
                             <BodyInfoInput
                               {...register("weight", {
                                 required: true,
-                                value: detail?.weight,
                               })}
                               placeholder="몸무게"
                             />
@@ -531,13 +503,13 @@ const ProfileForm = () => {
           </InformationWrapper>
         </Body>
       </Form>
-    </ProfileFormContainer>
+    </NewProfileFormContainer>
   );
 };
 
-export default ProfileForm;
+export default NewProfileForm;
 
-const ProfileFormContainer = styled.div`
+const NewProfileFormContainer = styled.div`
   width: 100%;
   height: 100%;
   margin-bottom: 100px;
@@ -707,13 +679,11 @@ const ValueWrapper = styled.div`
 const ContactDataRow = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
   width: 100%;
 `;
 
 const ContactValueWrapper = styled.div`
   display: flex;
-  justify-content: start;
   gap: 12px;
 `;
 

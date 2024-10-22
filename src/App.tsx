@@ -18,6 +18,7 @@ import Detail from "./pages/post/detail";
 import Applied from "./pages/post/applied";
 import ProfileDetail from "./pages/mypage/components/settingProfile/components/profileDetail";
 import ProfileForm from "./pages/mypage/components/settingProfile/components/profileForm";
+import NewProfileForm from "./pages/mypage/components/settingProfile/components/newProfileForm";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="mypage" element={<MyPage />} />
           <Route path="mypage/profiles/:id" element={<ProfileDetail />} />
           <Route path="mypage/profiles/:id/form" element={<ProfileForm />} />
+          <Route path="mypage/profiles/form" element={<NewProfileForm />} />
           <Route path="casts" element={<Search />} />
           <Route path="casts/:id" element={<Detail />} />
           <Route path="casts/applied" element={<Applied />} />

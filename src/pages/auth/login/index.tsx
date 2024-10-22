@@ -24,10 +24,11 @@ const Login = () => {
     const res = await requestLogin(data);
 
     if (res.accessToken) {
+      console.log(res);
       sessionStore.loginSession({
         email: emailValue,
         username: res.username,
-        phoneNumber: res.phoneNumber,
+        phoneNumber: res.cell,
       });
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);

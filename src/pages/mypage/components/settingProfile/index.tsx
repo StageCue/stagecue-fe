@@ -20,6 +20,10 @@ const SettingProfile = () => {
     navigate(`profiles/${id}`);
   };
 
+  const handleCreateProfileClick = () => {
+    navigate("/mypage/profiles/form");
+  };
+
   useEffect(() => {
     getProfiles();
   }, []);
@@ -27,7 +31,13 @@ const SettingProfile = () => {
   return (
     <SettingProfileContainer>
       <CreateBtnWrapper>
-        <Button variation="solid" btnClass="primary" width={180} height={48}>
+        <Button
+          variation="solid"
+          btnClass="primary"
+          width={180}
+          height={48}
+          onClick={handleCreateProfileClick}
+        >
           새 프로필 생성하기
         </Button>
       </CreateBtnWrapper>

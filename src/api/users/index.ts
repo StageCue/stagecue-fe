@@ -235,3 +235,13 @@ export const requestDeleteAccount = async (
 
   return res;
 };
+
+export const requestCreateProfile = async (data: ReqChangeProfileData) => {
+  const res = await request({
+    method: "post",
+    endpoint: `users/profiles`,
+    data,
+  });
+
+  return res;
+};
