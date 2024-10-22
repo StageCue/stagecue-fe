@@ -1,15 +1,33 @@
 import styled from "styled-components";
 import SearchSVG from "@/assets/icons/search.svg?react";
+import { useForm } from "react-hook-form";
+import useSearchStore from "@/store/search";
+import { useNavigate } from "react-router-dom";
+
+interface SearchBarInput {
+  query: string | null;
+}
 
 const Searchbar = () => {
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<SearchBarInput>();
+  const { setSearchQuery } = useSearchStore();
+
+  const onSubmitQuery = (data: SearchBarInput) => {
+    setSearchQuery(data);
+    navigate("/casts");
+  };
+
   return (
     <SearchbarContainer>
-      <InputWrapper>
-        <Input placeholder="검색어를 입력해보세요!" />
-        <IconWrapper>
-          <SearchSVG />
-        </IconWrapper>
-      </InputWrapper>
+      <Form onSubmit={handleSubmit(onSubmitQuery)}>
+        <InputWrapper>
+          <Input {...register("query")} placeholder="검색어를 입력해보세요!" />
+          <IconWrapper type="submit">
+            <SearchSVG />
+          </IconWrapper>
+        </InputWrapper>
+      </Form>
     </SearchbarContainer>
   );
 };
@@ -44,6 +62,10 @@ const Input = styled.input`
   }
 `;
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.button`
   cursor: pointer;
+  border: none;
+  background-color: white;
 `;
+
+const Form = styled.form``;

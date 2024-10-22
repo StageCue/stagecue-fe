@@ -30,6 +30,7 @@ const useSessionStore = create(
   persist<SessionState & SessionAction>(
     (set) => ({
       ...defaultState,
+
       logoutSession: () => {
         set(() => ({
           isLoggined: false,

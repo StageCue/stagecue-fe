@@ -3,12 +3,12 @@ import request from "..";
 interface ReqCastsParams {
   limit: string;
   offset: string;
-  category?: "TEATRE" | "MUSICAL" | "DANCE";
-  location?: string;
-  dayOfWeek?: string;
+  category?: "THEATRE" | "MUSICAL" | "DANCE";
+  locations?: string;
+  daysOfWeek?: string;
   feeRange?: string;
-  orderBy?: "newest" | "popular" | "0";
-  query?: string;
+  orderBy?: "newest" | "popular";
+  query?: string | null;
 }
 
 interface ReqCastsDetailListParams {
@@ -22,6 +22,7 @@ interface ReqApplyCast {
 }
 
 export const requestCasts = async (data: ReqCastsParams) => {
+  console.log(data);
   const {
     limit = "10",
     offset = "0",
@@ -29,10 +30,12 @@ export const requestCasts = async (data: ReqCastsParams) => {
     category = "THEATRE",
     daysOfWeek = "0",
     query = "",
+    locations = "",
   } = data;
+
   const res = await request({
     method: "get",
-    endpoint: `casts?limit=${limit}&offset=${offset}&orderBy=${orderBy}`,
+    endpoint: `casts?limit=${limit}&offset=${offset}&orderBy=${orderBy}&category=${category}&daysOfWeek=${daysOfWeek}&query=${query}&locations=${locations}`,
   });
   return res;
 };

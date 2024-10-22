@@ -10,9 +10,12 @@ import ChevronDownSVG from "@assets/icons/chevron_down.svg?react";
 import ChevronDownSSVG from "@assets/icons/chebron_down_s.svg?react";
 import RadioSVG from "@assets/icons/radio.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
+import ChecklineSVG from "@assets/icons/checkline.svg?react";
+import ElipsisSVG from "@assets/icons/elipsis.svg?react";
 import Button from "@components/buttons/button";
 import { requestCasts } from "@/api/cast";
 import Cast from "@/pages/home/components/cast";
+import useSearchStore from "@/store/search";
 
 type genreType = "연극" | "뮤지컬" | "댄스";
 type zoneType =
@@ -26,12 +29,19 @@ type zoneType =
   | "제주"
   | "충청";
 type dayPickerType = "전체요일" | "주말" | "평일" | "";
-type dayType = "월" | "화" | "수" | "목" | "금" | "토" | "일";
 
 const Search = () => {
+  const { query } = useSearchStore();
+
   const minThumbRef = useRef<MutableRefObject<HTMLDivElement | null>>();
   const maxThumbRef = useRef<MutableRefObject<HTMLDivElement | null>>();
   const rangeRef = useRef<MutableRefObject<HTMLDivElement | null>>();
+
+  const popupMenuRef = useRef<HTMLDivElement | null>(null);
+  const genreButtonRef = useRef<HTMLDivElement | null>(null);
+  const zoneButtonRef = useRef<HTMLDivElement | null>(null);
+  const dayButtonRef = useRef<HTMLDivElement | null>(null);
+  const costButtonRef = useRef<HTMLDivElement | null>(null);
 
   const [casts, setCasts] = useState([]);
 
@@ -40,7 +50,6 @@ const Search = () => {
   const [selectedDayPicker, setSelectedDayPicker] =
     useState<dayPickerType>("주말");
 
-  const [selectedDay, setSelectedDay] = useState<dayType[]>(["토", "일"]);
   const [practiceDays, setPracticeDays] = useState([
     "0",
     "0",
@@ -78,6 +87,10 @@ const Search = () => {
   const [isCostFilterShowing, setIsCostFilterShowing] =
     useState<boolean>(false);
 
+  const [currentOrderBy, setCurrentOrderBy] = useState<"newest" | "popular">(
+    "newest"
+  );
+
   const genreOptions: genreType[] = ["연극", "뮤지컬", "댄스"];
   const zoneOptions: zoneType[] = [
     "전체지역",
@@ -91,7 +104,7 @@ const Search = () => {
     "충청",
   ];
   const dayPickerOptions: dayPickerType[] = ["전체요일", "주말", "평일"];
-  const daysOptions: dayType[] = ["월", "화", "수", "목", "금", "토", "일"];
+  const daysOptions = ["월", "화", "수", "목", "금", "토", "일"];
 
   const handleGenreOptionChange = (genre: genreType) => {
     setSelectedGenre(genre);
@@ -164,9 +177,8 @@ const Search = () => {
   };
 
   const handleResetDayClick = () => {
-    setSelectedDay(["토", "일"]);
     setIsAppliedDay(false);
-    setPracticeDays();
+    setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
   };
 
   const handleApplyZoneClick = () => {
@@ -185,16 +197,7 @@ const Search = () => {
     setSelectedDayPicker(option);
   };
 
-  const handleDayClick = (option: dayType, index: number) => {
-    setSelectedDay((prev) => {
-      if (prev.includes(option)) {
-        const newSelectedDay = prev.filter((day) => day !== option);
-        return newSelectedDay;
-      } else {
-        return [...prev, option];
-      }
-    });
-
+  const handleDayClick = (index: number) => {
     setPracticeDays((prevDays) => {
       const updatedDays = [...prevDays];
       updatedDays[index] = updatedDays[index] === "0" ? "1" : "0";
@@ -226,46 +229,49 @@ const Search = () => {
 
   useEffect(() => {
     if (selectedDayPicker === "주말") {
-      setSelectedDay(["토", "일"]);
+      setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
     }
     if (selectedDayPicker === "평일") {
-      setSelectedDay(["월", "화", "수", "목", "금"]);
+      setPracticeDays(["1", "1", "1", "1", "1", "0", "0"]);
     }
     if (selectedDayPicker === "전체요일") {
-      setSelectedDay(["월", "화", "수", "목", "금", "토", "일"]);
+      setPracticeDays(["1", "1", "1", "1", "1", "1", "1"]);
     }
   }, [selectedDayPicker]);
 
   useEffect(() => {
-    const normalDays: dayType[] = ["월", "화", "수", "목", "금"];
-    const weekend: dayType[] = ["토", "일"];
-    const allDays: dayType[] = ["월", "화", "수", "목", "금", "토", "일"];
-
     if (
-      normalDays.every((day: dayType) => selectedDay.includes(day)) &&
-      selectedDay.length === normalDays.length
+      practiceDays.every(
+        (day, index) => day === ["1", "1", "1", "1", "1", "0", "0"][index]
+      )
     ) {
       setSelectedDayPicker("평일");
     } else if (
-      weekend.every((day: dayType) => selectedDay.includes(day)) &&
-      selectedDay.length === weekend.length
+      practiceDays.every(
+        (day, index) => day === ["0", "0", "0", "0", "0", "1", "1"][index]
+      )
     ) {
       setSelectedDayPicker("주말");
     } else if (
-      allDays.every((day: dayType) => selectedDay.includes(day)) &&
-      selectedDay.length === allDays.length
+      practiceDays.every(
+        (day, index) => day === ["1", "1", "1", "1", "1", "1", "1"][index]
+      )
     ) {
       setSelectedDayPicker("전체요일");
     } else {
       setSelectedDayPicker("");
     }
-  }, [selectedDay]);
+  }, [practiceDays]);
 
   useEffect(() => {
-    if (selectedDay.length === 0) {
-      setSelectedDayPicker("주말");
+    if (
+      practiceDays.every(
+        (day, index) => day === ["0", "0", "0", "0", "0", "0", "0"][index]
+      )
+    ) {
+      setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
     }
-  }, [selectedDay]);
+  }, [practiceDays]);
 
   const updateThumbsAndRange = (minCost: string, maxCost: string) => {
     const minPercent = ((parseInt(minCost) - 10000) / (500000 - 10000)) * 100;
@@ -286,7 +292,9 @@ const Search = () => {
       offset: "0",
       limit: "16",
       category: parsingCategory(selectedGenre),
-      zone,
+      locations: appliedZone[0] === "전체지역" ? "" : appliedZone.join(";"),
+      orderBy: currentOrderBy,
+      query,
     });
 
     setCasts(res.casts);
@@ -295,7 +303,7 @@ const Search = () => {
   const parsingCategory = (category: string) => {
     switch (category) {
       case "연극":
-        return "TEATRE";
+        return "THEATRE";
       case "뮤지컬":
         return "MUSICAL";
       case "댄스":
@@ -303,168 +311,266 @@ const Search = () => {
     }
   };
 
+  const handleResetFilterClick = () => {
+    setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
+    setAppliedDay(["0", "0", "0", "0", "0", "1", "1"]);
+    setAppliedZone(["전체지역"]);
+    setSelectedZone(["전체지역"]);
+    setIsAppliedDay(false);
+    setIsAppliedZone(false);
+  };
+
+  const handleNewestClick = () => {
+    setCurrentOrderBy("newest");
+  };
+
+  const handlePopularClick = () => {
+    setCurrentOrderBy("popular");
+  };
+
+  const handleClickOutside = (event) => {
+    if (
+      popupMenuRef.current &&
+      !popupMenuRef.current.contains(event.target) &&
+      genreButtonRef.current &&
+      !genreButtonRef.current.contains(event.target) &&
+      dayButtonRef.current &&
+      !dayButtonRef.current.contains(event.target) &&
+      zoneButtonRef.current &&
+      !zoneButtonRef.current.contains(event.target) &&
+      costButtonRef.current &&
+      !costButtonRef.current.contains(event.target)
+    ) {
+      setIsGenreMenuShowing(false);
+      setIsZoneFilterShowing(false);
+      setIsDayFilterShowing(false);
+      setIsCostFilterShowing(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     getCasts();
-  }, [selectedDay, selectedZone, selectedGenre, appliedDay]);
+  }, [appliedDay, selectedZone, selectedGenre, currentOrderBy, query]);
 
   return (
     <SearchContainer>
       <GenreWrapper>
         <SelectedGenre>{selectedGenre}</SelectedGenre>
-        <SelectGenreBtn onClick={handleGenreButtonClick}>
+        <SelectGenreBtn ref={genreButtonRef} onClick={handleGenreButtonClick}>
           <ChevronDownSVG />
         </SelectGenreBtn>
-        <GenreMenu $isShowing={isGenreMenuShowing}>
-          {genreOptions.map((option) => (
-            <GenreOption
-              key={option}
-              onClick={() => handleGenreOptionChange(option)}
-            >
-              {option}
-            </GenreOption>
-          ))}
-        </GenreMenu>
-      </GenreWrapper>
-      <FilterWrapper>
-        <ZoneFilterBtn onClick={handleZoneButtonClick} $isDirty={isAppliedZone}>
-          {appliedZone[0] === "전체지역"
-            ? "연습지역"
-            : `${appliedZone[0]} 외 ${appliedZone.length}`}
-          <ChevronDownSSVG />
-        </ZoneFilterBtn>
-        <DayFilterBtn onClick={handleDayButtonClick} $isDirty={isAppliedDay}>
-          {isAppliedDay ? selectedDayPicker : "요일"}
-          <ChevronDownSSVG />
-        </DayFilterBtn>
-        <CostFilterBtn onClick={handleCostButtonClick} $isDirty={isAppliedCost}>
-          월회비
-          <ChevronDownSSVG />
-        </CostFilterBtn>
-        <FilterMenu $isShowing={isZoneFilterShowing}>
-          <Chips>
-            {zoneOptions.map((option) => (
-              <Chip
+        {isGenreMenuShowing && (
+          <GenreMenu ref={popupMenuRef}>
+            {genreOptions.map((option) => (
+              <GenreOption
                 key={option}
-                $isSelected={selectedZone.includes(option)}
-                onClick={() => handleZoneClick(option)}
+                onClick={() => handleGenreOptionChange(option)}
               >
                 {option}
-              </Chip>
+              </GenreOption>
             ))}
-          </Chips>
-          <FilterMenuFooter>
-            <ResetBtn onClick={handleResetZoneClick}>초기화</ResetBtn>
-            <Button
-              variation="solid"
-              btnClass="primary"
-              width={51}
-              height={32}
-              fontSize={13}
-              letterSpacing={138.5}
-              lineHeight={1.94}
-              onClick={handleApplyZoneClick}
-              padding="7px 14px"
-            >
-              적용
-            </Button>
-          </FilterMenuFooter>
-        </FilterMenu>
-        <FilterMenu $isShowing={isDayFilterShowing}>
-          <PickerWrapper>
-            <DayPickers>
-              {dayPickerOptions.map((option) => (
-                <Picker
-                  key={option}
-                  onClick={() => handleClickDayPicker(option)}
+          </GenreMenu>
+        )}
+      </GenreWrapper>
+      <FilterOrderByWrapper>
+        <FilterWrapper>
+          <ZoneFilterBtn
+            onClick={handleZoneButtonClick}
+            $isDirty={isAppliedZone}
+            ref={zoneButtonRef}
+          >
+            {appliedZone[0] === "전체지역"
+              ? "연습지역"
+              : `${appliedZone[0]} 외 ${appliedZone.length}`}
+            <ChevronDownSSVG />
+          </ZoneFilterBtn>
+          <DayFilterBtn
+            onClick={handleDayButtonClick}
+            $isDirty={isAppliedDay}
+            ref={dayButtonRef}
+          >
+            {isAppliedDay ? selectedDayPicker : "요일"}
+            <ChevronDownSSVG />
+          </DayFilterBtn>
+          <CostFilterBtn
+            onClick={handleCostButtonClick}
+            $isDirty={isAppliedCost}
+            ref={costButtonRef}
+          >
+            월회비
+            <ChevronDownSSVG />
+          </CostFilterBtn>
+          {isZoneFilterShowing && (
+            <FilterMenu ref={popupMenuRef}>
+              <Chips>
+                {zoneOptions.map((option) => (
+                  <Chip
+                    key={option}
+                    $isSelected={selectedZone.includes(option)}
+                    onClick={() => handleZoneClick(option)}
+                  >
+                    {option}
+                  </Chip>
+                ))}
+              </Chips>
+              <FilterMenuFooter>
+                <ResetBtn onClick={handleResetZoneClick}>초기화</ResetBtn>
+                <Button
+                  variation="solid"
+                  btnClass="primary"
+                  width={51}
+                  height={32}
+                  fontSize={13}
+                  letterSpacing={138.5}
+                  lineHeight={1.94}
+                  onClick={handleApplyZoneClick}
+                  padding="7px 14px"
                 >
-                  <RadioWrapper>
-                    {selectedDayPicker.includes(option) ? (
-                      <RadioCheckedSVG />
-                    ) : (
-                      <RadioSVG />
-                    )}
-                  </RadioWrapper>
-                  <PickerName>{option}</PickerName>
-                </Picker>
-              ))}
-            </DayPickers>
-            <Days>
-              {daysOptions.map((option, index) => (
-                <Day
-                  key={option}
-                  onClick={() => handleDayClick(option, index)}
-                  $isSelected={selectedDay.includes(option)}
+                  적용
+                </Button>
+              </FilterMenuFooter>
+            </FilterMenu>
+          )}
+          {isDayFilterShowing && (
+            <FilterMenu ref={popupMenuRef}>
+              <PickerWrapper>
+                <DayPickers>
+                  {dayPickerOptions.map((option) => (
+                    <Picker
+                      key={option}
+                      onClick={() => handleClickDayPicker(option)}
+                    >
+                      <RadioWrapper>
+                        {selectedDayPicker.includes(option) ? (
+                          <RadioCheckedSVG />
+                        ) : (
+                          <RadioSVG />
+                        )}
+                      </RadioWrapper>
+                      <PickerName>{option}</PickerName>
+                    </Picker>
+                  ))}
+                </DayPickers>
+                <Days>
+                  {daysOptions.map((option, index) => (
+                    <Day
+                      key={option}
+                      onClick={() => handleDayClick(index)}
+                      $isSelected={practiceDays[index] === "1"}
+                    >
+                      {option}
+                    </Day>
+                  ))}
+                </Days>
+              </PickerWrapper>
+              <FilterMenuFooter>
+                <ResetBtn onClick={handleResetDayClick}>초기화</ResetBtn>
+                <Button
+                  variation="solid"
+                  btnClass="primary"
+                  width={51}
+                  height={32}
+                  fontSize={13}
+                  letterSpacing={138.5}
+                  lineHeight={1.94}
+                  padding="7px 14px"
+                  onClick={handleApplyDayClick}
                 >
-                  {option}
-                </Day>
-              ))}
-            </Days>
-          </PickerWrapper>
-          <FilterMenuFooter>
-            <ResetBtn onClick={handleResetDayClick}>초기화</ResetBtn>
+                  적용
+                </Button>
+              </FilterMenuFooter>
+            </FilterMenu>
+          )}
+          {isCostFilterShowing && (
+            <FilterMenu ref={popupMenuRef}>
+              <Filters>
+                <CostFilter>
+                  <InputWrapper>
+                    <CostInput
+                      type="text"
+                      onChange={handleMinCostChange}
+                      value={selectedMinCost}
+                    />
+                    <Won>원</Won>
+                  </InputWrapper>
+                  <Dash />
+                  <InputWrapper>
+                    <CostInput
+                      type="text"
+                      onChange={handleMaxCostChange}
+                      value={selectedMaxCost}
+                    />
+                    <Won>원</Won>
+                  </InputWrapper>
+                </CostFilter>
+                <CostRangeWrapper>
+                  <div>
+                    <MinRangeInput
+                      type="range"
+                      min={10000}
+                      value={parseInt(selectedMinCost.replace(/,/g, ""), 10)}
+                      max={parseInt(selectedMaxCost.replace(/,/g, ""), 10)}
+                      onChange={handleMinCostChange}
+                    />
+                    <MaxRangeInput
+                      type="range"
+                      min={parseInt(selectedMinCost.replace(/,/g, ""), 10)}
+                      value={parseInt(selectedMaxCost.replace(/,/g, ""), 10)}
+                      max={500000}
+                      onChange={handleMaxCostChange}
+                    />
+                    <Slider>
+                      <Track />
+                      <Range />
+                      <MinThumb ref={minThumbRef.current} />
+                      <MaxThumb ref={maxThumbRef.current} />
+                    </Slider>
+                  </div>
+                </CostRangeWrapper>
+              </Filters>
+            </FilterMenu>
+          )}
+          <ResetFilterWrapper>
             <Button
-              variation="solid"
+              variation="text"
               btnClass="primary"
-              width={51}
+              width={42}
               height={32}
-              fontSize={13}
-              letterSpacing={138.5}
-              lineHeight={1.94}
-              padding="7px 14px"
-              onClick={handleApplyDayClick}
+              padding="0px"
+              fontSize={16}
+              fontWeight="var(--medium)"
+              lineHeight={150}
+              letterSpacing={0.57}
+              onClick={handleResetFilterClick}
             >
-              적용
+              초기화
             </Button>
-          </FilterMenuFooter>
-        </FilterMenu>
-        <FilterMenu $isShowing={isCostFilterShowing}>
-          <Filters>
-            <CostFilter>
-              <InputWrapper>
-                <CostInput
-                  type="text"
-                  onChange={handleMinCostChange}
-                  value={selectedMinCost}
-                />
-                <Won>원</Won>
-              </InputWrapper>
-              <Dash />
-              <InputWrapper>
-                <CostInput
-                  type="text"
-                  onChange={handleMaxCostChange}
-                  value={selectedMaxCost}
-                />
-                <Won>원</Won>
-              </InputWrapper>
-            </CostFilter>
-            <CostRangeWrapper>
-              <div>
-                <MinRangeInput
-                  type="range"
-                  min={10000}
-                  value={parseInt(selectedMinCost.replace(/,/g, ""), 10)}
-                  max={parseInt(selectedMaxCost.replace(/,/g, ""), 10)}
-                  onChange={handleMinCostChange}
-                />
-                <MaxRangeInput
-                  type="range"
-                  min={parseInt(selectedMinCost.replace(/,/g, ""), 10)}
-                  value={parseInt(selectedMaxCost.replace(/,/g, ""), 10)}
-                  max={500000}
-                  onChange={handleMaxCostChange}
-                />
-                <Slider>
-                  <Track />
-                  <Range />
-                  <MinThumb ref={minThumbRef.current} />
-                  <MaxThumb ref={maxThumbRef.current} />
-                </Slider>
-              </div>
-            </CostRangeWrapper>
-          </Filters>
-        </FilterMenu>
-      </FilterWrapper>
+          </ResetFilterWrapper>
+        </FilterWrapper>
+        <OrderByWrapper>
+          <IconWrapper
+            onClick={handleNewestClick}
+            $isSelected={currentOrderBy === "newest"}
+          >
+            <ChecklineSVG />
+            최신순
+          </IconWrapper>
+          <IconWrapper
+            onClick={handlePopularClick}
+            $isSelected={currentOrderBy === "popular"}
+          >
+            <ElipsisSVG />
+            인기순
+          </IconWrapper>
+        </OrderByWrapper>
+      </FilterOrderByWrapper>
       <CastGrid>
         {casts?.map(
           ({
@@ -530,7 +636,7 @@ const SelectedGenre = styled.div`
   letter-spacing: -2.7%;
 `;
 
-const GenreMenu = styled.div<{ $isShowing: boolean }>`
+const GenreMenu = styled.div`
   position: absolute;
   width: 226px;
   height: fit-content;
@@ -538,7 +644,6 @@ const GenreMenu = styled.div<{ $isShowing: boolean }>`
   left: 0;
   border-radius: 8px;
   background-color: white;
-  visibility: ${({ $isShowing }) => ($isShowing ? "visible" : "hidden")};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   gap: 4px;
   padding: 4px;
@@ -571,7 +676,6 @@ const FilterWrapper = styled.div`
   align-items: center;
   gap: 6px;
   width: 100%;
-  margin-bottom: 40px;
 `;
 
 const ZoneFilterBtn = styled.div<{ $isDirty: boolean }>`
@@ -616,7 +720,7 @@ const CostFilterBtn = styled.div<{ $isDirty: boolean }>`
   color: #171719;
 `;
 
-const FilterMenu = styled.div<{ $isShowing: boolean }>`
+const FilterMenu = styled.div`
   position: absolute;
   width: 682px;
   height: 168px;
@@ -626,7 +730,6 @@ const FilterMenu = styled.div<{ $isShowing: boolean }>`
   border: 1px solid #f3f3f3;
   border-radius: 8px;
   background-color: white;
-  visibility: ${({ $isShowing }) => ($isShowing ? "visible" : "hidden")};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -873,4 +976,42 @@ const CastGrid = styled.div`
   row-gap: 40px;
   column-gap: 20px;
   grid-template-columns: repeat(4, 1fr);
+`;
+
+const ResetFilterWrapper = styled.div`
+  margin-left: 16px;
+`;
+
+const OrderByWrapper = styled.div`
+  display: flex;
+  gap: 4px;
+  align-items: center;
+`;
+
+const IconWrapper = styled.div<{ $isSelected: boolean }>`
+  cursor: pointer;
+  width: 64px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+
+  svg {
+    path {
+      stroke: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#c7c8c9")};
+    }
+
+    circle {
+      fill: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#c7c8c9")};
+    }
+  }
+
+  color: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#c7c8c9")};
+`;
+
+const FilterOrderByWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
 `;
