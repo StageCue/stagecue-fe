@@ -57,52 +57,79 @@ const Application = ({ castId }: ApplicationProps) => {
 
   return (
     <ApplicationContainer>
-      <ProfilesWrapper>
-        <ProfilesTitle>지원 프로필</ProfilesTitle>
-        <Profiles>
-          {profiles?.map(({ id, title, dateCreated, isDefault }) => (
-            <Profile key={id} $isDefault={isDefault}>
-              <CheckboxColumn>
-                <CheckboxWrapper onClick={() => handleCheckboxClick(id)}>
-                  {checkedProfileId === id ? <RadioCheckedSVG /> : <RadioSVG />}
-                </CheckboxWrapper>
-              </CheckboxColumn>
-              <TextColumn>
-                {isDefault && <DefaultProfileTag>기본프로필</DefaultProfileTag>}
-                <ProfileTitle>{title}</ProfileTitle>
-                <UpdateDate>{dateCreated}</UpdateDate>
-              </TextColumn>
-              <ButtonColumn>
-                <DetailButton onClick={handleDetailClick}>상세</DetailButton>
-                {isProfileModalOpen && (
-                  <ModalPortal>
-                    <ProfileModal
-                      id={id}
-                      isDefault={isDefault}
-                      onClose={handleCloseClick}
-                    />
-                  </ModalPortal>
-                )}
-              </ButtonColumn>
-            </Profile>
-          ))}
-        </Profiles>
-        <Button
-          width={308}
-          height={48}
-          variation="solid"
-          btnClass="primary"
-          fontSize={16}
-          letterSpacing={0.57}
-          lineHeight={150}
-          disabled={!checkedProfileId}
-          onClick={() =>
-            handleApplyClick({ castId, profileId: `${checkedProfileId}` })
-          }
-        >
-          지원하기
-        </Button>
-      </ProfilesWrapper>
+      {profiles.length !== 0 ? (
+        <ProfilesWrapper>
+          <ProfilesTitle>지원 프로필</ProfilesTitle>
+          <Profiles>
+            {profiles?.map(({ id, title, dateCreated, isDefault }) => (
+              <Profile key={id} $isDefault={isDefault}>
+                <CheckboxColumn>
+                  <CheckboxWrapper onClick={() => handleCheckboxClick(id)}>
+                    {checkedProfileId === id ? (
+                      <RadioCheckedSVG />
+                    ) : (
+                      <RadioSVG />
+                    )}
+                  </CheckboxWrapper>
+                </CheckboxColumn>
+                <TextColumn>
+                  {isDefault && (
+                    <DefaultProfileTag>기본프로필</DefaultProfileTag>
+                  )}
+                  <ProfileTitle>{title}</ProfileTitle>
+                  <UpdateDate>{dateCreated}</UpdateDate>
+                </TextColumn>
+                <ButtonColumn>
+                  <DetailButton onClick={handleDetailClick}>상세</DetailButton>
+                  {isProfileModalOpen && (
+                    <ModalPortal>
+                      <ProfileModal
+                        id={id}
+                        isDefault={isDefault}
+                        onClose={handleCloseClick}
+                      />
+                    </ModalPortal>
+                  )}
+                </ButtonColumn>
+              </Profile>
+            ))}
+          </Profiles>
+        </ProfilesWrapper>
+      ) : (
+        <NoProfileWrapper>
+          <TextWrapper>
+            <MainText>저장된 프로필이 없어요.</MainText>
+            <SubText>프로필을 작성하고 공고를 지원해주세요.</SubText>
+            <Button
+              variation="solid"
+              btnClass="primary"
+              padding="12px 84px"
+              lineHeight={150}
+              letterSpacing={0.57}
+              fontSize={16}
+              width={300}
+              height={48}
+            >
+              프로필 생성하기
+            </Button>
+          </TextWrapper>
+        </NoProfileWrapper>
+      )}
+      <Button
+        width={308}
+        height={48}
+        variation="solid"
+        btnClass="primary"
+        fontSize={16}
+        letterSpacing={0.57}
+        lineHeight={150}
+        disabled={!checkedProfileId}
+        onClick={() =>
+          handleApplyClick({ castId, profileId: `${checkedProfileId}` })
+        }
+      >
+        지원하기
+      </Button>
     </ApplicationContainer>
   );
 };
@@ -117,6 +144,7 @@ const ApplicationContainer = styled.div`
   top: 70px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 16px;
 `;
 
@@ -210,4 +238,38 @@ const DefaultProfileTag = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const NoProfileWrapper = styled.div`
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-radius: 12px;
+  border: 1px solid #f4f4f5;
+`;
+
+const TextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const MainText = styled.div`
+  font-size: 16px;
+  font-weight: var(--font-semibold);
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  color: #000000;
+`;
+
+const SubText = styled.div`
+  font-size: 14px;
+  font-weight: var(--font-regular);
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
+  color: #989ba2;
 `;

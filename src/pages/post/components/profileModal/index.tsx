@@ -9,6 +9,7 @@ import SlashSVG from "@assets/icons/slash.svg?react";
 import MailSVG from "@assets/icons/mail_lg.svg?react";
 import MobileSVG from "@assets/icons/mobile.svg?react";
 import CloseSVG from "@assets/icons/close_black.svg?react";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileModalProps {
   id: string;
@@ -18,6 +19,7 @@ interface ProfileModalProps {
 
 const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
   const sessionStore = useSessionStore();
+  const navigate = useNavigate();
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
@@ -43,6 +45,10 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
     }
 
     return `${birthYear}년생 (${koreanAge}세)`;
+  };
+
+  const handleEditClick = () => {
+    navigate(`/mypage/profiles/${id}/form`);
   };
 
   useEffect(() => {
@@ -71,6 +77,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
               letterSpacing={1.94}
               fontWeight={"var(--font-medium)"}
               fontSize={13}
+              onClick={handleEditClick}
             >
               프로필 수정
             </Button>
