@@ -27,6 +27,7 @@ interface ReqChangeProfileData {
   introduce: string;
   thumbnail: string;
   images: string[];
+  isDefault: boolean;
   experiences: {
     artworkName: string;
     artworkPart: string;

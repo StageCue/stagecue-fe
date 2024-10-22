@@ -40,6 +40,7 @@ interface CastDetail {
     lng: number;
   };
   recruitingParts: string;
+  isScrapping: boolean;
 }
 
 const Detail = () => {
@@ -69,10 +70,12 @@ const Detail = () => {
       const cast = await requestCastDetail(id);
 
       setCastDetail(cast);
+
+      if (cast.isScrapping) {
+        setIsBookmarked(true);
+      }
     }
   };
-
-  const getIsBookmarked = async () => {};
 
   useEffect(() => {
     getCastDetail();

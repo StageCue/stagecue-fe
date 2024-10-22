@@ -6,6 +6,8 @@ import Button from "@/components/buttons/button";
 import { requestApplyCast } from "@api/cast";
 import { useNavigate } from "react-router-dom";
 import { requestProfileList } from "@/api/users";
+import ModalPortal from "@/components/modal/portal";
+import ProfileModal from "../profileModal";
 
 interface ApplicationProps {
   castId: string;
@@ -15,6 +17,7 @@ const Application = ({ castId }: ApplicationProps) => {
   const navigate = useNavigate();
   const [checkedProfileId, setCheckedProfileId] = useState<number>();
   const [profiles, setProfiles] = useState([]);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const handleCheckboxClick = (id: number) => {
     if (checkedProfileId === id) {
@@ -40,49 +43,66 @@ const Application = ({ castId }: ApplicationProps) => {
     navigate("/casts/applied");
   };
 
+  const handleDetailClick = () => {
+    setIsProfileModalOpen(true);
+  };
+
+  const handleCloseClick = () => {
+    setIsProfileModalOpen(false);
+  };
+
   useEffect(() => {
     getProfileList();
   }, []);
-
-  console.log(profiles);
 
   return (
     <ApplicationContainer>
       <ProfilesWrapper>
         <ProfilesTitle>지원 프로필</ProfilesTitle>
         <Profiles>
-          {profiles?.map(({ id, title, dateCreated }) => (
-            <Profile key={id}>
+          {profiles?.map(({ id, title, dateCreated, isDefault }) => (
+            <Profile key={id} $isDefault={isDefault}>
               <CheckboxColumn>
                 <CheckboxWrapper onClick={() => handleCheckboxClick(id)}>
                   {checkedProfileId === id ? <RadioCheckedSVG /> : <RadioSVG />}
                 </CheckboxWrapper>
               </CheckboxColumn>
               <TextColumn>
+                {isDefault && <DefaultProfileTag>기본프로필</DefaultProfileTag>}
                 <ProfileTitle>{title}</ProfileTitle>
                 <UpdateDate>{dateCreated}</UpdateDate>
               </TextColumn>
               <ButtonColumn>
-                <DetailButton>상세</DetailButton>
+                <DetailButton onClick={handleDetailClick}>상세</DetailButton>
+                {isProfileModalOpen && (
+                  <ModalPortal>
+                    <ProfileModal
+                      id={id}
+                      isDefault={isDefault}
+                      onClose={handleCloseClick}
+                    />
+                  </ModalPortal>
+                )}
               </ButtonColumn>
             </Profile>
           ))}
         </Profiles>
+        <Button
+          width={308}
+          height={48}
+          variation="solid"
+          btnClass="primary"
+          fontSize={16}
+          letterSpacing={0.57}
+          lineHeight={150}
+          disabled={!checkedProfileId}
+          onClick={() =>
+            handleApplyClick({ castId, profileId: `${checkedProfileId}` })
+          }
+        >
+          지원하기
+        </Button>
       </ProfilesWrapper>
-      <Button
-        width={308}
-        height={48}
-        variation="solid"
-        btnClass="primary"
-        fontSize={16}
-        letterSpacing={0.57}
-        lineHeight={150}
-        onClick={() =>
-          handleApplyClick({ castId, profileId: `${checkedProfileId}` })
-        }
-      >
-        지원하기
-      </Button>
     </ApplicationContainer>
   );
 };
@@ -122,10 +142,14 @@ const ProfilesTitle = styled.div`
   color: #000000;
 `;
 
-const Profile = styled.div`
+const Profile = styled.div<{ $isDefault: boolean }>`
   width: 308px;
   display: flex;
   gap: 8px;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  border: ${({ $isDefault }) => ($isDefault ? "1px solid #B81716" : "none")};
 `;
 
 const CheckboxColumn = styled.div``;
@@ -170,4 +194,20 @@ const DetailButton = styled.div`
   letter-spacing: 2.52%;
   line-height: 133.4%;
   color: #171719;
+  cursor: pointer;
+`;
+
+const DefaultProfileTag = styled.div`
+  width: 75px;
+  height: 24px;
+  background-color: #fbf2f2;
+  color: #b82925;
+  font-weight: var(--font-medium);
+  font-size: 12px;
+  line-height: 133.4%;
+  letter-spacing: 2.52%;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

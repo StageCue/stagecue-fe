@@ -6,12 +6,14 @@ import SlashSVG from "@assets/icons/slash.svg?react";
 import EditSVG from "@assets/icons/edit.svg?react";
 import RequiredSVG from "@assets/icons/required_orange.svg?react";
 import TrashSVG from "@assets/icons/trash_lg.svg?react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { requestProfileDetail, requestSaveProfile } from "@/api/users";
 import { ProfileDetailData } from "../profileDetail";
 import useSessionStore from "@/store";
+import ModalPortal from "@/components/modal/portal";
+import SubmitModal from "../modals/submitModal";
 
-interface ProfileInput {
+export interface ProfileInput {
   birthday: string;
   experiences: ExpInput[];
   height: number;
@@ -20,6 +22,7 @@ interface ProfileInput {
   title: string;
   images: string[];
   thumbnail: string;
+  isDefault: boolean;
 }
 
 interface ExpInput {
@@ -31,6 +34,7 @@ interface ExpInput {
 }
 
 const ProfileForm = () => {
+  const navigate = useNavigate();
   const sessionStore = useSessionStore();
   const { id } = useParams();
   const [detail, setDetail] = useState<ProfileDetailData>();
@@ -38,6 +42,7 @@ const ProfileForm = () => {
   const [isEditIntroduce, setIsEditIntroduce] = useState<boolean>(false);
   const [selectedExpId, setSelectedExpId] = useState();
   const [isAddExp, setIsAddExp] = useState<boolean>(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   const { register, handleSubmit, setValue, watch } = useForm<ProfileInput>();
   const {
@@ -140,10 +145,22 @@ const ProfileForm = () => {
     setIsAddExp(false);
   };
 
-  const onSubmitProfile = async (data: ProfileInput) => {
-    console.log(data);
-    const res = await requestSaveProfile(data, id!);
+  const handleSubmitClick = async () => {
+    setIsSubmitModalOpen(true);
+  };
+
+  const handleConfirmClick = async (data: ProfileInput) => {
+    setIsSubmitModalOpen(false);
+    const res = await requestSaveProfile({ ...data, isDefault: true }, id!);
     console.log(res);
+    navigate(`/mypage/profiles/${id}`);
+  };
+
+  const handleCloseClick = async (data: ProfileInput) => {
+    setIsSubmitModalOpen(false);
+    const res = await requestSaveProfile({ ...data, isDefault: false }, id!);
+    console.log(res);
+    navigate(`/mypage/profiles/${id}`);
   };
 
   useEffect(() => {
@@ -152,7 +169,16 @@ const ProfileForm = () => {
 
   return (
     <ProfileFormContainer>
-      <Form onSubmit={handleSubmit(onSubmitProfile)}>
+      {isSubmitModalOpen && (
+        <ModalPortal>
+          <SubmitModal
+            onClose={handleCloseClick}
+            onConfirm={handleConfirmClick}
+            handleSubmit={handleSubmit}
+          />
+        </ModalPortal>
+      )}
+      <Form>
         <ProfileHeaderWrapper>
           <TitleWrapper>
             <TitleInput
@@ -163,7 +189,8 @@ const ProfileForm = () => {
               btnClass="primary"
               width={180}
               height={48}
-              type="submit"
+              type="button"
+              onClick={handleSubmitClick}
             >
               프로필 저장
             </Button>
