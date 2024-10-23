@@ -22,6 +22,7 @@ interface CastDetail {
   troupeLogoImage: string;
   recruitImages: string[];
   monthlyFee: number;
+  isApplied: boolean;
   practice: {
     dateStart: string;
     dateEnd: string;
@@ -81,6 +82,7 @@ const Detail = () => {
     getCastDetail();
   }, []);
 
+  console.log(castDetail);
   return (
     <DetailContainer>
       <ContentWrapper>
@@ -166,7 +168,9 @@ const Detail = () => {
           )}
         </Content>
       </ContentWrapper>
-      <Application castId={id!} />
+      {castDetail && (
+        <Application castId={id!} isApplied={castDetail?.isApplied} />
+      )}
     </DetailContainer>
   );
 };

@@ -11,9 +11,22 @@ import ProfileModal from "../profileModal";
 
 interface ApplicationProps {
   castId: string;
+  isApplied: boolean;
 }
 
-const Application = ({ castId }: ApplicationProps) => {
+interface Profile {
+  id: 0;
+  title: string;
+  duration: string;
+  height: 0;
+  weight: 0;
+  thumbnail: string;
+  birthday: string;
+  isDefault: boolean;
+  dateCreated: string;
+}
+
+const Application = ({ castId, isApplied }: ApplicationProps) => {
   const navigate = useNavigate();
   const [checkedProfileId, setCheckedProfileId] = useState<number>();
   const [profiles, setProfiles] = useState([]);
@@ -30,6 +43,13 @@ const Application = ({ castId }: ApplicationProps) => {
   const getProfileList = async () => {
     const res = await requestProfileList();
     setProfiles(res.profiles);
+    const defaultProfile = res.profiles.find(
+      (profile: Profile) => profile.isDefault === true
+    );
+
+    if (!isApplied) {
+      setCheckedProfileId(defaultProfile.id);
+    }
   };
 
   const handleApplyClick = async ({
@@ -57,63 +77,69 @@ const Application = ({ castId }: ApplicationProps) => {
 
   return (
     <ApplicationContainer>
-      {profiles.length !== 0 ? (
-        <ProfilesWrapper>
-          <ProfilesTitle>지원 프로필</ProfilesTitle>
-          <Profiles>
-            {profiles?.map(({ id, title, dateCreated, isDefault }) => (
-              <Profile key={id} $isDefault={isDefault}>
-                <CheckboxColumn>
-                  <CheckboxWrapper onClick={() => handleCheckboxClick(id)}>
-                    {checkedProfileId === id ? (
-                      <RadioCheckedSVG />
-                    ) : (
-                      <RadioSVG />
-                    )}
-                  </CheckboxWrapper>
-                </CheckboxColumn>
-                <TextColumn>
-                  {isDefault && (
-                    <DefaultProfileTag>기본프로필</DefaultProfileTag>
-                  )}
-                  <ProfileTitle>{title}</ProfileTitle>
-                  <UpdateDate>{dateCreated}</UpdateDate>
-                </TextColumn>
-                <ButtonColumn>
-                  <DetailButton onClick={handleDetailClick}>상세</DetailButton>
-                  {isProfileModalOpen && (
-                    <ModalPortal>
-                      <ProfileModal
-                        id={id}
-                        isDefault={isDefault}
-                        onClose={handleCloseClick}
-                      />
-                    </ModalPortal>
-                  )}
-                </ButtonColumn>
-              </Profile>
-            ))}
-          </Profiles>
-        </ProfilesWrapper>
-      ) : (
-        <NoProfileWrapper>
-          <TextWrapper>
-            <MainText>저장된 프로필이 없어요.</MainText>
-            <SubText>프로필을 작성하고 공고를 지원해주세요.</SubText>
-            <Button
-              variation="solid"
-              btnClass="primary"
-              padding="12px 84px"
-              lineHeight={150}
-              letterSpacing={0.57}
-              fontSize={16}
-              width={300}
-              height={48}
-            >
-              프로필 생성하기
-            </Button>
-          </TextWrapper>
-        </NoProfileWrapper>
+      {!isApplied && (
+        <ApplyWrapper>
+          {profiles.length !== 0 ? (
+            <ProfilesWrapper>
+              <ProfilesTitle>지원 프로필</ProfilesTitle>
+              <Profiles>
+                {profiles?.map(({ id, title, dateCreated, isDefault }) => (
+                  <Profile key={id} $isDefault={isDefault}>
+                    <CheckboxColumn>
+                      <CheckboxWrapper onClick={() => handleCheckboxClick(id)}>
+                        {checkedProfileId === id ? (
+                          <RadioCheckedSVG />
+                        ) : (
+                          <RadioSVG />
+                        )}
+                      </CheckboxWrapper>
+                    </CheckboxColumn>
+                    <TextColumn>
+                      {isDefault && (
+                        <DefaultProfileTag>기본프로필</DefaultProfileTag>
+                      )}
+                      <ProfileTitle>{title}</ProfileTitle>
+                      <UpdateDate>{dateCreated}</UpdateDate>
+                    </TextColumn>
+                    <ButtonColumn>
+                      <DetailButton onClick={handleDetailClick}>
+                        상세
+                      </DetailButton>
+                      {isProfileModalOpen && (
+                        <ModalPortal>
+                          <ProfileModal
+                            id={id}
+                            isDefault={isDefault}
+                            onClose={handleCloseClick}
+                          />
+                        </ModalPortal>
+                      )}
+                    </ButtonColumn>
+                  </Profile>
+                ))}
+              </Profiles>
+            </ProfilesWrapper>
+          ) : (
+            <NoProfileWrapper>
+              <TextWrapper>
+                <MainText>저장된 프로필이 없어요.</MainText>
+                <SubText>프로필을 작성하고 공고를 지원해주세요.</SubText>
+                <Button
+                  variation="solid"
+                  btnClass="primary"
+                  padding="12px 84px"
+                  lineHeight={150}
+                  letterSpacing={0.57}
+                  fontSize={16}
+                  width={300}
+                  height={48}
+                >
+                  프로필 생성하기
+                </Button>
+              </TextWrapper>
+            </NoProfileWrapper>
+          )}
+        </ApplyWrapper>
       )}
       <Button
         width={308}
@@ -123,12 +149,12 @@ const Application = ({ castId }: ApplicationProps) => {
         fontSize={16}
         letterSpacing={0.57}
         lineHeight={150}
-        disabled={!checkedProfileId}
+        disabled={!checkedProfileId || isApplied}
         onClick={() =>
           handleApplyClick({ castId, profileId: `${checkedProfileId}` })
         }
       >
-        지원하기
+        {isApplied ? "지원완료" : "지원하기"}
       </Button>
     </ApplicationContainer>
   );
@@ -273,3 +299,5 @@ const SubText = styled.div`
   letter-spacing: 1.45%;
   color: #989ba2;
 `;
+
+const ApplyWrapper = styled.div``;

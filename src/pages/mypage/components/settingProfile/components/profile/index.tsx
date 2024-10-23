@@ -28,32 +28,35 @@ const Profile = ({
 }: ProfileProps) => {
   return (
     <ProfileContainer>
-      <ProfileImage src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`} />
-      <ProfileSummary>
-        <TitleWrapper>
-          <Title>{title}</Title>
-          <UpdatedDate>{dateCreated} 작성완료</UpdatedDate>
-        </TitleWrapper>
-        <SummaryWrapper>
-          <ItemWrapper>
-            <Property>경력</Property>
-            <Value>{duration}</Value>
-          </ItemWrapper>
-          <ItemWrapper>
-            <Property>생년월일</Property>
-            <Value>{birthday} (30세)</Value>
-          </ItemWrapper>
-          <ItemWrapper>
-            <Property>신체정보</Property>
-            <Value>
-              {height}cm/{weight}kg
-            </Value>
-          </ItemWrapper>
-        </SummaryWrapper>
-      </ProfileSummary>
-      <ShowDetailBtn onClick={onClick}>
-        <ChevronRightSVG />
-      </ShowDetailBtn>
+      {isDefault && <DefaultProfileTag>기본프로필</DefaultProfileTag>}
+      <ProfileWrapper>
+        <ProfileImage src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`} />
+        <ProfileSummary>
+          <TitleWrapper>
+            <Title>{title}</Title>
+            <UpdatedDate>{dateCreated} 작성완료</UpdatedDate>
+          </TitleWrapper>
+          <SummaryWrapper>
+            <ItemWrapper>
+              <Property>경력</Property>
+              <Value>{duration}</Value>
+            </ItemWrapper>
+            <ItemWrapper>
+              <Property>생년월일</Property>
+              <Value>{birthday} (30세)</Value>
+            </ItemWrapper>
+            <ItemWrapper>
+              <Property>신체정보</Property>
+              <Value>
+                {height}cm/{weight}kg
+              </Value>
+            </ItemWrapper>
+          </SummaryWrapper>
+        </ProfileSummary>
+        <ShowDetailBtn onClick={onClick}>
+          <ChevronRightSVG />
+        </ShowDetailBtn>
+      </ProfileWrapper>
     </ProfileContainer>
   );
 };
@@ -62,12 +65,14 @@ export default Profile;
 
 const ProfileContainer = styled.div`
   width: 685px;
-  height: 210px;
+  min-height: 210px;
   border-radius: 12px;
   border: 1px solid #f4f4f5;
   padding: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 9.7px;
 `;
 
 const ProfileImage = styled.img`
@@ -139,4 +144,24 @@ const ShowDetailBtn = styled.div`
   align-items: center;
   margin-left: 16px;
   cursor: pointer;
+`;
+
+const DefaultProfileTag = styled.div`
+  width: 75px;
+  height: 24px;
+  background-color: #fbf2f2;
+  color: #b82925;
+  font-weight: var(--font-medium);
+  font-size: 12px;
+  line-height: 133.4%;
+  letter-spacing: 2.52%;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 9px;
+`;
+
+const ProfileWrapper = styled.div`
+  display: flex;
 `;
