@@ -4,7 +4,7 @@ interface RequestPrams {
   method: "get" | "post" | "put" | "delete";
   endpoint: string;
   data?: object;
-  header?: object;
+  header?: { [key: string]: string };
 }
 
 const request = async ({

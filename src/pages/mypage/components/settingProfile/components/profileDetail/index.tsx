@@ -36,6 +36,7 @@ const ProfileDetail = () => {
 
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
+    console.log(res);
     setDetail(res);
   };
 

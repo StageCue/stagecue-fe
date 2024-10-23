@@ -253,7 +253,8 @@ export const requestCreateProfile = async (data: ReqChangeProfileData) => {
 export const requestUploadImage = async (data: UploadImagePrams) => {
   const res = await request({
     method: "post",
-    endpoint: `users/profiles/upload-image?file=${data.file}`,
+    endpoint: "users/profiles/upload-image",
+    data,
   });
 
   return res;
@@ -262,7 +263,8 @@ export const requestUploadImage = async (data: UploadImagePrams) => {
 export const requestUploadThumbnail = async (data: UploadImagePrams) => {
   const res = await request({
     method: "post",
-    endpoint: `users/profiles/upload-thumbnail?file=${data.file}`,
+    endpoint: "users/profiles/upload-thumbnail",
+    data,
   });
 
   return res;

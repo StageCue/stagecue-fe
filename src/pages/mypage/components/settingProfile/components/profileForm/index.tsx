@@ -20,6 +20,7 @@ import SubmitModal from "../modals/submitModal";
 import { useDropzone } from "react-dropzone";
 import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
 import CloseSVG from "@assets/icons/close_black.svg?react";
+import ImageSVG from "@assets/icons/image.svg?react";
 import { generateId } from "@/utils/dev";
 
 export interface ProfileInput {
@@ -105,9 +106,13 @@ const ProfileForm = () => {
     if (imageFileArray.length !== 0) {
       try {
         const urls = await Promise.all(
-          imageFileArray.map(async (item) => {
-            const url = await requestUploadImage({ file: item.file });
-            return url;
+          imageFileArray.map(async (item, index) => {
+            if (item.file !== "noNeedToConvert") {
+              const url = await requestUploadImage({ file: item.file });
+              return url;
+            } else {
+              return imageUrlArray[index].url;
+            }
           })
         );
         setValue("images", urls);
@@ -121,6 +126,7 @@ const ProfileForm = () => {
     if (thumbnailFile) {
       try {
         const url = await requestUploadThumbnail({ file: thumbnailFile });
+        console.log("thumurl", url);
         setValue("thumbnail", url);
       } catch (error) {
         console.error("Error uploading images:", error);
@@ -178,6 +184,18 @@ const ProfileForm = () => {
     setValue("experiences", res.experiences);
     setValue("thumbnail", res.thumbnail);
     setValue("images", parseImagesUrl(res.images));
+
+    const currentImages = parseImagesUrl(res.images);
+    const currentImageArray = currentImages.map((url) => {
+      const id = generateId();
+      return { id, url };
+    });
+
+    const currentFileArray = currentImageArray.map(({ id }) => {
+      return { id, file: "noNeedToConvert" };
+    });
+    setImageUrlArray(currentImageArray);
+    setImageFileArray(currentFileArray);
   };
 
   const handleInfoEditClick = (section: string) => {
@@ -344,6 +362,10 @@ const ProfileForm = () => {
                   </ThumbnailWrapper>
                 ) : (
                   <ThumbnailDropzone {...getThumbnailRootProps()}>
+                    <ImageSVG />
+                    <DropzoneText>
+                      {`파일을 선택하거나 \n 여기로 끌어다 놓으세요`}
+                    </DropzoneText>
                     <ThumbnailInput {...getThumbnailInputProps()} />
                   </ThumbnailDropzone>
                 )}
@@ -660,15 +682,19 @@ const ProfileForm = () => {
               <ImageInput {...getImageInputProps()} />
             </ImageDropzone>
             <ImagesBox>
-              {imagesValue?.map((imgUrl) => (
+              {imageUrlArray?.map(({ url, id }, index) => (
                 <ImageWrapper>
                   <CloseIconWrapper onClick={() => handleDeleteImageClick(id)}>
                     <CloseSVG />
                   </CloseIconWrapper>
-                  <Image
-                    key={id}
-                    src={`https://s3.stagecue.co.kr/stagecue/${imgUrl}`}
-                  />
+                  {imageFileArray[index].file === "noNeedToConvert" ? (
+                    <Image
+                      key={id}
+                      src={`https://s3.stagecue.co.kr/stagecue/${url}`}
+                    />
+                  ) : (
+                    <Image key={id} src={url} />
+                  )}
                 </ImageWrapper>
               ))}
             </ImagesBox>
@@ -1080,6 +1106,21 @@ const ThumbnailDropzone = styled.div`
   height: 286px;
   border-radius: 8px;
   background-color: #f4f4f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 28px;
+`;
+
+const DropzoneText = styled.div`
+  font-size: 15px;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.96%;
+  line-height: 146.7%;
+  color: #46474a;
+  white-space: pre-wrap;
+  text-align: center;
 `;
 
 const ThumbnailInput = styled.input``;

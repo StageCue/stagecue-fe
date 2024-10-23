@@ -18,6 +18,7 @@ import SubmitModal from "../modals/submitModal";
 import { useDropzone } from "react-dropzone";
 import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
 import CloseSVG from "@assets/icons/close_black.svg?react";
+import ImageSVG from "@assets/icons/image.svg?react";
 import { generateId } from "@/utils/dev";
 
 export interface ProfileInput {
@@ -297,6 +298,10 @@ const NewProfileForm = () => {
                   </ThumbnailWrapper>
                 ) : (
                   <ThumbnailDropzone {...getThumbnailRootProps()}>
+                    <ImageSVG />
+                    <DropzoneText>
+                      {`파일을 선택하거나 \n 여기로 끌어다 놓으세요`}
+                    </DropzoneText>
                     <ThumbnailInput {...getThumbnailInputProps()} />
                   </ThumbnailDropzone>
                 )}
@@ -1027,6 +1032,21 @@ const ThumbnailDropzone = styled.div`
   height: 286px;
   border-radius: 8px;
   background-color: #f4f4f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 28px;
+`;
+
+const DropzoneText = styled.div`
+  font-size: 15px;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.96%;
+  line-height: 146.7%;
+  color: #46474a;
+  white-space: pre-wrap;
+  text-align: center;
 `;
 
 const ThumbnailInput = styled.input``;
