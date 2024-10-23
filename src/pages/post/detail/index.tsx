@@ -12,7 +12,7 @@ import {
   requestDeleteScrapCast,
   requestScrapCast,
 } from "@/api/cast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PostImageSlide from "../components/slide";
 
 interface CastDetail {
@@ -46,6 +46,7 @@ interface CastDetail {
 
 const Detail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [castDetail, setCastDetail] = useState<CastDetail>();
   const [selectedTab, setSelectedTab] = useState("공연 기본 정보");
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -78,11 +79,14 @@ const Detail = () => {
     }
   };
 
+  const handleTroupeNameClick = () => {
+    navigate(`/troupe/${castDetail?.troupeName}`);
+  };
+
   useEffect(() => {
     getCastDetail();
   }, []);
 
-  console.log(castDetail);
   return (
     <DetailContainer>
       <ContentWrapper>
@@ -101,7 +105,7 @@ const Detail = () => {
             <TroupeLogo
               src={`https://s3.stagecue.co.kr/stagecue${castDetail?.troupeLogoImage}`}
             />
-            <TroupeName>
+            <TroupeName onClick={handleTroupeNameClick}>
               {castDetail?.troupeName}
               <IconWrapper>
                 <ChevronRightSVG />
@@ -257,6 +261,7 @@ const TroupeName = styled.div`
   letter-spacing: 0.57%;
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const IconWrapper = styled.div`

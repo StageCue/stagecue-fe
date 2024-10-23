@@ -19,6 +19,7 @@ import Applied from "./pages/post/applied";
 import ProfileDetail from "./pages/mypage/components/settingProfile/components/profileDetail";
 import ProfileForm from "./pages/mypage/components/settingProfile/components/profileForm";
 import NewProfileForm from "./pages/mypage/components/settingProfile/components/newProfileForm";
+import TroupeDetail from "./pages/troupe/troupeDetail";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="casts" element={<Search />} />
           <Route path="casts/:id" element={<Detail />} />
           <Route path="casts/applied" element={<Applied />} />
+          <Route path="troupe/:troupeName" element={<TroupeDetail />} />
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="starting" element={<Starting />} />
