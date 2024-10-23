@@ -26,7 +26,7 @@ const request = async ({
     data,
     withCredentials: false,
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": header["Content-Type"] || "application/json",
       ...header,
     },
   })

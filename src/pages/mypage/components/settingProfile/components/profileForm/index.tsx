@@ -125,7 +125,9 @@ const ProfileForm = () => {
   const requestUploadThumbnailFile = async () => {
     if (thumbnailFile) {
       try {
-        const url = await requestUploadThumbnail({ file: thumbnailFile });
+        const formData = new FormData();
+        formData.append("file", thumbnailFile);
+        const url = await requestUploadThumbnail(formData);
         console.log("thumurl", url);
         setValue("thumbnail", url);
       } catch (error) {

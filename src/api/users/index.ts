@@ -260,11 +260,14 @@ export const requestUploadImage = async (data: UploadImagePrams) => {
   return res;
 };
 
-export const requestUploadThumbnail = async (data: UploadImagePrams) => {
+export const requestUploadThumbnail = async (data: FormData) => {
   const res = await request({
     method: "post",
     endpoint: "users/profiles/upload-thumbnail",
     data,
+    header: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 
   return res;
