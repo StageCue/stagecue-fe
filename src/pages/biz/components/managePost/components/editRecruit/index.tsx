@@ -206,7 +206,6 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
 
   const handleApplyDayClick = () => {
     const activeDays = getActiveDays(practiceDays);
-    console.log(activeDays);
 
     if (activeDays) {
       setDaysText(`매주 / ${activeDays}`);

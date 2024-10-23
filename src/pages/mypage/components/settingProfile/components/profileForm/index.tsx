@@ -1,17 +1,26 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import Button from "@/components/buttons/button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SlashSVG from "@assets/icons/slash.svg?react";
 import EditSVG from "@assets/icons/edit.svg?react";
 import RequiredSVG from "@assets/icons/required_orange.svg?react";
 import TrashSVG from "@assets/icons/trash_lg.svg?react";
 import { useNavigate, useParams } from "react-router-dom";
-import { requestProfileDetail, requestSaveProfile } from "@/api/users";
+import {
+  requestProfileDetail,
+  requestSaveProfile,
+  requestUploadImage,
+  requestUploadThumbnail,
+} from "@/api/users";
 import { ProfileDetailData } from "../profileDetail";
 import useSessionStore from "@/store";
 import ModalPortal from "@/components/modal/portal";
 import SubmitModal from "../modals/submitModal";
+import { useDropzone } from "react-dropzone";
+import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
+import CloseSVG from "@assets/icons/close_black.svg?react";
+import { generateId } from "@/utils/dev";
 
 export interface ProfileInput {
   birthday: string;
@@ -44,12 +53,80 @@ const ProfileForm = () => {
   const [isAddExp, setIsAddExp] = useState<boolean>(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
-  const { register, handleSubmit, setValue, watch } = useForm<ProfileInput>();
+  const [thumbnailFile, setThumbnailFile] = useState<string>();
+  const [thumbnailPreview, setThumbnailPreview] = useState<string>();
+  const [imageUrlArray, setImageUrlArray] = useState<
+    { url: string; id: string }[]
+  >([]);
+  const [imageFileArray, setImageFileArray] = useState<
+    { file: string; id: string }[]
+  >([]);
+
+  const { register, handleSubmit, setValue, watch, getValues } =
+    useForm<ProfileInput>();
   const {
     register: expRegister,
     handleSubmit: handleExpSubmit,
     watch: expWatch,
   } = useForm<ExpInput>();
+
+  const onDropThumbnail = useCallback(async (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      const binaryFile = await convertFileToBinaryData(file);
+      const url = convertFileToURL(file);
+      setThumbnailFile(binaryFile);
+      setThumbnailPreview(url);
+    }
+  }, []);
+  const {
+    getRootProps: getThumbnailRootProps,
+    getInputProps: getThumbnailInputProps,
+  } = useDropzone({
+    onDrop: onDropThumbnail,
+  });
+
+  const onDropImages = useCallback(async (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      const binaryFile = await convertFileToBinaryData(file);
+      const url = convertFileToURL(file);
+      const id = generateId();
+      setImageFileArray((prev) => [...prev, { file: binaryFile, id }]);
+      setImageUrlArray((prev) => [...prev, { url, id }]);
+    }
+  }, []);
+  const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } =
+    useDropzone({
+      onDrop: onDropImages,
+    });
+
+  const requestUploadImageFiles = async () => {
+    if (imageFileArray.length !== 0) {
+      try {
+        const urls = await Promise.all(
+          imageFileArray.map(async (item) => {
+            const url = await requestUploadImage({ file: item.file });
+            return url;
+          })
+        );
+        setValue("images", urls);
+      } catch (error) {
+        console.error("Error uploading images:", error);
+      }
+    }
+  };
+
+  const requestUploadThumbnailFile = async () => {
+    if (thumbnailFile) {
+      try {
+        const url = await requestUploadThumbnail({ file: thumbnailFile });
+        setValue("thumbnail", url);
+      } catch (error) {
+        console.error("Error uploading images:", error);
+      }
+    }
+  };
 
   const [
     titleValue,
@@ -91,7 +168,7 @@ const ProfileForm = () => {
 
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
-    console.log(res);
+
     setDetail(res);
     setValue("title", res.title);
     setValue("birthday", res.birthday);
@@ -151,14 +228,36 @@ const ProfileForm = () => {
 
   const handleConfirmClick = async (data: ProfileInput) => {
     setIsSubmitModalOpen(false);
-    const res = await requestSaveProfile({ ...data, isDefault: true }, id!);
+    await requestUploadImageFiles();
+    await requestUploadThumbnailFile();
+
+    const res = await requestSaveProfile(
+      {
+        ...data,
+        isDefault: true,
+        images: imagesValue,
+        thumbnail: thumbnailValue,
+      },
+      id!
+    );
     console.log(res);
     navigate(`/mypage/profiles/${id}`);
   };
 
   const handleCloseClick = async (data: ProfileInput) => {
     setIsSubmitModalOpen(false);
-    const res = await requestSaveProfile({ ...data, isDefault: false }, id!);
+    await requestUploadImageFiles();
+    await requestUploadThumbnailFile();
+
+    const res = await requestSaveProfile(
+      {
+        ...data,
+        isDefault: false,
+        images: imagesValue,
+        thumbnail: thumbnailValue,
+      },
+      id!
+    );
     console.log(res);
     navigate(`/mypage/profiles/${id}`);
   };
@@ -170,6 +269,21 @@ const ProfileForm = () => {
       return `${match[1]}-${match[2]}-${match[3]}`;
     }
     return value;
+  };
+
+  const handleDeleteThumbanailClick = () => {
+    setThumbnailFile("");
+    setThumbnailPreview("");
+    if (getValues("thumbnail")) {
+      setValue("thumbnail", "");
+    }
+  };
+
+  const handleDeleteImageClick = (id: string) => {
+    setImageUrlArray((prevArray) => prevArray.filter((item) => item.id !== id));
+    setImageFileArray((prevArray) =>
+      prevArray.filter((item) => item.id !== id)
+    );
   };
 
   useEffect(() => {
@@ -212,9 +326,27 @@ const ProfileForm = () => {
             </InfoTitleWrapper>
             <InfoBox>
               <BasicInfoWrapper>
-                <ThumbnailWrapper
-                  src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`}
-                />
+                {thumbnailPreview ? (
+                  <ThumbnailWrapper>
+                    <CloseIconWrapper onClick={handleDeleteThumbanailClick}>
+                      <CloseSVG />
+                    </CloseIconWrapper>
+                    <ThumbnailImage src={thumbnailPreview}></ThumbnailImage>
+                  </ThumbnailWrapper>
+                ) : thumbnailValue ? (
+                  <ThumbnailWrapper>
+                    <CloseIconWrapper onClick={handleDeleteThumbanailClick}>
+                      <CloseSVG />
+                    </CloseIconWrapper>
+                    <ThumbnailImage
+                      src={`https://s3.stagecue.co.kr/stagecue/${thumbnailValue}`}
+                    ></ThumbnailImage>
+                  </ThumbnailWrapper>
+                ) : (
+                  <ThumbnailDropzone {...getThumbnailRootProps()}>
+                    <ThumbnailInput {...getThumbnailInputProps()} />
+                  </ThumbnailDropzone>
+                )}
                 <PersonalInfoBox>
                   <EditIconAbsWrapper
                     onClick={() => handleInfoEditClick("personalInfo")}
@@ -523,9 +655,21 @@ const ProfileForm = () => {
             <InfoTitleWrapper>
               <InfoTitle>이미지</InfoTitle>
             </InfoTitleWrapper>
+            <ImageDropzone {...getImageRootProps()}>
+              파일을 선택하거나 여기다 끌어다 놓으세요.
+              <ImageInput {...getImageInputProps()} />
+            </ImageDropzone>
             <ImagesBox>
               {imagesValue?.map((imgUrl) => (
-                <Image src={`https://s3.stagecue.co.kr/stagecue/${imgUrl}`} />
+                <ImageWrapper>
+                  <CloseIconWrapper onClick={() => handleDeleteImageClick(id)}>
+                    <CloseSVG />
+                  </CloseIconWrapper>
+                  <Image
+                    key={id}
+                    src={`https://s3.stagecue.co.kr/stagecue/${imgUrl}`}
+                  />
+                </ImageWrapper>
               ))}
             </ImagesBox>
           </InformationWrapper>
@@ -625,11 +769,33 @@ const BasicInfoWrapper = styled.div`
   gap: 20px;
 `;
 
-const ThumbnailWrapper = styled.img`
+const ThumbnailWrapper = styled.div`
+  position: relative;
   width: 216px;
   height: 286px;
+`;
+
+const ThumbnailImage = styled.img`
+  width: 100%;
+  height: 100%;
   border-radius: 8px;
   margin-right: 8px;
+  object-fit: cover;
+`;
+
+const CloseIconWrapper = styled.div`
+  position: absolute;
+  cursor: pointer;
+  right: 12px;
+  top: 12px;
+  background-color: #c7c7c8;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  opacity: 0.5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const PersonalInfoBox = styled.div`
@@ -799,12 +965,6 @@ const ImagesBox = styled.div`
   gap: 12px;
 `;
 
-const Image = styled.img`
-  border-radius: 8px;
-  width: 216px;
-  height: 286px;
-`;
-
 const BodyInfoInput = styled.input`
   width: 50px;
   height: 22px;
@@ -913,4 +1073,43 @@ const ExpDateInput = styled.input`
 const ExpBtnsWrapper = styled.div`
   display: flex;
   gap: 4px;
+`;
+
+const ThumbnailDropzone = styled.div`
+  width: 216px;
+  height: 286px;
+  border-radius: 8px;
+  background-color: #f4f4f5;
+`;
+
+const ThumbnailInput = styled.input``;
+
+const ImageDropzone = styled.div`
+  width: 920px;
+  height: 54px;
+  border: 1px dashed #b81716;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15;
+  font-weight: var(--font-medium);
+  line-height: 146.7%;
+  letter-spacing: 0.96%;
+  color: #47484b;
+`;
+
+const ImageInput = styled.input``;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 216px;
+  height: 286px;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  margin-right: 8px;
 `;
