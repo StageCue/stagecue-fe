@@ -1,10 +1,16 @@
-import { requestTroupeDetail } from "@/api/troupe";
+import {
+  requestFollowTroupe,
+  requestTroupeDetail,
+  requestUnfollowTroupe,
+} from "@/api/troupe";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import LocationSVG from "@assets/icons/location_lg.svg?react";
 import PlusSVG from "@assets/icons/plus_white.svg?react";
 import Button from "@/components/buttons/button";
+import { formatPhoneNumber } from "@/utils/format";
+import CastCard from "../components/castCard";
 
 interface TroupeDetail {
   troupeName: string;
@@ -20,13 +26,13 @@ interface TroupeDetail {
   followerCount: number;
   isFollowing: boolean;
   publishedAt: string;
-  publishedCount: string;
+  publishedCount: number;
   website: string;
   picName: string;
   picCell: string;
   casts: [
     {
-      castId: string;
+      castId: number;
       castTitle: string;
       artworkName: string;
       practiceLocation: string;
@@ -39,11 +45,37 @@ interface TroupeDetail {
 const TroupeDetail = () => {
   const { troupeName } = useParams();
   const [detail, setDetail] = useState<TroupeDetail>();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getTroupeDetail = async () => {
     const res = await requestTroupeDetail(troupeName!);
 
     setDetail(res);
+    if (res.isFollowing) {
+      setIsFollowing(true);
+    }
+  };
+
+  const handleFollowClick = async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      if (isFollowing) {
+        const res = await requestUnfollowTroupe(troupeName!);
+        console.log(res);
+        setIsFollowing(false);
+      } else {
+        const res = await requestFollowTroupe(troupeName!);
+        console.log(res);
+        setIsFollowing(true);
+      }
+    } catch (error) {
+      console.error("Following action failed", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -51,7 +83,7 @@ const TroupeDetail = () => {
   }, []);
 
   const parsePublishDate = (date?: string) => {
-    return date.split("-")[0];
+    return date?.split("-")[0];
   };
 
   return (
@@ -110,6 +142,7 @@ const TroupeDetail = () => {
                 fontWeight={"var(--font-semibold)"}
                 fontSize={15}
                 padding="9px 23px"
+                onClick={handleFollowClick}
               >
                 <PlusSVG />
                 팔로우
@@ -123,9 +156,54 @@ const TroupeDetail = () => {
               </Value>
             </TroupeTopBottomBox>
           </TroupeTopBox>
-          <TroupeBottomBox></TroupeBottomBox>
+          <TroupeBottomBox>
+            <DataRow>
+              <Property>단원</Property>
+              <Value>?명</Value>
+            </DataRow>
+            <DataRow>
+              <Property>홈페이지</Property>
+              <Value>바로가기</Value>
+            </DataRow>
+            <DataRow>
+              <Property>담당자</Property>
+              <Value>{detail?.picName}</Value>
+            </DataRow>
+            <DataRow>
+              <Property>담당자 연락처</Property>
+              <Value>
+                {detail?.picCell && formatPhoneNumber(detail?.picCell)}
+              </Value>
+            </DataRow>
+          </TroupeBottomBox>
         </TroupeInfoWrapper>
       </InfoWrapper>
+      <CastWrapper>
+        <MenuBar>
+          <Menu>현재 모집중인 공고</Menu>
+        </MenuBar>
+        <Casts>
+          {detail?.casts.map(
+            ({
+              castId,
+              castTitle,
+              artworkName,
+              practiceLocation,
+              troupeName,
+              isScrapping,
+            }) => (
+              <CastCard
+                castId={castId}
+                castTitle={castTitle}
+                artworkName={artworkName}
+                practiceLocation={practiceLocation}
+                troupeName={troupeName}
+                isScrapping={isScrapping}
+              />
+            )
+          )}
+        </Casts>
+      </CastWrapper>
     </TroupeDetailContainer>
   );
 };
@@ -138,6 +216,7 @@ const TroupeDetailContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 100px;
 `;
 
 const CoverBox = styled.div<{ $bgSrc: string }>`
@@ -178,6 +257,7 @@ const InfoWrapper = styled.div`
   display: flex;
   gap: 20px;
   justify-content: center;
+  margin-bottom: 40px;
 `;
 
 const PositionInfoBox = styled.div`
@@ -237,14 +317,13 @@ const Property = styled.div`
   font-weight: var(--font-semibold);
   line-height: 150%;
   letter-spacing: 0.57%;
-  color: #171719;
-  margin-bottom: 16px;
 `;
 
 const AddressWrapper = styled.div`
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+  margin-top: 12px;
 `;
 
 const LocationTextWrapper = styled.div`
@@ -340,4 +419,37 @@ const DataRow = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+`;
+
+const CastWrapper = styled.div`
+  width: 1060px;
+  height: 262px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+`;
+
+const MenuBar = styled.div`
+  width: 100%;
+  height: 58px;
+  border-bottom: 2px solid #f4f4f5;
+`;
+
+const Menu = styled.div`
+  width: 149px;
+  height: 58px;
+  border-bottom: 4px solid #b81716;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #171719;
+  font-size: 18px;
+  font-weight: var(--font-semibold);
+  line-height: 144.5%;
+  letter-spacing: -0.02%;
+`;
+
+const Casts = styled.div`
+  display: flex;
+  gap: 20px;
 `;
