@@ -4,10 +4,12 @@ import {
   requestUnfollowTroupe,
 } from "@/api/troupe";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import LocationSVG from "@assets/icons/location_lg.svg?react";
 import PlusSVG from "@assets/icons/plus_white.svg?react";
+import CaretSVG from "@assets/icons/caret_right.svg?react";
+import CheckSVG from "@assets/icons/checkline_white.svg?react";
 import Button from "@/components/buttons/button";
 import { formatPhoneNumber } from "@/utils/format";
 import CastCard from "../components/castCard";
@@ -43,6 +45,7 @@ interface TroupeDetail {
 }
 
 const TroupeDetail = () => {
+  const navigate = useNavigate();
   const { troupeName } = useParams();
   const [detail, setDetail] = useState<TroupeDetail>();
   const [isFollowing, setIsFollowing] = useState(false);
@@ -75,6 +78,12 @@ const TroupeDetail = () => {
       console.error("Following action failed", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleWebsiteClick = () => {
+    if (detail?.website) {
+      navigate(detail?.website);
     }
   };
 
@@ -144,8 +153,17 @@ const TroupeDetail = () => {
                 padding="9px 23px"
                 onClick={handleFollowClick}
               >
-                <PlusSVG />
-                팔로우
+                {isFollowing ? (
+                  <>
+                    <CheckSVG />
+                    팔로잉
+                  </>
+                ) : (
+                  <>
+                    <PlusSVG />
+                    팔로우
+                  </>
+                )}
               </Button>
             </TroupeTopTopBox>
             <TroupeTopBottomBox>
@@ -163,7 +181,10 @@ const TroupeDetail = () => {
             </DataRow>
             <DataRow>
               <Property>홈페이지</Property>
-              <Value>바로가기</Value>
+              <WithIconValue onClick={handleWebsiteClick}>
+                바로가기
+                <CaretSVG />
+              </WithIconValue>
             </DataRow>
             <DataRow>
               <Property>담당자</Property>
@@ -415,6 +436,17 @@ const Value = styled.div`
   gap: 8px;
 `;
 
+const WithIconValue = styled.div`
+  font-size: 15px;
+  font-weight: var(--font-medium);
+  line-height: 146.7%;
+  letter-spacing: 0.96%;
+  color: #171719;
+  display: flex;
+  gap: 8px;
+  cursor: pointer;
+  align-items: center;
+`;
 const DataRow = styled.div`
   display: flex;
   gap: 12px;
