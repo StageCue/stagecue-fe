@@ -7,7 +7,6 @@ import Starting from "./pages/starting";
 import ForgotAccount from "./pages/auth/forgotAccount";
 import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
-import Search from "./pages/post/search";
 import Home from "./pages/home";
 import MyPage from "./pages/mypage";
 import DefaultLayout from "./components/layout/default";
@@ -20,6 +19,8 @@ import ProfileDetail from "./pages/mypage/components/settingProfile/components/p
 import ProfileForm from "./pages/mypage/components/settingProfile/components/profileForm";
 import NewProfileForm from "./pages/mypage/components/settingProfile/components/newProfileForm";
 import TroupeDetail from "./pages/troupe/troupeDetail";
+import List from "./pages/post/list";
+import Search from "./pages/post/search";
 
 function App() {
   return (
@@ -32,7 +33,8 @@ function App() {
           <Route path="mypage/profiles/:id" element={<ProfileDetail />} />
           <Route path="mypage/profiles/:id/form" element={<ProfileForm />} />
           <Route path="mypage/profiles/form" element={<NewProfileForm />} />
-          <Route path="casts" element={<Search />} />
+          <Route path="casts" element={<List />} />
+          <Route path="casts/search" element={<Search />} />
           <Route path="casts/:id" element={<Detail />} />
           <Route path="casts/applied" element={<Applied />} />
           <Route path="troupe/:troupeName" element={<TroupeDetail />} />

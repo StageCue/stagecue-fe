@@ -15,7 +15,7 @@ const Searchbar = () => {
 
   const onSubmitQuery = (data: SearchBarInput) => {
     setSearchQuery(data);
-    navigate("/casts");
+    navigate("/casts/search");
   };
 
   return (
