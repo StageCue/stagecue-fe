@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import ChevronDownSVG from "@/assets/icons/chebron_down_s.svg?react";
-import { requestCancelApply, requestCastsStatus } from "@/api/users";
+import { requestCastsStatus } from "@/api/users";
 import ApplyList from "./components/applyList";
 import { CastStatus } from "../mystage";
 
@@ -9,7 +9,9 @@ export type applyPhaseType =
   | "APPLIED"
   | "DOCUMENT_PASSED"
   | "FINAL_ACCEPTED"
-  | "REJECTED";
+  | "REJECTED"
+  | "CANCEL";
+
 type filterType = "전체" | "열람" | "미열람" | "지원취소";
 
 const ApplyHistory = () => {

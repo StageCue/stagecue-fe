@@ -12,21 +12,30 @@ interface ApplyListProps {
 
 const ApplyList = ({ status }: ApplyListProps) => {
   const [casts, setCasts] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   const getAppliedCasts = async () => {
     const res = await requestAppliedCasts({ limit: 10, offset: 0, status });
-
     const { applies } = res;
+
     setCasts(applies);
   };
 
-  const handleCancelClick = async (applyId: number) => {
+  const handleCancelClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmClick = async (applyId: number) => {
+    setIsModalOpen(false);
     const res = await requestCancelApply(applyId);
-    console.log(res);
 
     if (res) {
       getAppliedCasts();
     }
+  };
+
+  const handleCloseClick = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -47,12 +56,17 @@ const ApplyList = ({ status }: ApplyListProps) => {
           </Button>
         </NoApplyHistory>
       ) : (
-        casts.map(({ applyId, recruitTitle }) => (
+        casts.map(({ applyId, applyStatus, recruitTitle, applyStatusLogs }) => (
           <ApplyCast
             key={applyId}
             applyId={applyId}
+            applyStatus={applyStatus}
+            applyStatusLogs={applyStatusLogs}
             recruitTitle={recruitTitle}
-            onClickCancle={handleCancelClick}
+            onClickCancel={handleCancelClick}
+            onConfirm={() => handleConfirmClick(applyId)}
+            onClose={handleCloseClick}
+            isModalOpen={isModalOpen}
           />
         ))
       )}

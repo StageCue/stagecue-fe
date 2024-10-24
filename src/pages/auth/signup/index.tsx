@@ -101,8 +101,11 @@ const Signup = () => {
     const res = await requestSignup(userData, registerToken);
 
     if (res) {
-      sessionStore.loginSession();
-      sessionStore.setUsername(res.username);
+      sessionStore.loginSession({
+        email: emailValue,
+        username: res.username,
+        phoneNumber: res.cell,
+      });
       navigate("/auth/welcome");
     }
   };

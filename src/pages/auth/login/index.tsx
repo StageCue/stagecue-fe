@@ -24,7 +24,6 @@ const Login = () => {
     const res = await requestLogin(data);
 
     if (res.accessToken) {
-      console.log(res);
       sessionStore.loginSession({
         email: emailValue,
         username: res.username,

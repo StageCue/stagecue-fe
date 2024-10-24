@@ -6,3 +6,7 @@ export const formatPhoneNumber = (value: string) => {
   }
   return value;
 };
+
+export const formatDateWithDots = (dateString: string): string => {
+  return dateString.replace(/-/g, ".");
+};

@@ -49,6 +49,7 @@ const Mystage = () => {
     getScrappedCasts();
   }, []);
 
+  console.log(castsStatus?.applied);
   return (
     <MystageContainer>
       <MyStage>
