@@ -1,20 +1,37 @@
 import Button from "@/components/buttons/button";
 import styled from "styled-components";
 import PlusSVG from "@assets/icons/plus_red.svg?react";
-import { bizMenuOption } from "../..";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-interface SideMenuProps {
-  selectedOption: bizMenuOption;
-  onOptionClick: (option: bizMenuOption) => void;
-}
+type bizMenuOption = "지원자 관리" | "내 극단 관리" | "공고 관리" | "My Stage";
 
-const Sidemenu = ({ selectedOption, onOptionClick }: SideMenuProps) => {
+const Sidemenu = () => {
+  const navigate = useNavigate();
+  const [currentMenu, setCurrentMenu] = useState("지원자 관리");
+
   const menuOption: bizMenuOption[] = [
     "지원자 관리",
     "내 극단 관리",
     "공고 관리",
     "My Stage",
   ];
+
+  const handleCreateRecruitClick = () => {
+    navigate("/biz/cast/form");
+  };
+
+  const handleOptionClick = (option: bizMenuOption) => {
+    if (option === "지원자 관리") {
+      navigate("/biz/apply");
+    } else if (option === "내 극단 관리") {
+      navigate("/biz/troupe");
+    } else if (option === "공고 관리") {
+      navigate("/biz/cast");
+    }
+
+    setCurrentMenu(option);
+  };
 
   return (
     <SideMenuContainer>
@@ -44,6 +61,7 @@ const Sidemenu = ({ selectedOption, onOptionClick }: SideMenuProps) => {
           fontSize={16}
           letterSpacing={0.57}
           lineHeight={150}
+          onClick={handleCreateRecruitClick}
         >
           <PlusSVG />
           <BtnText>모집 공고 올리기</BtnText>
@@ -52,8 +70,8 @@ const Sidemenu = ({ selectedOption, onOptionClick }: SideMenuProps) => {
       <Menu>
         {menuOption.map((option: bizMenuOption) => (
           <Option
-            onClick={() => onOptionClick(option)}
-            $isSelected={selectedOption === option}
+            onClick={() => handleOptionClick(option)}
+            $isSelected={currentMenu === option}
           >
             {option}
           </Option>

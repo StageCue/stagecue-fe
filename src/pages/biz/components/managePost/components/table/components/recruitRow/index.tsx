@@ -10,19 +10,24 @@ interface RecruitRowProps {
   status: string;
   id: number;
   isFavorite: boolean;
+  isSelected: boolean;
+  onClickCheckbox: (id: number) => void;
 }
 
 const RecruitRow = ({
   title,
   applyCount,
   recruitEnd,
+  id,
   status,
+  isSelected,
+  onClickCheckbox,
 }: RecruitRowProps) => {
   return (
     <RecruitRowContainer>
       <CheckboxInRow>
-        <CheckIconWrapper>
-          <CheckboxSVG />
+        <CheckIconWrapper onClick={() => onClickCheckbox(id)}>
+          {isSelected ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
         </CheckIconWrapper>
         <StarIconWrapper>
           <StarSVG />
@@ -55,6 +60,7 @@ const CheckboxInRow = styled.div`
   width: 68px;
   height: 36px;
   padding: 8px;
+  cursor: pointer;
 `;
 
 const PostTitle = styled.div`

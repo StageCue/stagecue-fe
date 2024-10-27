@@ -7,6 +7,8 @@ import { useState } from "react";
 // import NoApplicant from "./components/noApplicant";
 import RadioSVG from "@assets/icons/radio_s.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
+import ProfileModal from "../profileMdoal";
+import StatusTag from "../statusTag";
 
 interface TableProps {
   applications: {
@@ -21,22 +23,42 @@ interface TableProps {
     applyDate: string;
     applyStatus: string;
   }[];
-  onClickCheckbox: (id: number) => void;
-  selectedApplyIds: number[];
+  onClickCheckbox: (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    id: number,
+    name: string
+  ) => void;
+  selectedApplyIds: { id: number; name: string }[];
+  onClickRow: (id: number, name: string) => void;
+  onClickPass: () => void;
+  onClickFail: () => void;
+  onCloseModal: () => void;
+  isProfileModalOpen: boolean;
+  showingApplicant: { id: number; name: string };
 }
 
 const Table = ({
   applications,
   onClickCheckbox,
   selectedApplyIds,
+  onClickRow,
+  onClickPass,
+  onClickFail,
+  onCloseModal,
+  isProfileModalOpen,
+  showingApplicant,
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isGenderFilterShowing, setIsGenderFilterShowing] = useState(false);
   const [selectedGender, setSelectedGender] = useState("남성");
 
-  const handleCheckboxClick = () => {
+  const handleCheckboxClick = (
+    e: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
     setIsCheckedAll((prev) => !prev);
-    applications.map(({ applyId }) => onClickCheckbox(applyId));
+    applications.map(({ applyId, performerName }) =>
+      onClickCheckbox(e, applyId, performerName)
+    );
   };
 
   const handleGenderColumnClick = () => {
@@ -49,21 +71,6 @@ const Table = ({
   ) => {
     event.stopPropagation();
     setSelectedGender(gender);
-  };
-
-  const parseApplyStatus = (status: string) => {
-    switch (status) {
-      case "APPLIED":
-        return "지원완료";
-      case "DOCUMENT_PASSED":
-        return "서류합격";
-      case "FINAL_ACCEPTED":
-        return "최종합격";
-      case "REJECTED":
-        return "불합격";
-      case "CANCELED":
-        return "지원취소";
-    }
   };
 
   return (
@@ -135,27 +142,52 @@ const Table = ({
       </Header>
       <Body>
         {applications.map(
-          ({ applyId, age, gender, recruitTitle, applyDate, applyStatus }) => (
-            <Row key={applyId}>
-              <CheckboxInRow>
-                <CheckIconWrapper onClick={() => onClickCheckbox(applyId)}>
-                  {selectedApplyIds.includes(applyId) ? (
-                    <CheckboxCheckedSVG />
-                  ) : (
-                    <CheckboxSVG />
-                  )}
-                </CheckIconWrapper>
-                <StarIconWrapper>
-                  <StarSVG />
-                </StarIconWrapper>
-              </CheckboxInRow>
-              <Name>홍길동</Name>
-              <Age>{age}</Age>
-              <Gender>{gender === "MALE" ? "남" : "여"}</Gender>
-              <PostTitle>{recruitTitle}</PostTitle>
-              <Date>{applyDate}</Date>
-              <State>{parseApplyStatus(applyStatus)}</State>
-            </Row>
+          ({
+            applyId,
+            age,
+            gender,
+            performerName,
+            recruitTitle,
+            applyDate,
+            applyStatus,
+          }) => (
+            <>
+              <Row
+                key={applyId}
+                onClick={() => onClickRow(applyId, performerName)}
+              >
+                <CheckboxInRow>
+                  <CheckIconWrapper
+                    onClick={(e) => onClickCheckbox(e, applyId, performerName)}
+                  >
+                    {selectedApplyIds.some((apply) => apply.id === applyId) ? (
+                      <CheckboxCheckedSVG />
+                    ) : (
+                      <CheckboxSVG />
+                    )}
+                  </CheckIconWrapper>
+                  <StarIconWrapper>
+                    <StarSVG />
+                  </StarIconWrapper>
+                </CheckboxInRow>
+                <Name>{performerName}</Name>
+                <Age>{age}</Age>
+                <Gender>{gender === "MALE" ? "남" : "여"}</Gender>
+                <PostTitle>{recruitTitle}</PostTitle>
+                <Date>{applyDate}</Date>
+                <StatusTag status={applyStatus} />
+              </Row>
+              {isProfileModalOpen && showingApplicant.id === applyId && (
+                <ProfileModal
+                  id={`${applyId}`}
+                  onClickPass={onClickPass}
+                  onClickFail={onClickFail}
+                  onClose={onCloseModal}
+                  name={performerName}
+                  applyStatus={applyStatus}
+                />
+              )}
+            </>
           )
         )}
       </Body>
@@ -303,6 +335,7 @@ const Row = styled.div`
   display: flex;
   padding: 6px 24px;
   gap: 16px;
+  cursor: pointer;
 `;
 
 const CheckboxInRow = styled.div`
@@ -346,13 +379,6 @@ const Date = styled.div`
   display: flex;
   align-items: center;
   width: 120px;
-  height: 36px;
-`;
-
-const State = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100px;
   height: 36px;
 `;
 

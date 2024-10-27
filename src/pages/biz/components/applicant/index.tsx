@@ -6,6 +6,7 @@ import Table from "./components/table";
 import PassSVG from "@assets/icons/pass.svg?react";
 import FailSVG from "@assets/icons/fail.svg?react";
 import { requestApplications, requestChangingApplyState } from "@/api/biz";
+import PassModal from "./components/passModal";
 
 type ApplyStatus =
   | "APPLIED"
@@ -16,10 +17,21 @@ type ApplyStatus =
   | "전체"
   | "미열람";
 
+interface ShowingApplicantState {
+  id: number;
+  name: string;
+}
 const Applicant = () => {
   const [selectedFilter, setSelectedFilter] = useState<ApplyStatus>("전체");
   const [applications, setApplications] = useState([]);
-  const [selectedApplyIds, setSelectedApplyIds] = useState<number[]>([]);
+  const [selectedApplyIds, setSelectedApplyIds] = useState<
+    { id: number; name: string }[]
+  >([]);
+  const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+  const [isFailModalOpen, setIsFailModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [showingApplicant, setShowingApplicant] =
+    useState<ShowingApplicantState>();
 
   const handleFilterClick = (filter: ApplyStatus) => {
     setSelectedFilter(filter);
@@ -27,6 +39,14 @@ const Applicant = () => {
 
   // 임시 applied 로직!!
   const handlePassClick = async () => {
+    setIsPassModalOpen(true);
+  };
+
+  const handleFailClick = async () => {
+    setIsFailModalOpen(true);
+  };
+
+  const handlePassConfirm = async () => {
     const requestStatus = (status: ApplyStatus) => {
       switch (status) {
         case "APPLIED":
@@ -38,19 +58,38 @@ const Applicant = () => {
       }
     };
     const applyStatus = requestStatus("APPLIED");
+
     await requestChangingApplyState({
       applyIds: `${selectedApplyIds}`,
       applyStatus,
     });
     setSelectedApplyIds([]);
     getApplications();
+
+    setIsPassModalOpen(false);
+    setIsProfileModalOpen(false);
   };
 
-  const handleFailClick = async () => {
+  const handleFailConfirm = async () => {
     await requestChangingApplyState({
       applyIds: `${selectedApplyIds}`,
       applyStatus: "REJECTED",
     });
+
+    setSelectedApplyIds([]);
+    getApplications();
+
+    setIsFailModalOpen(false);
+    setIsProfileModalOpen(false);
+  };
+
+  const handleCancelClick = () => {
+    setIsFailModalOpen(false);
+    setIsPassModalOpen(false);
+  };
+
+  const handleCloseProfileClick = () => {
+    setIsProfileModalOpen(false);
   };
 
   const getApplications = async () => {
@@ -62,14 +101,19 @@ const Applicant = () => {
     }
   };
 
-  const handleCheckboxClick = (id: number) => {
-    if (selectedApplyIds.includes(id)) {
+  const handleCheckboxClick = (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    id: number,
+    name: string
+  ) => {
+    e.stopPropagation();
+    if (selectedApplyIds.some((apply) => apply.id === id)) {
       setSelectedApplyIds((prev) => {
-        const newArray = prev.filter((applyId) => applyId !== id);
+        const newArray = prev.filter(({ id: applyId }) => applyId !== id);
         return newArray;
       });
     } else {
-      setSelectedApplyIds([...selectedApplyIds, id]);
+      setSelectedApplyIds([...selectedApplyIds, { id, name }]);
     }
   };
 
@@ -81,12 +125,41 @@ const Applicant = () => {
     return filteredArray;
   };
 
+  const handleApplicantRowClick = (id: number, name: string) => {
+    setIsProfileModalOpen(true);
+    setShowingApplicant({ id, name });
+  };
+
   useEffect(() => {
     getApplications();
   }, []);
 
   return (
     <ApplicantContainer>
+      {isPassModalOpen && (
+        <PassModal
+          onConfirm={handlePassConfirm}
+          onClose={handleCancelClick}
+          type="합격"
+          name={
+            isProfileModalOpen
+              ? showingApplicant!.name
+              : selectedApplyIds[0].name
+          }
+        />
+      )}
+      {isFailModalOpen && (
+        <PassModal
+          onConfirm={handleFailConfirm}
+          onClose={handleCancelClick}
+          type="반려"
+          name={
+            isProfileModalOpen
+              ? showingApplicant!.name
+              : selectedApplyIds[0].name
+          }
+        />
+      )}
       <TitleWrapper>
         <Title>지원자 관리</Title>
         <Searchbar>
@@ -172,8 +245,20 @@ const Applicant = () => {
             ? applications
             : filterByApplyStatus(selectedFilter)
         }
-        onClickCheckbox={(id: number) => handleCheckboxClick(id)}
+        onClickCheckbox={(
+          e: React.MouseEvent<HTMLElement, MouseEvent>,
+          id: number,
+          name: string
+        ) => handleCheckboxClick(e, id, name)}
         selectedApplyIds={selectedApplyIds}
+        onClickRow={(id: number, name: string) =>
+          handleApplicantRowClick(id, name)
+        }
+        onClickPass={handlePassClick}
+        onClickFail={handleFailClick}
+        onCloseModal={handleCloseProfileClick}
+        isProfileModalOpen={isProfileModalOpen}
+        showingApplicant={showingApplicant!}
       />
     </ApplicantContainer>
   );

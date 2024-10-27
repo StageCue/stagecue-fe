@@ -66,6 +66,10 @@ interface ReqEditRecruitParams {
   };
 }
 
+interface ReqDeleteRecruitsBody {
+  applyIds: number[];
+}
+
 export const requestApplications = ({
   limit,
   offset,
@@ -180,6 +184,16 @@ export const requestUploadRecruitImage = (data: ReqUploadImage) => {
 
 export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   const res = request({ method: "post", endpoint: "biz/recruits", data });
+
+  return res;
+};
+
+export const requestCloseRecruit = (data: ReqDeleteRecruitsBody) => {
+  const res = request({
+    method: "delete",
+    endpoint: "biz/recruits",
+    data,
+  });
 
   return res;
 };

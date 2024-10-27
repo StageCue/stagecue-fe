@@ -13,17 +13,13 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/dev";
 import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
 import { requestCreateRecruit, requestUploadRecruitImage } from "@/api/biz";
-
-interface EditRecruitProps {
-  isInitial: boolean;
-  id?: string;
-}
+import { useParams } from "react-router-dom";
 
 interface EditRecruitInputs {
   title: string;
   introduce: string;
   recruitEnd: string;
-  recruitingParts: string[];
+  recruitingParts: { value: string; id: string }[];
   monthlyFee: number;
   artworkName: string;
   category: string;
@@ -44,7 +40,9 @@ interface EditRecruitInputs {
   };
 }
 
-const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
+const EditRecruit = () => {
+  const { id } = useParams();
+
   const {
     register,
     handleSubmit,
@@ -58,9 +56,7 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
   const open = useDaumPostcodePopup();
   const [part, setPart] = useState<string>("");
   const [isMontlyFee, setIsMontlyFee] = useState<boolean>(false);
-  const [partsArray, setPartsArray] = useState<{ value: string; id: string }[]>(
-    []
-  );
+
   const [imageUrlArray, setImageUrlArray] = useState<
     { url: string; id: string }[]
   >([]);
@@ -96,7 +92,8 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
     await requestUploadImageFiles();
 
-    const res = await requestCreateRecruit(data);
+    const recruitingParts = partsValue.map(({ value }) => value);
+    const res = await requestCreateRecruit({ ...data, recruitingParts });
 
     console.log(res);
   };
@@ -128,10 +125,12 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
     if (event.key === "Enter") {
       const id = generateId();
 
-      if (partsArray) {
-        setPartsArray([...partsArray, { value: part, id }]);
+      if (partsValue) {
+        setValue("recruitingParts", [...partsValue, { value: part, id }]);
+        // setPartsArray([...partsArray, { value: part, id }]);
       } else {
-        setPartsArray([{ value: part, id }]);
+        setValue("recruitingParts", [{ value: part, id }]);
+        // setPartsArray([{ value: part, id }]);
       }
 
       setPart("");
@@ -143,7 +142,11 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
   };
 
   const handleDeleteChipClick = (id: string) => {
-    setPartsArray((prevArray) => prevArray.filter((part) => part.id !== id));
+    // setPartsArray((prevArray) => prevArray.filter((part) => part.id !== id));
+    setValue(
+      "recruitingParts",
+      partsValue.filter((part) => part.id !== id)
+    );
   };
 
   const handleAddressComplete = (data: any, input: string) => {
@@ -254,10 +257,10 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
   const getRecruitFormData = async (id: string) => {};
 
   useEffect(() => {
-    if (!isInitial) {
+    if (id) {
       getRecruitFormData(id!);
     }
-  }, [isInitial]);
+  }, [id]);
 
   return (
     <EditRecruitContainer>
@@ -318,6 +321,7 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
             $isDirty={Boolean(dirtyFields.title)}
             $isError={Boolean(errors.title)}
             placeholder="공고명을 입력해주세요"
+            {...register("title", { required: true })}
           />
         </InputWrapper>
         <InputWrapper>
@@ -325,8 +329,11 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
             모집 배역
             <RequiedRedDot />
           </RequiredLabel>
-          <ChipInputWrapper $isDirty={Boolean(partsArray)} $isError={false}>
-            {partsArray?.map(({ value, id }) => (
+          <ChipInputWrapper
+            $isDirty={Boolean(dirtyFields.recruitingParts)}
+            $isError={false}
+          >
+            {partsValue?.map(({ value, id }) => (
               <Chip key={id}>
                 {value}
                 <DeleteIconWrapper onClick={() => handleDeleteChipClick(id)}>
@@ -351,7 +358,10 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
             $isDirty={Boolean(dirtyFields.introduce)}
             $isError={Boolean(errors.introduce)}
           >
-            <TextAreaInput placeholder="공고 내용을 작성해주세요" />
+            <TextAreaInput
+              placeholder="공고 내용을 작성해주세요"
+              {...register("introduce", { required: true, maxLength: 3000 })}
+            />
             <Counter>0/ 3000</Counter>
           </TextAreaWrapper>
         </InputWrapper>
@@ -392,7 +402,10 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
               $isDirty={Boolean(dirtyFields.practice?.start)}
               $isError={false}
             >
-              <WithIconHalfInput type="date" />
+              <WithIconHalfInput
+                type="date"
+                {...register("practice.start", { required: true })}
+              />
               <CalendarSVG />
             </WithIconInputWrapper>
           </InputWrapper>
@@ -401,7 +414,10 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
               연습요일
               <RequiedRedDot />
             </RequiredLabel>
-            <WithIconInputWrapper $isDirty={false} $isError={false}>
+            <WithIconInputWrapper
+              $isDirty={Boolean(dirtyFields.practice?.dayOfWeek)}
+              $isError={false}
+            >
               {daysText}
               <IconWrapper onClick={handleDayInputClick}>
                 <CaretDownSVG />
@@ -459,7 +475,7 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
           </RequiredLabel>
           <FakeInput
             onClick={() => handleAddressInputClick("practice")}
-            $isDirty={false}
+            $isDirty={Boolean(dirtyFields.practice?.address)}
           >
             {addressValue || "클릭해서 주소를 검색해주세요."}
           </FakeInput>
@@ -467,6 +483,7 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
             type="text"
             $isDirty={Boolean(dirtyFields.practice?.addressDetail)}
             $isError={Boolean(errors.practice?.addressDetail)}
+            {...register("practice.addressDetail", { required: true })}
           />
         </InputWrapper>
         <InputWrapper>
@@ -487,8 +504,11 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
                 {isMontlyFee ? <RadioCheckedSVG /> : <RadioSVG />}
                 회비가 있어요
               </RadioInputWrapper>
-              <FeeInputWrapper $isDirty={false} $isError={false}>
-                <FeeInput />원
+              <FeeInputWrapper
+                $isDirty={Boolean(dirtyFields.monthlyFee)}
+                $isError={false}
+              >
+                <FeeInput {...register("monthlyFee")} />원
               </FeeInputWrapper>
             </WithTextInputWrapper>
           </RadioInputs>
@@ -501,7 +521,10 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
               카테고리
               <RequiedRedDot />
             </RequiredLabel>
-            <WithIconShortInputWrapper $isDirty={false} $isError={false}>
+            <WithIconShortInputWrapper
+              $isDirty={Boolean(dirtyFields.category)}
+              $isError={false}
+            >
               {categoryText}
               <IconWrapper onClick={handleCategoryInputClick}>
                 <CaretDownSVG />
@@ -523,10 +546,11 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
               <RequiedRedDot />
             </RequiredLabel>
             <MiddleInput
-              $isDirty={false}
+              $isDirty={Boolean(dirtyFields.artworkName)}
               $isError={false}
               type="text"
               placeholder="작품명을 입력해주세요"
+              {...register("artworkName", { required: true })}
             />
           </InputWrapper>
         </PairInputWrapper>
@@ -539,7 +563,10 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
             $isDirty={Boolean(dirtyFields.stage?.start)}
             $isError={false}
           >
-            <WithIconHalfInput type="date" />
+            <WithIconHalfInput
+              type="date"
+              {...register("stage.start", { required: true })}
+            />
             <CalendarSVG />
           </WithIconInputWrapper>
         </InputWrapper>
@@ -558,6 +585,7 @@ const EditRecruit = ({ isInitial, id }: EditRecruitProps) => {
             type="text"
             $isDirty={Boolean(dirtyFields.practice?.addressDetail)}
             $isError={Boolean(errors.practice?.addressDetail)}
+            {...register("stage.addressDetail", { required: true })}
           />
         </InputWrapper>
       </Form>

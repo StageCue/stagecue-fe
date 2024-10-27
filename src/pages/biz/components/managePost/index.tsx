@@ -4,29 +4,68 @@ import TimeSVG from "@assets/icons/time.svg?react";
 import CalendarSVG from "@assets/icons/calendar_s.svg?react";
 import PencilSVG from "@assets/icons/pencil.svg?react";
 import TrashSVG from "@assets/icons/trash.svg?react";
-
 import { useEffect, useState } from "react";
 import Button from "@/components/buttons/button";
 import Table from "./components/table";
-import { requestRecruits } from "@/api/biz";
-import EditRecruit from "./components/editRecruit";
+import { requestCloseRecruit, requestRecruits } from "@/api/biz";
+import CloseModal from "./components/closeModal";
+import { useNavigate } from "react-router-dom";
 
 const ManagePost = () => {
+  const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState("전체");
   const [recruits, setRecruits] = useState([]);
-  const [isEditRecruit, setIsEditRecruit] = useState(false);
+  const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
+  const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilter(filter);
   };
 
-  const handlePassClick = () => {};
+  const handleCloseRecruitClick = () => {
+    setCloseRecruitModalOpen(true);
+  };
 
-  const handleFailClick = () => {};
+  const handleCancelClick = () => {
+    setCloseRecruitModalOpen(false);
+  };
+
+  const handleConfirmClick = async () => {
+    const res = await requestCloseRecruit({ applyIds: selectedRecruitIds });
+    console.log(res);
+
+    setCloseRecruitModalOpen(false);
+
+    await getCasts();
+  };
+
+  const handleCheckboxClick = (id: number) => {
+    if (selectedRecruitIds.includes(id)) {
+      setSelectedRecruitIds((prev) => {
+        const newArray = prev.filter((recruitId) => recruitId !== id);
+        return newArray;
+      });
+    } else {
+      setSelectedRecruitIds([...selectedRecruitIds, id]);
+    }
+  };
+
+  const handleEditClick = () => {
+    const targetId = selectedRecruitIds[0];
+    navigate(`/biz/cast/${targetId}/form`);
+  };
+
+  const handleDeleteClick = async () => {
+    const res = await requestCloseRecruit({ applyIds: selectedRecruitIds });
+    console.log(res);
+
+    setCloseRecruitModalOpen(false);
+
+    await getCasts();
+  };
 
   const getCasts = async () => {
     const res = await requestRecruits({ limit: 10, offset: 0 });
-
     setRecruits(res.recruits);
   };
 
@@ -34,125 +73,123 @@ const ManagePost = () => {
     getCasts();
   }, []);
 
-  const handleCreateRecruitClick = () => {
-    setIsEditRecruit(true);
-  };
-
   return (
     <ManagePostContainer>
-      {isEditRecruit && <EditRecruit />}
-      {!isEditRecruit && (
-        <>
-          <TitleWrapper>
-            <Title>공고 관리</Title>
-            <Searchbar>
-              <SearchSVG />
-              <SearchInput placeholder="공고명으로 검색" />
-            </Searchbar>
-          </TitleWrapper>
-          <FilterWrapper>
-            <Filters>
-              <Option
-                onClick={() => handleFilterClick("전체")}
-                $isSelected={selectedFilter === "전체"}
-              >
-                전체
-              </Option>
-              <FilterDivider />
-              <Option
-                onClick={() => handleFilterClick("임시저장")}
-                $isSelected={selectedFilter === "임시저장"}
-              >
-                임시저장
-              </Option>
-              <FilterDivider />
-              <Option
-                onClick={() => handleFilterClick("모집중")}
-                $isSelected={selectedFilter === "모집중"}
-              >
-                모집중
-              </Option>
-              <FilterDivider />
-              <Option
-                onClick={() => handleFilterClick("모집종료")}
-                $isSelected={selectedFilter === "모집종료"}
-              >
-                모집종료
-              </Option>
-            </Filters>
-            <ButtonsWrapper>
-              <Button
-                variation="outlined"
-                btnClass="assistive"
-                onClick={handlePassClick}
-                width={109}
-                height={32}
-                fontSize={13}
-                lineHeight={138.5}
-                letterSpacing={1.94}
-                padding="8px 14px"
-              >
-                <IconWrapper>
-                  <TimeSVG />
-                </IconWrapper>
-                마감일 변경
-              </Button>
-              <Button
-                variation="outlined"
-                btnClass="assistive"
-                onClick={handlePassClick}
-                width={98}
-                height={32}
-                fontSize={13}
-                lineHeight={138.5}
-                letterSpacing={1.94}
-                padding="8px 14px"
-              >
-                <IconWrapper>
-                  <CalendarSVG />
-                </IconWrapper>
-                공고 마감
-              </Button>
-              <Button
-                variation="outlined"
-                btnClass="assistive"
-                onClick={handlePassClick}
-                width={71}
-                height={32}
-                fontSize={13}
-                lineHeight={138.5}
-                letterSpacing={1.94}
-                padding="8px 14px"
-              >
-                <IconWrapper>
-                  <PencilSVG />
-                </IconWrapper>
-                수정
-              </Button>
-              <Button
-                variation="outlined"
-                btnClass="assistive"
-                onClick={handleFailClick}
-                width={71}
-                height={32}
-                fontSize={13}
-                lineHeight={138.5}
-                letterSpacing={1.94}
-                padding="8px 14px"
-              >
-                <IconWrapper>
-                  <TrashSVG />
-                </IconWrapper>
-                삭제
-              </Button>
-            </ButtonsWrapper>
-          </FilterWrapper>
-          <Table
-            recruits={recruits}
-            onClickCreateRecruit={handleCreateRecruitClick}
-          />
-        </>
+      {isCloseRecruitModalOpen && (
+        <CloseModal
+          onConfirm={handleConfirmClick}
+          onClose={handleCancelClick}
+          targetLength={selectedRecruitIds.length}
+        />
       )}
+      <TitleWrapper>
+        <Title>공고 관리</Title>
+        <Searchbar>
+          <SearchSVG />
+          <SearchInput placeholder="공고명으로 검색" />
+        </Searchbar>
+      </TitleWrapper>
+      <FilterWrapper>
+        <Filters>
+          <Option
+            onClick={() => handleFilterClick("전체")}
+            $isSelected={selectedFilter === "전체"}
+          >
+            전체
+          </Option>
+          <FilterDivider />
+          <Option
+            onClick={() => handleFilterClick("임시저장")}
+            $isSelected={selectedFilter === "임시저장"}
+          >
+            임시저장
+          </Option>
+          <FilterDivider />
+          <Option
+            onClick={() => handleFilterClick("모집중")}
+            $isSelected={selectedFilter === "모집중"}
+          >
+            모집중
+          </Option>
+          <FilterDivider />
+          <Option
+            onClick={() => handleFilterClick("모집종료")}
+            $isSelected={selectedFilter === "모집종료"}
+          >
+            모집종료
+          </Option>
+        </Filters>
+        <ButtonsWrapper>
+          <Button
+            variation="outlined"
+            btnClass="assistive"
+            width={109}
+            height={32}
+            fontSize={13}
+            lineHeight={138.5}
+            letterSpacing={1.94}
+            padding="8px 14px"
+          >
+            <IconWrapper>
+              <TimeSVG />
+            </IconWrapper>
+            마감일 변경
+          </Button>
+          <Button
+            variation="outlined"
+            btnClass="assistive"
+            onClick={handleCloseRecruitClick}
+            width={98}
+            height={32}
+            fontSize={13}
+            lineHeight={138.5}
+            letterSpacing={1.94}
+            padding="8px 14px"
+          >
+            <IconWrapper>
+              <CalendarSVG />
+            </IconWrapper>
+            공고 마감
+          </Button>
+          <Button
+            variation="outlined"
+            btnClass="assistive"
+            width={71}
+            height={32}
+            fontSize={13}
+            lineHeight={138.5}
+            letterSpacing={1.94}
+            padding="8px 14px"
+            onClick={handleEditClick}
+          >
+            <IconWrapper>
+              <PencilSVG />
+            </IconWrapper>
+            수정
+          </Button>
+          <Button
+            variation="outlined"
+            btnClass="assistive"
+            width={71}
+            height={32}
+            fontSize={13}
+            lineHeight={138.5}
+            letterSpacing={1.94}
+            padding="8px 14px"
+            onClick={handleDeleteClick}
+          >
+            <IconWrapper>
+              <TrashSVG />
+            </IconWrapper>
+            삭제
+          </Button>
+        </ButtonsWrapper>
+      </FilterWrapper>
+      <Table
+        recruits={recruits}
+        onClickCheckbox={handleCheckboxClick}
+        selectedRecruitIds={selectedRecruitIds}
+      />
     </ManagePostContainer>
   );
 };

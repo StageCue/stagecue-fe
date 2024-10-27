@@ -11,7 +11,6 @@ import Home from "./pages/home";
 import MyPage from "./pages/mypage";
 import DefaultLayout from "./components/layout/default";
 import AuthLayout from "./components/layout/auth";
-import Biz from "./pages/biz";
 import BizLayout from "./components/layout/biz";
 import Detail from "./pages/post/detail";
 import Applied from "./pages/post/applied";
@@ -21,6 +20,10 @@ import NewProfileForm from "./pages/mypage/components/settingProfile/components/
 import TroupeDetail from "./pages/troupe/troupeDetail";
 import List from "./pages/post/list";
 import Search from "./pages/post/search";
+import EditRecruit from "./pages/biz/components/managePost/components/editRecruit";
+import Applicant from "./pages/biz/components/applicant";
+import ManageTroupe from "./pages/biz/components/manageTroupe";
+import ManagePost from "./pages/biz/components/managePost";
 
 function App() {
   return (
@@ -49,7 +52,12 @@ function App() {
           <Route path="resetpassword" element={<ResetPassword />} />
         </Route>
         <Route path="/biz" element={<BizLayout />}>
-          <Route index element={<Biz />} />
+          <Route index element={<Applicant />} />
+          <Route path="apply" element={<Applicant />} />
+          <Route path="troupe" element={<ManageTroupe />} />
+          <Route path="cast" element={<ManagePost />} />
+          <Route path="cast/form" element={<EditRecruit />} />
+          <Route path="cast/:id/form" element={<EditRecruit />} />
         </Route>
       </Routes>
     </AppContainer>

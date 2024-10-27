@@ -1,11 +1,13 @@
 import Button from "@/components/buttons/button";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-interface NoPostProps {
-  onClick: () => void;
-}
+const NoPost = () => {
+  const navigate = useNavigate();
 
-const NoPost = ({ onClick }: NoPostProps) => {
+  const handleCreateRecruitClick = () => {
+    navigate("/biz/cast/form");
+  };
   return (
     <NoPostContainer>
       <TextWrapper>
@@ -21,7 +23,7 @@ const NoPost = ({ onClick }: NoPostProps) => {
         lineHeight={146.7}
         letterSpacing={0.96}
         padding="9px 20px"
-        onClick={onClick}
+        onClick={handleCreateRecruitClick}
       >
         모집 공고 올리기
       </Button>

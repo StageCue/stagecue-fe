@@ -20,29 +20,21 @@ interface Recruit {
 
 interface TableProps {
   recruits: Recruit[];
-  onClickCreateRecruit: () => void;
+  onClickCheckbox: (id: number) => void;
+  selectedRecruitIds: number[];
 }
 
-const Table = ({ recruits, onClickCreateRecruit }: TableProps) => {
+const Table = ({
+  recruits,
+  onClickCheckbox,
+  selectedRecruitIds,
+}: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
-  // const [isGenderFilterShowing, setIsGenderFilterShowing] = useState(false);
-  // const [selectedGender, setSelectedGender] = useState("남성");
 
   const handleCheckboxClick = () => {
     setIsCheckedAll((prev) => !prev);
+    recruits.map(({ id }) => onClickCheckbox(id));
   };
-
-  // const handleGenderColumnClick = () => {
-  //   setIsGenderFilterShowing((prev) => !prev);
-  // };
-
-  // const handleGenderFilterClick = (
-  //   event: React.MouseEvent<HTMLElement, MouseEvent>,
-  //   gender: string
-  // ) => {
-  //   event.stopPropagation();
-  //   setSelectedGender(gender);
-  // };
 
   return (
     <TableContainer>
@@ -76,7 +68,7 @@ const Table = ({ recruits, onClickCreateRecruit }: TableProps) => {
         </StateColumn>
       </Header>
       <Body>
-        {/* {recruits?.map(
+        {recruits?.map(
           ({ title, id, isFavorite, applyCount, recruitEnd, status }) => (
             <RecruitRow
               key={id}
@@ -86,10 +78,12 @@ const Table = ({ recruits, onClickCreateRecruit }: TableProps) => {
               recruitEnd={recruitEnd}
               status={status}
               isFavorite={isFavorite}
+              isSelected={selectedRecruitIds.includes(id)}
+              onClickCheckbox={onClickCheckbox}
             />
           )
-        )} */}
-        <NoPost onClick={onClickCreateRecruit} />
+        )}
+        {!recruits && <NoPost />}
       </Body>
     </TableContainer>
   );
@@ -142,31 +136,6 @@ const StarWrapper = styled.div`
 
 const CaretWrapper = styled.div``;
 
-// const NameColumn = styled.div`
-//   display: flex;
-//   align-items: center;
-//   width: 100px;
-//   height: 36px;
-//   cursor: pointer;
-// `;
-
-// const AgeColumn = styled.div`
-//   display: flex;
-//   align-items: center;
-//   width: 80px;
-//   height: 36px;
-//   cursor: pointer;
-// `;
-
-// const GenderColumn = styled.div`
-//   display: flex;
-//   align-items: center;
-//   width: 80px;
-//   height: 36px;
-//   position: relative;
-//   cursor: pointer;
-// `;
-
 const PostTitleColumn = styled.div`
   display: flex;
   align-items: center;
@@ -203,14 +172,4 @@ const Body = styled.div`
   display: flex;
   justify-content: center;
   height: 100%;
-`;
-
-const Row = styled.div`
-  width: 100%;
-  height: 48px;
-  border-bottom: 1px solid #f4f4f5;
-  align-items: center;
-  display: flex;
-  padding: 6px 24px;
-  gap: 16px;
 `;

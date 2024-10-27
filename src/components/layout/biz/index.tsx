@@ -1,5 +1,6 @@
 import DefaultFooter from "@/components/footer/default";
 import BizHeader from "@/components/header/biz";
+import Sidemenu from "@/pages/biz/components/sidemenu";
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -15,7 +16,8 @@ const BizLayout = () => {
     <BizLayoutContainer>
       <BizHeader />
       <Body>
-        <Outlet />
+        <Sidemenu />
+        {<Outlet />}
       </Body>
       <DefaultFooter />
     </BizLayoutContainer>
@@ -37,4 +39,5 @@ const Body = styled.div`
   height: 100%;
   min-height: calc(100vh - 100px);
   padding-top: 60px;
+  display: flex;
 `;
