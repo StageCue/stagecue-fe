@@ -16,10 +16,6 @@ interface ReqChangingApplyState {
   applyStatus: string;
 }
 
-interface ReqUploadImage {
-  file: string;
-}
-
 interface ReqEditTroupeData {
   logoImg: string;
   coverImg: string;
@@ -50,7 +46,7 @@ interface ReqEditRecruitParams {
   artworkName: string;
   category: string;
   recruitStatus: string;
-  recruitImages: string[];
+  recruitImages?: string[];
   practice: {
     start: string;
     end: string;
@@ -181,7 +177,7 @@ export const requestEditRecruit = (
   return res;
 };
 
-export const requestUploadRecruitImage = (data: ReqUploadImage) => {
+export const requestUploadRecruitImage = (data: FormData) => {
   const res = request({
     method: "put",
     endpoint: "biz/recruits/images",

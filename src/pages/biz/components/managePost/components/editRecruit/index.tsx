@@ -11,7 +11,7 @@ import { useDaumPostcodePopup } from "react-daum-postcode";
 import DeleteSVG from "@assets/icons/delete_circle.svg?react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/dev";
-import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
+import { convertFileToURL } from "@/utils/file";
 import { requestCreateRecruit, requestUploadRecruitImage } from "@/api/biz";
 import { useParams } from "react-router-dom";
 
@@ -24,7 +24,7 @@ interface EditRecruitInputs {
   artworkName: string;
   category: string;
   recruitStatus: string;
-  recruitImages: string[];
+  recruitImages?: string[];
   practice: {
     start: string;
     end: string;
@@ -61,7 +61,7 @@ const EditRecruit = () => {
     { url: string; id: string }[]
   >([]);
   const [imageFileArray, setImageFileArray] = useState<
-    { file: string; id: string }[]
+    { file: File; id: string }[]
   >([]);
 
   const [isDaySelectOpen, setIsDaySelectOpen] = useState(false);
@@ -90,10 +90,14 @@ const EditRecruit = () => {
   ]);
 
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
-    await requestUploadImageFiles();
+    const recruitImages = await requestUploadImageFiles();
 
     const recruitingParts = partsValue.map(({ value }) => value);
-    const res = await requestCreateRecruit({ ...data, recruitingParts });
+    const res = await requestCreateRecruit({
+      ...data,
+      recruitingParts,
+      recruitImages,
+    });
 
     console.log(res);
   };
@@ -102,11 +106,14 @@ const EditRecruit = () => {
     try {
       const urls = await Promise.all(
         imageFileArray.map(async (item) => {
-          const url = await requestUploadRecruitImage({ file: item.file });
+          const formData = new FormData();
+          formData.append("file", item.file);
+          const url = (await requestUploadRecruitImage(formData)) as string;
           return url;
         })
       );
       setValue("recruitImages", urls);
+      return urls;
     } catch (error) {
       console.error("Error uploading images:", error);
     }
@@ -227,13 +234,12 @@ const EditRecruit = () => {
     const file = event.target.files?.[0];
 
     if (file) {
-      const binaryFile = await convertFileToBinaryData(file);
       const url = convertFileToURL(file);
 
       const id = generateId();
 
       setImageUrlArray((prev) => [...prev, { url, id }]);
-      setImageFileArray((prev) => [...prev, { file: binaryFile, id }]);
+      setImageFileArray((prev) => [...prev, { file, id }]);
     }
   };
 
