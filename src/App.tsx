@@ -24,6 +24,7 @@ import EditRecruit from "./pages/biz/components/managePost/components/editRecrui
 import Applicant from "./pages/biz/components/applicant";
 import ManageTroupe from "./pages/biz/components/manageTroupe";
 import ManagePost from "./pages/biz/components/managePost";
+import EditTroupe from "./pages/biz/components/manageTroupe/components/editTroupe";
 
 function App() {
   return (
@@ -55,6 +56,14 @@ function App() {
           <Route index element={<Applicant />} />
           <Route path="apply" element={<Applicant />} />
           <Route path="troupe" element={<ManageTroupe />} />
+          <Route
+            path="troupe/form"
+            element={<EditTroupe isInitial={false} />}
+          />
+          <Route
+            path="troupe/form/new"
+            element={<EditTroupe isInitial={true} />}
+          />
           <Route path="cast" element={<ManagePost />} />
           <Route path="cast/form" element={<EditRecruit />} />
           <Route path="cast/:id/form" element={<EditRecruit />} />

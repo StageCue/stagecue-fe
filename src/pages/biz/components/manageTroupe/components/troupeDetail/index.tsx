@@ -6,20 +6,32 @@ import PersonSVG from "@assets/icons/person.svg?react";
 import MailSVG from "@assets/icons/mail.svg?react";
 import Button from "@/components/buttons/button";
 import { TroupeInfo } from "../..";
+import { useNavigate } from "react-router-dom";
 
 interface TroupeDetailInterface {
-  onClick: () => void;
   troupe: TroupeInfo;
 }
 
-const TroupeDetail = ({ onClick, troupe }: TroupeDetailInterface) => {
+const TroupeDetail = ({ troupe }: TroupeDetailInterface) => {
+  const navigate = useNavigate();
+
+  const handleEditClick = () => {
+    navigate("/biz/troupe/form");
+  };
+
+  console.log(troupe);
+
   return (
     <TroupeDetailContainer>
       <CoverImageWrapper>
         <CoverImageWrapper>
-          <Cover />
+          <Cover
+            src={`https://s3.stagecue.co.kr/stagecue/${troupe?.coverImg}`}
+          />
           <LogoWrapper>
-            <Logo />
+            <Logo
+              src={`https://s3.stagecue.co.kr/stagecue/${troupe?.logoImg}`}
+            />
           </LogoWrapper>
         </CoverImageWrapper>
       </CoverImageWrapper>
@@ -32,7 +44,7 @@ const TroupeDetail = ({ onClick, troupe }: TroupeDetailInterface) => {
             height={40}
             fontSize={15}
             padding="9px 20px"
-            onClick={onClick}
+            onClick={handleEditClick}
           >
             극단 정보 수정
           </Button>
@@ -40,10 +52,10 @@ const TroupeDetail = ({ onClick, troupe }: TroupeDetailInterface) => {
         <ContentWrapper>
           <TextColumn>
             <TextTitleWrapper>
-              <Title>{troupe.name}</Title>
+              <Title>{troupe?.name}</Title>
               <FollowerWrapper>
                 <FollowerText>팔로워</FollowerText>
-                <FollowerValue>{troupe.followerCount}</FollowerValue>
+                <FollowerValue>{troupe?.followerCount}</FollowerValue>
               </FollowerWrapper>
             </TextTitleWrapper>
             <Description>소개 내용</Description>
@@ -54,21 +66,21 @@ const TroupeDetail = ({ onClick, troupe }: TroupeDetailInterface) => {
                 <CalendarSVG />
                 극단 설립일
               </Property>
-              <Value>{troupe.publishDate}</Value>
+              <Value>{troupe?.publishDate}</Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
                 <LinkSVG />
                 극단 웹사이트
               </Property>
-              <Value>{troupe.website}</Value>
+              <Value>{troupe?.website}</Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
                 <LocationSVG />
                 극단 위치
               </Property>
-              <Value>{troupe.address}</Value>
+              <Value>{troupe?.address}</Value>
             </SummaryPropertyWrapper>
             <Divider />
             <SummaryPropertyWrapper>
@@ -76,14 +88,14 @@ const TroupeDetail = ({ onClick, troupe }: TroupeDetailInterface) => {
                 <PersonSVG />
                 담당자 연락처
               </Property>
-              <Value>{troupe.picCell}</Value>
+              <Value>{troupe?.picCell}</Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
                 <MailSVG />
                 극단 이메일
               </Property>
-              <Value>{troupe.email}</Value>
+              <Value>{troupe?.email}</Value>
             </SummaryPropertyWrapper>
           </SummaryColumn>
         </ContentWrapper>
@@ -102,11 +114,11 @@ const CoverImageWrapper = styled.div`
   position: relative;
 `;
 
-const Cover = styled.div`
+const Cover = styled.img`
   width: 1100px;
   height: 300px;
-  background-color: gray;
   border-radius: 12px;
+  object-fit: cover;
 `;
 
 const LogoWrapper = styled.div`
@@ -115,11 +127,10 @@ const LogoWrapper = styled.div`
   left: 25px;
 `;
 
-const Logo = styled.div`
+const Logo = styled.img`
   width: 80px;
   height: 80px;
   border-radius: 20px;
-  background-color: black;
 `;
 
 const Content = styled.div`

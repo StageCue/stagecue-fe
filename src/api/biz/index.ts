@@ -92,31 +92,40 @@ export const requestChangingApplyState = ({
   return res;
 };
 
-export const requestUploadLogo = (data: ReqUploadImage) => {
+export const requestUploadLogo = (data: FormData) => {
   const res = request({
     method: "put",
     endpoint: "biz/troupes/info/upload-logo",
     data,
+    header: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 
   return res;
 };
 
-export const requestUploadCover = (data: ReqUploadImage) => {
+export const requestUploadCover = (data: FormData) => {
   const res = request({
     method: "put",
     endpoint: "biz/troupes/info/upload-cover",
     data,
+    header: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 
   return res;
 };
 
-export const requestUploadRegistration = (data: ReqUploadImage) => {
+export const requestUploadRegistration = (data: FormData) => {
   const res = request({
     method: "put",
     endpoint: "biz/troupes/info/upload-registration",
     data,
+    header: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 
   return res;

@@ -1,31 +1,27 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import TroupeDetail from "./components/troupeDetail";
-import EditTroupe from "./components/editTroupe";
 import { requestTroupeInfo } from "@/api/biz";
 import Button from "@/components/buttons/button";
+import { useNavigate } from "react-router-dom";
 
 export interface TroupeInfo {
-  name: "string";
-  description: "string";
-  logoImg: "string";
-  coverImg: "string";
+  name: string;
+  description: string;
+  logoImg: string;
+  coverImg: string;
   followerCount: 0;
-  publishDate: "string";
-  website: "string";
-  address: "string";
-  email: "string";
-  picName: "string";
-  picCell: "string";
+  publishDate: string;
+  website: string;
+  address: string;
+  email: string;
+  picName: string;
+  picCell: string;
 }
 
 const ManageTroupe = () => {
+  const navigate = useNavigate();
   const [troupeInfo, setTroupeInfo] = useState<TroupeInfo>();
-  const [isEditTroupe, setIsEditTroupe] = useState(false);
-
-  const handleEditTroupe = () => {
-    setIsEditTroupe(true);
-  };
 
   const getTroupeInfo = async () => {
     const res = await requestTroupeInfo();
@@ -38,15 +34,12 @@ const ManageTroupe = () => {
   }, []);
 
   const handleRegisterTroupeClick = () => {
-    setIsEditTroupe(true);
+    navigate("/biz/troupe/form/new");
   };
 
   return (
     <ManageTroupeContainer>
-      {!isEditTroupe && troupeInfo && (
-        <TroupeDetail onClick={handleEditTroupe} troupe={troupeInfo!} />
-      )}
-      {isEditTroupe && <EditTroupe isInitial={Boolean(!troupeInfo)} />}
+      {troupeInfo && <TroupeDetail troupe={troupeInfo!} />}
       {!troupeInfo && (
         <NoTroupeInfo>
           <RegisterWrapper>

@@ -12,12 +12,9 @@ import {
   requestUploadLogo,
   requestUploadRegistration,
 } from "@/api/biz";
-import {
-  convertFileToBinaryData,
-  convertFileToURL,
-  seperateFileNameFromPath,
-} from "@/utils/file";
+import { convertFileToURL, seperateFileNameFromPath } from "@/utils/file";
 import { useDaumPostcodePopup } from "react-daum-postcode";
+import { useNavigate } from "react-router-dom";
 
 interface EditTroupeProps {
   isInitial: boolean;
@@ -50,17 +47,20 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     getValues,
   } = useForm<EditTroupeInputs>({ mode: "all" });
 
+  const navigate = useNavigate();
+
   const open = useDaumPostcodePopup();
 
   const inputLogoFileRef = useRef<HTMLInputElement | null>(null);
   const inputCoverFileRef = useRef<HTMLInputElement | null>(null);
   const inputRegistrationFileRef = useRef<HTMLInputElement | null>(null);
 
-  const [logoFile, setLogoFile] = useState<string>();
+  const [logoFile, setLogoFile] = useState<File>();
   const [logoPreview, setLogoPreview] = useState<string>();
-  const [coverFile, setCoverFile] = useState<string>();
-  const [registrationFile, setRegistrationFile] = useState<string>();
-  const [regstratironFileName, setRegistrationFileName] = useState<string>();
+  const [coverFile, setCoverFile] = useState<File>();
+  const [coverFileName, setCoverFileName] = useState<string>();
+  const [registrationFile, setRegistrationFile] = useState<File>();
+  const [registrationFileName, setRegistrationFileName] = useState<string>();
 
   const [descriptionValue, addressValue] = watch(["description", "address"]);
 
@@ -83,46 +83,71 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   };
 
   const onSubmitEdit = async (data: EditTroupeInputs) => {
-    await requestUploadFiles();
+    const logoImg = await requestUploadLogoFile();
+    const coverImg = await requestUploadCoverFile();
+    const registrationFile = await requestUploadRegistrationFile();
 
-    const res = await requestEditTroupe(data);
+    const res = await requestEditTroupe({
+      ...data,
+      logoImg,
+      coverImg,
+      registrationFile,
+    });
+
+    console.log(res);
+    navigate("/biz/troupe");
   };
 
-  const requestUploadFiles = async () => {
+  const requestUploadLogoFile = async () => {
     if (logoFile) {
-      const url = await requestUploadLogo({ file: logoFile });
-      setValue("logoImg", url);
-    }
+      const formData = new FormData();
+      formData.append("file", logoFile);
+      const { filePath } = await requestUploadLogo(formData);
 
-    if (coverFile) {
-      const url = await requestUploadCover({ file: coverFile });
-      setValue("coverImg", url);
-    }
-
-    if (registrationFile) {
-      requestUploadRegistration({ file: registrationFile });
+      setValue("logoImg", filePath);
+      return filePath;
     }
   };
 
-  const handleLogoFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const requestUploadCoverFile = async () => {
+    if (coverFile) {
+      const formData = new FormData();
+      formData.append("file", coverFile);
+      const { filePath } = await requestUploadCover(formData);
+
+      setValue("coverImg", filePath);
+      return filePath;
+    }
+  };
+
+  const requestUploadRegistrationFile = async () => {
+    if (registrationFile) {
+      const formData = new FormData();
+      formData.append("file", registrationFile);
+      const { filePath } = await requestUploadRegistration(formData);
+
+      setValue("registrationFile", filePath);
+      return filePath;
+    }
+  };
+
+  const handleLogoFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (file) {
-      const binaryFile = await convertFileToBinaryData(file);
       const url = convertFileToURL(file);
-      setLogoFile(binaryFile);
+      setLogoFile(file);
       setLogoPreview(url);
     }
   };
 
-  const handleCoverFileChange = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleCoverFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const binaryFile = await convertFileToBinaryData(file);
+    const path = event.target.value;
 
-      setCoverFile(binaryFile);
+    if (file) {
+      setCoverFile(file);
+      setCoverFileName(seperateFileNameFromPath(path));
     }
   };
 
@@ -133,10 +158,9 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const path = event.target.value;
 
     if (file) {
-      const binaryFile = await convertFileToBinaryData(file);
       const fileName = seperateFileNameFromPath(path);
       console.log(fileName);
-      setRegistrationFile(binaryFile);
+      setRegistrationFile(file);
       setRegistrationFileName(fileName);
     }
   };
@@ -163,12 +187,21 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     open({ onComplete: handleAddressComplete });
   };
 
+  const getCoverFileName = (path: string) => {
+    if (path) {
+      const parts = path.split("/");
+      return parts[parts.length - 1];
+    }
+    return "";
+  };
+
   const getTroupeFormData = async () => {
     const res = await requestTroupeEditInfo();
-
-    const logoUrl = res.logImg;
+    console.log(res);
+    const logoUrl = res.logoImg;
     const coverImg = res.coverImg;
     const name = res.name;
+    const description = res.description;
     const publishDate = res.publishDate;
     const address = res.address;
     const addressDetail = res.addressDetail;
@@ -179,8 +212,12 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const email = res.email;
     const website = res.website;
 
-    setLogoPreview(`https://s3.stagecue.co.kr/stagecue${logoUrl}`);
+    setLogoPreview(`https://s3.stagecue.co.kr/stagecue/${logoUrl}`);
+    setCoverFileName(getCoverFileName(coverImg));
+    setValue("logoImg", logoUrl);
+    setValue("coverImg", coverImg);
     setValue("name", name);
+    setValue("description", description);
     setValue("publishDate", publishDate.split("T")[0]);
     setValue("address", address);
     setValue("addressDetail", addressDetail);
@@ -239,7 +276,9 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
             )}
             <FileInput
               type="file"
-              {...register("logoImg", { required: true })}
+              {...register("logoImg", {
+                required: true,
+              })}
               ref={inputLogoFileRef}
               accept="image/*"
               onChange={handleLogoFileChange}
@@ -264,6 +303,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
               <TipSVG />
             </LabelWrapper>
             <FileGuide>극단을 표현하는 이미지를 설정해보세요.</FileGuide>
+            <CoverFileName>{coverFileName}</CoverFileName>
             <FileInput
               type="file"
               {...register("coverImg")}
@@ -363,7 +403,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
           <Label>사업자 등록증</Label>
           <WithBtnInputWrapper>
             <FakeWithBtnInput $isFileUploaded={Boolean(registrationFile)}>
-              {regstratironFileName}
+              {registrationFileName}
             </FakeWithBtnInput>
             <FileInput
               type="file"
@@ -481,7 +521,7 @@ const RedDot = styled.div`
   border-radius: 50%;
 `;
 
-const Form = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -713,14 +753,33 @@ const PreviewEmptyWrapper = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 10px;
+  margin-bottom: 8px;
 `;
 
 const PreviewImage = styled.img`
   width: 48px;
   height: 48px;
   border-radius: 10px;
+  margin-bottom: 8px;
 `;
 
 const FileInput = styled.input`
   display: none;
+`;
+
+const CoverFileName = styled.div`
+  width: fit-content;
+  min-width: 100px;
+  height: 32px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  color: #171719;
+  font-weight: var(--font-medium);
+  font-size: 14px;
+  line-height: 142.9%;
+  letter-spacing: 1.45%;
 `;

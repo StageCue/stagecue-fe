@@ -42,10 +42,6 @@ interface ReqChangePasswordBody {
   confirmPassword: string;
 }
 
-interface UploadImagePrams {
-  file: string;
-}
-
 export const requestCastsStatus = async () => {
   const res = await request({
     method: "get",
@@ -250,11 +246,15 @@ export const requestCreateProfile = async (data: ReqChangeProfileData) => {
   return res;
 };
 
-export const requestUploadImage = async (data: UploadImagePrams) => {
+export const requestUploadImage = async (data: FormData) => {
+  console.log(data);
   const res = await request({
     method: "post",
     endpoint: "users/profiles/upload-image",
     data,
+    header: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 
   return res;

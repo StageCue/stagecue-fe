@@ -127,10 +127,8 @@ const EditRecruit = () => {
 
       if (partsValue) {
         setValue("recruitingParts", [...partsValue, { value: part, id }]);
-        // setPartsArray([...partsArray, { value: part, id }]);
       } else {
         setValue("recruitingParts", [{ value: part, id }]);
-        // setPartsArray([{ value: part, id }]);
       }
 
       setPart("");
@@ -142,7 +140,6 @@ const EditRecruit = () => {
   };
 
   const handleDeleteChipClick = (id: string) => {
-    // setPartsArray((prevArray) => prevArray.filter((part) => part.id !== id));
     setValue(
       "recruitingParts",
       partsValue.filter((part) => part.id !== id)

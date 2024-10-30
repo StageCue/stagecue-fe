@@ -18,7 +18,7 @@ import useSessionStore from "@/store";
 import ModalPortal from "@/components/modal/portal";
 import SubmitModal from "../modals/submitModal";
 import { useDropzone } from "react-dropzone";
-import { convertFileToBinaryData, convertFileToURL } from "@/utils/file";
+import { convertFileToURL } from "@/utils/file";
 import CloseSVG from "@assets/icons/close_black.svg?react";
 import ImageSVG from "@assets/icons/image.svg?react";
 import { generateId } from "@/utils/dev";
@@ -54,13 +54,13 @@ const ProfileForm = () => {
   const [isAddExp, setIsAddExp] = useState<boolean>(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
-  const [thumbnailFile, setThumbnailFile] = useState<string>();
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string>();
   const [imageUrlArray, setImageUrlArray] = useState<
     { url: string; id: string }[]
   >([]);
   const [imageFileArray, setImageFileArray] = useState<
-    { file: string; id: string }[]
+    { file: File | null; id: string }[]
   >([]);
 
   const { register, handleSubmit, setValue, watch, getValues } =
@@ -74,9 +74,8 @@ const ProfileForm = () => {
   const onDropThumbnail = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
-      const binaryFile = await convertFileToBinaryData(file);
       const url = convertFileToURL(file);
-      setThumbnailFile(binaryFile);
+      setThumbnailFile(file);
       setThumbnailPreview(url);
     }
   }, []);
@@ -90,10 +89,9 @@ const ProfileForm = () => {
   const onDropImages = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
-      const binaryFile = await convertFileToBinaryData(file);
       const url = convertFileToURL(file);
       const id = generateId();
-      setImageFileArray((prev) => [...prev, { file: binaryFile, id }]);
+      setImageFileArray((prev) => [...prev, { file, id }]);
       setImageUrlArray((prev) => [...prev, { url, id }]);
     }
   }, []);
@@ -105,17 +103,20 @@ const ProfileForm = () => {
   const requestUploadImageFiles = async () => {
     if (imageFileArray.length !== 0) {
       try {
-        const urls = await Promise.all(
+        const urls: string[] = await Promise.all(
           imageFileArray.map(async (item, index) => {
-            if (item.file !== "noNeedToConvert") {
-              const url = await requestUploadImage({ file: item.file });
-              return url;
+            if (item.file) {
+              const formData = new FormData();
+              formData.append("file", item.file);
+              const { imageUrl } = await requestUploadImage(formData);
+              return imageUrl;
             } else {
               return imageUrlArray[index].url;
             }
           })
         );
         setValue("images", urls);
+        return urls;
       } catch (error) {
         console.error("Error uploading images:", error);
       }
@@ -128,11 +129,14 @@ const ProfileForm = () => {
         const formData = new FormData();
         formData.append("file", thumbnailFile);
         const url = await requestUploadThumbnail(formData);
-        console.log("thumurl", url);
+
         setValue("thumbnail", url);
+        return url;
       } catch (error) {
         console.error("Error uploading images:", error);
       }
+    } else {
+      return null;
     }
   };
 
@@ -194,7 +198,7 @@ const ProfileForm = () => {
     });
 
     const currentFileArray = currentImageArray.map(({ id }) => {
-      return { id, file: "noNeedToConvert" };
+      return { id, file: null };
     });
     setImageUrlArray(currentImageArray);
     setImageFileArray(currentFileArray);
@@ -248,15 +252,15 @@ const ProfileForm = () => {
 
   const handleConfirmClick = async (data: ProfileInput) => {
     setIsSubmitModalOpen(false);
-    await requestUploadImageFiles();
-    await requestUploadThumbnailFile();
+    const imageUrls = await requestUploadImageFiles();
+    const thumbnailRes = await requestUploadThumbnailFile();
 
     const res = await requestSaveProfile(
       {
         ...data,
         isDefault: true,
-        images: imagesValue,
-        thumbnail: thumbnailValue,
+        images: imageUrls!,
+        thumbnail: thumbnailRes ? thumbnailRes.imageUrl : thumbnailValue,
       },
       id!
     );
@@ -267,14 +271,14 @@ const ProfileForm = () => {
   const handleCloseClick = async (data: ProfileInput) => {
     setIsSubmitModalOpen(false);
     await requestUploadImageFiles();
-    await requestUploadThumbnailFile();
+    const thumbnailRes = await requestUploadThumbnailFile();
 
     const res = await requestSaveProfile(
       {
         ...data,
         isDefault: false,
         images: imagesValue,
-        thumbnail: thumbnailValue,
+        thumbnail: thumbnailRes.imageUrl,
       },
       id!
     );
@@ -292,7 +296,7 @@ const ProfileForm = () => {
   };
 
   const handleDeleteThumbanailClick = () => {
-    setThumbnailFile("");
+    setThumbnailFile(null);
     setThumbnailPreview("");
     if (getValues("thumbnail")) {
       setValue("thumbnail", "");
@@ -689,7 +693,7 @@ const ProfileForm = () => {
                   <CloseIconWrapper onClick={() => handleDeleteImageClick(id)}>
                     <CloseSVG />
                   </CloseIconWrapper>
-                  {imageFileArray[index].file === "noNeedToConvert" ? (
+                  {!imageFileArray[index].file ? (
                     <Image
                       key={id}
                       src={`https://s3.stagecue.co.kr/stagecue/${url}`}
