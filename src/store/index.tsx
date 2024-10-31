@@ -43,6 +43,7 @@ const useSessionStore = create(
 
       loginSession: ({ username, phoneNumber, email }: LoginParams) => {
         const accessToken = localStorage.getItem("accessToken");
+        console.log("store", accessToken);
         if (accessToken) {
           set((state) => ({
             ...state,

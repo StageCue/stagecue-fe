@@ -24,13 +24,13 @@ const Login = () => {
     const res = await requestLogin(data);
 
     if (res.accessToken) {
+      localStorage.setItem("accessToken", res.accessToken);
+      localStorage.setItem("refreshToken", res.refreshToken);
       sessionStore.loginSession({
         email: emailValue,
         username: res.username,
         phoneNumber: res.cell,
       });
-      localStorage.setItem("accessToken", res.accessToken);
-      localStorage.setItem("refreshToken", res.refreshToken);
       navigate("/");
     }
   };

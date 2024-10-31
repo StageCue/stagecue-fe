@@ -22,6 +22,7 @@ export interface SignupInputs {
 export interface ForgotAccountInputs {
   phoneNumber: string;
   certCode: string;
+  certificated: boolean;
 }
 
 export interface ForgotPasswordInput {

@@ -25,6 +25,10 @@ interface ReqVerifySignupParams {
   token: string;
 }
 
+interface ReqFindAccountParams {
+  findAccountToken: string;
+}
+
 export const requestLogin = async (data: ReqLoginParams) => {
   const res = await request({
     method: "post",
@@ -69,5 +73,37 @@ export const requestVerifySignup = async (data: ReqVerifySignupParams) => {
     method: "get",
     endpoint: `auth/verify-signup?phoneNumber=${phoneNumber}&token=${token}`,
   });
+  return res;
+};
+
+export const requestFindAccountCode = async (data: ReqCellPhoneCertCode) => {
+  const res = await request({
+    method: "post",
+    endpoint: "auth/claim-find-account",
+    data,
+  });
+  return res;
+};
+
+export const requestVerifyFindAccountCode = async (
+  data: ReqVerifySignupParams
+) => {
+  const { phoneNumber, token } = data;
+  const res = await request({
+    method: "get",
+    endpoint: `auth/verify-find-account?phoneNumber=${phoneNumber}&token=${token}`,
+  });
+  return res;
+};
+
+export const requestFindAccount = async (data: ReqFindAccountParams) => {
+  const { findAccountToken } = data;
+  console.log(findAccountToken);
+  const res = await request({
+    method: "get",
+    endpoint: "auth/find-account",
+    header: { "Auth-Find-Account-Token": `${findAccountToken}` },
+  });
+
   return res;
 };
