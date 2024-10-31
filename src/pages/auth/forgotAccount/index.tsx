@@ -8,8 +8,10 @@ import {
   requestFindAccountCode,
   requestVerifyFindAccountCode,
 } from "@/api/auth";
+import { useNavigate } from "react-router-dom";
 
 const ForgotAccount = () => {
+  const navigate = useNavigate();
   const [isSentCode, setIsSentCode] = useState(false);
   const [certTime, setCertTime] = useState<number>(300);
   const [certCode, setCertCode] = useState<string>("");
@@ -101,6 +103,13 @@ const ForgotAccount = () => {
     return () => clearInterval(timer);
   }, [certTime, isSentCode]);
 
+  const handleLoginClick = () => {
+    navigate("/auth/login");
+  };
+
+  const handleForgotPasswordClick = () => {
+    navigate("/auth/forgotpassword");
+  };
   return (
     <ForgotAccountContainer>
       <TitleWrapper>
@@ -194,7 +203,48 @@ const ForgotAccount = () => {
           </Button>
         </Form>
       )}
-      {foundAccount && <FoundAccountBox>{foundAccount}</FoundAccountBox>}
+      {foundAccount && (
+        <>
+          <FoundAccountBox>
+            <TextWrapper>
+              <MainText>계정을 찾았어요!</MainText>
+              <SubText>방금 인증한 번호로 가입하신 계정을 알려드려요.</SubText>
+            </TextWrapper>
+            <Divder />
+            <AccountText>{foundAccount}</AccountText>
+          </FoundAccountBox>
+          <Button
+            btnClass="primary"
+            variation="solid"
+            width={340}
+            height={48}
+            padding="12px"
+            lineHeight={150}
+            fontSize={16}
+            letterSpacing={0.57}
+            fontWeight="var(--font-semibold)"
+            onClick={handleLoginClick}
+          >
+            찾은 계정으로 로그인하기
+          </Button>
+          <BtnWrapper>
+            <Button
+              btnClass="assistive"
+              variation="text"
+              width={146}
+              height={28}
+              lineHeight={142.9}
+              letterSpacing={1.45}
+              padding="4px 6px"
+              fontSize={14}
+              fontWeight="var(--font-semibold)"
+              onClick={handleForgotPasswordClick}
+            >
+              비밀번호를 잊으셨나요?
+            </Button>
+          </BtnWrapper>
+        </>
+      )}
     </ForgotAccountContainer>
   );
 };
@@ -365,17 +415,54 @@ const FoundAccountBox = styled.div`
   width: 520px;
   height: 164px;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-content: center;
+  flex-direction: column;
   background-color: #f7f7f8;
+  padding: 24px;
+  gap: 16px;
+  border-radius: 10px;
+  margin-bottom: 56px;
 `;
 
-const TextWrapper = styled.div``;
+const TextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+`;
 
-const MainText = styled.div``;
+const MainText = styled.div`
+  font-size: 18px;
+  line-height: 144.5%;
+  letter-spacing: -0.02%;
+  font-weight: var(--font-semibold);
+  color: #000000;
+`;
 
-const SubText = styled.div``;
+const SubText = styled.div`
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  font-weight: var(--font-regular);
+  color: #000000;
+`;
 
-const Divder = styled.div``;
+const Divder = styled.div`
+  height: 1px;
+  width: 120px;
+  background-color: #37383c;
+`;
 
-const AccountText = styled.div``;
+const AccountText = styled.div`
+  font-size: 18px;
+  line-height: 144.5%;
+  letter-spacing: -0.02%;
+  font-weight: var(--font-semibold);
+  color: #000000;
+`;
+
+const BtnWrapper = styled.div`
+  margin-top: 16px;
+`;
