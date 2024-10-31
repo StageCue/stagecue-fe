@@ -98,11 +98,19 @@ export const requestVerifyFindAccountCode = async (
 
 export const requestFindAccount = async (data: ReqFindAccountParams) => {
   const { findAccountToken } = data;
-  console.log(findAccountToken);
   const res = await request({
     method: "get",
     endpoint: "auth/find-account",
     header: { "Auth-Find-Account-Token": `${findAccountToken}` },
+  });
+
+  return res;
+};
+
+export const requestResetPasswordEmail = async (email: string) => {
+  const res = await request({
+    method: "get",
+    endpoint: `auth/claim-password-reset?email=${email}`,
   });
 
   return res;

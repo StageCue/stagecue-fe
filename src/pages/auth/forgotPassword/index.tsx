@@ -2,9 +2,18 @@ import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { ForgotPasswordInput } from "../../../types/user";
 import Button from "../../../components/buttons/button";
+import { requestResetPasswordEmail } from "@/api/auth";
 
 const ForgotPassword = () => {
-  const { register } = useForm<ForgotPasswordInput>();
+  const { register, handleSubmit, watch } = useForm<ForgotPasswordInput>();
+
+  const [emailValue] = watch(["email"]);
+
+  const onSubmitEmail = async (data: ForgotPasswordInput) => {
+    const res = await requestResetPasswordEmail(data.email);
+
+    console.log(res);
+  };
 
   return (
     <ResetPasswordContainer>
@@ -14,7 +23,7 @@ const ForgotPassword = () => {
           비밀번호 재설정을 진행할 계정의 이메일을 입력해주세요.
         </Description>
       </TitleWrapper>
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmitEmail)}>
         <InputWrapper>
           <Label>이메일</Label>
           <Input
@@ -24,8 +33,13 @@ const ForgotPassword = () => {
             placeholder="stagecue@example.com"
           />
         </InputWrapper>
-        <Button variation="solid" btnClass="primary" width={340}>
-          계속
+        <Button
+          variation="solid"
+          btnClass="primary"
+          width={340}
+          disabled={!emailValue}
+        >
+          비밀번호 변경
         </Button>
       </Form>
     </ResetPasswordContainer>
