@@ -22,7 +22,6 @@ interface ReqApplyCast {
 }
 
 export const requestCasts = async (data: ReqCastsParams) => {
-  console.log(data);
   const {
     limit = "10",
     offset = "0",

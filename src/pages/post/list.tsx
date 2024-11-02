@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ChevronDownSVG from "@assets/icons/chevron_down.svg?react";
 import ChevronDownSSVG from "@assets/icons/chebron_down_s.svg?react";
@@ -15,7 +9,7 @@ import ElipsisSVG from "@assets/icons/elipsis.svg?react";
 import Button from "@components/buttons/button";
 import { requestCasts } from "@/api/cast";
 import Cast from "@/pages/home/components/cast";
-import useSearchStore from "@/store/search";
+import RangeInput from "./components/rangeInput";
 
 type genreType = "연극" | "뮤지컬" | "댄스";
 type zoneType =
@@ -31,10 +25,6 @@ type zoneType =
 type dayPickerType = "전체요일" | "주말" | "평일" | "";
 
 const List = () => {
-  const minThumbRef = useRef<MutableRefObject<HTMLDivElement | null>>();
-  const maxThumbRef = useRef<MutableRefObject<HTMLDivElement | null>>();
-  const rangeRef = useRef<MutableRefObject<HTMLDivElement | null>>();
-
   const popupMenuRef = useRef<HTMLDivElement | null>(null);
   const genreButtonRef = useRef<HTMLDivElement | null>(null);
   const zoneButtonRef = useRef<HTMLDivElement | null>(null);
@@ -58,9 +48,6 @@ const List = () => {
     "1",
   ]);
 
-  const [selectedMinCost, setSelectedMinCost] = useState<string>("10,000");
-  const [selectedMaxCost, setSelectedMaxCost] = useState<string>("500,000");
-
   const [isAppliedZone, setIsAppliedZone] = useState<boolean>(false);
   const [isAppliedDay, setIsAppliedDay] = useState<boolean>(false);
   const [isAppliedCost] = useState<boolean>(false);
@@ -75,8 +62,10 @@ const List = () => {
     "1",
     "1",
   ]);
+  const [appliedCost, setAppliedCost] = useState<string>("");
 
-  const [AppliedCost, setAppliedCost] = useState();
+  const [minCost, setMinCost] = useState<string>("10000");
+  const [maxCost, setMaxCost] = useState<string>("500000");
 
   const [isGenreMenuShowing, setIsGenreMenuShowing] = useState<boolean>(false);
   const [isZoneFilterShowing, setIsZoneFilterShowing] =
@@ -203,24 +192,6 @@ const List = () => {
     });
   };
 
-  const handleMinCostChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const validatedValue = event.target.value.replace(/[^0-9]/g, "");
-    const formattedValue = new Intl.NumberFormat("ko-KR").format(
-      Number(validatedValue)
-    );
-    setSelectedMinCost(formattedValue);
-    updateThumbsAndRange(formattedValue, selectedMaxCost);
-  };
-
-  const handleMaxCostChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const validatedValue = event.target.value.replace(/[^0-9]/g, "");
-    const formattedValue = new Intl.NumberFormat("ko-KR").format(
-      Number(validatedValue)
-    );
-    setSelectedMaxCost(formattedValue);
-    updateThumbsAndRange(selectedMaxCost, formattedValue);
-  };
-
   // const handleMinCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
   // const handleMaxCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
@@ -261,6 +232,24 @@ const List = () => {
     }
   }, [practiceDays]);
 
+  const onChangeMinCost = (cost: string) => {
+    setMinCost(cost);
+  };
+
+  const onChanageMaxCost = (cost: string) => {
+    setMaxCost(cost);
+  };
+
+  const handleResetCostClick = () => {
+    setMinCost("10000");
+    setMaxCost("500000");
+  };
+
+  const handleCostApplyClick = () => {
+    setAppliedCost(`${minCost}-${maxCost}`);
+    setIsCostFilterShowing(false);
+  };
+
   useEffect(() => {
     if (
       practiceDays.every(
@@ -271,20 +260,6 @@ const List = () => {
     }
   }, [practiceDays]);
 
-  const updateThumbsAndRange = (minCost: string, maxCost: string) => {
-    const minPercent = ((parseInt(minCost) - 10000) / (500000 - 10000)) * 100;
-    const maxPercent = ((parseInt(maxCost) - 10000) / (500000 - 10000)) * 100;
-
-    if (minThumbRef.current instanceof HTMLDivElement)
-      minThumbRef.current.style.left = `${minPercent}%`;
-    if (maxThumbRef.current instanceof HTMLDivElement)
-      maxThumbRef.current.style.left = `${maxPercent}%`;
-    if (rangeRef.current instanceof HTMLDivElement) {
-      rangeRef.current.style.left = `${minPercent}%`;
-      rangeRef.current.style.right = `${100 - maxPercent}%`;
-    }
-  };
-
   const getCasts = async () => {
     const res = await requestCasts({
       offset: "0",
@@ -292,6 +267,7 @@ const List = () => {
       category: parsingCategory(selectedGenre),
       locations: appliedZone[0] === "전체지역" ? "" : appliedZone.join(";"),
       orderBy: currentOrderBy,
+      feeRange: appliedCost,
     });
 
     setCasts(res.casts);
@@ -354,7 +330,7 @@ const List = () => {
 
   useEffect(() => {
     getCasts();
-  }, [appliedDay, selectedZone, selectedGenre, currentOrderBy]);
+  }, [appliedDay, selectedZone, selectedGenre, currentOrderBy, appliedCost]);
 
   return (
     <ListContainer>
@@ -487,51 +463,28 @@ const List = () => {
           )}
           {isCostFilterShowing && (
             <FilterMenu ref={popupMenuRef}>
-              <Filters>
-                <CostFilter>
-                  <InputWrapper>
-                    <CostInput
-                      type="text"
-                      onChange={handleMinCostChange}
-                      value={selectedMinCost}
-                    />
-                    <Won>원</Won>
-                  </InputWrapper>
-                  <Dash />
-                  <InputWrapper>
-                    <CostInput
-                      type="text"
-                      onChange={handleMaxCostChange}
-                      value={selectedMaxCost}
-                    />
-                    <Won>원</Won>
-                  </InputWrapper>
-                </CostFilter>
-                <CostRangeWrapper>
-                  <div>
-                    <MinRangeInput
-                      type="range"
-                      min={10000}
-                      value={parseInt(selectedMinCost.replace(/,/g, ""), 10)}
-                      max={parseInt(selectedMaxCost.replace(/,/g, ""), 10)}
-                      onChange={handleMinCostChange}
-                    />
-                    <MaxRangeInput
-                      type="range"
-                      min={parseInt(selectedMinCost.replace(/,/g, ""), 10)}
-                      value={parseInt(selectedMaxCost.replace(/,/g, ""), 10)}
-                      max={500000}
-                      onChange={handleMaxCostChange}
-                    />
-                    <Slider>
-                      <Track />
-                      <Range />
-                      <MinThumb ref={minThumbRef.current} />
-                      <MaxThumb ref={maxThumbRef.current} />
-                    </Slider>
-                  </div>
-                </CostRangeWrapper>
-              </Filters>
+              <RangeInput
+                minCost={minCost}
+                maxCost={maxCost}
+                onChangeMaxCost={onChanageMaxCost}
+                onChangeMinCost={onChangeMinCost}
+              />
+              <FilterMenuFooter>
+                <ResetBtn onClick={handleResetCostClick}>초기화</ResetBtn>
+                <Button
+                  variation="solid"
+                  btnClass="primary"
+                  width={51}
+                  height={32}
+                  fontSize={13}
+                  letterSpacing={138.5}
+                  lineHeight={1.94}
+                  padding="7px 14px"
+                  onClick={handleCostApplyClick}
+                >
+                  적용
+                </Button>
+              </FilterMenuFooter>
             </FilterMenu>
           )}
           <ResetFilterWrapper>
@@ -826,146 +779,146 @@ const Day = styled.div<{ $isSelected: boolean }>`
   cursor: pointer;
 `;
 
-const Filters = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-`;
+// const Filters = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   gap: 16px;
+// `;
 
-const CostFilter = styled.div`
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-`;
+// const CostFilter = styled.div`
+//   display: flex;
+//   gap: 12px;
+//   align-items: center;
+//   justify-content: center;
+// `;
 
-const InputWrapper = styled.div`
-  border: 1px solid #70737c;
-  border-radius: 10px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
+// const InputWrapper = styled.div`
+//   border: 1px solid #70737c;
+//   border-radius: 10px;
+//   padding: 12px 16px;
+//   display: flex;
+//   align-items: center;
+//   gap: 12px;
+// `;
 
-const CostInput = styled.input`
-  border: none;
-  outline: none;
-  font-size: 16px;
-  line-height: 150%;
-  letter-spacing: 0.57%;
-  width: 91px;
-`;
+// const CostInput = styled.input`
+//   border: none;
+//   outline: none;
+//   font-size: 16px;
+//   line-height: 150%;
+//   letter-spacing: 0.57%;
+//   width: 91px;
+// `;
 
-const Won = styled.div``;
+// const Won = styled.div``;
 
-const Dash = styled.div`
-  width: 12px;
-  height: 1px;
-  border: 1px solid #171719;
-`;
+// const Dash = styled.div`
+//   width: 12px;
+//   height: 1px;
+//   border: 1px solid #171719;
+// `;
 
-const CostRangeWrapper = styled.div`
-  position: relative;
-  width: 50%;
-  max-width: 500px;
-`;
+// const CostRangeWrapper = styled.div`
+//   position: relative;
+//   width: 50%;
+//   max-width: 500px;
+// `;
 
-const MinRangeInput = styled.input`
-  position: absolute;
-  -webkit-appearance: none;
-  appearance: none;
-  pointer-events: none;
-  z-index: 2;
-  height: 10px;
-  width: 100%;
-  opacity: 0;
+// const MinRangeInput = styled.input`
+//   position: absolute;
+//   -webkit-appearance: none;
+//   appearance: none;
+//   pointer-events: none;
+//   z-index: 2;
+//   height: 10px;
+//   width: 100%;
+//   opacity: 0;
 
-  &:-webkit-slider-thumb {
-    pointer-events: all;
-    width: 30px;
-    height: 30px;
-    border-radius: 0;
-    border: 0 none;
-    background-color: red;
-    cursor: pointer;
-    -webkit-appearance: none;
-  }
-`;
+//   &:-webkit-slider-thumb {
+//     pointer-events: all;
+//     width: 30px;
+//     height: 30px;
+//     border-radius: 0;
+//     border: 0 none;
+//     background-color: red;
+//     cursor: pointer;
+//     -webkit-appearance: none;
+//   }
+// `;
 
-const MaxRangeInput = styled.input`
-  position: absolute;
-  -webkit-appearance: none;
-  appearance: none;
-  pointer-events: none;
-  z-index: 2;
-  height: 10px;
-  width: 100%;
-  opacity: 0;
+// const MaxRangeInput = styled.input`
+//   position: absolute;
+//   -webkit-appearance: none;
+//   appearance: none;
+//   pointer-events: none;
+//   z-index: 2;
+//   height: 10px;
+//   width: 100%;
+//   opacity: 0;
 
-  &:-webkit-slider-thumb {
-    pointer-events: all;
-    width: 30px;
-    height: 30px;
-    border-radius: 0;
-    border: 0 none;
-    background-color: red;
-    cursor: pointer;
-    -webkit-appearance: none;
-  }
-`;
+//   &:-webkit-slider-thumb {
+//     pointer-events: all;
+//     width: 30px;
+//     height: 30px;
+//     border-radius: 0;
+//     border: 0 none;
+//     background-color: red;
+//     cursor: pointer;
+//     -webkit-appearance: none;
+//   }
+// `;
 
-const Slider = styled.div`
-  position: relative;
-  z-index: 1;
-  height: 10px;
-  margin: 0 15px;
-`;
+// const Slider = styled.div`
+//   position: relative;
+//   z-index: 1;
+//   height: 10px;
+//   margin: 0 15px;
+// `;
 
-const Track = styled.div`
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  border-radius: 5px;
-  background-color: #c6aee7;
-`;
+// const Track = styled.div`
+//   position: absolute;
+//   z-index: 1;
+//   left: 0;
+//   right: 0;
+//   top: 0;
+//   bottom: 0;
+//   border-radius: 5px;
+//   background-color: #c6aee7;
+// `;
 
-const Range = styled.div`
-  position: absolute;
-  z-index: 2;
-  left: 25%;
-  right: 25%;
-  top: 0;
-  bottom: 0;
-  border-radius: 5px;
-  background-color: #6200ee;
-`;
+// const Range = styled.div`
+//   position: absolute;
+//   z-index: 2;
+//   left: 25%;
+//   right: 25%;
+//   top: 0;
+//   bottom: 0;
+//   border-radius: 5px;
+//   background-color: #6200ee;
+// `;
 
-const MinThumb = styled.div`
-  position: absolute;
-  z-index: 3;
-  width: 30px;
-  height: 30px;
-  background-color: #6200ee;
-  border-radius: 50%;
-  left: 25%;
-  transform: translate(-15px, -10px);
-`;
+// const MinThumb = styled.div`
+//   position: absolute;
+//   z-index: 3;
+//   width: 30px;
+//   height: 30px;
+//   background-color: #6200ee;
+//   border-radius: 50%;
+//   left: 25%;
+//   transform: translate(-15px, -10px);
+// `;
 
-const MaxThumb = styled.div`
-  position: absolute;
-  z-index: 3;
-  width: 30px;
-  height: 30px;
-  background-color: #6200ee;
-  border-radius: 50%;
-  right: 25%;
-  transform: translate(15px, -10px);
-`;
+// const MaxThumb = styled.div`
+//   position: absolute;
+//   z-index: 3;
+//   width: 30px;
+//   height: 30px;
+//   background-color: #6200ee;
+//   border-radius: 50%;
+//   right: 25%;
+//   transform: translate(15px, -10px);
+// `;
 
 const CastGrid = styled.div`
   display: grid;
