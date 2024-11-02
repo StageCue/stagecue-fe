@@ -25,6 +25,7 @@ import Applicant from "./pages/biz/components/applicant";
 import ManageTroupe from "./pages/biz/components/manageTroupe";
 import ManagePost from "./pages/biz/components/managePost";
 import EditTroupe from "./pages/biz/components/manageTroupe/components/editTroupe";
+import FindPassword from "./pages/auth/resetPassword";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
           <Route path="forgotAccount" element={<ForgotAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
           <Route path="resetpassword" element={<ResetPassword />} />
+          <Route path="find-password" element={<FindPassword />} />
         </Route>
         <Route path="/biz" element={<BizLayout />}>
           <Route index element={<Applicant />} />

@@ -29,6 +29,11 @@ interface ReqFindAccountParams {
   findAccountToken: string;
 }
 
+interface ReqChangePassword {
+  newPassword: string;
+  token: string;
+}
+
 export const requestLogin = async (data: ReqLoginParams) => {
   const res = await request({
     method: "post",
@@ -111,6 +116,17 @@ export const requestResetPasswordEmail = async (email: string) => {
   const res = await request({
     method: "get",
     endpoint: `auth/claim-password-reset?email=${email}`,
+  });
+
+  return res;
+};
+
+export const requestResetPasswordFromMail = async (data: ReqChangePassword) => {
+  const res = await request({
+    method: "put",
+    endpoint: "auth/change-password",
+    data,
+    header: { "Auth-Change-Password-Token": `${data.token}` },
   });
 
   return res;
