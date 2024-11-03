@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import styled from "styled-components";
 import { SignupInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
@@ -13,7 +13,8 @@ import CheckboxSVG from "@assets/icons/checkbox.svg?react";
 import CheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
 import useSessionStore from "@/store";
-// import CalendarSVG from "@assets/icons/calendar.svg?react";
+import CalendarSVG from "@assets/icons/calendar.svg?react";
+import Datepicker from "@/components/datepicker";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -25,6 +26,14 @@ const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isAllAgree, setIsAllAgree] = useState(false);
   const [registerToken, setRegisterToken] = useState("");
+  const [isDatepickerShowing, setIsDatePickerShowing] = useState(false);
+
+  const [date, setDate] = useState<Date>();
+
+  const handleDateChange = (date: Date) => {
+    console.log(date);
+    setDate(date);
+  };
 
   const {
     register,
@@ -34,6 +43,7 @@ const Signup = () => {
     setValue,
     setError,
     trigger,
+    control,
   } = useForm<SignupInputs>({ mode: "all" });
 
   const [
@@ -216,6 +226,10 @@ const Signup = () => {
     }
   };
 
+  const handleCalendarClick = () => {
+    setIsDatePickerShowing(true);
+  };
+
   useEffect(() => {
     if (certTime === 0 || !isSentCertCode) return;
 
@@ -359,14 +373,27 @@ const Signup = () => {
               <RequiedRedDot />
             </RequiredLabel>
             <WithIconInputWrapper>
-              <WithIconHalfInput
+              {/* <WithIconHalfInput
                 {...register("birthday", {
                   required: true,
                 })}
                 placeholder="YYYY.MM.DD"
                 type="date"
+              /> */}
+              <Controller
+                name="birthday"
+                control={control}
+                defaultValue={`${new Date(Date.now())}`}
+                render={() => (
+                  <Datepicker
+                    selectedDate={date!}
+                    onChangeDate={(date: Date | null) => handleDateChange(date)}
+                  />
+                )}
               />
-              {/* <CalendarSVG /> */}
+              <IconWrapper onClick={handleCalendarClick}>
+                <CalendarSVG />
+              </IconWrapper>
             </WithIconInputWrapper>
           </InputWrapper>
           <InputWrapper>
@@ -726,6 +753,7 @@ const WithIconInputWrapper = styled.div`
   display: flex;
   gap: 12px;
   border: 1px solid #e0e0e2;
+  justify-content: space-between;
 `;
 
 const WithIconHalfInput = styled.input`
@@ -787,7 +815,9 @@ const CheckboxLabel = styled.div`
   width: fit-content;
 `;
 
-const IconWrapper = styled.div``;
+const IconWrapper = styled.div`
+  cursor: pointer;
+`;
 
 const SuccessCert = styled.div`
   color: #00bf40;
@@ -802,3 +832,5 @@ const VerifyWrapper = styled.div`
   gap: 8px;
   margin-bottom: 8px;
 `;
+
+const DateValue = styled.div``;
