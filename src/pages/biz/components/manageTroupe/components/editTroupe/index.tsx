@@ -70,6 +70,12 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
 
   const [descriptionValue, addressValue] = watch(["description", "address"]);
 
+  const handleCalendarClick = () => {
+    if (datepickerRef.current) {
+      datepickerRef.current.setOpen(true);
+    }
+  };
+
   const handleDateChange = (date: Date) => {
     setDate(date);
   };
@@ -385,7 +391,9 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
                   />
                 )}
               />
-              <CalendarSVG />
+              <IconWrapper onClick={handleCalendarClick}>
+                <CalendarSVG />
+              </IconWrapper>
             </WithIconInputWrapper>
           </InputWrapper>
         </TwoInputWrapper>
@@ -810,4 +818,8 @@ const CoverFileName = styled.div`
   font-size: 14px;
   line-height: 142.9%;
   letter-spacing: 1.45%;
+`;
+
+const IconWrapper = styled.div`
+  cursor: pointer;
 `;

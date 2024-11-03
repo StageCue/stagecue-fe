@@ -7,16 +7,18 @@ import styled from "styled-components";
 import Button from "../buttons/button";
 import { forwardRef } from "react";
 
-interface DatepickerProps {
-  selectedDate: Date;
-  onChangeDate: (date: Date | null) => void;
+interface RangeDatepickerProps {
+  selectedRange: [Date | null, Date | null];
+  onChangeDate: (range: [Date | null, Date | null]) => void;
   minDate?: Date;
   maxDate?: Date;
   pickerText: string;
 }
 
-const Datepicker = forwardRef<DatePicker, DatepickerProps>(
-  ({ selectedDate, onChangeDate, pickerText }, ref) => {
+const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
+  ({ selectedRange, onChangeDate, pickerText }, ref) => {
+    const [startDate, endDate] = selectedRange;
+
     const handleApplyClick = () => {
       if (ref && "current" in ref && ref.current) {
         ref.current.setOpen(false);
@@ -24,16 +26,18 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
     };
 
     const handleResetClick = () => {
-      onChangeDate(new Date(Date.now()));
+      onChangeDate([new Date(Date.now()), new Date(Date.now())]);
     };
 
     return (
-      <DatePickerContainer>
+      <RangeDatePickerContainer>
         <DatePicker
           ref={ref}
           dateFormat="yyyy.MM.dd"
-          selected={selectedDate}
-          onChange={onChangeDate}
+          selectsRange
+          startDate={startDate!}
+          endDate={endDate!}
+          onChange={(update) => onChangeDate(update)}
           shouldCloseOnSelect={false}
           disabledKeyboardNavigation
           customInputRef=""
@@ -48,14 +52,14 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
             />
           )}
         />
-      </DatePickerContainer>
+      </RangeDatePickerContainer>
     );
   }
 );
 
-export default Datepicker;
+export default RangeDatepicker;
 
-const DatePickerContainer = styled.div``;
+const RangeDatePickerContainer = styled.div``;
 
 interface CustomHeaderProps {
   date: Date;

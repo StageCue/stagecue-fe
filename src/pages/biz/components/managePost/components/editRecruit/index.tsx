@@ -6,7 +6,7 @@ import PlusSVG from "@assets/icons/plus_circle.svg?react";
 import MinusSVG from "@assets/icons/minus.svg?react";
 import RadioSVG from "@assets/icons/radio.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import DeleteSVG from "@assets/icons/delete_circle.svg?react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -14,6 +14,8 @@ import { generateId } from "@/utils/dev";
 import { convertFileToURL } from "@/utils/file";
 import { requestCreateRecruit, requestUploadRecruitImage } from "@/api/biz";
 import { useParams } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import RangeDatepicker from "@/components/rangeDatepicker";
 
 interface EditRecruitInputs {
   title: string;
@@ -49,6 +51,7 @@ const EditRecruit = () => {
     formState: { errors, dirtyFields },
     watch,
     setValue,
+    control,
   } = useForm<EditRecruitInputs>();
 
   const inputImageFileRef = useRef<HTMLInputElement | null>(null);
@@ -88,6 +91,36 @@ const EditRecruit = () => {
     "recruitingParts",
     "category",
   ]);
+
+  const practiceDatepickerRef = useRef<DatePicker | null>(null);
+  const [practiceDataRange, setPracticeDataRange] = useState<
+    [Date | null, Date | null]
+  >([new Date(Date.now()), new Date(Date.now())]);
+
+  const handlePracticeCalendarClick = () => {
+    if (practiceDatepickerRef.current) {
+      practiceDatepickerRef.current.setOpen(true);
+    }
+  };
+
+  const handlePracticeRangeChange = (range: [Date | null, Date | null]) => {
+    setPracticeDataRange(range);
+    if (range) {
+      const stringDate = range.map((date) =>
+        date
+          ?.toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })
+          .replace(/\./g, "-")
+          .replace(/\s/g, "")
+          .replace(/-$/, "")
+      );
+      setValue("practice.start", stringDate[0]!);
+      setValue("practice.end", stringDate[1]!);
+    }
+  };
 
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
     const recruitImages = await requestUploadImageFiles();
@@ -405,11 +438,17 @@ const EditRecruit = () => {
               $isDirty={Boolean(dirtyFields.practice?.start)}
               $isError={false}
             >
-              <WithIconHalfInput
-                type="date"
-                {...register("practice.start", { required: true })}
+              <RangeDatepicker
+                ref={practiceDatepickerRef}
+                selectedRange={practiceDataRange}
+                onChangeDate={(range: [Date | null, Date | null]) => {
+                  handlePracticeRangeChange(range);
+                }}
+                pickerText="연습기간을 입력해주세요"
               />
-              <CalendarSVG />
+              <IconWrapper onClick={handlePracticeCalendarClick}>
+                <CalendarSVG />
+              </IconWrapper>
             </WithIconInputWrapper>
           </InputWrapper>
           <InputWrapper>

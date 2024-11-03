@@ -156,7 +156,7 @@ html, body {
     border: none;
     outline: none;
     cursor: pointer;
-    width: 100%;
+    width: 200px;
     }
 
 }
