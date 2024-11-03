@@ -26,12 +26,10 @@ const Signup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isAllAgree, setIsAllAgree] = useState(false);
   const [registerToken, setRegisterToken] = useState("");
-  const [isDatepickerShowing, setIsDatePickerShowing] = useState(false);
 
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date>(new Date(Date.now()));
 
   const handleDateChange = (date: Date) => {
-    console.log(date);
     setDate(date);
   };
 
@@ -68,6 +66,7 @@ const Signup = () => {
     "ageCheck",
     "agreeServicePolicy",
     "agreePrivatePolicy",
+    "birthday",
   ]);
 
   const isAllInputHasValue = useMemo(() => {
@@ -226,10 +225,6 @@ const Signup = () => {
     }
   };
 
-  const handleCalendarClick = () => {
-    setIsDatePickerShowing(true);
-  };
-
   useEffect(() => {
     if (certTime === 0 || !isSentCertCode) return;
 
@@ -373,25 +368,32 @@ const Signup = () => {
               <RequiedRedDot />
             </RequiredLabel>
             <WithIconInputWrapper>
-              {/* <WithIconHalfInput
-                {...register("birthday", {
-                  required: true,
-                })}
-                placeholder="YYYY.MM.DD"
-                type="date"
-              /> */}
               <Controller
                 name="birthday"
                 control={control}
-                defaultValue={`${new Date(Date.now())}`}
-                render={() => (
+                defaultValue={date?.toLocaleDateString()}
+                render={({ field }) => (
                   <Datepicker
                     selectedDate={date!}
-                    onChangeDate={(date: Date | null) => handleDateChange(date)}
+                    onChangeDate={(date: Date | null) => {
+                      handleDateChange(date!);
+                      field.onChange(
+                        date
+                          ?.toLocaleDateString("ko-KR", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          })
+                          .replace(/\./g, "-")
+                          .replace(/\s/g, "")
+                          .replace(/-$/, "")
+                      );
+                    }}
+                    pickerText="생년월일을 입력해주세요"
                   />
                 )}
               />
-              <IconWrapper onClick={handleCalendarClick}>
+              <IconWrapper>
                 <CalendarSVG />
               </IconWrapper>
             </WithIconInputWrapper>
@@ -756,20 +758,6 @@ const WithIconInputWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const WithIconHalfInput = styled.input`
-  width: 272px;
-  height: 24px;
-  border: none;
-  outline: none;
-
-  &::placeholder {
-    color: #dadada;
-    line-height: 150%;
-    letter-spacing: 0.57%;
-    font-size: 16px;
-  }
-`;
-
 const GenderButtonWrapper = styled.div`
   display: flex;
   gap: 12px;
@@ -832,5 +820,3 @@ const VerifyWrapper = styled.div`
   gap: 8px;
   margin-bottom: 8px;
 `;
-
-const DateValue = styled.div``;

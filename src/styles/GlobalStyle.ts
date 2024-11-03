@@ -144,6 +144,20 @@ html, body {
     font-weight: var(--font-bold);
 }
 
+
+.react-datepicker__input-container {
+    input[type="text"] {
+    color:#171719;
+    font-size:16px;
+    line-height: 150%;
+    letter-spacing: 9.57%;
+    height: 24px;
+    border: none;
+    outline: none;
+    }
+
+}
+
 `;
 
 export default GlobalStyle;

@@ -18,7 +18,7 @@ interface DatepickerProps {
 const Datepicker = ({
   selectedDate,
   onChangeDate,
-  pickerText = "생년월일을 입력해주세요",
+  pickerText,
 }: DatepickerProps) => {
   const datepickerRef = useRef<DatePicker | null>(null);
 
@@ -60,6 +60,15 @@ export default Datepicker;
 
 const DatePickerContainer = styled.div``;
 
+interface CustomHeaderProps {
+  date: Date;
+  decreaseMonth: () => void;
+  increaseMonth: () => void;
+  pickerText: string;
+  onClickApply: () => void;
+  onClickReset: () => void;
+}
+
 // Header
 const CustomHeader = ({
   date,
@@ -68,7 +77,7 @@ const CustomHeader = ({
   pickerText,
   onClickApply,
   onClickReset,
-}) => {
+}: CustomHeaderProps) => {
   return (
     <CustomHeaderContainer>
       <HeaderWrapper>
