@@ -70,6 +70,7 @@ html, body {
 
 }
 
+
 .react-datepicker__month-container {
     width: 340px;
     height: 389.16px;
@@ -154,6 +155,8 @@ html, body {
     height: 24px;
     border: none;
     outline: none;
+    cursor: pointer;
+    width: 100%;
     }
 
 }

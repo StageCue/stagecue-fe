@@ -5,7 +5,7 @@ import CaretRight from "@assets/icons/caret_right_cal.svg?react";
 import "react-datepicker/dist/react-datepicker.css";
 import styled from "styled-components";
 import Button from "../buttons/button";
-import { useRef } from "react";
+import { forwardRef } from "react";
 
 interface DatepickerProps {
   selectedDate: Date;
@@ -15,46 +15,45 @@ interface DatepickerProps {
   pickerText: string;
 }
 
-const Datepicker = ({
-  selectedDate,
-  onChangeDate,
-  pickerText,
-}: DatepickerProps) => {
-  const datepickerRef = useRef<DatePicker | null>(null);
+const Datepicker = forwardRef<DatePicker, DatepickerProps>(
+  ({ selectedDate, onChangeDate, pickerText }, ref) => {
+    // const datepickerRef = useRef<DatePicker | null>(null);
 
-  const handleApplyClick = () => {
-    if (datepickerRef.current) {
-      datepickerRef.current.setOpen(false);
-    }
-  };
+    const handleApplyClick = () => {
+      if (ref && "current" in ref && ref.current) {
+        ref.current.setOpen(false);
+      }
+    };
 
-  const handleResetClick = () => {
-    onChangeDate(new Date(Date.now()));
-  };
+    const handleResetClick = () => {
+      onChangeDate(new Date(Date.now()));
+    };
 
-  return (
-    <DatePickerContainer>
-      <DatePicker
-        ref={datepickerRef}
-        dateFormat="yyyy.MM.dd"
-        selected={selectedDate}
-        onChange={onChangeDate}
-        shouldCloseOnSelect={false}
-        disabledKeyboardNavigation
-        renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
-          <CustomHeader
-            date={date}
-            decreaseMonth={decreaseMonth}
-            increaseMonth={increaseMonth}
-            pickerText={pickerText}
-            onClickApply={handleApplyClick}
-            onClickReset={handleResetClick}
-          />
-        )}
-      />
-    </DatePickerContainer>
-  );
-};
+    return (
+      <DatePickerContainer>
+        <DatePicker
+          ref={ref}
+          dateFormat="yyyy.MM.dd"
+          selected={selectedDate}
+          onChange={onChangeDate}
+          shouldCloseOnSelect={false}
+          disabledKeyboardNavigation
+          customInputRef=""
+          renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
+            <CustomHeader
+              date={date}
+              decreaseMonth={decreaseMonth}
+              increaseMonth={increaseMonth}
+              pickerText={pickerText}
+              onClickApply={handleApplyClick}
+              onClickReset={handleResetClick}
+            />
+          )}
+        />
+      </DatePickerContainer>
+    );
+  }
+);
 
 export default Datepicker;
 

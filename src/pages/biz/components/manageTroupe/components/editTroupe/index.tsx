@@ -1,5 +1,5 @@
 import Button from "@/components/buttons/button";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import styled from "styled-components";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
 import TipSVG from "@assets/icons/tip.svg?react";
@@ -15,6 +15,8 @@ import {
 import { convertFileToURL, seperateFileNameFromPath } from "@/utils/file";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import { useNavigate } from "react-router-dom";
+import Datepicker from "@/components/datepicker";
+import DatePicker from "react-datepicker";
 
 interface EditTroupeProps {
   isInitial: boolean;
@@ -45,6 +47,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     setValue,
     // trigger,
     getValues,
+    control,
   } = useForm<EditTroupeInputs>({ mode: "all" });
 
   const navigate = useNavigate();
@@ -62,7 +65,14 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   const [registrationFile, setRegistrationFile] = useState<File>();
   const [registrationFileName, setRegistrationFileName] = useState<string>();
 
+  const datepickerRef = useRef<DatePicker | null>(null);
+  const [date, setDate] = useState<Date>(new Date(Date.now()));
+
   const [descriptionValue, addressValue] = watch(["description", "address"]);
+
+  const handleDateChange = (date: Date) => {
+    setDate(date);
+  };
 
   const handleLogoInputClick = () => {
     if (inputLogoFileRef.current) {
@@ -219,6 +229,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     setValue("name", name);
     setValue("description", description);
     setValue("publishDate", publishDate.split("T")[0]);
+    setDate(new Date(publishDate));
     setValue("address", address);
     setValue("addressDetail", addressDetail);
     setValue("registrationFile", registrationFile);
@@ -348,9 +359,31 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
               $isDirty={Boolean(dirtyFields.publishDate)}
               $isError={Boolean(errors.publishDate)}
             >
-              <WithIconHalfInput
-                {...register("publishDate", { required: true })}
-                type="date"
+              <Controller
+                name="publishDate"
+                control={control}
+                defaultValue={date?.toLocaleDateString()}
+                render={({ field }) => (
+                  <Datepicker
+                    ref={datepickerRef}
+                    selectedDate={date!}
+                    onChangeDate={(date: Date | null) => {
+                      handleDateChange(date!);
+                      field.onChange(
+                        date
+                          ?.toLocaleDateString("ko-KR", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          })
+                          .replace(/\./g, "-")
+                          .replace(/\s/g, "")
+                          .replace(/-$/, "")
+                      );
+                    }}
+                    pickerText="설립일자를 입력해주세요"
+                  />
+                )}
               />
               <CalendarSVG />
             </WithIconInputWrapper>
@@ -665,20 +698,15 @@ const WithIconInputWrapper = styled.div<{
   padding: 12px 16px;
   border-radius: 10px;
   display: flex;
+  justify-content: space-between;
   gap: 12px;
+  cursor: pointer;
   border: ${({ $isDirty, $isError }) =>
     $isError
       ? "1px solid #FF4242"
       : $isDirty
       ? "1px solid #000000"
       : "1px solid #e0e0E2"};
-`;
-
-const WithIconHalfInput = styled.input`
-  width: 272px;
-  height: 24px;
-  border: none;
-  outline: none;
 `;
 
 const TextAreaWrapper = styled.div<{

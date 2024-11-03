@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { SignupInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   requestCellPhoneCertCode,
   requestSignup,
@@ -15,6 +15,7 @@ import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
 import useSessionStore from "@/store";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
 import Datepicker from "@/components/datepicker";
+import DatePicker from "react-datepicker";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ const Signup = () => {
   const [isAllAgree, setIsAllAgree] = useState(false);
   const [registerToken, setRegisterToken] = useState("");
 
+  const datepickerRef = useRef<DatePicker | null>(null);
   const [date, setDate] = useState<Date>(new Date(Date.now()));
 
   const handleDateChange = (date: Date) => {
@@ -225,6 +227,12 @@ const Signup = () => {
     }
   };
 
+  const handleCalendarClick = () => {
+    if (datepickerRef.current) {
+      datepickerRef.current.setOpen(true);
+    }
+  };
+
   useEffect(() => {
     if (certTime === 0 || !isSentCertCode) return;
 
@@ -374,6 +382,7 @@ const Signup = () => {
                 defaultValue={date?.toLocaleDateString()}
                 render={({ field }) => (
                   <Datepicker
+                    ref={datepickerRef}
                     selectedDate={date!}
                     onChangeDate={(date: Date | null) => {
                       handleDateChange(date!);
@@ -393,7 +402,7 @@ const Signup = () => {
                   />
                 )}
               />
-              <IconWrapper>
+              <IconWrapper onClick={handleCalendarClick}>
                 <CalendarSVG />
               </IconWrapper>
             </WithIconInputWrapper>
