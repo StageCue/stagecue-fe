@@ -40,7 +40,7 @@ interface CastDetail {
     lat: number;
     lng: number;
   };
-  recruitingParts: string;
+  recruitingParts: string[];
   isScrapping: boolean;
 }
 
@@ -68,7 +68,7 @@ const Detail = () => {
   const getCastDetail = async () => {
     if (id) {
       const cast = await requestCastDetail(id);
-
+      console.log(cast);
       setCastDetail(cast);
 
       if (cast.isScrapping) {

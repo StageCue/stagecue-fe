@@ -15,7 +15,11 @@ const ApplyList = ({ status }: ApplyListProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getAppliedCasts = async () => {
-    const res = await requestAppliedCasts({ limit: 10, offset: 0, status });
+    const res = await requestAppliedCasts({
+      limit: 10,
+      offset: 0,
+      status: status === "APPLIED" ? "" : status,
+    });
     const { applies } = res;
 
     setCasts(applies);

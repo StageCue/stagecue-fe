@@ -17,7 +17,8 @@ interface ReqAppliedCastsParams {
     | "DOCUMENT_PASSED"
     | "FINAL_ACCEPTED"
     | "REJECTED"
-    | "CANCEL";
+    | "CANCEL"
+    | "";
 }
 
 interface ReqChangeProfileData {

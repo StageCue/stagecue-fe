@@ -67,7 +67,14 @@ const ApplyHistory = () => {
             $isSelected={selectedPhase === "APPLIED"}
           >
             <ItemName>지원 완료</ItemName>
-            <Value>{castsStatus?.applied}</Value>
+            {castsStatus && (
+              <Value>
+                {castsStatus?.applied +
+                  castsStatus?.passed +
+                  castsStatus?.accepted +
+                  castsStatus?.rejected}
+              </Value>
+            )}
           </ApplyPhase>
           <Divider />
           <ApplyPhase
@@ -98,23 +105,29 @@ const ApplyHistory = () => {
       <ApplyListWrapper>
         <TitleWrapper>
           <ItemTitle>{parsePhase(selectedPhase)}</ItemTitle>
-          <FilterBtnWrapper>
-            <FilterBtn onClick={handleFilterBtnClick}>
-              {selectedFilter} <ChevronDownSVG />
-            </FilterBtn>
-            {isFilterMenuShowing && (
-              <FilterMenu>
-                <Option onClick={() => handleFilterClick("전체")}>전체</Option>
-                <Option onClick={() => handleFilterClick("열람")}>열람</Option>
-                <Option onClick={() => handleFilterClick("미열람")}>
-                  미열람
-                </Option>
-                <Option onClick={() => handleFilterClick("지원취소")}>
-                  지원취소
-                </Option>
-              </FilterMenu>
-            )}
-          </FilterBtnWrapper>
+          {selectedPhase === "APPLIED" && (
+            <FilterBtnWrapper>
+              <FilterBtn onClick={handleFilterBtnClick}>
+                {selectedFilter} <ChevronDownSVG />
+              </FilterBtn>
+              {isFilterMenuShowing && (
+                <FilterMenu>
+                  <Option onClick={() => handleFilterClick("전체")}>
+                    전체
+                  </Option>
+                  <Option onClick={() => handleFilterClick("열람")}>
+                    열람
+                  </Option>
+                  <Option onClick={() => handleFilterClick("미열람")}>
+                    미열람
+                  </Option>
+                  <Option onClick={() => handleFilterClick("지원취소")}>
+                    지원취소
+                  </Option>
+                </FilterMenu>
+              )}
+            </FilterBtnWrapper>
+          )}
         </TitleWrapper>
         <ApplyList status={selectedPhase} />
       </ApplyListWrapper>

@@ -6,7 +6,7 @@ import Cast from "../cast";
 export interface Cast {
   castId: number;
   thumbnail: string;
-  castTitle: string;
+  recruitTitle: string;
   artworkName: string;
   practiceLocation: string;
   isScrapping: boolean;
@@ -40,7 +40,7 @@ const NewPost = ({ casts }: NewPostProps) => {
           ({
             castId,
             thumbnail,
-            castTitle,
+            recruitTitle,
             artworkName,
             practiceLocation,
             isScrapping,
@@ -49,7 +49,7 @@ const NewPost = ({ casts }: NewPostProps) => {
               key={castId}
               castId={castId}
               thumbnail={thumbnail}
-              castTitle={castTitle}
+              castTitle={recruitTitle}
               artworkName={artworkName}
               practiceLocation={practiceLocation}
               isScrapping={isScrapping}

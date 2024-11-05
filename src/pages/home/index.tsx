@@ -22,13 +22,13 @@ const Home = () => {
   };
 
   const getNewestCasts = async () => {
-    const { casts } = await requestCasts({
+    const { recruits } = await requestCasts({
       limit: "10",
       offset: "0",
       orderBy: "newest",
     });
 
-    setNewestCasts(casts);
+    setNewestCasts(recruits);
   };
 
   const getPopularCasts = async () => {

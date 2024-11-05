@@ -5,7 +5,7 @@ interface BasicInfoProps {
   start: string;
   end: string;
   monthlyFee: number;
-  recruitingParts: string;
+  recruitingParts: string[];
 }
 
 const BasicInfo = ({
@@ -46,7 +46,7 @@ const BasicInfo = ({
           연기 가능 배역
         </Property>
         <Chips>
-          {recruitingParts?.split("|").map((part) => (
+          {recruitingParts?.map((part) => (
             <Chip>{part}</Chip>
           ))}
         </Chips>

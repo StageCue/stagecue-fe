@@ -17,10 +17,9 @@ const Mystage = () => {
   const [castsStatus, setCastStatus] = useState<CastStatus>();
   const [popularCasts, setPopularCast] = useState([]);
   const [scraps, setScraps] = useState([]);
-
+  console.log(scraps);
   const getCastsStatus = async () => {
     const res = await requestCastsStatus();
-
     setCastStatus(res);
   };
 
@@ -49,7 +48,6 @@ const Mystage = () => {
     getScrappedCasts();
   }, []);
 
-  console.log(castsStatus?.applied);
   return (
     <MystageContainer>
       <MyStage>
@@ -59,7 +57,14 @@ const Mystage = () => {
         <Dashboard>
           <MyStageItem>
             <ItemName>지원 완료</ItemName>
-            <Value>{castsStatus?.applied}</Value>
+            {castsStatus && (
+              <Value>
+                {castsStatus?.applied +
+                  castsStatus?.passed +
+                  castsStatus?.accepted +
+                  castsStatus?.rejected}
+              </Value>
+            )}
           </MyStageItem>
           <Divider />
           <MyStageItem>
@@ -101,7 +106,7 @@ const Mystage = () => {
                 imageUrl,
                 castTitle,
                 artworkName,
-                practiceLocation,
+                practiceAddress,
                 isScrapping,
               }) => (
                 <Cast
@@ -110,7 +115,7 @@ const Mystage = () => {
                   thumbnail={imageUrl}
                   castTitle={castTitle}
                   artworkName={artworkName}
-                  practiceLocation={practiceLocation}
+                  practiceLocation={practiceAddress}
                   isScrapping={isScrapping}
                 />
               )
@@ -125,7 +130,7 @@ const Mystage = () => {
             <ShowAll>전체보기</ShowAll>
           </ItemTitleWrapper>
           <Casts>
-            {popularCasts.map(
+            {popularCasts?.map(
               ({
                 castId,
                 thumbnail,
