@@ -35,6 +35,10 @@ const Signup = () => {
     setDate(date);
   };
 
+  const handleServicePolicyLinkClick = () => {};
+
+  const handlePrivatePolicyLinkClick = () => {};
+
   const {
     register,
     handleSubmit,

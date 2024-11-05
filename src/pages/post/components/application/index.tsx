@@ -10,7 +10,7 @@ import ModalPortal from "@/components/modal/portal";
 import ProfileModal from "../profileModal";
 
 interface ApplicationProps {
-  castId: string;
+  recruitId: string;
   isApplied: boolean;
 }
 
@@ -26,7 +26,7 @@ interface Profile {
   dateCreated: string;
 }
 
-const Application = ({ castId, isApplied }: ApplicationProps) => {
+const Application = ({ recruitId, isApplied }: ApplicationProps) => {
   const navigate = useNavigate();
   const [checkedProfileId, setCheckedProfileId] = useState<number>();
   const [profiles, setProfiles] = useState([]);
@@ -53,13 +53,13 @@ const Application = ({ castId, isApplied }: ApplicationProps) => {
   };
 
   const handleApplyClick = async ({
-    castId,
+    recruitId,
     profileId,
   }: {
-    castId: string;
+    recruitId: string;
     profileId: string;
   }) => {
-    await requestApplyCast({ castId, profileId });
+    await requestApplyCast({ recruitId, profileId });
     navigate("/casts/applied");
   };
 
@@ -151,7 +151,7 @@ const Application = ({ castId, isApplied }: ApplicationProps) => {
         lineHeight={150}
         disabled={!checkedProfileId || isApplied}
         onClick={() =>
-          handleApplyClick({ castId, profileId: `${checkedProfileId}` })
+          handleApplyClick({ recruitId, profileId: `${checkedProfileId}` })
         }
       >
         {isApplied ? "지원완료" : "지원하기"}

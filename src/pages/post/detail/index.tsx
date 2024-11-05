@@ -57,12 +57,10 @@ const Detail = () => {
 
   const handleBookmarkClick = async () => {
     if (isBookmarked) {
-      const res = await requestDeleteScrapCast(id!);
-      console.log(res);
+      await requestDeleteScrapCast(id!);
       setIsBookmarked(false);
     } else {
-      const res = await requestScrapCast(id!);
-      console.log(res);
+      await requestScrapCast(id!);
       setIsBookmarked(true);
     }
   };
@@ -173,7 +171,7 @@ const Detail = () => {
         </Content>
       </ContentWrapper>
       {castDetail && (
-        <Application castId={id!} isApplied={castDetail?.isApplied} />
+        <Application recruitId={id!} isApplied={castDetail?.isApplied} />
       )}
     </DetailContainer>
   );

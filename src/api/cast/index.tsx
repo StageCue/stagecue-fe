@@ -17,7 +17,7 @@ interface ReqCastsDetailListParams {
 }
 
 interface ReqApplyCast {
-  castId: string;
+  recruitId: string;
   profileId: string;
 }
 
@@ -34,7 +34,7 @@ export const requestCasts = async (data: ReqCastsParams) => {
 
   const res = await request({
     method: "get",
-    endpoint: `casts?limit=${limit}&offset=${offset}&orderBy=${orderBy}&category=${category}&daysOfWeek=${daysOfWeek}&query=${query}&locations=${locations}`,
+    endpoint: `recruits?limit=${limit}&offset=${offset}&orderBy=${orderBy}&category=${category}&daysOfWeek=${daysOfWeek}&query=${query}&locations=${locations}`,
   });
   return res;
 };
@@ -45,7 +45,7 @@ export const requestCastsDetailList = async (
   const { limit = "5", offset = "0" } = data;
   const res = await request({
     method: "get",
-    endpoint: `casts/details?limit=${limit}&offset=${offset}`,
+    endpoint: `recruits/details?limit=${limit}&offset=${offset}`,
   });
   return res;
 };
@@ -53,32 +53,35 @@ export const requestCastsDetailList = async (
 export const requestCastDetail = async (id: string) => {
   const res = await request({
     method: "get",
-    endpoint: `casts/${id}`,
+    endpoint: `recruits/${id}`,
   });
   return res;
 };
 
-export const requestApplyCast = async ({ castId, profileId }: ReqApplyCast) => {
+export const requestApplyCast = async ({
+  recruitId,
+  profileId,
+}: ReqApplyCast) => {
   const res = await request({
     method: "post",
-    endpoint: `casts/${castId}/apply?profileId=${profileId}`,
+    endpoint: `recruits/${recruitId}/apply?profileId=${profileId}`,
   });
   return res;
 };
 
-export const requestScrapCast = async (castId: string) => {
+export const requestScrapCast = async (recruitId: string) => {
   const res = await request({
     method: "post",
-    endpoint: `casts/${castId}/scrap`,
+    endpoint: `recruits/${recruitId}/scrap`,
   });
 
   return res;
 };
 
-export const requestDeleteScrapCast = async (castId: string) => {
+export const requestDeleteScrapCast = async (recruitId: string) => {
   const res = await request({
     method: "delete",
-    endpoint: `casts/${castId}/scrap`,
+    endpoint: `recruits/${recruitId}/scrap`,
   });
 
   return res;
