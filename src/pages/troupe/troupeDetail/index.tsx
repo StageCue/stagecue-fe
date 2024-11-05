@@ -176,10 +176,6 @@ const TroupeDetail = () => {
           </TroupeTopBox>
           <TroupeBottomBox>
             <DataRow>
-              <Property>단원</Property>
-              <Value>?명</Value>
-            </DataRow>
-            <DataRow>
               <Property>홈페이지</Property>
               <WithIconValue onClick={handleWebsiteClick}>
                 바로가기

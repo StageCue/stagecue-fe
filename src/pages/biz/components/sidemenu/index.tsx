@@ -85,7 +85,6 @@ export default Sidemenu;
 
 const SideMenuContainer = styled.div`
   width: 260px;
-  height: 100%;
   min-height: inherit;
   border-right: 1px solid #e1e2e4;
   padding-top: 24px;

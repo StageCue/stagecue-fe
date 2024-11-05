@@ -51,7 +51,6 @@ const EditRecruit = () => {
     formState: { errors, dirtyFields },
     watch,
     setValue,
-    control,
   } = useForm<EditRecruitInputs>();
 
   const inputImageFileRef = useRef<HTMLInputElement | null>(null);
