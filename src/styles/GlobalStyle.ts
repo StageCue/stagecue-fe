@@ -161,6 +161,28 @@ html, body {
 
 }
 
+
+.react-datepicker__day--in-range {
+    background-color: #d47473;
+    border-radius: 0;
+}
+
+.react-datepicker__day--range-start {
+    background-color: #B81716;
+    border-top-left-radius: 866.48px;
+    border-bottom-left-radius: 866.48px;
+}
+
+
+.react-datepicker__day--range-end {
+    background-color: #B81716;
+    border-top-right-radius: 866.48px;
+    border-bottom-right-radius: 866.48px;
+}
+
+
+
+
 `;
 
 export default GlobalStyle;

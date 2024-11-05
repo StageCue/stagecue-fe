@@ -97,9 +97,20 @@ const EditRecruit = () => {
     [Date | null, Date | null]
   >([new Date(Date.now()), new Date(Date.now())]);
 
+  const stageDatepickerRef = useRef<DatePicker | null>(null);
+  const [stageDateRange, setStageDateRange] = useState<
+    [Date | null, Date | null]
+  >([new Date(Date.now()), new Date(Date.now())]);
+
   const handlePracticeCalendarClick = () => {
     if (practiceDatepickerRef.current) {
       practiceDatepickerRef.current.setOpen(true);
+    }
+  };
+
+  const handleStageCalendarClick = () => {
+    if (stageDatepickerRef.current) {
+      stageDatepickerRef.current.setOpen(true);
     }
   };
 
@@ -119,6 +130,25 @@ const EditRecruit = () => {
       );
       setValue("practice.start", stringDate[0]!);
       setValue("practice.end", stringDate[1]!);
+    }
+  };
+
+  const handleStageRangeChange = (range: [Date | null, Date | null]) => {
+    setStageDateRange(range);
+    if (range) {
+      const stringDate = range.map((date) =>
+        date
+          ?.toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })
+          .replace(/\./g, "-")
+          .replace(/\s/g, "")
+          .replace(/-$/, "")
+      );
+      setValue("stage.start", stringDate[0]!);
+      setValue("stage.end", stringDate[1]!);
     }
   };
 
@@ -605,11 +635,17 @@ const EditRecruit = () => {
             $isDirty={Boolean(dirtyFields.stage?.start)}
             $isError={false}
           >
-            <WithIconHalfInput
-              type="date"
-              {...register("stage.start", { required: true })}
+            <RangeDatepicker
+              ref={stageDatepickerRef}
+              selectedRange={stageDateRange}
+              onChangeDate={(range: [Date | null, Date | null]) => {
+                handleStageRangeChange(range);
+              }}
+              pickerText="공연기간을 입력해주세요"
             />
-            <CalendarSVG />
+            <IconWrapper onClick={handleStageCalendarClick}>
+              <CalendarSVG />
+            </IconWrapper>
           </WithIconInputWrapper>
         </InputWrapper>
         <InputWrapper>
