@@ -82,7 +82,7 @@ const Mystage = () => {
         <ItemTitleWrapper>
           <ItemTitle>스크랩한 공고</ItemTitle>
         </ItemTitleWrapper>
-        {scraps.length === 0 ? (
+        {scraps?.length === 0 ? (
           <NoSavedPost>
             <NoScrappedSVG />
             <TextWrapper>

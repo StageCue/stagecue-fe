@@ -7,7 +7,11 @@ import TrashSVG from "@assets/icons/trash.svg?react";
 import { useEffect, useState } from "react";
 import Button from "@/components/buttons/button";
 import Table from "./components/table";
-import { requestCloseRecruit, requestRecruits } from "@/api/biz";
+import {
+  requestCloseRecruit,
+  requestDeleteRecruit,
+  requestRecruits,
+} from "@/api/biz";
 import CloseModal from "./components/closeModal";
 import { useNavigate } from "react-router-dom";
 
@@ -31,8 +35,10 @@ const ManagePost = () => {
   };
 
   const handleConfirmClick = async () => {
-    const res = await requestCloseRecruit({ applyIds: selectedRecruitIds });
-    console.log(res);
+    await requestCloseRecruit({
+      recruitIds: selectedRecruitIds,
+      status: "CLOSED",
+    });
 
     setCloseRecruitModalOpen(false);
 
@@ -56,8 +62,9 @@ const ManagePost = () => {
   };
 
   const handleDeleteClick = async () => {
-    const res = await requestCloseRecruit({ applyIds: selectedRecruitIds });
-    console.log(res);
+    await requestDeleteRecruit({
+      applyIds: `[${selectedRecruitIds}]`,
+    });
 
     setCloseRecruitModalOpen(false);
 

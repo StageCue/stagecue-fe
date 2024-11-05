@@ -63,7 +63,12 @@ interface ReqEditRecruitParams {
 }
 
 interface ReqDeleteRecruitsBody {
-  applyIds: number[];
+  applyIds: string;
+}
+
+interface ReqChangeRecruitStatusBody {
+  recruitIds: number[];
+  status: "TEMP" | "RECRUIT" | "CLOSED";
 }
 
 export const requestApplications = ({
@@ -193,10 +198,20 @@ export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   return res;
 };
 
-export const requestCloseRecruit = (data: ReqDeleteRecruitsBody) => {
+export const requestCloseRecruit = (data: ReqChangeRecruitStatusBody) => {
+  const res = request({
+    method: "put",
+    endpoint: "biz/recruits/status",
+    data,
+  });
+
+  return res;
+};
+
+export const requestDeleteRecruit = (data: ReqDeleteRecruitsBody) => {
   const res = request({
     method: "delete",
-    endpoint: "biz/recruits",
+    endpoint: `biz/recruits/applyIds=${data.applyIds}`,
     data,
   });
 

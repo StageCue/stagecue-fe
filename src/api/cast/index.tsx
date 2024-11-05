@@ -3,7 +3,16 @@ import request from "..";
 interface ReqCastsParams {
   limit: string;
   offset: string;
-  category?: "THEATRE" | "MUSICAL" | "DANCE";
+  category?:
+    | "THEATRE"
+    | "MUSICAL"
+    | "DANCE"
+    | "MOVIE"
+    | "PERFORMANCE"
+    | "TVSHOW"
+    | "SNS"
+    | "SINGER"
+    | "MODEL";
   locations?: string;
   daysOfWeek?: string;
   feeRange?: string;

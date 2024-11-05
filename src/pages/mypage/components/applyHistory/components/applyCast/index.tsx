@@ -9,6 +9,7 @@ interface ApplyCastProps {
   applyId: number;
   applyStatus: applyPhaseType;
   recruitTitle: string;
+  troupeName: string;
   applyStatusLogs: { applyStatus: applyPhaseType; historyAt: string }[];
   onClickCancel: (applyId: number) => void;
   onConfirm: (applyId: number) => void;
@@ -21,6 +22,7 @@ const ApplyCast = ({
   applyStatus,
   recruitTitle,
   applyStatusLogs,
+  troupeName,
   onClickCancel,
   onConfirm,
   onClose,
@@ -65,7 +67,7 @@ const ApplyCast = ({
       )}
       <ApplyInfoWrapper>
         <TagsWrapper>
-          <TroupeTag>극단이름</TroupeTag>
+          <TroupeTag>{troupeName}</TroupeTag>
           <StatusTag>{parsePhase(applyStatus)}</StatusTag>
         </TagsWrapper>
         <Title>{recruitTitle}</Title>

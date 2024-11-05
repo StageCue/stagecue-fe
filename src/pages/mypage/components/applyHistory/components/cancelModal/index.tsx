@@ -24,7 +24,7 @@ const CancelModal = ({ onClose, onConfirm }: CancelModalProps) => {
               height={48}
               onClick={onClose}
             >
-              취소
+              닫기
             </Button>
             <Button
               variation="solid"
@@ -33,7 +33,7 @@ const CancelModal = ({ onClose, onConfirm }: CancelModalProps) => {
               height={48}
               onClick={onConfirm}
             >
-              설정
+              지원취소
             </Button>
           </ButtonWrapper>
         </ModalBox>

@@ -45,7 +45,7 @@ interface ReqChangePasswordBody {
 export const requestCastsStatus = async () => {
   const res = await request({
     method: "get",
-    endpoint: "users/casts/status",
+    endpoint: "users/recruits/status",
   });
 
   return res;
@@ -75,7 +75,7 @@ export const requestAppliedCasts = async (params: ReqAppliedCastsParams) => {
   const { limit, offset, status } = params;
   const res = await request({
     method: "get",
-    endpoint: `users/casts?limit=${limit}&offset=${offset}&status=${status}`,
+    endpoint: `users/recruits?limit=${limit}&offset=${offset}&status=${status}`,
   });
 
   return res;
@@ -84,7 +84,7 @@ export const requestAppliedCasts = async (params: ReqAppliedCastsParams) => {
 export const requestCancelApply = async (applyId: number) => {
   const res = await request({
     method: "put",
-    endpoint: `users/casts?applyId=${applyId}`,
+    endpoint: `users/recruits?applyId=${applyId}`,
   });
 
   return res;

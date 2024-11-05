@@ -12,7 +12,7 @@ interface ApplyListProps {
 
 const ApplyList = ({ status }: ApplyListProps) => {
   const [casts, setCasts] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getAppliedCasts = async () => {
     const res = await requestAppliedCasts({ limit: 10, offset: 0, status });
@@ -56,19 +56,28 @@ const ApplyList = ({ status }: ApplyListProps) => {
           </Button>
         </NoApplyHistory>
       ) : (
-        casts.map(({ applyId, applyStatus, recruitTitle, applyStatusLogs }) => (
-          <ApplyCast
-            key={applyId}
-            applyId={applyId}
-            applyStatus={applyStatus}
-            applyStatusLogs={applyStatusLogs}
-            recruitTitle={recruitTitle}
-            onClickCancel={handleCancelClick}
-            onConfirm={() => handleConfirmClick(applyId)}
-            onClose={handleCloseClick}
-            isModalOpen={isModalOpen}
-          />
-        ))
+        casts.map(
+          ({
+            applyId,
+            troupeName,
+            applyStatus,
+            recruitTitle,
+            applyStatusLogs,
+          }) => (
+            <ApplyCast
+              key={applyId}
+              applyId={applyId}
+              applyStatus={applyStatus}
+              applyStatusLogs={applyStatusLogs}
+              recruitTitle={recruitTitle}
+              onClickCancel={handleCancelClick}
+              troupeName={troupeName}
+              onConfirm={() => handleConfirmClick(applyId)}
+              onClose={handleCloseClick}
+              isModalOpen={isModalOpen}
+            />
+          )
+        )
       )}
     </ApplyListContainer>
   );
