@@ -71,6 +71,11 @@ interface ReqChangeRecruitStatusBody {
   status: "TEMP" | "RECRUIT" | "CLOSED";
 }
 
+interface ReqChangeEndDateBody {
+  recruitIds: number[];
+  endDate: string;
+}
+
 export const requestApplications = ({
   limit,
   offset,
@@ -222,6 +227,16 @@ export const requestRecruitFormData = async (recruitId: string) => {
   const res = await request({
     method: "get",
     endpoint: `biz/recruits/${recruitId}/edit`,
+  });
+
+  return res;
+};
+
+export const requestChangeEndDate = async (data: ReqChangeEndDateBody) => {
+  const res = await request({
+    method: "put",
+    endpoint: "biz/recruits/endData",
+    data,
   });
 
   return res;

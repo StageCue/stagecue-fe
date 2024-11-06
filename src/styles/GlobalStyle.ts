@@ -181,6 +181,17 @@ html, body {
 }
 
 
+.datepicker-modal .react-datepicker  {
+    border:none;
+}
+
+
+.datepicker-modal .react-datepicker__month-container  {
+    width: 300px;
+    height: 337px;
+    padding: 0px;
+    margin-bottom: 24px;
+}
 
 
 `;

@@ -35,9 +35,21 @@ const Signup = () => {
     setDate(date);
   };
 
-  const handleServicePolicyLinkClick = () => {};
+  const handleServicePolicyLinkClick = () => {
+    window.open(
+      "https://www.notion.so/023d21af0ea24dafb2bcff260e2fe4eb?pvs=4",
+      "_blank",
+      "rel=nooopener noreferrer"
+    );
+  };
 
-  const handlePrivatePolicyLinkClick = () => {};
+  const handlePrivatePolicyLinkClick = () => {
+    window.open(
+      "https://www.notion.so/aeca057f02914c52bf9a0f627cf01e40?pvs=4",
+      "_blank",
+      "rel=nooopener noreferrer"
+    );
+  };
 
   const {
     register,
@@ -493,19 +505,19 @@ const Signup = () => {
                   스테이지큐 이용약관 동의 <RequiredText>(필수)</RequiredText>
                 </CheckboxLabel>
               </CheckboxWrapper>
-              <IconWrapper>
+              <IconWrapper onClick={handleServicePolicyLinkClick}>
                 <ChevronRight />
               </IconWrapper>
             </CheckboxInputWrapper>
             <CheckboxInputWrapper>
-              <CheckboxWrapper onClick={handlePrivatePolicyClick}>
+              <CheckboxWrapper>
                 {agreePrivatePolicyValue ? <CheckedSVG /> : <CheckboxSVG />}
                 <CheckboxLabel>
                   스테이지큐 개인정보 수집 및 이용 동의
                   <RequiredText>(필수)</RequiredText>
                 </CheckboxLabel>
               </CheckboxWrapper>
-              <IconWrapper>
+              <IconWrapper onClick={handlePrivatePolicyLinkClick}>
                 <ChevronRight />
               </IconWrapper>
             </CheckboxInputWrapper>

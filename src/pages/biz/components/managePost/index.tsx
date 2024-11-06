@@ -6,24 +6,38 @@ import PencilSVG from "@assets/icons/pencil.svg?react";
 import TrashSVG from "@assets/icons/trash.svg?react";
 import { useEffect, useState } from "react";
 import Button from "@/components/buttons/button";
-import Table from "./components/table";
+import Table, { Recruit } from "./components/table";
 import {
+  requestChangeEndDate,
   requestCloseRecruit,
   requestDeleteRecruit,
   requestRecruits,
 } from "@/api/biz";
 import CloseModal from "./components/closeModal";
 import { useNavigate } from "react-router-dom";
+import DatepickerModal from "@/components/datepickerModal";
 
 const ManagePost = () => {
   const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState("전체");
-  const [recruits, setRecruits] = useState([]);
+  const [recruits, setRecruits] = useState<Recruit[]>([]);
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
   const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
+  const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] =
+    useState<boolean>(false);
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilter(filter);
+  };
+
+  const handleChangeDeadlineClick = () => {
+    if (selectedRecruitIds.length !== 0) {
+      setIsChangeDeadlineModalOpen(true);
+    }
+  };
+
+  const handleCloseChangeDeadlineClick = () => {
+    setIsChangeDeadlineModalOpen(false);
   };
 
   const handleCloseRecruitClick = () => {
@@ -32,6 +46,16 @@ const ManagePost = () => {
 
   const handleCancelClick = () => {
     setCloseRecruitModalOpen(false);
+  };
+
+  const handleDeadlineConfirm = async (endDate: string) => {
+    const res = await requestChangeEndDate({
+      recruitIds: selectedRecruitIds,
+      endDate,
+    });
+    console.log(res);
+
+    await getCasts();
   };
 
   const handleConfirmClick = async () => {
@@ -89,6 +113,16 @@ const ManagePost = () => {
           targetLength={selectedRecruitIds.length}
         />
       )}
+      {isChangeDeadlieModalOpen && selectedRecruitIds.length !== 0 && (
+        <DatepickerModal
+          defaultValue={
+            recruits.find((item) => item.id === selectedRecruitIds[0])
+              ?.recruitEnd
+          }
+          onClose={handleCloseChangeDeadlineClick}
+          onConfirm={handleDeadlineConfirm}
+        />
+      )}
       <TitleWrapper>
         <Title>공고 관리</Title>
         <Searchbar>
@@ -136,6 +170,7 @@ const ManagePost = () => {
             lineHeight={138.5}
             letterSpacing={1.94}
             padding="8px 14px"
+            onClick={handleChangeDeadlineClick}
           >
             <IconWrapper>
               <TimeSVG />

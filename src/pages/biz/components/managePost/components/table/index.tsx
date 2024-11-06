@@ -9,7 +9,7 @@ import NoPost from "./components/noPost";
 // import RadioSVG from "@assets/icons/radio_s.svg?react";
 // import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
 
-interface Recruit {
+export interface Recruit {
   id: number;
   isFavorite: boolean;
   title: string;
