@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import ChevronDownSVG from "@assets/icons/chevron_down.svg?react";
 import ChevronDownSSVG from "@assets/icons/chebron_down_s.svg?react";
@@ -22,7 +22,6 @@ type zoneType =
   | "전라"
   | "제주"
   | "충청";
-type dayPickerType = "전체요일" | "주말" | "평일" | "";
 
 const List = () => {
   const popupMenuRef = useRef<HTMLDivElement | null>(null);
@@ -35,8 +34,7 @@ const List = () => {
 
   const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
   const [selectedZone, setSelectedZone] = useState(["전체지역"]);
-  const [selectedDayPicker, setSelectedDayPicker] =
-    useState<dayPickerType>("주말");
+  const [selectedDayPicker, setSelectedDayPicker] = useState<string>("주말");
 
   const [practiceDays, setPracticeDays] = useState([
     "0",
@@ -90,8 +88,11 @@ const List = () => {
     "제주",
     "충청",
   ];
-  const dayPickerOptions: dayPickerType[] = ["전체요일", "주말", "평일"];
-  const daysOptions = ["월", "화", "수", "목", "금", "토", "일"];
+  const dayPickerOptions = ["전체요일", "주말", "평일"];
+  const daysOptions = useMemo(
+    () => ["월", "화", "수", "목", "금", "토", "일"],
+    []
+  );
 
   const handleGenreOptionChange = (genre: genreType) => {
     setSelectedGenre(genre);
@@ -180,7 +181,7 @@ const List = () => {
     setAppliedDay([...practiceDays]);
   };
 
-  const handleClickDayPicker = (option: dayPickerType) => {
+  const handleClickDayPicker = (option: string) => {
     setSelectedDayPicker(option);
   };
 
@@ -191,10 +192,6 @@ const List = () => {
       return updatedDays;
     });
   };
-
-  // const handleMinCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
-
-  // const handleMaxCostRangeChange = (event: ChangeEvent<HTMLInputElement>) => {};
 
   useEffect(() => {
     if (selectedDayPicker === "주말") {
@@ -228,9 +225,14 @@ const List = () => {
     ) {
       setSelectedDayPicker("전체요일");
     } else {
-      setSelectedDayPicker("");
+      const activeDays = practiceDays
+        .map((value, index) => (value === "1" ? daysOptions[index] : null)) // "1"인 경우 해당 요일 반환
+        .filter((day) => day !== null) // null 값 제거
+        .join("·"); // 중간점을 넣어 문자열로 결합
+
+      setSelectedDayPicker(activeDays);
     }
-  }, [practiceDays]);
+  }, [practiceDays, daysOptions]);
 
   const onChangeMinCost = (cost: string) => {
     setMinCost(cost);
@@ -357,6 +359,7 @@ const List = () => {
           <ZoneFilterBtn
             onClick={handleZoneButtonClick}
             $isDirty={isAppliedZone}
+            $isOpen={isZoneFilterShowing}
             ref={zoneButtonRef}
           >
             {appliedZone[0] === "전체지역"
@@ -367,6 +370,7 @@ const List = () => {
           <DayFilterBtn
             onClick={handleDayButtonClick}
             $isDirty={isAppliedDay}
+            $isOpen={isDayFilterShowing}
             ref={dayButtonRef}
           >
             {isAppliedDay ? selectedDayPicker : "요일"}
@@ -375,6 +379,7 @@ const List = () => {
           <CostFilterBtn
             onClick={handleCostButtonClick}
             $isDirty={isAppliedCost}
+            $isOpen={isCostFilterShowing}
             ref={costButtonRef}
           >
             월회비
@@ -628,7 +633,7 @@ const FilterWrapper = styled.div`
   width: 100%;
 `;
 
-const ZoneFilterBtn = styled.div<{ $isDirty: boolean }>`
+const ZoneFilterBtn = styled.div<{ $isDirty: boolean; $isOpen: boolean }>`
   min-width: 80px;
   height: 40px;
   padding: 9px 16px;
@@ -638,11 +643,20 @@ const ZoneFilterBtn = styled.div<{ $isDirty: boolean }>`
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  background-color: ${({ $isDirty }) => ($isDirty ? "#f4f4f5" : "white")};
-  color: #171719;
+  background-color: ${({ $isDirty, $isOpen }) =>
+    $isOpen ? "#f4f4f5" : $isDirty ? "#171719" : "white"};
+  color: ${({ $isDirty, $isOpen }) =>
+    $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+
+  svg {
+    rect {
+      fill: ${({ $isDirty, $isOpen }) =>
+        $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+    }
+  }
 `;
 
-const DayFilterBtn = styled.div<{ $isDirty: boolean }>`
+const DayFilterBtn = styled.div<{ $isDirty: boolean; $isOpen: boolean }>`
   min-width: 80px;
   height: 40px;
   padding: 9px 16px;
@@ -652,11 +666,20 @@ const DayFilterBtn = styled.div<{ $isDirty: boolean }>`
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  background-color: ${({ $isDirty }) => ($isDirty ? "#f4f4f5" : "white")};
-  color: #171719;
+  background-color: ${({ $isDirty, $isOpen }) =>
+    $isOpen ? "#f4f4f5" : $isDirty ? "#171719" : "white"};
+  color: ${({ $isDirty, $isOpen }) =>
+    $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+
+  svg {
+    rect {
+      fill: ${({ $isDirty, $isOpen }) =>
+        $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+    }
+  }
 `;
 
-const CostFilterBtn = styled.div<{ $isDirty: boolean }>`
+const CostFilterBtn = styled.div<{ $isDirty: boolean; $isOpen: boolean }>`
   min-width: 80px;
   height: 40px;
   padding: 9px 16px;
@@ -666,8 +689,17 @@ const CostFilterBtn = styled.div<{ $isDirty: boolean }>`
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  background-color: ${({ $isDirty }) => ($isDirty ? "#f4f4f5" : "white")};
-  color: #171719;
+  background-color: ${({ $isDirty, $isOpen }) =>
+    $isOpen ? "#f4f4f5" : $isDirty ? "#171719" : "white"};
+  color: ${({ $isDirty, $isOpen }) =>
+    $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+
+  svg {
+    rect {
+      fill: ${({ $isDirty, $isOpen }) =>
+        $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+    }
+  }
 `;
 
 const FilterMenu = styled.div`
