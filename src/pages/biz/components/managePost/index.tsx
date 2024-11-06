@@ -2,7 +2,6 @@ import styled from "styled-components";
 import SearchSVG from "@assets/icons/search.svg?react";
 import TimeSVG from "@assets/icons/time.svg?react";
 import CalendarSVG from "@assets/icons/calendar_s.svg?react";
-import PencilSVG from "@assets/icons/pencil.svg?react";
 import TrashSVG from "@assets/icons/trash.svg?react";
 import { useEffect, useState } from "react";
 import Button from "@/components/buttons/button";
@@ -78,11 +77,6 @@ const ManagePost = () => {
     } else {
       setSelectedRecruitIds([...selectedRecruitIds, id]);
     }
-  };
-
-  const handleEditClick = () => {
-    const targetId = selectedRecruitIds[0];
-    navigate(`/biz/cast/${targetId}/form`);
   };
 
   const handleDeleteClick = async () => {
@@ -192,22 +186,6 @@ const ManagePost = () => {
               <CalendarSVG />
             </IconWrapper>
             공고 마감
-          </Button>
-          <Button
-            variation="outlined"
-            btnClass="assistive"
-            width={71}
-            height={32}
-            fontSize={13}
-            lineHeight={138.5}
-            letterSpacing={1.94}
-            padding="8px 14px"
-            onClick={handleEditClick}
-          >
-            <IconWrapper>
-              <PencilSVG />
-            </IconWrapper>
-            수정
           </Button>
           <Button
             variation="outlined"

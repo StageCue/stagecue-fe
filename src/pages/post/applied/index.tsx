@@ -3,6 +3,8 @@ import Button from "@/components/buttons/button";
 import Cast from "@/pages/home/components/cast";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import Lottie from "react-lottie";
+import AppliedGIF from "@assets/images/appliedLottie.json";
 
 const Applied = () => {
   const [popularCasts, setPopularCast] = useState([]);
@@ -23,7 +25,18 @@ const Applied = () => {
   return (
     <AppliedContainer>
       <SuccessBox>
-        <SuccessGIF src="https://lottiefiles.com/animations/progress-completed-animation-qy0WxXRTgS" />
+        <Lottie
+          width={150}
+          height={150}
+          options={{
+            loop: true,
+            autoplay: true,
+            animationData: AppliedGIF,
+            rendererSettings: {
+              preserveAspectRatio: "xMidYMid slice",
+            },
+          }}
+        />
         <CompleteTextWrapper>
           <Text>공고지원을 완료했어요!</Text>
           <SubText>다른 공고도 둘러볼까요?</SubText>
@@ -38,7 +51,7 @@ const Applied = () => {
           <ShowAll>전체보기</ShowAll>
         </TextWrapper>
         <Casts>
-          {popularCasts.map(
+          {popularCasts?.map(
             ({
               castId,
               thumbnail,
