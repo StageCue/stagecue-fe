@@ -6,16 +6,21 @@ import PlusSVG from "@assets/icons/plus_circle.svg?react";
 import MinusSVG from "@assets/icons/minus.svg?react";
 import RadioSVG from "@assets/icons/radio.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import DeleteSVG from "@assets/icons/delete_circle.svg?react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { generateId } from "@/utils/dev";
 import { convertFileToURL } from "@/utils/file";
-import { requestCreateRecruit, requestUploadRecruitImage } from "@/api/biz";
+import {
+  requestCreateRecruit,
+  requestRecruitFormData,
+  requestUploadRecruitImage,
+} from "@/api/biz";
 import { useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import RangeDatepicker from "@/components/rangeDatepicker";
+import { decimalToBinaryArray } from "@/utils/format";
 
 interface EditRecruitInputs {
   title: string;
@@ -63,7 +68,7 @@ const EditRecruit = () => {
     { url: string; id: string }[]
   >([]);
   const [imageFileArray, setImageFileArray] = useState<
-    { file: File; id: string }[]
+    { file: File | null; id: string }[]
   >([]);
 
   const [isDaySelectOpen, setIsDaySelectOpen] = useState(false);
@@ -155,13 +160,11 @@ const EditRecruit = () => {
     const recruitImages = await requestUploadImageFiles();
 
     const recruitingParts = partsValue.map(({ value }) => value);
-    const res = await requestCreateRecruit({
+    await requestCreateRecruit({
       ...data,
       recruitingParts,
       recruitImages,
     });
-
-    console.log(res);
   };
 
   const requestUploadImageFiles = async () => {
@@ -319,7 +322,48 @@ const EditRecruit = () => {
     }
   };
 
-  const getRecruitFormData = async (id: string) => {};
+  const getRecruitFormData = async (id: string) => {
+    const res = await requestRecruitFormData(id);
+
+    console.log(res);
+
+    setValue("title", res.title);
+    setValue("introduce", res.introduce);
+    setValue(
+      "recruitingParts",
+      res.recruitingParts.map((part: string) => {
+        const id = generateId();
+        return { value: part, id };
+      })
+    );
+    setValue("monthlyFee", res.monthlyFee);
+    if (res.monthlyFee !== 0) {
+      setIsMontlyFee(true);
+    }
+    setValue("practice.start", res.practice.start);
+    setValue("practice.end", res.practice.end);
+    setValue("practice.dayOfWeek", res.practice.daysOfWeek);
+    setPracticeDays(decimalToBinaryArray(res.practice.dayOfWeek));
+    setValue("practice.address", res.practice.address);
+    setValue("practice.addressDetail", res.practice.addressDetail);
+    setValue("stage.start", res.stage.start);
+    setValue("stage.end", res.stage.end);
+    setValue("stage.address", res.stage.address);
+    setValue("stage.addressDetail", res.stage.addressDetail);
+
+    const currentImagesArray: { id: string; url: string }[] =
+      res.recruitImages.map((url: string) => {
+        const id = generateId();
+        return { id, url };
+      });
+
+    const currentFileArray = currentImagesArray.map(({ id }) => {
+      return { id, file: null };
+    });
+
+    setImageUrlArray(currentImagesArray);
+    setImageFileArray(currentFileArray);
+  };
 
   useEffect(() => {
     if (id) {
@@ -433,9 +477,17 @@ const EditRecruit = () => {
         <InputWrapper>
           <Label>공고 관련 이미지</Label>
           <Images>
-            {imageUrlArray.map(({ url, id }) => (
+            {imageUrlArray.map(({ url, id }, index) => (
               <ImageWrapper key={id}>
-                <RecruitImage src={url} />
+                {!imageFileArray[index].file ? (
+                  <RecruitImage
+                    key={id}
+                    src={`https://s3.stagecue.co.kr/stagecue/${url}`}
+                  />
+                ) : (
+                  <RecruitImage key={id} src={url} />
+                )}
+
                 <AbsoluteIconWrapper onClick={() => handleDeleteImageClick(id)}>
                   <MinusSVG />
                 </AbsoluteIconWrapper>

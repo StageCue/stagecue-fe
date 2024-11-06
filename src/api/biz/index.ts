@@ -217,3 +217,12 @@ export const requestDeleteRecruit = (data: ReqDeleteRecruitsBody) => {
 
   return res;
 };
+
+export const requestRecruitFormData = async (recruitId: string) => {
+  const res = await request({
+    method: "get",
+    endpoint: `biz/recruits/${recruitId}/edit`,
+  });
+
+  return res;
+};

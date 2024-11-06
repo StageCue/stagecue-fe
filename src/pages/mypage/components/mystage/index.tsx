@@ -100,7 +100,7 @@ const Mystage = () => {
           </NoSavedPost>
         ) : (
           <Scraps>
-            {scraps.map(
+            {scraps?.map(
               ({
                 castId,
                 imageUrl,
@@ -123,7 +123,7 @@ const Mystage = () => {
           </Scraps>
         )}
       </ScrappedPost>
-      {scraps.length === 0 && (
+      {scraps?.length === 0 && (
         <PopularPost>
           <ItemTitleWrapper>
             <ItemTitle>이번주 인기공고</ItemTitle>

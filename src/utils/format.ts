@@ -10,3 +10,9 @@ export const formatPhoneNumber = (value: string) => {
 export const formatDateWithDots = (dateString: string): string => {
   return dateString.replace(/-/g, ".");
 };
+
+export const decimalToBinaryArray = (decimal: number) => {
+  const binary = decimal?.toString(2).padStart(7, "0");
+
+  return binary.split("");
+};

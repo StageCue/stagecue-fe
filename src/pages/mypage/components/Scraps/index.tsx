@@ -37,7 +37,7 @@ const Scraps = () => {
         </FilterInput>
       </TitleWrapper>
 
-      {scraps.length === 0 ? (
+      {scraps?.length === 0 ? (
         <NoScrap>
           <DotdotdotSVG />
           <TextWrapper>
@@ -49,7 +49,7 @@ const Scraps = () => {
         </NoScrap>
       ) : (
         <ScrapList>
-          {scraps.map(
+          {scraps?.map(
             ({
               castId,
               imageUrl,
