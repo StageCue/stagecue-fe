@@ -17,6 +17,8 @@ type ApplyStatus =
   | "전체"
   | "미열람";
 
+type PassType = "DOCUMENT_PASSED" | "FINAL_ACCEPTED";
+
 interface ShowingApplicantState {
   id: number;
   name: string;
@@ -33,13 +35,18 @@ const Applicant = () => {
   const [showingApplicant, setShowingApplicant] =
     useState<ShowingApplicantState>();
 
+  const [passType, setPassType] = useState<PassType>();
+
   const handleFilterClick = (filter: ApplyStatus) => {
     setSelectedFilter(filter);
   };
 
-  // 임시 applied 로직!!
-  const handlePassClick = async () => {
+  const handlePassClick = async (passType?: PassType) => {
     setIsPassModalOpen(true);
+
+    if (selectedFilter === "전체") {
+      setPassType(passType);
+    }
   };
 
   const handleFailClick = async () => {
@@ -47,22 +54,11 @@ const Applicant = () => {
   };
 
   const handlePassConfirm = async () => {
-    const requestStatus = (status: ApplyStatus) => {
-      switch (status) {
-        case "APPLIED":
-          return "DOCUMENT_PASSED";
-        case "DOCUMENT_PASSED":
-          return "FINAL_ACCEPTED";
-        default:
-          return "";
-      }
-    };
-    const applyStatus = requestStatus("APPLIED");
-
     await requestChangingApplyState({
       applyIds: `${selectedApplyIds}`,
-      applyStatus,
+      applyStatus: passType!,
     });
+
     setSelectedApplyIds([]);
     getApplications();
 
@@ -133,6 +129,14 @@ const Applicant = () => {
   useEffect(() => {
     getApplications();
   }, []);
+
+  useEffect(() => {
+    if (selectedFilter === "미열람") {
+      setPassType("DOCUMENT_PASSED");
+    } else if (selectedFilter === "DOCUMENT_PASSED") {
+      setPassType("FINAL_ACCEPTED");
+    }
+  }, [selectedFilter]);
 
   return (
     <ApplicantContainer>
@@ -205,38 +209,81 @@ const Applicant = () => {
           </Option>
         </Filters>
         <ButtonsWrapper>
-          <Button
-            variation="outlined"
-            btnClass="assistive"
-            onClick={handlePassClick}
-            width={71}
-            height={32}
-            fontSize={13}
-            lineHeight={138.5}
-            letterSpacing={1.94}
-            padding="8px 14px"
-          >
-            <IconWrapper>
-              <PassSVG />
-            </IconWrapper>
-            합격
-          </Button>
-          <Button
-            variation="outlined"
-            btnClass="assistive"
-            onClick={handleFailClick}
-            width={71}
-            height={32}
-            fontSize={13}
-            lineHeight={138.5}
-            letterSpacing={1.94}
-            padding="8px 14px"
-          >
-            <IconWrapper>
-              <FailSVG />
-            </IconWrapper>
-            반려
-          </Button>
+          {selectedFilter === "전체" && (
+            <>
+              <Button
+                variation="outlined"
+                btnClass="assistive"
+                onClick={() => handlePassClick("DOCUMENT_PASSED")}
+                width={100}
+                height={32}
+                fontSize={13}
+                lineHeight={138.5}
+                letterSpacing={1.94}
+                padding="8px 14px"
+              >
+                <IconWrapper>
+                  <PassSVG />
+                </IconWrapper>
+                서류합격
+              </Button>
+              <Button
+                variation="outlined"
+                btnClass="assistive"
+                onClick={() => handlePassClick("FINAL_ACCEPTED")}
+                width={100}
+                height={32}
+                fontSize={13}
+                lineHeight={138.5}
+                letterSpacing={1.94}
+                padding="8px 14px"
+              >
+                <IconWrapper>
+                  <PassSVG />
+                </IconWrapper>
+                최종합격
+              </Button>
+            </>
+          )}
+          {selectedFilter !== "전체" &&
+            selectedFilter !== "FINAL_ACCEPTED" &&
+            selectedFilter !== "REJECTED" && (
+              <>
+                <Button
+                  variation="outlined"
+                  btnClass="assistive"
+                  onClick={handlePassClick}
+                  width={71}
+                  height={32}
+                  fontSize={13}
+                  lineHeight={138.5}
+                  letterSpacing={1.94}
+                  padding="8px 14px"
+                >
+                  <IconWrapper>
+                    <PassSVG />
+                  </IconWrapper>
+                  합격
+                </Button>
+
+                <Button
+                  variation="outlined"
+                  btnClass="assistive"
+                  onClick={handleFailClick}
+                  width={71}
+                  height={32}
+                  fontSize={13}
+                  lineHeight={138.5}
+                  letterSpacing={1.94}
+                  padding="8px 14px"
+                >
+                  <IconWrapper>
+                    <FailSVG />
+                  </IconWrapper>
+                  반려
+                </Button>
+              </>
+            )}
         </ButtonsWrapper>
       </FilterWrapper>
       <Table

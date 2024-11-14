@@ -44,7 +44,17 @@ export const requestLogin = async (data: ReqLoginParams) => {
   return res;
 };
 
-export const requestRefreshSession = async () => {};
+export const requestRefreshSession = async (refreshToken: string) => {
+  const res = await request({
+    method: "get",
+    endpoint: "auth/token/refresh",
+    header: {
+      "Auth-Refresh-Token": refreshToken,
+    },
+  });
+
+  return res;
+};
 
 export const requestSignup = async (
   data: ReqSignupParams,

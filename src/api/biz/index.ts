@@ -13,7 +13,7 @@ interface ReqApplicationsParams {
 
 interface ReqChangingApplyState {
   applyIds: string;
-  applyStatus: string;
+  applyStatus: "DOCUMENT_PASSED" | "FINAL_ACCEPTED" | "REJECTED";
 }
 
 interface ReqEditTroupeData {

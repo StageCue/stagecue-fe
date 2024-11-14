@@ -6,6 +6,7 @@ interface SessionState {
   username: string | null;
   email: string | null;
   phoneNumber: string | null;
+  expirationTime: number | null;
 }
 
 interface LoginParams {
@@ -24,6 +25,7 @@ const defaultState: SessionState = {
   username: null,
   email: null,
   phoneNumber: null,
+  expirationTime: null,
 };
 
 const useSessionStore = create(
@@ -39,11 +41,16 @@ const useSessionStore = create(
           phoneNumber: null,
         }));
         localStorage.clear();
+        useSessionStore.persist.clearStorage();
+        console.log("logout");
+        alert("세션이 초기화되었습니당");
       },
 
       loginSession: ({ username, phoneNumber, email }: LoginParams) => {
         const accessToken = localStorage.getItem("accessToken");
-        console.log("store", accessToken);
+
+        const expirationTime = Date.now() + 30 * 60 * 1000;
+
         if (accessToken) {
           set((state) => ({
             ...state,
@@ -51,6 +58,7 @@ const useSessionStore = create(
             username,
             phoneNumber,
             email,
+            expirationTime,
           }));
         }
       },

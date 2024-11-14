@@ -26,8 +26,20 @@ import ManageTroupe from "./pages/biz/components/manageTroupe";
 import ManagePost from "./pages/biz/components/managePost";
 import EditTroupe from "./pages/biz/components/manageTroupe/components/editTroupe";
 import FindPassword from "./pages/auth/resetPassword";
+import useSessionStore from "./store";
+import { useEffect } from "react";
 
 function App() {
+  const sessionStroe = useSessionStore();
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      sessionStroe.logoutSession();
+    }, 1000 * 60 * 30);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [sessionStroe]);
   return (
     <AppContainer>
       <Routes>
