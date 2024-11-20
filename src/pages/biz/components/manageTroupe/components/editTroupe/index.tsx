@@ -17,6 +17,7 @@ import { useDaumPostcodePopup } from "react-daum-postcode";
 import { useNavigate } from "react-router-dom";
 import Datepicker from "@/components/datepicker";
 import DatePicker from "react-datepicker";
+import InvalidFileModal from "../invalidFileModal";
 
 interface EditTroupeProps {
   isInitial: boolean;
@@ -45,8 +46,6 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     formState: { errors, dirtyFields },
     watch,
     setValue,
-    // trigger,
-    getValues,
     control,
   } = useForm<EditTroupeInputs>({ mode: "all" });
 
@@ -64,6 +63,9 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   const [coverFileName, setCoverFileName] = useState<string>();
   const [registrationFile, setRegistrationFile] = useState<File>();
   const [registrationFileName, setRegistrationFileName] = useState<string>();
+
+  const [isInvalidaModalShowing, setIsInvalidModalShowing] =
+    useState<boolean>(false);
 
   const datepickerRef = useRef<DatePicker | null>(null);
   const [date, setDate] = useState<Date>(new Date(Date.now()));
@@ -157,13 +159,35 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     }
   };
 
+  const validateFile = (file: File): boolean => {
+    if (file.size > 1 * 1024 * 1024) {
+      return false;
+    }
+
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+    if (!allowedExtensions.test(file.name)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleInvalidConfirm = () => {
+    setIsInvalidModalShowing(false);
+  };
+
   const handleCoverFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     const path = event.target.value;
 
     if (file) {
-      setCoverFile(file);
-      setCoverFileName(seperateFileNameFromPath(path));
+      const isValidFile = validateFile(file);
+      if (isValidFile) {
+        setCoverFile(file);
+        setCoverFileName(seperateFileNameFromPath(path));
+      } else {
+        setIsInvalidModalShowing(true);
+      }
     }
   };
 
@@ -174,10 +198,15 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const path = event.target.value;
 
     if (file) {
-      const fileName = seperateFileNameFromPath(path);
-      console.log(fileName);
-      setRegistrationFile(file);
-      setRegistrationFileName(fileName);
+      const isValidFile = validateFile(file);
+      if (isValidFile) {
+        const fileName = seperateFileNameFromPath(path);
+        console.log(fileName);
+        setRegistrationFile(file);
+        setRegistrationFileName(fileName);
+      } else {
+        setIsInvalidModalShowing(true);
+      }
     }
   };
 
@@ -213,7 +242,6 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
 
   const getTroupeFormData = async () => {
     const res = await requestTroupeEditInfo();
-    console.log(res);
     const logoUrl = res.logoImg;
     const coverImg = res.coverImg;
     const name = res.name;
@@ -254,6 +282,9 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
 
   return (
     <EditTroupeContainer>
+      {isInvalidaModalShowing && (
+        <InvalidFileModal onConfirm={handleInvalidConfirm} />
+      )}
       <Form onSubmit={handleSubmit(onSubmitEdit)}>
         <TitleWrapper>
           <Title>

@@ -18,7 +18,7 @@ const ForgotAccount = () => {
   const [findAccountToken, setFindAccountToken] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [foundAccount, setFoundAccount] = useState("");
-  const [isFound, setIsFound] = useState(false);
+  const [isResultStep, setIsResultStep] = useState(true);
 
   const {
     register,
@@ -89,8 +89,11 @@ const ForgotAccount = () => {
 
   const onSubmitFindAccount = async () => {
     const res = await requestFindAccount({ findAccountToken });
-    console.log(res);
-    setFoundAccount(res.email);
+
+    if (res) {
+      setFoundAccount(res.email);
+    }
+    setIsResultStep(true);
   };
 
   useEffect(() => {
@@ -110,17 +113,25 @@ const ForgotAccount = () => {
   const handleForgotPasswordClick = () => {
     navigate("/auth/forgotpassword");
   };
+
+  const handleSignupClick = () => {
+    navigate("/auth/starting");
+  };
+
+  const handleRetryClick = () => {
+    setIsResultStep(false);
+  };
   return (
     <ForgotAccountContainer>
       <TitleWrapper>
         <Title>계정 찾기</Title>
-        {!foundAccount && (
+        {!isResultStep && (
           <Description>
             회원 가입시 인증했던 전화번호를 입력해주세요.
           </Description>
         )}
       </TitleWrapper>
-      {!foundAccount && (
+      {!isResultStep && (
         <Form onSubmit={handleSubmit(onSubmitFindAccount)}>
           <InputWrapper>
             <Label>휴대폰번호</Label>
@@ -203,7 +214,7 @@ const ForgotAccount = () => {
           </Button>
         </Form>
       )}
-      {foundAccount && (
+      {foundAccount && isResultStep && (
         <>
           <FoundAccountBox>
             <TextWrapper>
@@ -241,6 +252,48 @@ const ForgotAccount = () => {
               onClick={handleForgotPasswordClick}
             >
               비밀번호를 잊으셨나요?
+            </Button>
+          </BtnWrapper>
+        </>
+      )}
+      {isResultStep && !foundAccount && (
+        <>
+          <NotFoundBox>
+            <TextWrapper>
+              <MainText>가입되어 있는 계정이 없어요.</MainText>
+              <SubText>
+                다른 전화번호로 시도해주시거나 새로 가입해주세요.
+              </SubText>
+            </TextWrapper>
+          </NotFoundBox>
+          <Button
+            btnClass="primary"
+            variation="outlined"
+            width={340}
+            height={48}
+            padding="12px"
+            lineHeight={150}
+            fontSize={16}
+            letterSpacing={0.57}
+            fontWeight="var(--font-semibold)"
+            onClick={handleRetryClick}
+          >
+            다시찾기
+          </Button>
+          <BtnWrapper>
+            <Button
+              btnClass="primary"
+              variation="solid"
+              width={340}
+              height={48}
+              padding="12px"
+              lineHeight={150}
+              fontSize={16}
+              letterSpacing={0.57}
+              fontWeight="var(--font-semibold)"
+              onClick={handleSignupClick}
+            >
+              회원가입
             </Button>
           </BtnWrapper>
         </>
@@ -421,6 +474,20 @@ const FoundAccountBox = styled.div`
   background-color: #f7f7f8;
   padding: 24px;
   gap: 16px;
+  border-radius: 10px;
+  margin-bottom: 56px;
+`;
+
+const NotFoundBox = styled.div`
+  width: 520px;
+  height: 106px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #f7f7f8;
+  padding: 24px;
+  gap: 8px;
   border-radius: 10px;
   margin-bottom: 56px;
 `;

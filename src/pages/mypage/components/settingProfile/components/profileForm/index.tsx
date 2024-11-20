@@ -36,6 +36,7 @@ export interface ProfileInput {
 }
 
 interface ExpInput {
+  id: string;
   artworkName: string;
   artworkPart: string;
   troupe: string;
@@ -50,7 +51,7 @@ const ProfileForm = () => {
   const [detail, setDetail] = useState<ProfileDetailData>();
   const [isEditPersonalInfo, setIsEditPersonalInfo] = useState<boolean>(false);
   const [isEditIntroduce, setIsEditIntroduce] = useState<boolean>(false);
-  const [selectedExpId, setSelectedExpId] = useState();
+  const [editingExpId, setEditingExpId] = useState<string>("");
   const [isAddExp, setIsAddExp] = useState<boolean>(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
@@ -65,10 +66,13 @@ const ProfileForm = () => {
 
   const { register, handleSubmit, setValue, watch, getValues } =
     useForm<ProfileInput>();
+
   const {
     register: expRegister,
     handleSubmit: handleExpSubmit,
     watch: expWatch,
+    reset: expReset,
+    setValue: expSetValue,
   } = useForm<ExpInput>();
 
   const onDropThumbnail = useCallback(async (acceptedFiles: File[]) => {
@@ -178,6 +182,17 @@ const ProfileForm = () => {
     return images.map(({ url }) => url);
   };
 
+  const addIdtoExps = (expArray: ExpInput[]) => {
+    const withIdExpArray = expArray.map((exp: ExpInput) => {
+      const id = generateId();
+      return {
+        ...exp,
+        id,
+      };
+    });
+    return withIdExpArray;
+  };
+
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
 
@@ -187,11 +202,12 @@ const ProfileForm = () => {
     setValue("weight", res.weight);
     setValue("height", res.height);
     setValue("introduce", res.introduce);
-    setValue("experiences", res.experiences);
+    setValue("experiences", addIdtoExps(res.experiences));
     setValue("thumbnail", res.thumbnail);
     setValue("images", parseImagesUrl(res.images));
 
     const currentImages = parseImagesUrl(res.images);
+
     const currentImageArray = currentImages.map((url) => {
       const id = generateId();
       return { id, url };
@@ -216,6 +232,7 @@ const ProfileForm = () => {
     setValue("experiences", [
       ...experiencesValue,
       {
+        id: generateId(),
         artworkName: artworkNameValue,
         artworkPart: artworkPartValue,
         troupe: troupeValue,
@@ -224,6 +241,7 @@ const ProfileForm = () => {
       },
     ]);
     setIsAddExp(false);
+    expReset();
   };
 
   const handleSaveClick = (section: "personalInfo" | "introduce") => {
@@ -234,12 +252,20 @@ const ProfileForm = () => {
     }
   };
 
-  const handleEditExpClick = (id: number) => {};
+  const handleEditExpClick = (id: string) => {
+    setEditingExpId(id);
+    setIsAddExp(false);
+  };
 
-  const handleDeleteExpClick = (id: number) => {};
+  const handleDeleteExpClick = (id: string) => {
+    const filteredExpArr = experiencesValue.filter((exp) => exp.id !== id);
+    setValue("experiences", filteredExpArr);
+  };
 
   const handleAddExpClick = () => {
     setIsAddExp(true);
+    setEditingExpId("");
+    expReset();
   };
 
   const handleCancleAddExpClick = () => {
@@ -255,7 +281,7 @@ const ProfileForm = () => {
     const imageUrls = await requestUploadImageFiles();
     const thumbnailRes = await requestUploadThumbnailFile();
 
-    const res = await requestSaveProfile(
+    await requestSaveProfile(
       {
         ...data,
         isDefault: true,
@@ -264,7 +290,6 @@ const ProfileForm = () => {
       },
       id!
     );
-    console.log(res);
     navigate(`/mypage/profiles/${id}`);
   };
 
@@ -273,7 +298,7 @@ const ProfileForm = () => {
     await requestUploadImageFiles();
     const thumbnailRes = await requestUploadThumbnailFile();
 
-    const res = await requestSaveProfile(
+    await requestSaveProfile(
       {
         ...data,
         isDefault: false,
@@ -282,7 +307,7 @@ const ProfileForm = () => {
       },
       id!
     );
-    console.log(res);
+
     navigate(`/mypage/profiles/${id}`);
   };
 
@@ -313,6 +338,19 @@ const ProfileForm = () => {
   useEffect(() => {
     getProfileDetail(id!);
   }, [id]);
+
+  useEffect(() => {
+    if (editingExpId && experiencesValue.length !== 0) {
+      const exp = experiencesValue.find((exp) => exp.id === editingExpId);
+
+      expSetValue("artworkName", exp!.artworkName);
+      expSetValue("artworkPart", exp!.artworkPart);
+      expSetValue("startDate", exp!.startDate);
+      expSetValue("endDate", exp!.endDate);
+      expSetValue("troupe", exp!.troupe);
+      expSetValue("id", exp!.id);
+    }
+  }, [editingExpId, expSetValue, experiencesValue]);
 
   return (
     <ProfileFormContainer>
@@ -551,38 +589,147 @@ const ProfileForm = () => {
               </Button>
             </WithButtonTitleWrapper>
             <ExpGrid>
-              {experiencesValue?.map((exp) => (
-                <ExpBox>
-                  <ExpDataWrapper>
-                    <DataRow>
-                      <Property>작품제목</Property>
-                      <Value>{exp.artworkName}</Value>
-                    </DataRow>
-                    <DataRow>
-                      <Property>배역</Property>
-                      <Value>{exp.artworkPart}</Value>
-                    </DataRow>
-                    <DataRow>
-                      <Property>극단</Property>
-                      <Value>{exp.troupe}</Value>
-                    </DataRow>
-                    <DataRow>
-                      <Property>기간</Property>
-                      <Value>
-                        {exp.startDate} ~ {exp.endDate}
-                      </Value>
-                    </DataRow>
-                  </ExpDataWrapper>
-                  <ExpIconsWrapper>
-                    <TrashIconWrapper>
-                      <TrashSVG />
-                    </TrashIconWrapper>
-                    <EditIconWrapper>
-                      <EditSVG />
-                    </EditIconWrapper>
-                  </ExpIconsWrapper>
-                </ExpBox>
-              ))}
+              {experiencesValue?.map((exp) =>
+                editingExpId === exp.id ? (
+                  <ExpFormBox>
+                    <FormLabel>
+                      <DataRows>
+                        <DataRow>
+                          <FormLabel>
+                            작품제목
+                            <RequiredWrapper>
+                              <RequiredSVG />
+                            </RequiredWrapper>
+                          </FormLabel>
+                          <ExpTextInput
+                            {...expRegister("artworkName", {
+                              required: true,
+                            })}
+                            placeholder="작품제목을 입력해주세요."
+                          />
+                        </DataRow>
+                        <DataRow>
+                          <FormLabel>
+                            배역
+                            <RequiredWrapper>
+                              <RequiredSVG />
+                            </RequiredWrapper>
+                          </FormLabel>
+                          <ExpTextInput
+                            {...expRegister("artworkPart", {
+                              required: true,
+                            })}
+                            placeholder="맡은 배역을 입력해주세요. 예) 주연"
+                          />
+                        </DataRow>
+                        <DataRow>
+                          <FormLabel>
+                            극단
+                            <RequiredWrapper>
+                              <RequiredSVG />
+                            </RequiredWrapper>
+                          </FormLabel>
+                          <ExpTextInput
+                            {...expRegister("troupe", {
+                              required: true,
+                            })}
+                            placeholder="활동한 극단 이름을 입력해주세요."
+                          />
+                        </DataRow>
+                        <DataRow>
+                          <FormLabel>
+                            기간
+                            <RequiredWrapper>
+                              <RequiredSVG />
+                            </RequiredWrapper>
+                          </FormLabel>
+                          <ExpDateInput
+                            {...expRegister("startDate", {
+                              required: true,
+                            })}
+                            placeholder="YYYY.MM"
+                            type="text"
+                          />
+                          ~
+                          <ExpDateInput
+                            {...expRegister("endDate", {
+                              required: true,
+                            })}
+                            placeholder="YYYY.MM"
+                            type="text"
+                          />
+                        </DataRow>
+                      </DataRows>
+                    </FormLabel>
+                    <ExpBtnsWrapper>
+                      <Button
+                        variation="outlined"
+                        btnClass="assistive"
+                        width={53}
+                        height={32}
+                        padding="7px 14px"
+                        fontSize={13}
+                        fontWeight="var(--font-medium)"
+                        lineHeight={138.5}
+                        letterSpacing={1.94}
+                        onClick={handleCancleAddExpClick}
+                      >
+                        취소
+                      </Button>
+                      <Button
+                        variation="solid"
+                        btnClass="primary"
+                        width={53}
+                        height={32}
+                        padding="7px 14px"
+                        fontSize={13}
+                        fontWeight="var(--font-medium)"
+                        lineHeight={138.5}
+                        letterSpacing={1.94}
+                        onClick={handleSaveExpClick}
+                        type="button"
+                      >
+                        저장
+                      </Button>
+                    </ExpBtnsWrapper>
+                  </ExpFormBox>
+                ) : (
+                  <ExpBox>
+                    <ExpDataWrapper>
+                      <DataRow>
+                        <Property>작품제목</Property>
+                        <Value>{exp.artworkName}</Value>
+                      </DataRow>
+                      <DataRow>
+                        <Property>배역</Property>
+                        <Value>{exp.artworkPart}</Value>
+                      </DataRow>
+                      <DataRow>
+                        <Property>극단</Property>
+                        <Value>{exp.troupe}</Value>
+                      </DataRow>
+                      <DataRow>
+                        <Property>기간</Property>
+                        <Value>
+                          {exp.startDate} ~ {exp.endDate}
+                        </Value>
+                      </DataRow>
+                    </ExpDataWrapper>
+                    <ExpIconsWrapper>
+                      <TrashIconWrapper
+                        onClick={() => handleDeleteExpClick(exp.id)}
+                      >
+                        <TrashSVG />
+                      </TrashIconWrapper>
+                      <EditIconWrapper
+                        onClick={() => handleEditExpClick(exp.id)}
+                      >
+                        <EditSVG />
+                      </EditIconWrapper>
+                    </ExpIconsWrapper>
+                  </ExpBox>
+                )
+              )}
               {isAddExp && (
                 <ExpFormBox>
                   <FormLabel>
@@ -633,13 +780,13 @@ const ProfileForm = () => {
                         <ExpDateInput
                           {...expRegister("startDate", { required: true })}
                           placeholder="YYYY.MM"
-                          type="month"
+                          type="text"
                         />
                         ~
                         <ExpDateInput
                           {...expRegister("endDate", { required: true })}
                           placeholder="YYYY.MM"
-                          type="month"
+                          type="text"
                         />
                       </DataRow>
                     </DataRows>
@@ -1083,7 +1230,7 @@ const ExpTextInput = styled.input`
 `;
 
 const ExpDateInput = styled.input`
-  width: 105px;
+  width: 80px;
   height: 22px;
   outline: none;
   border: none;
