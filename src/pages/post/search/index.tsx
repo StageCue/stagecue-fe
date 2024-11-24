@@ -7,7 +7,7 @@ import styled from "styled-components";
 const Search = () => {
   const { query } = useSearchStore();
 
-  const [currentFilter, setCurrentFilter] = useState("극단");
+  const [currentFilter, _] = useState("극단");
   const [results, setResults] = useState([]);
 
   const getResults = async () => {

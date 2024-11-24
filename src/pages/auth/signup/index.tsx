@@ -142,7 +142,7 @@ const Signup = () => {
   };
 
   const handleSendCertClick = async () => {
-    const res = await requestCellPhoneCertCode({
+    await requestCellPhoneCertCode({
       phoneNumber: phoneNumberValue,
     });
 
@@ -510,7 +510,7 @@ const Signup = () => {
               </IconWrapper>
             </CheckboxInputWrapper>
             <CheckboxInputWrapper>
-              <CheckboxWrapper>
+              <CheckboxWrapper onClick={handlePrivatePolicyClick}>
                 {agreePrivatePolicyValue ? <CheckedSVG /> : <CheckboxSVG />}
                 <CheckboxLabel>
                   스테이지큐 개인정보 수집 및 이용 동의

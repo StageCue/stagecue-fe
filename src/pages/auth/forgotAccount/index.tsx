@@ -24,7 +24,6 @@ const ForgotAccount = () => {
     register,
     handleSubmit,
     watch,
-    getValues,
     setValue,
     formState: { errors, dirtyFields },
     setError,
@@ -37,7 +36,7 @@ const ForgotAccount = () => {
   ]);
 
   const handleSendCodeClick = async () => {
-    const res = await requestFindAccountCode({
+    await requestFindAccountCode({
       phoneNumber: phoneNumberValue,
     });
     setCertTime(300);

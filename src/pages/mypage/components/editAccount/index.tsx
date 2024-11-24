@@ -45,15 +45,10 @@ const EditAccount = () => {
     setValue,
   } = useForm();
 
-  const [emailValue, isVerifiedValue, codeValue] = emailWatch([
-    "email",
-    "verified",
-    "code",
-  ]);
+  const [emailValue, codeValue] = emailWatch(["email", "code"]);
 
-  const [phoneNumberValue, isVerifiedPhoneValue, phoneCodeValue] = phoneWatch([
+  const [phoneNumberValue, phoneCodeValue] = phoneWatch([
     "phoneNumber",
-    "verified",
     "code",
   ]);
 
@@ -141,11 +136,11 @@ const EditAccount = () => {
   };
 
   const handleEmailSubmitClick = async () => {
-    const res = await requestChangeEmail(updateEmailToken);
+    await requestChangeEmail(updateEmailToken);
   };
 
   const handlePhoneSubmitClick = async () => {
-    const res = await requestChangePhone(updatePhoneToken);
+    await requestChangePhone(updatePhoneToken);
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {

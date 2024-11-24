@@ -102,8 +102,6 @@ const SuccessBox = styled.div`
   border-radius: 8px;
 `;
 
-const SuccessGIF = styled.img``;
-
 const CompleteTextWrapper = styled.div`
   display: flex;
   flex-direction: column;

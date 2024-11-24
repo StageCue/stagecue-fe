@@ -69,7 +69,6 @@ const ProfileForm = () => {
 
   const {
     register: expRegister,
-    handleSubmit: handleExpSubmit,
     watch: expWatch,
     reset: expReset,
     setValue: expSetValue,

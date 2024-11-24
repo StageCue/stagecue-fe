@@ -13,11 +13,9 @@ import {
   requestRecruits,
 } from "@/api/biz";
 import CloseModal from "./components/closeModal";
-import { useNavigate } from "react-router-dom";
 import DatepickerModal from "@/components/datepickerModal";
 
 const ManagePost = () => {
-  const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState("전체");
   const [recruits, setRecruits] = useState<Recruit[]>([]);
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);

@@ -89,11 +89,9 @@ const EditRecruit = () => {
 
   const days = ["월", "화", "수", "목", "금", "토", "일"];
 
-  const [introduceValue, addressValue, partsValue, categoryValue] = watch([
-    "introduce",
+  const [addressValue, partsValue] = watch([
     "practice.address",
     "recruitingParts",
-    "category",
   ]);
 
   const practiceDatepickerRef = useRef<DatePicker | null>(null);
@@ -172,7 +170,7 @@ const EditRecruit = () => {
       const urls = await Promise.all(
         imageFileArray.map(async (item) => {
           const formData = new FormData();
-          formData.append("file", item.file);
+          formData.append("file", item.file!);
           const url = (await requestUploadRecruitImage(formData)) as string;
           return url;
         })
@@ -928,13 +926,6 @@ const WithIconShortInputWrapper = styled.div<{
       : $isDirty
       ? "1px solid #000000"
       : "1px solid #e0e0E2"};
-`;
-
-const WithIconHalfInput = styled.input`
-  width: 272px;
-  height: 24px;
-  border: none;
-  outline: none;
 `;
 
 const FakeInput = styled.div<{ $isDirty: boolean }>`

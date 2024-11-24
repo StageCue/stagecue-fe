@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import Button from "@/components/buttons/button";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SlashSVG from "@assets/icons/slash.svg?react";
 import EditSVG from "@assets/icons/edit.svg?react";
 import RequiredSVG from "@assets/icons/required_orange.svg?react";
@@ -34,6 +34,7 @@ export interface ProfileInput {
 }
 
 interface ExpInput {
+  id: string;
   artworkName: string;
   artworkPart: string;
   troupe: string;
@@ -46,11 +47,11 @@ const NewProfileForm = () => {
   const sessionStore = useSessionStore();
   const [isEditPersonalInfo, setIsEditPersonalInfo] = useState<boolean>(false);
   const [isEditIntroduce, setIsEditIntroduce] = useState<boolean>(false);
-  const [selectedExpId, setSelectedExpId] = useState();
+  const [editingExpId, setEditingExpId] = useState<string>("");
   const [isAddExp, setIsAddExp] = useState<boolean>(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
-  const [thumbnailFile, setThumbnailFile] = useState<File>();
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string>();
   const [imageUrlArray, setImageUrlArray] = useState<
     { url: string; id: string }[]
@@ -62,8 +63,9 @@ const NewProfileForm = () => {
   const { register, handleSubmit, setValue, watch } = useForm<ProfileInput>();
   const {
     register: expRegister,
-    handleSubmit: handleExpSubmit,
     watch: expWatch,
+    reset: expReset,
+    setValue: expSetValue,
   } = useForm<ExpInput>();
 
   const onDropThumbnail = useCallback(async (acceptedFiles: File[]) => {
@@ -175,6 +177,7 @@ const NewProfileForm = () => {
     setValue("experiences", [
       ...experiencesValue,
       {
+        id: generateId(),
         artworkName: artworkNameValue,
         artworkPart: artworkPartValue,
         troupe: troupeValue,
@@ -193,12 +196,20 @@ const NewProfileForm = () => {
     }
   };
 
-  const handleEditExpClick = (id: number) => {};
+  const handleEditExpClick = (id: string) => {
+    setEditingExpId(id);
+    setIsAddExp(false);
+  };
 
-  const handleDeleteExpClick = (id: number) => {};
+  const handleDeleteExpClick = (id: string) => {
+    const filteredExpArr = experiencesValue.filter((exp) => exp.id !== id);
+    setValue("experiences", filteredExpArr);
+  };
 
   const handleAddExpClick = () => {
     setIsAddExp(true);
+    setEditingExpId("");
+    expReset();
   };
 
   const handleCancleAddExpClick = () => {
@@ -247,7 +258,7 @@ const NewProfileForm = () => {
   };
 
   const handleDeleteThumbanailClick = () => {
-    setThumbnailFile("");
+    setThumbnailFile(null);
     setThumbnailPreview("");
   };
 
@@ -257,6 +268,19 @@ const NewProfileForm = () => {
       prevArray.filter((item) => item.id !== id)
     );
   };
+
+  useEffect(() => {
+    if (editingExpId && experiencesValue.length !== 0) {
+      const exp = experiencesValue.find((exp) => exp.id === editingExpId);
+
+      expSetValue("artworkName", exp!.artworkName);
+      expSetValue("artworkPart", exp!.artworkPart);
+      expSetValue("startDate", exp!.startDate);
+      expSetValue("endDate", exp!.endDate);
+      expSetValue("troupe", exp!.troupe);
+      expSetValue("id", exp!.id);
+    }
+  }, [editingExpId, expSetValue, experiencesValue]);
 
   return (
     <NewProfileFormContainer>
@@ -508,10 +532,12 @@ const NewProfileForm = () => {
                     </DataRow>
                   </ExpDataWrapper>
                   <ExpIconsWrapper>
-                    <TrashIconWrapper>
+                    <TrashIconWrapper
+                      onClick={() => handleDeleteExpClick(exp.id)}
+                    >
                       <TrashSVG />
                     </TrashIconWrapper>
-                    <EditIconWrapper>
+                    <EditIconWrapper onClick={() => handleEditExpClick(exp.id)}>
                       <EditSVG />
                     </EditIconWrapper>
                   </ExpIconsWrapper>

@@ -15,7 +15,6 @@ interface ProfileProps {
 }
 
 const Profile = ({
-  id,
   title,
   duration,
   birthday,
