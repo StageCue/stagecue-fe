@@ -3,12 +3,12 @@ import Menu from "./components/menu/menu";
 import Mystage from "./components/mystage";
 import { useState } from "react";
 import ApplyHistory from "./components/applyHistory";
-import Scraps from "./components/scraps";
 import SettingProfile from "./components/settingProfile";
 import EditAccount from "./components/editAccount";
 import ResetPassword from "./components/resetPassword";
 import DeleteAccount from "./components/deleteAccount";
 import useSessionStore from "@/store";
+import Scraps from "./components/scraps";
 
 export type mypageMenuType =
   | "my stage"
