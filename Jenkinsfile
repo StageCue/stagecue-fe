@@ -106,7 +106,7 @@ pipeline {
                 branch "main"
             }
             steps {
-                sshagent (credentials: ["prod"]) {
+               script {
                     echo 'deploying application to prod server...'
                   
                         withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
