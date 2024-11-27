@@ -14,7 +14,6 @@ pipeline {
        STG_USER = "stagecue"       
         test_text = "qwefqwef"
     }
-
     agent any
 
     tools {
