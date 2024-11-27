@@ -11,8 +11,7 @@ pipeline {
        PROD_SERVER = "129.154.49.243"
        PROD_USER = "ubuntu"
        STG_SERVER = "146.56.113.170"
-       STG_USER = "stagecue"       
-        test_text = "qwefqwef"
+       STG_USER = "ubuntu"       
     }
     agent any
 
@@ -102,7 +101,7 @@ pipeline {
             }
         }
 
-        stage('Deplolying to prod server(main branch)') {
+        stage('Deplolying to stage server(main branch)') {
             when {
                 branch "main"
             }
@@ -112,7 +111,7 @@ pipeline {
                   
                         withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                             sh """
-                                ssh ${PROD_USER}@${PROD_SERVER} << 'EOF'
+                                ssh ${STG_USER}@${STG_SERVER} << 'EOF'
                                 docker stop stagecue-fe || true
                                 docker rm stagecue-fe || true
                                 echo $PASSWORD | docker login -u $USERNAME --password-stdin
