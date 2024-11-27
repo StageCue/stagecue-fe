@@ -17,7 +17,7 @@ const Mystage = () => {
   const [castsStatus, setCastStatus] = useState<CastStatus>();
   const [popularCasts, setPopularCast] = useState([]);
   const [scraps, setScraps] = useState([]);
-  console.log(scraps);
+
   const getCastsStatus = async () => {
     const res = await requestCastsStatus();
     setCastStatus(res);
