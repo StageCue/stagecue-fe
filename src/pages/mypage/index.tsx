@@ -8,7 +8,7 @@ import EditAccount from "./components/editAccount";
 import ResetPassword from "./components/resetPassword";
 import DeleteAccount from "./components/deleteAccount";
 import useSessionStore from "@/store";
-import Scraps from "./components/scraps";
+import Scraps from "@pages/mypage/components/scraps";
 
 export type mypageMenuType =
   | "my stage"
