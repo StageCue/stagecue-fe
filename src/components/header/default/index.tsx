@@ -12,6 +12,8 @@ const DefaultHeader = () => {
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
+  const isAuthenticated = sessionStore.isLoggined;
+
   const handlePostPageClick = () => {
     navigate("/casts");
   };
@@ -91,17 +93,20 @@ const DefaultHeader = () => {
             로그인/회원가입
           </Button>
         )}
-        <Button
-          variation="outlined"
-          btnClass="assistive"
-          width={102}
-          height={32}
-          padding="7px 14px"
-          fontSize={13}
-          onClick={handleBizClick}
-        >
-          극단주 서비스
-        </Button>
+
+        {isAuthenticated && (
+          <Button
+            variation="outlined"
+            btnClass="assistive"
+            width={102}
+            height={32}
+            padding="7px 14px"
+            fontSize={13}
+            onClick={handleBizClick}
+          >
+            극단주 서비스
+          </Button>
+        )}
       </RightSideWrapper>
     </DefaultHeaderContainer>
   );

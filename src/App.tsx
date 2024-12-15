@@ -28,28 +28,34 @@ import EditTroupe from "./pages/biz/components/manageTroupe/components/editTroup
 import FindPassword from "./pages/auth/resetPassword";
 import useSessionStore from "./store";
 import { useEffect } from "react";
+import PrivateRoute from "./components/bizRouter";
 
 function App() {
-  const sessionStroe = useSessionStore();
+  const sessionStore = useSessionStore();
+
+  const isAuthenticated = sessionStore.isLoggined;
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      sessionStroe.logoutSession();
+      sessionStore.logoutSession();
     }, 1000 * 60 * 30);
     return () => {
       clearInterval(intervalId);
     };
-  }, [sessionStroe]);
+  }, [sessionStore]);
+
   return (
     <AppContainer>
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
-          <Route path="mypage" element={<MyPage />} />
-          <Route path="mypage/profiles/:id" element={<ProfileDetail />} />
-          <Route path="mypage/profiles/:id/form" element={<ProfileForm />} />
-          <Route path="mypage/profiles/form" element={<NewProfileForm />} />
+          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+            <Route path="mypage" element={<MyPage />} />
+            <Route path="mypage/profiles/:id" element={<ProfileDetail />} />
+            <Route path="mypage/profiles/:id/form" element={<ProfileForm />} />
+            <Route path="mypage/profiles/form" element={<NewProfileForm />} />
+          </Route>
           <Route path="casts" element={<List />} />
           <Route path="casts/search" element={<Search />} />
           <Route path="casts/:id" element={<Detail />} />
