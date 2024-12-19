@@ -13,7 +13,7 @@ const Home = () => {
   const [newestCasts, setNewestCasts] = useState([]);
   const [popularCasts, setPopularCast] = useState([]);
   const [notices, setNotices] = useState([]);
-  const [_, setBanners] = useState([]);
+  const [banners, setBanners] = useState([]);
 
   const getBanners = async () => {
     const { banners } = await requestBanners();
@@ -55,7 +55,7 @@ const Home = () => {
 
   return (
     <HomeContainer>
-      <AdsSlide />
+      <AdsSlide banners={banners} />
       <NewPost casts={newestCasts} />
       <ThemePost />
       <PopularPost casts={popularCasts} />

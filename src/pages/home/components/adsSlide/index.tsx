@@ -4,13 +4,14 @@ import styled from "styled-components";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 
-// interface AdsSlideContainer {
-//   banners: any[];
-// }
+interface AdsSlideProps {
+  banners: { imageUrl: string; link: string }[];
+}
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
-const AdsSlide = () => {
+const AdsSlide = ({ banners }: AdsSlideProps) => {
+  console.log(banners);
   return (
     <AdsSlideContainer>
       <Swiper
@@ -27,21 +28,13 @@ const AdsSlide = () => {
         pagination={{ clickable: true }}
         grabCursor={true}
       >
-        <SwiperSlide>
-          <SlideDiv>Slide 1</SlideDiv>
-        </SwiperSlide>
-        <SwiperSlide>
-          <SlideDiv>Slide 2</SlideDiv>
-        </SwiperSlide>
-        <SwiperSlide>
-          <SlideDiv>Slide 3</SlideDiv>
-        </SwiperSlide>
-        <SwiperSlide>
-          <SlideDiv>Slide 4</SlideDiv>
-        </SwiperSlide>
-        <SwiperSlide>
-          <SlideDiv>Slide 5</SlideDiv>
-        </SwiperSlide>
+        {banners?.map((banner) => (
+          <SwiperSlide>
+            <SlideDiv
+              src={`https://s3.stagecue.co.kr/stagecue/${banner.imageUrl}`}
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </AdsSlideContainer>
   );
@@ -55,13 +48,7 @@ const AdsSlideContainer = styled.div`
   justify-content: center;
 `;
 
-const SlideDiv = styled.div`
+const SlideDiv = styled.img`
   height: 240px;
   width: 1060px;
-  background: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  border-radius: 10px;
 `;
