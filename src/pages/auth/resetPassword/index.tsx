@@ -16,7 +16,7 @@ const FindPassword = () => {
     // formState: { errors },
   } = useForm<ResetPasswordInputs>();
 
-  const [isResetPassword, setIsResetPassword] = useState(true);
+  const [isResetPassword, setIsResetPassword] = useState<boolean>();
 
   const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
     const params = new URLSearchParams(location.search);
