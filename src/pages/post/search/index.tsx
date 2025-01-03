@@ -7,7 +7,7 @@ import styled from "styled-components";
 const Search = () => {
   const { query } = useSearchStore();
 
-  const [currentFilter, _] = useState("극단");
+  const [currentFilter, _] = useState("공고");
   const [results, setResults] = useState([]);
 
   const getResults = async () => {
@@ -17,7 +17,7 @@ const Search = () => {
       query,
     });
 
-    setResults(res.casts);
+    setResults(res.recruits);
   };
 
   useEffect(() => {
@@ -27,16 +27,13 @@ const Search = () => {
   return (
     <SearchContainer>
       <FilterWrapper>
-        <Filter $isSelected={currentFilter === "극단"}>
-          극단({results?.length})
-        </Filter>
         <Filter $isSelected={currentFilter === "공고"}>공고(0)</Filter>
       </FilterWrapper>
       <CastGrid>
         {results?.map(
           ({
             recruitId,
-            castTitle,
+            recruitTitle,
             artworkName,
             practiceLocation,
             isScrapping,
@@ -44,7 +41,7 @@ const Search = () => {
           }) => (
             <Cast
               recruitId={recruitId}
-              recruitTitle={castTitle}
+              recruitTitle={recruitTitle}
               artworkName={artworkName}
               practiceLocation={practiceLocation}
               isScrapping={isScrapping}
