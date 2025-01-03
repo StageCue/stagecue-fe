@@ -30,7 +30,7 @@ const List = () => {
   const dayButtonRef = useRef<HTMLDivElement | null>(null);
   const costButtonRef = useRef<HTMLDivElement | null>(null);
 
-  const [casts, setCasts] = useState([]);
+  const [recruits, setRecruits] = useState([]);
 
   const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
   const [selectedZone, setSelectedZone] = useState(["전체지역"]);
@@ -272,7 +272,7 @@ const List = () => {
       feeRange: appliedCost,
     });
 
-    setCasts(res.casts);
+    setRecruits(res.casts);
   };
 
   const parsingCategory = (category: string) => {
@@ -527,18 +527,18 @@ const List = () => {
         </OrderByWrapper>
       </FilterOrderByWrapper>
       <CastGrid>
-        {casts?.map(
+        {recruits?.map(
           ({
-            castId,
-            castTitle,
+            recruitId,
+            recruitTitle,
             artworkName,
             practiceLocation,
             isScrapping,
             thumbnail,
           }) => (
             <Cast
-              castId={castId}
-              castTitle={castTitle}
+              recruitId={recruitId}
+              recruitTitle={recruitTitle}
               artworkName={artworkName}
               practiceLocation={practiceLocation}
               isScrapping={isScrapping}

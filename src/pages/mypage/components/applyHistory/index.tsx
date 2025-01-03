@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ChevronDownSVG from "@/assets/icons/chebron_down_s.svg?react";
 import { requestCastsStatus } from "@/api/users";
 import ApplyList from "./components/applyList";
-import { CastStatus } from "../mystage";
+import { RecruitsStatus } from "../mystage";
 
 export type applyPhaseType =
   | "APPLIED"
@@ -15,7 +15,7 @@ export type applyPhaseType =
 type filterType = "전체" | "열람" | "미열람" | "지원취소";
 
 const ApplyHistory = () => {
-  const [castsStatus, setCastStatus] = useState<CastStatus>();
+  const [recruitsStatus, setRecruitsStatus] = useState<RecruitsStatus>();
   const [selectedPhase, setSelectedPhase] = useState<applyPhaseType>("APPLIED");
   const [selectedFilter, setSelectedFilter] = useState<filterType>("전체");
   const [isFilterMenuShowing, setIsFilterMenuShowing] =
@@ -50,7 +50,7 @@ const ApplyHistory = () => {
   const getCastsStatus = async () => {
     const res = await requestCastsStatus();
 
-    setCastStatus(res);
+    setRecruitsStatus(res);
   };
 
   useEffect(() => {
@@ -67,12 +67,12 @@ const ApplyHistory = () => {
             $isSelected={selectedPhase === "APPLIED"}
           >
             <ItemName>지원 완료</ItemName>
-            {castsStatus && (
+            {recruitsStatus && (
               <Value>
-                {castsStatus?.applied +
-                  castsStatus?.passed +
-                  castsStatus?.accepted +
-                  castsStatus?.rejected}
+                {recruitsStatus?.applied +
+                  recruitsStatus?.passed +
+                  recruitsStatus?.accepted +
+                  recruitsStatus?.rejected}
               </Value>
             )}
           </ApplyPhase>
@@ -82,7 +82,7 @@ const ApplyHistory = () => {
             $isSelected={selectedPhase === "DOCUMENT_PASSED"}
           >
             <ItemName>서류 통과</ItemName>
-            <Value>{castsStatus?.passed}</Value>
+            <Value>{recruitsStatus?.passed}</Value>
           </ApplyPhase>
           <Divider />
           <ApplyPhase
@@ -90,7 +90,7 @@ const ApplyHistory = () => {
             $isSelected={selectedPhase === "FINAL_ACCEPTED"}
           >
             <ItemName>최종 합격</ItemName>
-            <Value>{castsStatus?.accepted}</Value>
+            <Value>{recruitsStatus?.accepted}</Value>
           </ApplyPhase>
           <Divider />
           <ApplyPhase
@@ -98,7 +98,7 @@ const ApplyHistory = () => {
             $isSelected={selectedPhase === "REJECTED"}
           >
             <ItemName>불합격</ItemName>
-            <Value>{castsStatus?.rejected}</Value>
+            <Value>{recruitsStatus?.rejected}</Value>
           </ApplyPhase>
         </Dashboard>
       </ApplyDashboard>

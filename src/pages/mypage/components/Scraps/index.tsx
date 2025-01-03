@@ -51,18 +51,18 @@ const Scraps = () => {
         <ScrapList>
           {scraps?.map(
             ({
-              castId,
+              recruitId,
               imageUrl,
-              castTitle,
+              recruitTitle,
               artworkName,
               practiceLocation,
               isScrapping,
             }) => (
               <Cast
-                key={castId}
-                castId={castId}
+                key={recruitId}
+                recruitId={recruitId}
                 thumbnail={imageUrl}
-                castTitle={castTitle}
+                recruitTitle={recruitTitle}
                 artworkName={artworkName}
                 practiceLocation={practiceLocation}
                 isScrapping={isScrapping}

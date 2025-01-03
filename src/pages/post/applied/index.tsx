@@ -7,7 +7,7 @@ import Lottie from "react-lottie";
 import AppliedGIF from "@assets/images/appliedLottie.json";
 
 const Applied = () => {
-  const [popularCasts, setPopularCast] = useState([]);
+  const [popularRecruits, setPopularRecruits] = useState([]);
 
   const getNewestCasts = async () => {
     const { casts } = await requestCasts({
@@ -16,7 +16,7 @@ const Applied = () => {
       orderBy: "newest",
     });
 
-    setPopularCast(casts);
+    setPopularRecruits(casts);
   };
 
   useEffect(() => {
@@ -51,9 +51,9 @@ const Applied = () => {
           <ShowAll>전체보기</ShowAll>
         </TextWrapper>
         <Casts>
-          {popularCasts?.map(
+          {popularRecruits?.map(
             ({
-              castId,
+              recruitId,
               thumbnail,
               castTitle,
               artworkName,
@@ -61,10 +61,10 @@ const Applied = () => {
               isScrapping,
             }) => (
               <Cast
-                key={castId}
-                castId={castId}
+                key={recruitId}
+                recruitId={recruitId}
                 thumbnail={thumbnail}
-                castTitle={castTitle}
+                recruitTitle={castTitle}
                 artworkName={artworkName}
                 practiceLocation={practiceLocation}
                 isScrapping={isScrapping}

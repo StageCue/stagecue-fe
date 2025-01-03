@@ -6,7 +6,7 @@ import { requestCastsStatus, requestScraps } from "@/api/users";
 import { requestCasts } from "@/api/cast";
 import Cast from "@/pages/home/components/cast";
 
-export interface CastStatus {
+export interface RecruitsStatus {
   accepted: number;
   applied: number;
   passed: number;
@@ -14,7 +14,7 @@ export interface CastStatus {
 }
 
 const Mystage = () => {
-  const [recruitsStatus, setRecruitsStatus] = useState<CastStatus>();
+  const [recruitsStatus, setRecruitsStatus] = useState<RecruitsStatus>();
   const [popularRecruits, setPopularRecruits] = useState([]);
   const [scraps, setScraps] = useState([]);
 
