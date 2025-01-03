@@ -1,21 +1,21 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { CastDetail } from "../popularPost";
+import { RecruitDetail } from "../popularPost";
 import LocationSVG from "@assets/icons/location.svg?react";
 import Button from "@/components/buttons/button";
 import ArrowRightSVG from "@assets/icons/arrow_right_red.svg?react";
 import { useNavigate } from "react-router-dom";
 
-interface RankedCastsProps {
-  casts: CastDetail[];
+interface RankedRecruitsProps {
+  recruits: RecruitDetail[];
 }
 
-const RankedCasts = ({ casts }: RankedCastsProps) => {
+const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
   const navigate = useNavigate();
-  const [selectedCast, setSelectedCast] = useState<CastDetail>();
+  const [selectedRecruit, setSelectedRecruit] = useState<RecruitDetail>();
 
-  const handleThumbnailClick = (cast: CastDetail) => {
-    setSelectedCast(cast);
+  const handleThumbnailClick = (recruit: RecruitDetail) => {
+    setSelectedRecruit(recruit);
   };
 
   const handleClickDetail = (id?: number) => {
@@ -23,28 +23,28 @@ const RankedCasts = ({ casts }: RankedCastsProps) => {
   };
 
   useEffect(() => {
-    setSelectedCast(casts[0]);
-  }, [casts]);
+    setSelectedRecruit(recruits[0]);
+  }, [recruits]);
   return (
     <RankedCastsContainer>
       <ThumbnailWrapper>
         <SelectedThumbnail
-          src={`https://s3.stagecue.co.kr/stagecue/${selectedCast?.thumbnailUrl}`}
+          src={`https://s3.stagecue.co.kr/stagecue/${selectedRecruit?.thumbnailUrl}`}
         />
       </ThumbnailWrapper>
       <RightSideWrapper>
         <SummaryWrapper>
           <TitleWrapper>
-            <TroupeName>{selectedCast?.troupeName}</TroupeName>
-            <CastTitle>{selectedCast?.title}</CastTitle>
-            <ArtworkName>{selectedCast?.artworkName}</ArtworkName>
+            <TroupeName>{selectedRecruit?.troupeName}</TroupeName>
+            <CastTitle>{selectedRecruit?.title}</CastTitle>
+            <ArtworkName>{selectedRecruit?.artworkName}</ArtworkName>
           </TitleWrapper>
           <Summary>
             <SummaryRow>
               <PropertyWrapper>
                 <Property>지원 가능 배역</Property>
                 <Value>
-                  {selectedCast?.recruitingParts.map((part) => (
+                  {selectedRecruit?.recruitingParts.map((part) => (
                     <Chip>{part}</Chip>
                   ))}
                 </Value>
@@ -53,7 +53,9 @@ const RankedCasts = ({ casts }: RankedCastsProps) => {
                 <Property>연습 위치</Property>
                 <Value>
                   <LocationSVG />
-                  <LocationText>{selectedCast?.practiceAddress}</LocationText>
+                  <LocationText>
+                    {selectedRecruit?.practiceAddress}
+                  </LocationText>
                 </Value>
               </PropertyWrapper>
               <Button
@@ -63,7 +65,7 @@ const RankedCasts = ({ casts }: RankedCastsProps) => {
                 width={94}
                 height={32}
                 fontSize={13}
-                onClick={() => handleClickDetail(selectedCast?.id)}
+                onClick={() => handleClickDetail(selectedRecruit?.id)}
               >
                 상세보기
                 <ArrowRightSVG />
@@ -72,18 +74,18 @@ const RankedCasts = ({ casts }: RankedCastsProps) => {
             <SummaryRow>
               <PropertyWrapper>
                 <Property>극단소개</Property>
-                <Value>{selectedCast?.troupeIntroduce}</Value>
+                <Value>{selectedRecruit?.troupeIntroduce}</Value>
               </PropertyWrapper>
             </SummaryRow>
           </Summary>
         </SummaryWrapper>
         <Thumbnails>
-          {casts.map((cast) => (
+          {recruits.map((recruit) => (
             <Thumbnail
-              key={cast.id}
-              src={`https://s3.stagecue.co.kr/stagecue/${cast.thumbnailUrl}`}
-              onClick={() => handleThumbnailClick(cast)}
-              $isSelected={cast.id === selectedCast?.id}
+              key={recruit.id}
+              src={`https://s3.stagecue.co.kr/stagecue/${recruit.thumbnailUrl}`}
+              onClick={() => handleThumbnailClick(recruit)}
+              $isSelected={recruit.id === selectedRecruit?.id}
             />
           ))}
         </Thumbnails>

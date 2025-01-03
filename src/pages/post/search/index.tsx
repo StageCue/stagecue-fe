@@ -28,14 +28,14 @@ const Search = () => {
     <SearchContainer>
       <FilterWrapper>
         <Filter $isSelected={currentFilter === "극단"}>
-          극단({results.length})
+          극단({results?.length})
         </Filter>
         <Filter $isSelected={currentFilter === "공고"}>공고(0)</Filter>
       </FilterWrapper>
       <CastGrid>
         {results?.map(
           ({
-            castId,
+            recruitId,
             castTitle,
             artworkName,
             practiceLocation,
@@ -43,8 +43,8 @@ const Search = () => {
             thumbnail,
           }) => (
             <Cast
-              castId={castId}
-              castTitle={castTitle}
+              recruitId={recruitId}
+              recruitTitle={castTitle}
               artworkName={artworkName}
               practiceLocation={practiceLocation}
               isScrapping={isScrapping}

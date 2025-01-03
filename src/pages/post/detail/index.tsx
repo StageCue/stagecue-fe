@@ -14,9 +14,10 @@ import {
 } from "@/api/cast";
 import { useNavigate, useParams } from "react-router-dom";
 import PostImageSlide from "../components/slide";
+import useSessionStore from "@/store";
 
-interface CastDetail {
-  castTitle: string;
+interface RecruitDetail {
+  recruitTitle: string;
   introduce: string;
   troupeName: string;
   troupeLogoImage: string;
@@ -47,9 +48,11 @@ interface CastDetail {
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [castDetail, setCastDetail] = useState<CastDetail>();
+  const [recruitDetail, setRecruitDetail] = useState<RecruitDetail>();
   const [selectedTab, setSelectedTab] = useState("공연 기본 정보");
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const { isLoggined } = useSessionStore();
 
   const handleTabClick = (option: string) => {
     setSelectedTab(option);
@@ -69,7 +72,7 @@ const Detail = () => {
     if (id) {
       const cast = await requestCastDetail(id);
       console.log(cast);
-      setCastDetail(cast);
+      setRecruitDetail(cast);
 
       if (cast.isScrapping) {
         setIsBookmarked(true);
@@ -78,7 +81,7 @@ const Detail = () => {
   };
 
   const handleTroupeNameClick = () => {
-    navigate(`/troupe/${castDetail?.troupeName}`);
+    navigate(`/troupe/${recruitDetail?.troupeName}`);
   };
 
   useEffect(() => {
@@ -92,25 +95,29 @@ const Detail = () => {
           <TitleWrapper>
             <DdayWrapper>
               <Dday>D-12</Dday>
-              <BookmarkWrapper onClick={handleBookmarkClick}>
-                {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
-              </BookmarkWrapper>
+              {isLoggined && (
+                <BookmarkWrapper onClick={handleBookmarkClick}>
+                  {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
+                </BookmarkWrapper>
+              )}
             </DdayWrapper>
-            <Title>{castDetail?.castTitle}</Title>
+            <Title>{recruitDetail?.recruitTitle}</Title>
           </TitleWrapper>
           <Divider />
           <TroupeWrapper>
             <TroupeLogo
-              src={`https://s3.stagecue.co.kr/stagecue${castDetail?.troupeLogoImage}`}
+              src={`https://s3.stagecue.co.kr/stagecue${recruitDetail?.troupeLogoImage}`}
             />
             <TroupeName onClick={handleTroupeNameClick}>
-              {castDetail?.troupeName}
+              {recruitDetail?.troupeName}
               <IconWrapper>
                 <ChevronRightSVG />
               </IconWrapper>
             </TroupeName>
           </TroupeWrapper>
-          {castDetail && <PostImageSlide images={castDetail?.recruitImages} />}
+          {recruitDetail && (
+            <PostImageSlide images={recruitDetail?.recruitImages} />
+          )}
         </Header>
         <Content>
           <ContentTab>
@@ -136,42 +143,42 @@ const Detail = () => {
               {selectedTab === "연습 장소 정보" && <SelectedBorder />}
             </Option>
           </ContentTab>
-          {castDetail && (
+          {recruitDetail && (
             <ContentBody>
               {selectedTab === "공연 기본 정보" && (
                 <BasicInfo
-                  introduce={castDetail.introduce}
-                  start={castDetail.stage.dateStart}
-                  end={castDetail.stage.dateEnd}
-                  monthlyFee={castDetail.monthlyFee}
-                  recruitingParts={castDetail.recruitingParts}
+                  introduce={recruitDetail.introduce}
+                  start={recruitDetail.stage.dateStart}
+                  end={recruitDetail.stage.dateEnd}
+                  monthlyFee={recruitDetail.monthlyFee}
+                  recruitingParts={recruitDetail.recruitingParts}
                 />
               )}
               {selectedTab === "공연 위치 정보" && (
                 <LocationInfo
-                  address={castDetail.stage.address}
-                  addressDetail={castDetail.stage.addressDetail}
-                  lat={castDetail.stage.lat}
-                  lng={castDetail.stage.lng}
+                  address={recruitDetail.stage.address}
+                  addressDetail={recruitDetail.stage.addressDetail}
+                  lat={recruitDetail.stage.lat}
+                  lng={recruitDetail.stage.lng}
                 />
               )}
               {selectedTab === "연습 장소 정보" && (
                 <PracticeInfo
-                  start={castDetail.practice.dateStart}
-                  end={castDetail.practice.dateEnd}
-                  address={castDetail.practice.address}
-                  addressDetail={castDetail.practice.addressDetail}
-                  daysOfWeek={castDetail.practice.daysOfWeek}
-                  lat={castDetail.practice.lat}
-                  lng={castDetail.practice.lng}
+                  start={recruitDetail.practice.dateStart}
+                  end={recruitDetail.practice.dateEnd}
+                  address={recruitDetail.practice.address}
+                  addressDetail={recruitDetail.practice.addressDetail}
+                  daysOfWeek={recruitDetail.practice.daysOfWeek}
+                  lat={recruitDetail.practice.lat}
+                  lng={recruitDetail.practice.lng}
                 />
               )}
             </ContentBody>
           )}
         </Content>
       </ContentWrapper>
-      {castDetail && (
-        <Application recruitId={id!} isApplied={castDetail?.isApplied} />
+      {recruitDetail && isLoggined && (
+        <Application recruitId={id!} isApplied={recruitDetail?.isApplied} />
       )}
     </DetailContainer>
   );

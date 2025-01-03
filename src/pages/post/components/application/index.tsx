@@ -43,7 +43,7 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
   const getProfileList = async () => {
     const res = await requestProfileList();
     setProfiles(res.profiles);
-    const defaultProfile = res.profiles.find(
+    const defaultProfile = res?.profiles.find(
       (profile: Profile) => profile.isDefault === true
     );
 

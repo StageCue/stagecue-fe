@@ -2,34 +2,34 @@ import styled from "styled-components";
 import LocationSVG from "@/assets/icons/location.svg?react";
 import { useNavigate } from "react-router-dom";
 
-interface CastProps {
-  castId: number;
-  castTitle: string;
+interface RecruitProps {
+  recruitId: number;
+  recruitTitle: string;
   artworkName: string;
   practiceLocation: string;
   isScrapping: boolean;
   thumbnail: string;
 }
 
-const Cast = ({
-  castId,
-  castTitle,
+const Recruit = ({
+  recruitId,
+  recruitTitle,
   artworkName,
   practiceLocation,
   // isScrapping,
   thumbnail,
-}: CastProps) => {
+}: RecruitProps) => {
   const navigate = useNavigate();
 
   const handleCastClick = () => {
-    navigate(`/casts/${castId}`);
+    navigate(`/casts/${recruitId}`);
   };
 
   return (
     <CastContainer onClick={handleCastClick}>
       <Poster src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`} />
       <TextWrapper>
-        <Title>{castTitle}</Title>
+        <Title>{recruitTitle}</Title>
         <Artwork>{artworkName}</Artwork>
         <Location>
           <LocationSVG />
@@ -40,7 +40,7 @@ const Cast = ({
   );
 };
 
-export default Cast;
+export default Recruit;
 
 const CastContainer = styled.div`
   width: 196px;

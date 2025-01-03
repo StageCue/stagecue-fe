@@ -10,8 +10,8 @@ import { requestNotices } from "@/api/notice";
 import { requestBanners } from "@/api/ads";
 
 const Home = () => {
-  const [newestCasts, setNewestCasts] = useState([]);
-  const [popularCasts, setPopularCast] = useState([]);
+  const [newestRecruits, setNewestRecruits] = useState([]);
+  const [popularRecruits, setPopularRecruits] = useState([]);
   const [notices, setNotices] = useState([]);
   const [banners, setBanners] = useState([]);
 
@@ -28,7 +28,7 @@ const Home = () => {
       orderBy: "newest",
     });
 
-    setNewestCasts(recruits);
+    setNewestRecruits(recruits);
   };
 
   const getPopularCasts = async () => {
@@ -37,7 +37,7 @@ const Home = () => {
       offset: "0",
     });
 
-    setPopularCast(recruits);
+    setPopularRecruits(recruits);
   };
 
   const getNotices = async () => {
@@ -56,9 +56,9 @@ const Home = () => {
   return (
     <HomeContainer>
       <AdsSlide banners={banners} />
-      <NewPost casts={newestCasts} />
+      <NewPost recruits={newestRecruits} />
       <ThemePost />
-      <PopularPost casts={popularCasts} />
+      <PopularPost recruits={popularRecruits} />
       <StageCue notices={notices} />
     </HomeContainer>
   );

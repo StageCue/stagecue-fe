@@ -3,8 +3,8 @@ import ChevronRightSVG from "@/assets/icons/chevron_right_red_s.svg?react";
 import Button from "@/components/buttons/button";
 import Cast from "../cast";
 
-export interface Cast {
-  castId: number;
+export interface Recruit {
+  recruitId: number;
   thumbnail: string;
   recruitTitle: string;
   artworkName: string;
@@ -13,10 +13,10 @@ export interface Cast {
 }
 
 interface NewPostProps {
-  casts: Cast[];
+  recruits: Recruit[];
 }
 
-const NewPost = ({ casts }: NewPostProps) => {
+const NewPost = ({ recruits }: NewPostProps) => {
   return (
     <NewPostContainer>
       <TitleWrapper>
@@ -35,10 +35,10 @@ const NewPost = ({ casts }: NewPostProps) => {
           <ChevronRightSVG />
         </Button>
       </TitleWrapper>
-      <Casts>
-        {casts?.map(
+      <Recruits>
+        {recruits?.map(
           ({
-            castId,
+            recruitId,
             thumbnail,
             recruitTitle,
             artworkName,
@@ -46,17 +46,17 @@ const NewPost = ({ casts }: NewPostProps) => {
             isScrapping,
           }) => (
             <Cast
-              key={castId}
-              castId={castId}
+              key={recruitId}
+              recruitId={recruitId}
               thumbnail={thumbnail}
-              castTitle={recruitTitle}
+              recruitTitle={recruitTitle}
               artworkName={artworkName}
               practiceLocation={practiceLocation}
               isScrapping={isScrapping}
             />
           )
         )}
-      </Casts>
+      </Recruits>
     </NewPostContainer>
   );
 };
@@ -104,6 +104,6 @@ const Higliting = styled.div`
   z-index: -10;
 `;
 
-const Casts = styled.div`
+const Recruits = styled.div`
   min-height: 394px;
 `;

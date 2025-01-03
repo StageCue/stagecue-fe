@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import RankedCasts from "../rankedCasts";
 
-export interface CastDetail {
+export interface RecruitDetail {
   id: number;
   title: string;
   artworkName: string;
@@ -12,11 +12,11 @@ export interface CastDetail {
   thumbnailUrl: string;
 }
 
-interface PopularPostProps {
-  casts: CastDetail[];
+interface PopularRecruitProps {
+  recruits: RecruitDetail[];
 }
 
-const PopularPost = ({ casts }: PopularPostProps) => {
+const PopularPost = ({ recruits }: PopularRecruitProps) => {
   return (
     <PopularPostContainer>
       <TitleWrapper>
@@ -27,7 +27,7 @@ const PopularPost = ({ casts }: PopularPostProps) => {
         </Title>
       </TitleWrapper>
       <Casts>
-        <RankedCasts casts={casts} />
+        <RankedCasts recruits={recruits} />
       </Casts>
     </PopularPostContainer>
   );
