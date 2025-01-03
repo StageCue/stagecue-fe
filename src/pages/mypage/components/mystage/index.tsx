@@ -14,23 +14,23 @@ export interface CastStatus {
 }
 
 const Mystage = () => {
-  const [castsStatus, setCastStatus] = useState<CastStatus>();
-  const [popularCasts, setPopularCast] = useState([]);
+  const [recruitsStatus, setRecruitsStatus] = useState<CastStatus>();
+  const [popularRecruits, setPopularRecruits] = useState([]);
   const [scraps, setScraps] = useState([]);
 
-  const getCastsStatus = async () => {
+  const getRecruitsStatus = async () => {
     const res = await requestCastsStatus();
-    setCastStatus(res);
+    setRecruitsStatus(res);
   };
 
-  const getPopularCasts = async () => {
+  const getPopularRecruits = async () => {
     const { casts } = await requestCasts({
       limit: "4",
       offset: "0",
       orderBy: "newest",
     });
 
-    setPopularCast(casts);
+    setPopularRecruits(casts);
   };
 
   const getScrappedCasts = async () => {
@@ -43,8 +43,8 @@ const Mystage = () => {
   };
 
   useEffect(() => {
-    getCastsStatus();
-    getPopularCasts();
+    getRecruitsStatus();
+    getPopularRecruits();
     getScrappedCasts();
   }, []);
 
@@ -57,29 +57,29 @@ const Mystage = () => {
         <Dashboard>
           <MyStageItem>
             <ItemName>지원 완료</ItemName>
-            {castsStatus && (
+            {recruitsStatus && (
               <Value>
-                {castsStatus?.applied +
-                  castsStatus?.passed +
-                  castsStatus?.accepted +
-                  castsStatus?.rejected}
+                {recruitsStatus?.applied +
+                  recruitsStatus?.passed +
+                  recruitsStatus?.accepted +
+                  recruitsStatus?.rejected}
               </Value>
             )}
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>서류 통과</ItemName>
-            <Value>{castsStatus?.passed}</Value>
+            <Value>{recruitsStatus?.passed}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>최종 합격</ItemName>
-            <Value>{castsStatus?.accepted}</Value>
+            <Value>{recruitsStatus?.accepted}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>불합격</ItemName>
-            <Value>{castsStatus?.rejected}</Value>
+            <Value>{recruitsStatus?.rejected}</Value>
           </MyStageItem>
         </Dashboard>
       </MyStage>
@@ -102,18 +102,18 @@ const Mystage = () => {
           <Scraps>
             {scraps?.map(
               ({
-                castId,
+                recruitId,
                 imageUrl,
-                castTitle,
+                recruitTitle,
                 artworkName,
                 practiceAddress,
                 isScrapping,
               }) => (
                 <Cast
-                  key={castId}
-                  castId={castId}
+                  key={recruitId}
+                  recruitId={recruitId}
                   thumbnail={imageUrl}
-                  castTitle={castTitle}
+                  recruitTitle={recruitTitle}
                   artworkName={artworkName}
                   practiceLocation={practiceAddress}
                   isScrapping={isScrapping}
@@ -130,20 +130,20 @@ const Mystage = () => {
             <ShowAll>전체보기</ShowAll>
           </ItemTitleWrapper>
           <Casts>
-            {popularCasts?.map(
+            {popularRecruits?.map(
               ({
-                castId,
+                recruitId,
                 thumbnail,
-                castTitle,
+                recruitTitle,
                 artworkName,
                 practiceLocation,
                 isScrapping,
               }) => (
                 <Cast
-                  key={castId}
-                  castId={castId}
+                  key={recruitId}
+                  recruitId={recruitId}
                   thumbnail={thumbnail}
-                  castTitle={castTitle}
+                  recruitTitle={recruitTitle}
                   artworkName={artworkName}
                   practiceLocation={practiceLocation}
                   isScrapping={isScrapping}

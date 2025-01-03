@@ -3,6 +3,7 @@ import Cast from "@/pages/home/components/cast";
 import useSearchStore from "@/store/search";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import NoResult from "./noResult";
 
 const Search = () => {
   const { query } = useSearchStore();
@@ -29,27 +30,31 @@ const Search = () => {
       <FilterWrapper>
         <Filter $isSelected={currentFilter === "공고"}>공고(0)</Filter>
       </FilterWrapper>
-      <CastGrid>
-        {results?.map(
-          ({
-            recruitId,
-            recruitTitle,
-            artworkName,
-            practiceLocation,
-            isScrapping,
-            thumbnail,
-          }) => (
-            <Cast
-              recruitId={recruitId}
-              recruitTitle={recruitTitle}
-              artworkName={artworkName}
-              practiceLocation={practiceLocation}
-              isScrapping={isScrapping}
-              thumbnail={thumbnail}
-            />
-          )
-        )}
-      </CastGrid>
+      {results ? (
+        <CastGrid>
+          {results?.map(
+            ({
+              recruitId,
+              recruitTitle,
+              artworkName,
+              practiceLocation,
+              isScrapping,
+              thumbnail,
+            }) => (
+              <Cast
+                recruitId={recruitId}
+                recruitTitle={recruitTitle}
+                artworkName={artworkName}
+                practiceLocation={practiceLocation}
+                isScrapping={isScrapping}
+                thumbnail={thumbnail}
+              />
+            )
+          )}
+        </CastGrid>
+      ) : (
+        <NoResult />
+      )}
     </SearchContainer>
   );
 };
