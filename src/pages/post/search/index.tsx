@@ -30,7 +30,7 @@ const Search = () => {
       <FilterWrapper>
         <Filter $isSelected={currentFilter === "공고"}>공고(0)</Filter>
       </FilterWrapper>
-      {results ? (
+      {results.length > 0 ? (
         <CastGrid>
           {results?.map(
             ({
