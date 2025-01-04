@@ -112,7 +112,6 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
       registrationFile,
     });
 
-    console.log(res);
     navigate("/biz/troupe");
   };
 
@@ -201,7 +200,6 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
       const isValidFile = validateFile(file);
       if (isValidFile) {
         const fileName = seperateFileNameFromPath(path);
-        console.log(fileName);
         setRegistrationFile(file);
         setRegistrationFileName(fileName);
       } else {

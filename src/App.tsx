@@ -29,6 +29,7 @@ import FindPassword from "./pages/auth/resetPassword";
 import useSessionStore from "./store";
 import { useEffect } from "react";
 import PrivateRoute from "./components/bizRouter";
+import CreatedTroupe from "./pages/biz/components/manageTroupe/components/createdTroupe";
 
 function App() {
   const sessionStore = useSessionStore();
@@ -84,6 +85,7 @@ function App() {
             path="troupe/form/new"
             element={<EditTroupe isInitial={true} />}
           />
+          <Route path="troupe/created" element={<CreatedTroupe />} />
           <Route path="cast" element={<ManagePost />} />
           <Route path="cast/form" element={<EditRecruit />} />
           <Route path="cast/:id/form" element={<EditRecruit />} />
