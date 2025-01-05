@@ -8,8 +8,12 @@ import AdsSlide from "./components/adsSlide";
 import StageCue from "./components/stageCue";
 import { requestNotices } from "@/api/notice";
 import { requestBanners } from "@/api/ads";
+import RecommendRecruit from "./components/recommendRecruit";
+import useSessionStore from "@/store";
 
 const Home = () => {
+  const { isLoggined } = useSessionStore();
+
   const [newestRecruits, setNewestRecruits] = useState([]);
   const [popularRecruits, setPopularRecruits] = useState([]);
   const [notices, setNotices] = useState([]);
@@ -55,6 +59,7 @@ const Home = () => {
 
   return (
     <HomeContainer>
+      {isLoggined && <RecommendRecruit />}
       <AdsSlide banners={banners} />
       <NewPost recruits={newestRecruits} />
       <ThemePost />

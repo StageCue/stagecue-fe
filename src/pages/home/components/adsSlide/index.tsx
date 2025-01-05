@@ -11,7 +11,6 @@ interface AdsSlideProps {
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
 const AdsSlide = ({ banners }: AdsSlideProps) => {
-  console.log(banners);
   return (
     <AdsSlideContainer>
       <Swiper
