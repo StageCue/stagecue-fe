@@ -46,11 +46,10 @@ const ManagePost = () => {
   };
 
   const handleDeadlineConfirm = async (endDate: string) => {
-    const res = await requestChangeEndDate({
+    await requestChangeEndDate({
       recruitIds: selectedRecruitIds,
       endDate,
     });
-    console.log(res);
 
     await getCasts();
   };

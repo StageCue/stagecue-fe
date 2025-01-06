@@ -149,9 +149,11 @@ const Table = ({
 
   const handleAllStarClick = () => {
     setIsStarAll((prev) => !prev);
-    applications.map(({ applyId }) =>
-      setStarMarkedIds((prev) => [...prev, applyId])
-    );
+    if (!isStarAll) {
+      setStarMarkedIds(applications.map(({ applyId }) => applyId));
+    } else {
+      setStarMarkedIds([]);
+    }
   };
 
   const handleStarClick = (
@@ -221,7 +223,15 @@ const Table = ({
   }, [starMarkedIds, applications]);
 
   useEffect(() => {
-    setSortedAplications(applications);
+    if (applications.length > 0) {
+      setSortedAplications(applications);
+
+      const favoriteIds = applications
+        .filter((application) => application.isFavorite)
+        .map((application) => application.applyId);
+
+      setStarMarkedIds(favoriteIds);
+    }
   }, [applications]);
 
   return (

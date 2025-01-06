@@ -2,6 +2,7 @@ import StarSVG from "@assets/icons/star.svg?react";
 import CheckboxSVG from "@assets/icons/checkbox_gray.svg?react";
 import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import styled from "styled-components";
+import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
 
 interface RecruitRowProps {
   title: string;
@@ -12,6 +13,7 @@ interface RecruitRowProps {
   isFavorite: boolean;
   isSelected: boolean;
   onClickCheckbox: (id: number) => void;
+  onClickStar: (e: React.MouseEvent<HTMLElement>, id: number) => void;
 }
 
 const RecruitRow = ({
@@ -21,16 +23,23 @@ const RecruitRow = ({
   id,
   status,
   isSelected,
+  isFavorite,
   onClickCheckbox,
+  onClickStar,
 }: RecruitRowProps) => {
   return (
     <RecruitRowContainer>
       <CheckboxInRow>
         <CheckIconWrapper onClick={() => onClickCheckbox(id)}>
-          {isSelected ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
+          <CheckedIconWrapper $isChecked={isSelected}>
+            {isSelected ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
+          </CheckedIconWrapper>
         </CheckIconWrapper>
-        <StarIconWrapper>
-          <StarSVG />
+        <StarIconWrapper
+          onClick={(e) => onClickStar(e, id)}
+          $isMarked={isFavorite}
+        >
+          {isFavorite ? <StarMarkedSVG /> : <StarSVG />}
         </StarIconWrapper>
       </CheckboxInRow>
       <PostTitle>{title}</PostTitle>
@@ -92,13 +101,23 @@ const State = styled.div`
 `;
 
 const CheckIconWrapper = styled.div`
-  rect {
-    stroke: #e0e0e2;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  svg {
+    width: 28px;
+    height: 28px;
   }
 `;
 
-const StarIconWrapper = styled.div`
+const StarIconWrapper = styled.div<{ $isMarked: boolean }>`
   rect {
-    fill: #e0e0e2;
+    fill: ${({ $isMarked }) => !$isMarked && "#e0e0e2"};
+  }
+`;
+
+const CheckedIconWrapper = styled.div<{ $isChecked: boolean }>`
+  rect {
+    stroke: ${({ $isChecked }) => !$isChecked && "#e0e0e2"};
   }
 `;

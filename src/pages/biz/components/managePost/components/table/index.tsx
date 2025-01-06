@@ -2,12 +2,12 @@ import styled from "styled-components";
 import CheckboxSVG from "@assets/icons/checkbox_gray.svg?react";
 import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import StarSVG from "@assets/icons/star.svg?react";
-import CaretSVG from "@assets/icons/caret_down.svg?react";
-import { useState } from "react";
+import CaretDownSVG from "@assets/icons/caret_down.svg?react";
+import { useEffect, useState } from "react";
 import RecruitRow from "./components/recruitRow";
 import NoPost from "./components/noPost";
-// import RadioSVG from "@assets/icons/radio_s.svg?react";
-// import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
+import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
+import CaretUpSVG from "@assets/icons/caret_up.svg?react";
 
 export interface Recruit {
   id: number;
@@ -30,11 +30,126 @@ const Table = ({
   selectedRecruitIds,
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
+  const [isStarAll, setIsStarAll] = useState(false);
+  const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
+  const [sortedRecruits, setSortedRecruits] = useState<Recruit[]>([]);
+  const [isCountAsc, setIsCountAsc] = useState(true);
+  const [isDateAsc, setIsDateAsc] = useState(true);
+  const [isStatusAsc, setIsStatusAsc] = useState(true);
+
+  const orderAsc = ["TEMP", "RECRUIT", "CLOSED"];
+  const orderDesc = [...orderAsc].reverse();
+
+  const handleCountSortClick = () => {
+    setIsCountAsc((prev) => !prev);
+
+    if (isCountAsc) {
+      setSortedRecruits((prev) =>
+        prev.sort((a, b) => a.applyCount - b.applyCount)
+      );
+    } else {
+      setSortedRecruits((prev) =>
+        prev.sort((a, b) => b.applyCount - a.applyCount)
+      );
+    }
+  };
+
+  const handleDateSortClick = () => {
+    setIsDateAsc((prev) => !prev);
+
+    if (isDateAsc) {
+      setSortedRecruits((prev) =>
+        prev.sort(
+          (a, b) =>
+            new (Date as any)(a.recruitEnd) - new (Date as any)(b.recruitEnd)
+        )
+      );
+    } else {
+      setSortedRecruits((prev) =>
+        prev.sort(
+          (a, b) =>
+            new (Date as any)(b.recruitEnd) - new (Date as any)(a.recruitEnd)
+        )
+      );
+    }
+  };
 
   const handleCheckboxClick = () => {
     setIsCheckedAll((prev) => !prev);
     recruits.map(({ id }) => onClickCheckbox(id));
   };
+
+  const handleAllStarClick = () => {
+    setIsStarAll((prev) => !prev);
+    if (!isStarAll) {
+      setStarMarkedIds(recruits.map(({ id }) => id));
+    } else {
+      setStarMarkedIds([]);
+    }
+  };
+
+  const handleStatusSortClick = () => {
+    setIsStatusAsc((prev) => !prev);
+
+    if (isStatusAsc) {
+      setSortedRecruits((prev) =>
+        prev.sort(
+          (a, b) => orderAsc.indexOf(a.status) - orderAsc.indexOf(b.status)
+        )
+      );
+    } else {
+      setSortedRecruits((prev) =>
+        prev.sort(
+          (a, b) => orderDesc.indexOf(a.status) - orderDesc.indexOf(b.status)
+        )
+      );
+    }
+  };
+
+  const handleStarClick = (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    recruitId: number
+  ) => {
+    e.stopPropagation();
+    if (starMarkedIds.includes(recruitId)) {
+      setStarMarkedIds((prev) => prev.filter((id) => id !== recruitId));
+    } else {
+      setStarMarkedIds((prev) => [...prev, recruitId]);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      selectedRecruitIds.length !== 0 &&
+      selectedRecruitIds.length === recruits.length
+    ) {
+      setIsCheckedAll(true);
+    } else {
+      setIsCheckedAll(false);
+    }
+  }, [selectedRecruitIds, recruits]);
+
+  useEffect(() => {
+    if (
+      starMarkedIds.length !== 0 &&
+      starMarkedIds.length === recruits.length
+    ) {
+      setIsStarAll(true);
+    } else {
+      setIsStarAll(false);
+    }
+  }, [starMarkedIds, recruits]);
+
+  useEffect(() => {
+    if (recruits.length > 0) {
+      setSortedRecruits(recruits);
+      const favoriteIds = recruits
+        .filter((recruit) => recruit.isFavorite)
+        .map((recruit) => recruit.id);
+
+      setStarMarkedIds(favoriteIds);
+    }
+  }, [recruits]);
 
   return (
     <TableContainer>
@@ -43,33 +158,33 @@ const Table = ({
           <CheckboxWrapper onClick={handleCheckboxClick}>
             {isCheckedAll ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
           </CheckboxWrapper>
-          <StarWrapper>
-            <StarSVG />
+          <StarWrapper onClick={handleAllStarClick}>
+            {isStarAll ? <StarMarkedSVG /> : <StarSVG />}
           </StarWrapper>
         </CheckboxColumn>
         <PostTitleColumn>공고명</PostTitleColumn>
-        <ApplicantColumn>
+        <ApplicantColumn onClick={handleCountSortClick}>
           지원 건수
           <CaretWrapper>
-            <CaretSVG />
+            {isCountAsc ? <CaretDownSVG /> : <CaretUpSVG />}
           </CaretWrapper>
         </ApplicantColumn>
-        <DateColumn>
+        <DateColumn onClick={handleDateSortClick}>
           마감일
           <CaretWrapper>
-            <CaretSVG />
+            {isDateAsc ? <CaretDownSVG /> : <CaretUpSVG />}
           </CaretWrapper>
         </DateColumn>
-        <StateColumn>
+        <StateColumn onClick={handleStatusSortClick}>
           상태
           <CaretWrapper>
-            <CaretSVG />
+            {isStatusAsc ? <CaretDownSVG /> : <CaretUpSVG />}
           </CaretWrapper>
         </StateColumn>
       </Header>
       <Body>
-        {recruits?.map(
-          ({ title, id, isFavorite, applyCount, recruitEnd, status }) => (
+        {sortedRecruits?.map(
+          ({ title, id, applyCount, recruitEnd, status }) => (
             <RecruitRow
               key={id}
               title={title}
@@ -77,13 +192,14 @@ const Table = ({
               applyCount={applyCount}
               recruitEnd={recruitEnd}
               status={status}
-              isFavorite={isFavorite}
+              isFavorite={starMarkedIds.includes(id)}
+              onClickStar={(e, id) => handleStarClick(e, id)}
               isSelected={selectedRecruitIds.includes(id)}
               onClickCheckbox={onClickCheckbox}
             />
           )
         )}
-        {!recruits && <NoPost />}
+        {recruits.length === 0 && <NoPost />}
       </Body>
     </TableContainer>
   );
