@@ -7,12 +7,14 @@ interface SessionState {
   email: string | null;
   phoneNumber: string | null;
   expirationTime: number | null;
+  userType: "TROUPE" | "PERFORMER" | null;
 }
 
 interface LoginParams {
   username: string;
   email: string;
   phoneNumber: string;
+  userType: "TROUPE" | "PERFORMER";
 }
 
 interface SessionAction {
@@ -26,6 +28,7 @@ const defaultState: SessionState = {
   email: null,
   phoneNumber: null,
   expirationTime: null,
+  userType: null,
 };
 
 const useSessionStore = create(
@@ -43,10 +46,14 @@ const useSessionStore = create(
         localStorage.clear();
         useSessionStore.persist.clearStorage();
         console.log("logout");
-        alert("세션이 초기화되었습니당");
       },
 
-      loginSession: ({ username, phoneNumber, email }: LoginParams) => {
+      loginSession: ({
+        username,
+        phoneNumber,
+        email,
+        userType,
+      }: LoginParams) => {
         const accessToken = localStorage.getItem("accessToken");
 
         const expirationTime = Date.now() + 30 * 60 * 1000;
@@ -59,6 +66,7 @@ const useSessionStore = create(
             phoneNumber,
             email,
             expirationTime,
+            userType,
           }));
         }
       },

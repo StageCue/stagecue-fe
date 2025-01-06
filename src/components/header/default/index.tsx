@@ -12,7 +12,7 @@ const DefaultHeader = () => {
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
-  const isAuthenticated = sessionStore.isLoggined;
+  const isTroupeUser = sessionStore.userType === "TROUPE";
 
   const handlePostPageClick = () => {
     navigate("/casts");
@@ -45,7 +45,6 @@ const DefaultHeader = () => {
     setIsMymenuShowing(false);
   };
 
-  console.log(sessionStore.username);
   return (
     <DefaultHeaderContainer>
       <LeftSideWrapper>
@@ -94,7 +93,7 @@ const DefaultHeader = () => {
           </Button>
         )}
 
-        {isAuthenticated && (
+        {isTroupeUser && (
           <Button
             variation="outlined"
             btnClass="assistive"

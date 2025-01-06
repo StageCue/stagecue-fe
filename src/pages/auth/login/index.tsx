@@ -23,6 +23,8 @@ const Login = () => {
   const onSubmitLogin = async (data: LoginInputs) => {
     const res = await requestLogin(data);
 
+    console.log("login res", res);
+
     if (res.accessToken) {
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
@@ -30,6 +32,7 @@ const Login = () => {
         email: emailValue,
         username: res.username,
         phoneNumber: res.cell,
+        userType: res.userType,
       });
       navigate("/");
     }
