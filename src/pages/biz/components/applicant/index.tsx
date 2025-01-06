@@ -90,7 +90,6 @@ const Applicant = () => {
 
   const getApplications = async () => {
     const res = await requestApplications({ limit: "10", offset: "0" });
-    console.log(res.applications);
 
     if (res.applications) {
       setApplications(res.applications);

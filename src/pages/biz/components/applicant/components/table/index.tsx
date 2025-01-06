@@ -2,8 +2,10 @@ import styled from "styled-components";
 import CheckboxSVG from "@assets/icons/checkbox_gray.svg?react";
 import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import StarSVG from "@assets/icons/star.svg?react";
-import CaretSVG from "@assets/icons/caret_down.svg?react";
-import { useState } from "react";
+import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
+import CaretDownSVG from "@assets/icons/caret_down.svg?react";
+import CaretUpSVG from "@assets/icons/caret_up.svg?react";
+import { useEffect, useState } from "react";
 // import NoApplicant from "./components/noApplicant";
 import RadioSVG from "@assets/icons/radio_s.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
@@ -11,18 +13,7 @@ import ProfileModal from "../profileMdoal";
 import StatusTag from "../statusTag";
 
 interface TableProps {
-  applications: {
-    applyId: number;
-    profileId: number;
-    recruitId: number;
-    isFavorite: boolean;
-    performerName: string;
-    age: number;
-    gender: "MALE" | "FEMALE";
-    recruitTitle: string;
-    applyDate: string;
-    applyStatus: string;
-  }[];
+  applications: Application[];
   onClickCheckbox: (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
     id: number,
@@ -37,6 +28,19 @@ interface TableProps {
   showingApplicant: { id: number; name: string };
 }
 
+interface Application {
+  applyId: number;
+  profileId: number;
+  recruitId: number;
+  isFavorite: boolean;
+  performerName: string;
+  age: number;
+  gender: "MALE" | "FEMALE";
+  recruitTitle: string;
+  applyDate: string;
+  applyStatus: string;
+}
+
 const Table = ({
   applications,
   onClickCheckbox,
@@ -49,8 +53,90 @@ const Table = ({
   showingApplicant,
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
-  const [isGenderFilterShowing, setIsGenderFilterShowing] = useState(false);
+  const [isStarAll, setIsStarAll] = useState(false);
+  const [isGenderSortShowing, setIsGenderSortShowing] = useState(false);
   const [selectedGender, setSelectedGender] = useState("남성");
+  const [isNameAsc, setIsNameAsc] = useState(true);
+  const [isAgeAsc, setIsAgeAsc] = useState(true);
+  const [isDateAsc, setIsDateAsc] = useState(true);
+  const [isStatusAsc, setIsStatusAsc] = useState(true);
+  const [sortedApplications, setSortedAplications] = useState<Application[]>(
+    []
+  );
+  const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
+
+  const orderAsc = [
+    "APPLIED",
+    "DOCUMENT_PASSED",
+    "FINAL_ACCEPTED",
+    "REJECTED",
+    "CANCEL",
+  ];
+  const orderDesc = [...orderAsc].reverse();
+
+  const handleNameSortClick = () => {
+    setIsNameAsc((prev) => !prev);
+
+    if (isNameAsc) {
+      setSortedAplications((prev) =>
+        prev.sort((a, b) => a.performerName.localeCompare(b.performerName))
+      );
+    } else {
+      setSortedAplications((prev) =>
+        prev.sort((a, b) => b.performerName.localeCompare(a.performerName))
+      );
+    }
+  };
+
+  const handleAgeSortClick = () => {
+    setIsAgeAsc((prev) => !prev);
+
+    if (isAgeAsc) {
+      setSortedAplications((prev) => prev.sort((a, b) => a.age - b.age));
+    } else {
+      setSortedAplications((prev) => prev.sort((a, b) => b.age - a.age));
+    }
+  };
+
+  const handleDateSortClick = () => {
+    setIsDateAsc((prev) => !prev);
+
+    if (isDateAsc) {
+      setSortedAplications((prev) =>
+        prev.sort(
+          (a, b) =>
+            new (Date as any)(a.applyDate) - new (Date as any)(b.applyDate)
+        )
+      );
+    } else {
+      setSortedAplications((prev) =>
+        prev.sort(
+          (a, b) =>
+            new (Date as any)(b.applyDate) - new (Date as any)(a.applyDate)
+        )
+      );
+    }
+  };
+
+  const handleStatusSortClick = () => {
+    setIsStatusAsc((prev) => !prev);
+
+    if (isStatusAsc) {
+      setSortedAplications((prev) =>
+        prev.sort(
+          (a, b) =>
+            orderAsc.indexOf(a.applyStatus) - orderAsc.indexOf(b.applyStatus)
+        )
+      );
+    } else {
+      setSortedAplications((prev) =>
+        prev.sort(
+          (a, b) =>
+            orderDesc.indexOf(a.applyStatus) - orderDesc.indexOf(b.applyStatus)
+        )
+      );
+    }
+  };
 
   const handleCheckboxClick = (
     e: React.MouseEvent<HTMLElement, MouseEvent>
@@ -61,17 +147,82 @@ const Table = ({
     );
   };
 
-  const handleGenderColumnClick = () => {
-    setIsGenderFilterShowing((prev) => !prev);
+  const handleAllStarClick = () => {
+    setIsStarAll((prev) => !prev);
+    applications.map(({ applyId }) =>
+      setStarMarkedIds((prev) => [...prev, applyId])
+    );
   };
 
-  const handleGenderFilterClick = (
+  const handleStarClick = (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    applyId: number
+  ) => {
+    e.stopPropagation();
+    if (starMarkedIds.includes(applyId)) {
+      setStarMarkedIds((prev) => prev.filter((id) => id !== applyId));
+    } else {
+      setStarMarkedIds((prev) => [...prev, applyId]);
+    }
+  };
+
+  const handleGenderColumnClick = () => {
+    setIsGenderSortShowing((prev) => !prev);
+  };
+
+  const handleGenderSortingClick = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
     gender: string
   ) => {
     event.stopPropagation();
     setSelectedGender(gender);
+    setIsGenderSortShowing(false);
+
+    if (gender === "MALE") {
+      setSortedAplications((prev) =>
+        prev.sort((a, b) => {
+          if (a.gender === b.gender) {
+            return 0;
+          }
+          return a.gender === "MALE" ? -1 : 1;
+        })
+      );
+    } else {
+      setSortedAplications((prev) =>
+        prev.sort((a, b) => {
+          if (a.gender === b.gender) {
+            return 0;
+          }
+          return a.gender === "FEMALE" ? -1 : 1;
+        })
+      );
+    }
   };
+  useEffect(() => {
+    if (
+      selectedApplyIds.length !== 0 &&
+      selectedApplyIds.length === applications.length
+    ) {
+      setIsCheckedAll(true);
+    } else {
+      setIsCheckedAll(false);
+    }
+  }, [selectedApplyIds, applications]);
+
+  useEffect(() => {
+    if (
+      starMarkedIds.length !== 0 &&
+      starMarkedIds.length === applications.length
+    ) {
+      setIsStarAll(true);
+    } else {
+      setIsStarAll(false);
+    }
+  }, [starMarkedIds, applications]);
+
+  useEffect(() => {
+    setSortedAplications(applications);
+  }, [applications]);
 
   return (
     <TableContainer>
@@ -80,30 +231,32 @@ const Table = ({
           <CheckboxWrapper onClick={handleCheckboxClick}>
             {isCheckedAll ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
           </CheckboxWrapper>
-          <StarWrapper>
-            <StarSVG />
+          <StarWrapper onClick={handleAllStarClick}>
+            {isStarAll ? <StarMarkedSVG /> : <StarSVG />}
           </StarWrapper>
         </CheckboxColumn>
-        <NameColumn>
+        <NameColumn onClick={handleNameSortClick}>
           이름
           <CaretWrapper>
-            <CaretSVG />
+            {isNameAsc ? <CaretDownSVG /> : <CaretUpSVG />}
           </CaretWrapper>
         </NameColumn>
-        <AgeColumn>
+        <AgeColumn onClick={handleAgeSortClick}>
           나이
           <CaretWrapper>
-            <CaretSVG />
+            {isAgeAsc ? <CaretDownSVG /> : <CaretUpSVG />}
           </CaretWrapper>
         </AgeColumn>
         <GenderColumn onClick={handleGenderColumnClick}>
           성별
           <CaretWrapper>
-            <CaretSVG />
+            {isGenderSortShowing ? <CaretUpSVG /> : <CaretDownSVG />}
           </CaretWrapper>
-          {isGenderFilterShowing && (
-            <GenderFilter>
-              <GenderOption onClick={(e) => handleGenderFilterClick(e, "남성")}>
+          {isGenderSortShowing && (
+            <GenderSort>
+              <GenderOption
+                onClick={(e) => handleGenderSortingClick(e, "남성")}
+              >
                 <RaidoWrapper>
                   {selectedGender === "남성" ? (
                     <RadioCheckedSVG />
@@ -113,7 +266,9 @@ const Table = ({
                 </RaidoWrapper>
                 남성
               </GenderOption>
-              <GenderOption onClick={(e) => handleGenderFilterClick(e, "여성")}>
+              <GenderOption
+                onClick={(e) => handleGenderSortingClick(e, "여성")}
+              >
                 <RaidoWrapper>
                   {selectedGender === "여성" ? (
                     <RadioCheckedSVG />
@@ -123,25 +278,25 @@ const Table = ({
                 </RaidoWrapper>
                 여성
               </GenderOption>
-            </GenderFilter>
+            </GenderSort>
           )}
         </GenderColumn>
         <PostTitleColumn>공고명</PostTitleColumn>
-        <DateColumn>
+        <DateColumn onClick={handleDateSortClick}>
           지원 일자
           <CaretWrapper>
-            <CaretSVG />
+            {isDateAsc ? <CaretDownSVG /> : <CaretUpSVG />}
           </CaretWrapper>
         </DateColumn>
-        <StateColumn>
+        <StateColumn onClick={handleStatusSortClick}>
           상태
           <CaretWrapper>
-            <CaretSVG />
+            {isStatusAsc ? <CaretDownSVG /> : <CaretUpSVG />}
           </CaretWrapper>
         </StateColumn>
       </Header>
       <Body>
-        {applications.map(
+        {sortedApplications.map(
           ({
             applyId,
             age,
@@ -161,13 +316,24 @@ const Table = ({
                     onClick={(e) => onClickCheckbox(e, applyId, performerName)}
                   >
                     {selectedApplyIds.some((apply) => apply.id === applyId) ? (
-                      <CheckboxCheckedSVG />
+                      <CheckedIconWrapper $isChecked={true}>
+                        <CheckboxCheckedSVG />
+                      </CheckedIconWrapper>
                     ) : (
-                      <CheckboxSVG />
+                      <CheckedIconWrapper $isChecked={false}>
+                        <CheckboxSVG />
+                      </CheckedIconWrapper>
                     )}
                   </CheckIconWrapper>
-                  <StarIconWrapper>
-                    <StarSVG />
+                  <StarIconWrapper
+                    onClick={(e) => handleStarClick(e, applyId)}
+                    $isMarked={starMarkedIds.includes(applyId)}
+                  >
+                    {starMarkedIds.includes(applyId) ? (
+                      <StarMarkedSVG />
+                    ) : (
+                      <StarSVG />
+                    )}
                   </StarIconWrapper>
                 </CheckboxInRow>
                 <Name>{performerName}</Name>
@@ -230,6 +396,8 @@ const CheckboxColumn = styled.div`
 `;
 
 const CheckboxWrapper = styled.div`
+  width: 28px;
+  height: 28px;
   display: flex;
   justify-content: center;
   cursor: pointer;
@@ -297,7 +465,7 @@ const Body = styled.div`
   height: 100%;
 `;
 
-const GenderFilter = styled.div`
+const GenderSort = styled.div`
   position: absolute;
   bottom: -72px;
   width: 81px;
@@ -383,14 +551,23 @@ const Date = styled.div`
 `;
 
 const CheckIconWrapper = styled.div`
+  display: flex;
+  justify-content: center;
   cursor: pointer;
-  rect {
-    stroke: #e0e0e2;
+  svg {
+    width: 28px;
+    height: 28px;
   }
 `;
 
-const StarIconWrapper = styled.div`
+const StarIconWrapper = styled.div<{ $isMarked: boolean }>`
   rect {
-    fill: #e0e0e2;
+    fill: ${({ $isMarked }) => !$isMarked && "#e0e0e2"};
+  }
+`;
+
+const CheckedIconWrapper = styled.div<{ $isChecked: boolean }>`
+  rect {
+    stroke: ${({ $isChecked }) => !$isChecked && "#e0e0e2"};
   }
 `;

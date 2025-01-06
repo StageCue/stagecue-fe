@@ -21,12 +21,14 @@ export interface TroupeInfo {
 
 const ManageTroupe = () => {
   const navigate = useNavigate();
-  const [troupeInfo, setTroupeInfo] = useState<TroupeInfo>();
+  const [troupeInfo, setTroupeInfo] = useState<TroupeInfo | null>(null);
 
   const getTroupeInfo = async () => {
     const res = await requestTroupeInfo();
 
-    setTroupeInfo(res);
+    if (!res.response.data.error) {
+      setTroupeInfo(res);
+    }
   };
 
   useEffect(() => {
@@ -39,8 +41,9 @@ const ManageTroupe = () => {
 
   return (
     <ManageTroupeContainer>
-      {troupeInfo && <TroupeDetail troupe={troupeInfo!} />}
-      {!troupeInfo && (
+      {troupeInfo ? (
+        <TroupeDetail troupe={troupeInfo!} />
+      ) : (
         <NoTroupeInfo>
           <RegisterWrapper>
             <RegisterText>
@@ -68,7 +71,9 @@ const ManageTroupe = () => {
 
 export default ManageTroupe;
 
-const ManageTroupeContainer = styled.div``;
+const ManageTroupeContainer = styled.div`
+  width: 100%;
+`;
 
 const NoTroupeInfo = styled.div`
   width: 100%;
