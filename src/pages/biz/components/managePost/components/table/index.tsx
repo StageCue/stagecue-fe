@@ -141,7 +141,7 @@ const Table = ({
   }, [starMarkedIds, recruits]);
 
   useEffect(() => {
-    if (recruits.length > 0) {
+    if (recruits?.length > 0) {
       setSortedRecruits(recruits);
       const favoriteIds = recruits
         .filter((recruit) => recruit.isFavorite)
@@ -199,7 +199,7 @@ const Table = ({
             />
           )
         )}
-        {recruits.length === 0 && <NoPost />}
+        {recruits?.length === 0 && <NoPost />}
       </Body>
     </TableContainer>
   );

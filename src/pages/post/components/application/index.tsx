@@ -71,6 +71,10 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
     setIsProfileModalOpen(false);
   };
 
+  const handleCreateProfileClick = () => {
+    navigate("/mypage/profiles/form");
+  };
+
   useEffect(() => {
     getProfileList();
   }, []);
@@ -133,6 +137,7 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
                   fontSize={16}
                   width={300}
                   height={48}
+                  onClick={handleCreateProfileClick}
                 >
                   프로필 생성하기
                 </Button>
