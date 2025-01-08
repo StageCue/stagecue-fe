@@ -28,9 +28,8 @@ const Login = () => {
 
   const onSubmitLogin = async (data: LoginInputs) => {
     const res = await requestLogin(data);
-    console.log(res);
 
-    if (res.response.data.error) {
+    if (res.response?.data?.error) {
       setError("root.serverError", {
         type: "400",
         message: `이메일 또는 비밀번호가 올바르지 않습니다.\n입력한 내용을 다시 확인해주세요.`,

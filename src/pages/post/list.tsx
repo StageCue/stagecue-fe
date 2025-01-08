@@ -226,9 +226,9 @@ const List = () => {
       setSelectedDayPicker("전체요일");
     } else {
       const activeDays = practiceDays
-        .map((value, index) => (value === "1" ? daysOptions[index] : null)) // "1"인 경우 해당 요일 반환
-        .filter((day) => day !== null) // null 값 제거
-        .join("·"); // 중간점을 넣어 문자열로 결합
+        .map((value, index) => (value === "1" ? daysOptions[index] : null))
+        .filter((day) => day !== null)
+        .join("·");
 
       setSelectedDayPicker(activeDays);
     }
@@ -272,7 +272,7 @@ const List = () => {
       feeRange: appliedCost,
     });
 
-    setRecruits(res.casts);
+    setRecruits(res.recruits);
   };
 
   const parsingCategory = (category: string) => {

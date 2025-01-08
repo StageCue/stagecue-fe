@@ -18,7 +18,7 @@ const ForgotAccount = () => {
   const [findAccountToken, setFindAccountToken] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [foundAccount, setFoundAccount] = useState("");
-  const [isResultStep, setIsResultStep] = useState(true);
+  const [isResultStep, setIsResultStep] = useState(false);
 
   const {
     register,

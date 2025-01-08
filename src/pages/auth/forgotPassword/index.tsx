@@ -10,9 +10,7 @@ const ForgotPassword = () => {
   const [emailValue] = watch(["email"]);
 
   const onSubmitEmail = async (data: ForgotPasswordInput) => {
-    const res = await requestResetPasswordEmail(data.email);
-
-    console.log(res);
+    await requestResetPasswordEmail(data.email);
   };
 
   return (
