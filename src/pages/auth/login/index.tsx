@@ -13,7 +13,13 @@ import { useState } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, watch } = useForm<LoginInputs>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    formState: { errors },
+  } = useForm<LoginInputs>();
   const sessionStore = useSessionStore();
 
   const [emailValue, passwordValue] = watch(["email", "password"]);
@@ -22,19 +28,25 @@ const Login = () => {
 
   const onSubmitLogin = async (data: LoginInputs) => {
     const res = await requestLogin(data);
+    console.log(res);
 
-    console.log("login res", res);
-
-    if (res.accessToken) {
-      localStorage.setItem("accessToken", res.accessToken);
-      localStorage.setItem("refreshToken", res.refreshToken);
-      sessionStore.loginSession({
-        email: emailValue,
-        username: res.username,
-        phoneNumber: res.cell,
-        userType: res.userType,
+    if (res.response.data.error) {
+      setError("root.serverError", {
+        type: "400",
+        message: `이메일 또는 비밀번호가 올바르지 않습니다.\n입력한 내용을 다시 확인해주세요.`,
       });
-      navigate("/");
+    } else {
+      if (res.accessToken) {
+        localStorage.setItem("accessToken", res.accessToken);
+        localStorage.setItem("refreshToken", res.refreshToken);
+        sessionStore.loginSession({
+          email: emailValue,
+          username: res.username,
+          phoneNumber: res.cell,
+          userType: res.userType,
+        });
+        navigate("/");
+      }
     }
   };
 
@@ -54,6 +66,8 @@ const Login = () => {
     setIsAutoLogin((prev) => !prev);
   };
 
+  console.log(errors);
+
   return (
     <LoginContainer>
       <Title>이메일로 로그인</Title>
@@ -67,11 +81,15 @@ const Login = () => {
               })}
               placeholder="이메일을 입력해주세요"
               $isDirty={Boolean(emailValue)}
+              $isError={Boolean(errors.root)}
             />
           </InputWrapper>
           <InputWrapper>
             <Label>비밀번호</Label>
-            <PasswordInputWrapper $isDirty={Boolean(passwordValue)}>
+            <PasswordInputWrapper
+              $isDirty={Boolean(passwordValue)}
+              $isError={Boolean(errors.root)}
+            >
               <PasswordInput
                 {...register("password", {
                   required: true,
@@ -83,6 +101,7 @@ const Login = () => {
                 {isPasswordHidden ? <HideSVG /> : <ShowSVG />}
               </PasswordIconWrapper>
             </PasswordInputWrapper>
+            <InputError>{errors.root?.serverError?.message}</InputError>
             <CheckboxInputWrapper onClick={handleAutoLoginClick}>
               {isAutoLogin ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
               <CheckboxLabel>로그인 유지하기</CheckboxLabel>
@@ -167,14 +186,17 @@ const InputWrapper = styled.div`
   gap: 8px;
 `;
 
-const Input = styled.input<{ $isDirty: boolean }>`
+const Input = styled.input<{ $isDirty: boolean; $isError: boolean }>`
   padding: 12px 16px;
   width: 340px;
   height: 48px;
   border-radius: 10px;
-  border: ${({ $isDirty }) =>
-    $isDirty ? "1px solid #70737c" : "1px solid #dadada"};
-  outline: none;
+  border: ${({ $isError, $isDirty }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0e2"};
   font-size: 16px;
   line-height: 150%;
   letter-spacing: 0.57%;
@@ -256,12 +278,19 @@ const BottomBtnsWrapper = styled.div`
   gap: 16px;
 `;
 
-const PasswordInputWrapper = styled.div<{ $isDirty: boolean }>`
+const PasswordInputWrapper = styled.div<{
+  $isDirty: boolean;
+  $isError: boolean;
+}>`
   border-radius: 10px;
   width: 340px;
   height: 48px;
-  border: ${({ $isDirty }) =>
-    $isDirty ? "1px solid #70737c" : "1px solid #dadada"};
+  border: ${({ $isError, $isDirty }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0e2"};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -292,4 +321,13 @@ const PasswordInput = styled.input`
 
 const PasswordIconWrapper = styled.div`
   cursor: pointer;
+`;
+
+const InputError = styled.div`
+  white-space: pre-wrap;
+  color: #ff4242;
+  font-size: 13px;
+  font-weight: var(--font-regular);
+  letter-spacing: 1.94%;
+  line-height: 138.5%;
 `;
