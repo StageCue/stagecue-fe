@@ -6,7 +6,7 @@ import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
 import CaretDownSVG from "@assets/icons/caret_down.svg?react";
 import CaretUpSVG from "@assets/icons/caret_up.svg?react";
 import { useEffect, useState } from "react";
-// import NoApplicant from "./components/noApplicant";
+import NoApplicant from "./components/noApplicant";
 import RadioSVG from "@assets/icons/radio_s.svg?react";
 import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
 import ProfileModal from "../profileMdoal";
@@ -306,7 +306,7 @@ const Table = ({
         </StateColumn>
       </Header>
       <Body>
-        {sortedApplications.map(
+        {sortedApplications?.map(
           ({
             applyId,
             age,
@@ -366,6 +366,7 @@ const Table = ({
             </>
           )
         )}
+        {sortedApplications.length === 0 && <NoApplicant />}
       </Body>
     </TableContainer>
   );
