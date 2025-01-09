@@ -68,7 +68,7 @@ const ApplyCast = ({
       <ApplyInfoWrapper>
         <TagsWrapper>
           <TroupeTag>{troupeName}</TroupeTag>
-          <StatusTag>{parsePhase(applyStatus)}</StatusTag>
+          <StatusTag $status={applyStatus}>{parsePhase(applyStatus)}</StatusTag>
         </TagsWrapper>
         <Title>{recruitTitle}</Title>
         <LogWrapper>
@@ -150,16 +150,23 @@ const TroupeTag = styled.div`
   color: #171719;
 `;
 
-const StatusTag = styled.div`
+const StatusTag = styled.div<{ $status: applyPhaseType }>`
   font-size: 12px;
   font-weight: var(--font-semibold);
   width: 62px;
   height: 24px;
   border-radius: 4px;
-  color: #989ba2;
+  color: ${({ $status }) =>
+    $status === "DOCUMENT_PASSED" || $status === "FINAL_ACCEPTED"
+      ? "#00BF40"
+      : "#989ba2"};
+  background-color: ${({ $status }) =>
+    $status === "DOCUMENT_PASSED" || $status === "FINAL_ACCEPTED"
+      ? "#D9FFE6"
+      : "#f7f7f8"};
   line-height: 133.4%;
   letter-spacing: 2.52%;
-  background-color: #f7f7f8;
+
   display: flex;
   justify-content: center;
   align-items: center;

@@ -55,7 +55,7 @@ const ApplyHistory = () => {
 
   useEffect(() => {
     getCastsStatus();
-  });
+  }, []);
 
   return (
     <ApplyHistoryContainer>
