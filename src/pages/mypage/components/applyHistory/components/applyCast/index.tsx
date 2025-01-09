@@ -96,7 +96,7 @@ const ApplyCast = ({
         onClick={() => onClickCancel(applyId)}
         disabled={applyStatus === "CANCEL"}
       >
-        {applyStatus === "CANCEL" ? "서류회수" : "지원취소"}
+        {applyStatus === "REJECTED" ? "서류회수" : "지원취소"}
       </Button>
     </ApplyCastContainer>
   );

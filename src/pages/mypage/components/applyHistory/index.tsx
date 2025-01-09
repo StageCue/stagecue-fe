@@ -12,7 +12,7 @@ export type applyPhaseType =
   | "REJECTED"
   | "CANCEL";
 
-type filterType = "전체" | "열람" | "미열람" | "지원취소";
+export type filterType = "전체" | "APPLIED" | "CANCEL";
 
 const ApplyHistory = () => {
   const [recruitsStatus, setRecruitsStatus] = useState<RecruitsStatus>();
@@ -47,9 +47,19 @@ const ApplyHistory = () => {
     }
   };
 
+  const parseFilterText = (filter: filterType) => {
+    switch (filter) {
+      case "전체":
+        return "전체";
+      case "APPLIED":
+        return "지원완료";
+      case "CANCEL":
+        return "지원취소";
+    }
+  };
+
   const getCastsStatus = async () => {
     const res = await requestCastsStatus();
-
     setRecruitsStatus(res);
   };
 
@@ -108,20 +118,20 @@ const ApplyHistory = () => {
           {selectedPhase === "APPLIED" && (
             <FilterBtnWrapper>
               <FilterBtn onClick={handleFilterBtnClick}>
-                {selectedFilter} <ChevronDownSVG />
+                {parseFilterText(selectedFilter)} <ChevronDownSVG />
               </FilterBtn>
               {isFilterMenuShowing && (
                 <FilterMenu>
                   <Option onClick={() => handleFilterClick("전체")}>
                     전체
                   </Option>
-                  <Option onClick={() => handleFilterClick("열람")}>
+                  <Option onClick={() => handleFilterClick("APPLIED")}>
                     열람
                   </Option>
-                  <Option onClick={() => handleFilterClick("미열람")}>
+                  <Option onClick={() => handleFilterClick("APPLIED")}>
                     미열람
                   </Option>
-                  <Option onClick={() => handleFilterClick("지원취소")}>
+                  <Option onClick={() => handleFilterClick("CANCEL")}>
                     지원취소
                   </Option>
                 </FilterMenu>
@@ -129,7 +139,7 @@ const ApplyHistory = () => {
             </FilterBtnWrapper>
           )}
         </TitleWrapper>
-        <ApplyList status={selectedPhase} />
+        <ApplyList status={selectedPhase} filter={selectedFilter} />
       </ApplyListWrapper>
     </ApplyHistoryContainer>
   );

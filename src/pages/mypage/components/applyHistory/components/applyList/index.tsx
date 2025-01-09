@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { applyPhaseType } from "../..";
+import { applyPhaseType, filterType } from "../..";
 import { useEffect, useState } from "react";
 import { requestAppliedCasts, requestCancelApply } from "@/api/users";
 import Button from "@/components/buttons/button";
@@ -8,9 +8,10 @@ import ApplyCast from "../applyCast";
 
 interface ApplyListProps {
   status: applyPhaseType;
+  filter: filterType;
 }
 
-const ApplyList = ({ status }: ApplyListProps) => {
+const ApplyList = ({ status, filter }: ApplyListProps) => {
   const [casts, setCasts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -18,8 +19,9 @@ const ApplyList = ({ status }: ApplyListProps) => {
     const res = await requestAppliedCasts({
       limit: 10,
       offset: 0,
-      status: status === "APPLIED" ? "" : status,
+      status: filter === "전체" ? "" : filter,
     });
+
     const { applies } = res;
 
     setCasts(applies);
@@ -44,7 +46,7 @@ const ApplyList = ({ status }: ApplyListProps) => {
 
   useEffect(() => {
     getAppliedCasts();
-  }, [status]);
+  }, [status, filter]);
 
   return (
     <ApplyListContainer>
