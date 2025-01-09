@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Login from "./pages/auth/login";
 import Welcome from "./pages/welcome";
@@ -32,6 +32,7 @@ import PrivateRoute from "./components/bizRouter";
 import CreatedTroupe from "./pages/biz/components/manageTroupe/components/createdTroupe";
 
 function App() {
+  const navigate = useNavigate();
   const sessionStore = useSessionStore();
 
   const isAuthenticated = sessionStore.isLoggined;
@@ -39,7 +40,10 @@ function App() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       sessionStore.logoutSession();
+
+      navigate("/auth/login");
     }, 1000 * 60 * 30);
+
     return () => {
       clearInterval(intervalId);
     };

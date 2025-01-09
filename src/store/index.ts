@@ -45,7 +45,6 @@ const useSessionStore = create(
         }));
         localStorage.clear();
         useSessionStore.persist.clearStorage();
-        console.log("logout");
       },
 
       loginSession: ({

@@ -102,18 +102,18 @@ const Mystage = () => {
           <Scraps>
             {scraps?.map(
               ({
-                recruitId,
+                castId,
                 imageUrl,
-                recruitTitle,
+                castTitle,
                 artworkName,
                 practiceAddress,
                 isScrapping,
               }) => (
                 <Cast
-                  key={recruitId}
-                  recruitId={recruitId}
+                  key={castId}
+                  recruitId={castId}
                   thumbnail={imageUrl}
-                  recruitTitle={recruitTitle}
+                  recruitTitle={castTitle}
                   artworkName={artworkName}
                   practiceLocation={practiceAddress}
                   isScrapping={isScrapping}
