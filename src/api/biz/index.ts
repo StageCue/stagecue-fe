@@ -35,6 +35,7 @@ interface ReqEditTroupeData {
 interface ReqRecruitsParams {
   limit: number;
   offset: number;
+  status?: "TEMP" | "RECRUIT" | "CLOSED" | "";
 }
 
 interface ReqEditRecruitParams {
@@ -165,10 +166,14 @@ export const requestTroupeEditInfo = () => {
   return res;
 };
 
-export const requestRecruits = ({ limit, offset }: ReqRecruitsParams) => {
+export const requestRecruits = ({
+  limit,
+  offset,
+  status,
+}: ReqRecruitsParams) => {
   const res = request({
     method: "get",
-    endpoint: `biz/recruits?limit=${limit}&offset=${offset}`,
+    endpoint: `biz/recruits?limit=${limit}&offset=${offset}&status=${status}`,
   });
 
   return res;

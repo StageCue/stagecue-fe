@@ -15,15 +15,18 @@ import {
 import CloseModal from "./components/closeModal";
 import DatepickerModal from "@/components/datepickerModal";
 
+type ManageRecruitFilterType = "TEMP" | "RECRUIT" | "CLOSED" | "전체";
+
 const ManagePost = () => {
-  const [selectedFilter, setSelectedFilter] = useState("전체");
+  const [selectedFilter, setSelectedFilter] =
+    useState<ManageRecruitFilterType>("전체");
   const [recruits, setRecruits] = useState<Recruit[]>([]);
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
   const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
   const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] =
     useState<boolean>(false);
 
-  const handleFilterClick = (filter: string) => {
+  const handleFilterClick = (filter: ManageRecruitFilterType) => {
     setSelectedFilter(filter);
   };
 
@@ -51,7 +54,7 @@ const ManagePost = () => {
       endDate,
     });
 
-    await getCasts();
+    await getCasts(selectedFilter);
   };
 
   const handleConfirmClick = async () => {
@@ -62,7 +65,7 @@ const ManagePost = () => {
 
     setCloseRecruitModalOpen(false);
 
-    await getCasts();
+    await getCasts(selectedFilter);
   };
 
   const handleCheckboxClick = (id: number) => {
@@ -83,17 +86,22 @@ const ManagePost = () => {
 
     setCloseRecruitModalOpen(false);
 
-    await getCasts();
+    await getCasts(selectedFilter);
   };
 
-  const getCasts = async () => {
-    const res = await requestRecruits({ limit: 10, offset: 0 });
+  const getCasts = async (status: ManageRecruitFilterType) => {
+    const res = await requestRecruits({
+      limit: 10,
+      offset: 0,
+      status: status === "전체" ? "" : status,
+    });
+
     setRecruits(res.recruits);
   };
 
   useEffect(() => {
-    getCasts();
-  }, []);
+    getCasts(selectedFilter);
+  }, [selectedFilter]);
 
   return (
     <ManagePostContainer>
@@ -131,22 +139,22 @@ const ManagePost = () => {
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("임시저장")}
-            $isSelected={selectedFilter === "임시저장"}
+            onClick={() => handleFilterClick("TEMP")}
+            $isSelected={selectedFilter === "TEMP"}
           >
             임시저장
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("모집중")}
-            $isSelected={selectedFilter === "모집중"}
+            onClick={() => handleFilterClick("RECRUIT")}
+            $isSelected={selectedFilter === "RECRUIT"}
           >
             모집중
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("모집종료")}
-            $isSelected={selectedFilter === "모집종료"}
+            onClick={() => handleFilterClick("CLOSED")}
+            $isSelected={selectedFilter === "CLOSED"}
           >
             모집종료
           </Option>

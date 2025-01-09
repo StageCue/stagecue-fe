@@ -27,6 +27,9 @@ const Scraps = () => {
   useEffect(() => {
     getScrappedCasts();
   }, []);
+
+  console.log(scraps);
+
   return (
     <ScrapContainer>
       <TitleWrapper>
@@ -51,20 +54,20 @@ const Scraps = () => {
         <ScrapList>
           {scraps?.map(
             ({
-              recruitId,
+              castId,
               imageUrl,
-              recruitTitle,
+              castTitle,
               artworkName,
-              practiceLocation,
+              practiceAddress,
               isScrapping,
             }) => (
               <Cast
-                key={recruitId}
-                recruitId={recruitId}
+                key={castId}
+                recruitId={castId}
                 thumbnail={imageUrl}
-                recruitTitle={recruitTitle}
+                recruitTitle={castTitle}
                 artworkName={artworkName}
-                practiceLocation={practiceLocation}
+                practiceLocation={practiceAddress}
                 isScrapping={isScrapping}
               />
             )

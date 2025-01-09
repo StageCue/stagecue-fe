@@ -148,6 +148,8 @@ const Table = ({
         .map((recruit) => recruit.id);
 
       setStarMarkedIds(favoriteIds);
+    } else {
+      setSortedRecruits([]);
     }
   }, [recruits]);
 
@@ -199,7 +201,7 @@ const Table = ({
             />
           )
         )}
-        {recruits?.length === 0 && <NoPost />}
+        {sortedRecruits?.length === 0 && <NoPost />}
       </Body>
     </TableContainer>
   );
