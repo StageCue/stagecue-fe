@@ -231,6 +231,8 @@ const Table = ({
         .map((application) => application.applyId);
 
       setStarMarkedIds(favoriteIds);
+    } else {
+      setSortedAplications([]);
     }
   }, [applications]);
 
