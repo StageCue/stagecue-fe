@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
+import "./fonts.css";
 
 const GlobalStyle = createGlobalStyle`
 
@@ -9,10 +10,16 @@ ${reset}
 html, body {
     width: 100%;
     height: 100%;
+    font-family: 'Pretendard', sans-serif;
+}
+
+button {
+    font-family: 'Pretendard', sans-serif;
 }
 
 * {
     box-sizing: border-box;
+  
 }
 
 :root {
