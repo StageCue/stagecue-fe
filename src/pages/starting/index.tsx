@@ -100,6 +100,7 @@ const SubText = styled.div`
 `;
 
 const MainText = styled.div`
+  width: 200px;
   height: 52px;
   text-align: center;
   font-size: 40px;
