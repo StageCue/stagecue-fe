@@ -10,6 +10,7 @@ import Button from "@components/buttons/button";
 import { requestCasts } from "@/api/cast";
 import Cast from "@/pages/home/components/cast";
 import RangeInput from "./components/rangeInput";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 type genreType = "연극" | "뮤지컬" | "댄스";
 type zoneType =
@@ -30,7 +31,9 @@ const List = () => {
   const dayButtonRef = useRef<HTMLDivElement | null>(null);
   const costButtonRef = useRef<HTMLDivElement | null>(null);
 
-  const [recruits, setRecruits] = useState([]);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  // const [recruits, setRecruits] = useState([]);
 
   const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
   const [selectedZone, setSelectedZone] = useState(["전체지역"]);
@@ -262,18 +265,32 @@ const List = () => {
     }
   }, [practiceDays]);
 
-  const getCasts = async () => {
-    const res = await requestCasts({
-      offset: "0",
-      limit: "16",
-      category: parsingCategory(selectedGenre),
-      locations: appliedZone[0] === "전체지역" ? "" : appliedZone.join(";"),
-      orderBy: currentOrderBy,
-      feeRange: appliedCost,
-    });
 
-    setRecruits(res.recruits);
-  };
+  
+const queryClient = useQueryClient()
+
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage  } = useInfiniteQuery({
+  queryKey: ["recruits"],
+  queryFn: ({pageParam = 0}) =>requestCasts({offset: `${pageParam}`, limit:"16", category: parsingCategory(selectedGenre),
+    locations: appliedZone[0] === "전체지역" ? "" : appliedZone.join(";"),
+    orderBy: currentOrderBy,
+    feeRange: appliedCost, }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoaded = allPages.flatMap((page) => page.data).length; 
+      if (totalLoaded >= lastPage.totalCount) {
+        return undefined; 
+      }
+      return allPages.length;
+    },
+  })
+
+
+const recruits = useMemo(
+  () => data?.pages.flatMap((page) => page.recruits) || [],
+  [data]
+);
+
 
   const parsingCategory = (category: string) => {
     switch (category) {
@@ -331,8 +348,41 @@ const List = () => {
   }, []);
 
   useEffect(() => {
-    getCasts();
+    queryClient.invalidateQueries({ queryKey: ["recruits"]}); 
   }, [appliedDay, selectedZone, selectedGenre, currentOrderBy, appliedCost]);
+
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        root: null, 
+        rootMargin: "200px",
+        threshold: 1.0,
+      }
+    );
+
+
+    const target = loadMoreRef.current; 
+
+
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+ 
 
   return (
     <ListContainer>
@@ -547,6 +597,7 @@ const List = () => {
           )
         )}
       </CastGrid>
+      <div ref={loadMoreRef} />
     </ListContainer>
   );
 };
@@ -554,6 +605,7 @@ const List = () => {
 export default List;
 
 const ListContainer = styled.div`
+  position: relative;
   width: 920px;
   height: 100%;
   min-height: inherit;
@@ -811,146 +863,6 @@ const Day = styled.div<{ $isSelected: boolean }>`
   cursor: pointer;
 `;
 
-// const Filters = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   gap: 16px;
-// `;
-
-// const CostFilter = styled.div`
-//   display: flex;
-//   gap: 12px;
-//   align-items: center;
-//   justify-content: center;
-// `;
-
-// const InputWrapper = styled.div`
-//   border: 1px solid #70737c;
-//   border-radius: 10px;
-//   padding: 12px 16px;
-//   display: flex;
-//   align-items: center;
-//   gap: 12px;
-// `;
-
-// const CostInput = styled.input`
-//   border: none;
-//   outline: none;
-//   font-size: 16px;
-//   line-height: 150%;
-//   letter-spacing: 0.57%;
-//   width: 91px;
-// `;
-
-// const Won = styled.div``;
-
-// const Dash = styled.div`
-//   width: 12px;
-//   height: 1px;
-//   border: 1px solid #171719;
-// `;
-
-// const CostRangeWrapper = styled.div`
-//   position: relative;
-//   width: 50%;
-//   max-width: 500px;
-// `;
-
-// const MinRangeInput = styled.input`
-//   position: absolute;
-//   -webkit-appearance: none;
-//   appearance: none;
-//   pointer-events: none;
-//   z-index: 2;
-//   height: 10px;
-//   width: 100%;
-//   opacity: 0;
-
-//   &:-webkit-slider-thumb {
-//     pointer-events: all;
-//     width: 30px;
-//     height: 30px;
-//     border-radius: 0;
-//     border: 0 none;
-//     background-color: red;
-//     cursor: pointer;
-//     -webkit-appearance: none;
-//   }
-// `;
-
-// const MaxRangeInput = styled.input`
-//   position: absolute;
-//   -webkit-appearance: none;
-//   appearance: none;
-//   pointer-events: none;
-//   z-index: 2;
-//   height: 10px;
-//   width: 100%;
-//   opacity: 0;
-
-//   &:-webkit-slider-thumb {
-//     pointer-events: all;
-//     width: 30px;
-//     height: 30px;
-//     border-radius: 0;
-//     border: 0 none;
-//     background-color: red;
-//     cursor: pointer;
-//     -webkit-appearance: none;
-//   }
-// `;
-
-// const Slider = styled.div`
-//   position: relative;
-//   z-index: 1;
-//   height: 10px;
-//   margin: 0 15px;
-// `;
-
-// const Track = styled.div`
-//   position: absolute;
-//   z-index: 1;
-//   left: 0;
-//   right: 0;
-//   top: 0;
-//   bottom: 0;
-//   border-radius: 5px;
-//   background-color: #c6aee7;
-// `;
-
-// const Range = styled.div`
-//   position: absolute;
-//   z-index: 2;
-//   left: 25%;
-//   right: 25%;
-//   top: 0;
-//   bottom: 0;
-//   border-radius: 5px;
-//   background-color: #6200ee;
-// `;
-
-// const MinThumb = styled.div`
-//   position: absolute;
-//   z-index: 3;
-//   width: 30px;
-//   height: 30px;
-//   background-color: #6200ee;
-//   border-radius: 50%;
-//   left: 25%;
-//   transform: translate(-15px, -10px);
-// `;
-
-// const MaxThumb = styled.div`
-//   position: absolute;
-//   z-index: 3;
-//   width: 30px;
-//   height: 30px;
-//   background-color: #6200ee;
-//   border-radius: 50%;
-//   right: 25%;
-//   transform: translate(15px, -10px);
-// `;
 
 const CastGrid = styled.div`
   display: grid;

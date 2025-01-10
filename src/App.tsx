@@ -18,7 +18,7 @@ import ProfileDetail from "./pages/mypage/components/settingProfile/components/p
 import ProfileForm from "./pages/mypage/components/settingProfile/components/profileForm";
 import NewProfileForm from "./pages/mypage/components/settingProfile/components/newProfileForm";
 import TroupeDetail from "./pages/troupe/troupeDetail";
-import List from "./pages/post/list";
+import List from "./pages/post";
 import Search from "./pages/post/search";
 import EditRecruit from "./pages/biz/components/managePost/components/editRecruit";
 import Applicant from "./pages/biz/components/applicant";
