@@ -7,7 +7,7 @@ import Button from "@/components/buttons/button";
 import { requestScraps } from "@/api/users";
 import Cast from "@/pages/home/components/cast";
 
-const Scraps = () => {
+const ScrapRecruits = () => {
   const [isFilteredClosedPost, setIsFilteredClosedPost] = useState(false);
   const [scraps, setScraps] = useState([]);
 
@@ -27,8 +27,6 @@ const Scraps = () => {
   useEffect(() => {
     getScrappedCasts();
   }, []);
-
-  console.log(scraps);
 
   return (
     <ScrapContainer>
@@ -78,7 +76,7 @@ const Scraps = () => {
   );
 };
 
-export default Scraps;
+export default ScrapRecruits;
 
 const ScrapContainer = styled.div`
   width: 100%;
