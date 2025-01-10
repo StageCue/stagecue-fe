@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import CaretDownSVG from "@assets/icons/caret_down.svg?react";
 import { useNavigate } from "react-router-dom";
-import Button from "@/components/buttons/button";
 import { useState } from "react";
 import useSessionStore from "@/store";
 

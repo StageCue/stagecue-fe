@@ -105,7 +105,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const coverImg = await requestUploadCoverFile();
     const registrationFile = await requestUploadRegistrationFile();
 
-    const res = await requestEditTroupe({
+    await requestEditTroupe({
       ...data,
       logoImg,
       coverImg,

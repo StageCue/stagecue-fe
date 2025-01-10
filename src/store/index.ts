@@ -14,7 +14,7 @@ interface LoginParams {
   username: string;
   email: string;
   phoneNumber: string;
-  userType: "TROUPE" | "PERFORMER";
+  userType?: "TROUPE" | "PERFORMER" | null;
 }
 
 interface SessionAction {
