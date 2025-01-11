@@ -7,6 +7,9 @@ import PassSVG from "@assets/icons/pass.svg?react";
 import FailSVG from "@assets/icons/fail.svg?react";
 import { requestApplications, requestChangingApplyState } from "@/api/biz";
 import PassModal from "./components/passModal";
+import { useQuery } from "@tanstack/react-query";
+import Paginator from "@/components/paginator";
+
 
 type ApplyStatus =
   | "APPLIED"
@@ -24,8 +27,8 @@ interface ShowingApplicantState {
   name: string;
 }
 const Applicant = () => {
+  const [page, setPage] = useState(0)
   const [selectedFilter, setSelectedFilter] = useState<ApplyStatus>("전체");
-  const [applications, setApplications] = useState([]);
   const [selectedApplyIds, setSelectedApplyIds] = useState<
     { id: number; name: string }[]
   >([]);
@@ -60,7 +63,7 @@ const Applicant = () => {
     });
 
     setSelectedApplyIds([]);
-    getApplications();
+    // getApplications();
 
     setIsPassModalOpen(false);
     setIsProfileModalOpen(false);
@@ -73,7 +76,7 @@ const Applicant = () => {
     });
 
     setSelectedApplyIds([]);
-    getApplications();
+    // getApplications();
 
     setIsFailModalOpen(false);
     setIsProfileModalOpen(false);
@@ -88,13 +91,15 @@ const Applicant = () => {
     setIsProfileModalOpen(false);
   };
 
-  const getApplications = async () => {
-    const res = await requestApplications({ limit: "10", offset: "0" });
+  const { data  } = useQuery({
+    queryKey: ["applications"],
+    queryFn: () => requestApplications({ limit: "10", offset: "0"}),
+  })
 
-    if (res.applications) {
-      setApplications(res.applications);
-    }
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
   };
+
 
   const handleCheckboxClick = (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -113,11 +118,12 @@ const Applicant = () => {
   };
 
   const filterByApplyStatus = (status: ApplyStatus) => {
-    const filteredArray = applications.filter(
+    const filteredArray = data?.applications?.filter(
       (application) => application["applyStatus"] === status
     );
 
     return filteredArray;
+  
   };
 
   const handleApplicantRowClick = (id: number, name: string) => {
@@ -125,9 +131,6 @@ const Applicant = () => {
     setShowingApplicant({ id, name });
   };
 
-  useEffect(() => {
-    getApplications();
-  }, []);
 
   useEffect(() => {
     if (selectedFilter === "미열람") {
@@ -176,7 +179,7 @@ const Applicant = () => {
             onClick={() => handleFilterClick("전체")}
             $isSelected={selectedFilter === "전체"}
           >
-            전체 ({applications.length})
+            전체 ({data?.applications?.length})
           </Option>
           <FilterDivider />
           <Option
@@ -190,21 +193,21 @@ const Applicant = () => {
             onClick={() => handleFilterClick("DOCUMENT_PASSED")}
             $isSelected={selectedFilter === "DOCUMENT_PASSED"}
           >
-            서류합격 ({filterByApplyStatus("DOCUMENT_PASSED").length})
+            서류합격 ({filterByApplyStatus("DOCUMENT_PASSED")?.length})
           </Option>
           <FilterDivider />
           <Option
             onClick={() => handleFilterClick("FINAL_ACCEPTED")}
             $isSelected={selectedFilter === "FINAL_ACCEPTED"}
           >
-            최종합격 ({filterByApplyStatus("FINAL_ACCEPTED").length})
+            최종합격 ({filterByApplyStatus("FINAL_ACCEPTED")?.length})
           </Option>
           <FilterDivider />
           <Option
             onClick={() => handleFilterClick("REJECTED")}
             $isSelected={selectedFilter === "REJECTED"}
           >
-            불합격({filterByApplyStatus("REJECTED").length})
+            불합격({filterByApplyStatus("REJECTED")?.length})
           </Option>
         </Filters>
         <ButtonsWrapper>
@@ -285,10 +288,10 @@ const Applicant = () => {
             )}
         </ButtonsWrapper>
       </FilterWrapper>
-      <Table
+     { data?.applications && <Table
         applications={
           selectedFilter === "전체"
-            ? applications
+            ? data?.applications
             : filterByApplyStatus(selectedFilter)
         }
         onClickCheckbox={(
@@ -305,7 +308,8 @@ const Applicant = () => {
         onCloseModal={handleCloseProfileClick}
         isProfileModalOpen={isProfileModalOpen}
         showingApplicant={showingApplicant!}
-      />
+      /> }
+      <Paginator page={page} totalCounts={data?.totalCount} itemsPerPage={10} pageGroupSize={5} onChangePage={handlePageChange} />
     </ApplicantContainer>
   );
 };
@@ -411,3 +415,4 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
+

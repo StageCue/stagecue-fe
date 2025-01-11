@@ -368,7 +368,7 @@ const Table = ({
             </>
           )
         )}
-        {sortedApplications.length === 0 && <NoApplicant />}
+        {applications.length === 0 && <NoApplicant />}
       </Body>
     </TableContainer>
   );
