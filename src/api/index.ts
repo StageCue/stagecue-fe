@@ -16,7 +16,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const sessionStore = useSessionStore.getState();
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = sessionStorage.getItem("refreshToken");
     const expirationTime = sessionStore.expirationTime;
     const currentTime = Date.now();
     const timeLeft = expirationTime ? expirationTime - currentTime : 0;
@@ -25,11 +25,11 @@ apiClient.interceptors.request.use(
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
         await requestRefreshSession(refreshToken!);
 
-      localStorage.setItem("accessToken", newAccessToken);
-      localStorage.setItem("refreshToken", newRefreshToken);
+      sessionStorage.setItem("accessToken", newAccessToken);
+      sessionStorage.setItem("refreshToken", newRefreshToken);
       config.headers["Authorization"] = `Bearer ${newAccessToken}`;
     } else {
-      const currentAccessToken = localStorage.getItem("accessToken");
+      const currentAccessToken = sessionStorage.getItem("accessToken");
       if (currentAccessToken) {
         config.headers["Authorization"] = `Bearer ${currentAccessToken}`;
       }
@@ -47,7 +47,7 @@ const request = async ({
 }: RequestPrams) => {
   const url = `/v1/${endpoint}`;
 
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = sessionStorage.getItem("accessToken");
   if (accessToken) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   }

@@ -36,8 +36,8 @@ const Login = () => {
       });
     } else {
       if (res.accessToken) {
-        localStorage.setItem("accessToken", res.accessToken);
-        localStorage.setItem("refreshToken", res.refreshToken);
+        sessionStorage.setItem("accessToken", res.accessToken);
+        sessionStorage.setItem("refreshToken", res.refreshToken);
         sessionStore.loginSession({
           email: emailValue,
           username: res.username,

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface SessionState {
   isLoggined: boolean;
@@ -43,7 +43,7 @@ const useSessionStore = create(
           email: null,
           phoneNumber: null,
         }));
-        localStorage.clear();
+        sessionStorage.clear();
         useSessionStore.persist.clearStorage();
       },
 
@@ -53,7 +53,7 @@ const useSessionStore = create(
         email,
         userType,
       }: LoginParams) => {
-        const accessToken = localStorage.getItem("accessToken");
+        const accessToken = sessionStorage.getItem("accessToken");
 
         const expirationTime = Date.now() + 30 * 60 * 1000;
 
@@ -70,7 +70,7 @@ const useSessionStore = create(
         }
       },
     }),
-    { name: "userSessionStorage" }
+    { name: "userSessionStorage", storage: createJSONStorage(() => sessionStorage) }
   )
 );
 
