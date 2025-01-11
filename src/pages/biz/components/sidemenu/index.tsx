@@ -1,14 +1,17 @@
 import Button from "@/components/buttons/button";
 import styled from "styled-components";
 import PlusSVG from "@assets/icons/plus_red.svg?react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 type bizMenuOption = "지원자 관리" | "내 극단 관리" | "공고 관리" | "My Stage";
 
 const Sidemenu = () => {
   const navigate = useNavigate();
   const [currentMenu, setCurrentMenu] = useState("지원자 관리");
+
+  const location = useLocation();
+
 
   const menuOption: bizMenuOption[] = [
     "지원자 관리",
@@ -33,6 +36,18 @@ const Sidemenu = () => {
     setCurrentMenu(option);
   };
 
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/biz/apply")) {
+      setCurrentMenu("지원자 관리");
+    } else if (location.pathname.startsWith("/biz/troupe")) {
+      setCurrentMenu("내 극단 관리");
+    } else if (location.pathname.startsWith("/biz/cast")) {
+      setCurrentMenu("공고 관리");
+    } else if (location.pathname.startsWith("/biz/my-stage")) {
+      setCurrentMenu("My Stage");
+    }
+  }, [location.pathname]);
   return (
     <SideMenuContainer>
       <TroupeWrapper>

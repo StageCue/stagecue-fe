@@ -201,7 +201,7 @@ const Table = ({
             />
           )
         )}
-        {sortedRecruits?.length === 0 && <NoPost />}
+        {recruits?.length === 0 && <NoPost />}
       </Body>
     </TableContainer>
   );

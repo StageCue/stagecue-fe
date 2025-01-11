@@ -14,17 +14,39 @@ import {
 } from "@/api/biz";
 import CloseModal from "./components/closeModal";
 import DatepickerModal from "@/components/datepickerModal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Paginator from "@/components/paginator";
 
 type ManageRecruitFilterType = "TEMP" | "RECRUIT" | "CLOSED" | "전체";
 
+interface Recruit {
+  id: number;
+  applyCount: number;
+  isFavorite: false;
+  status: ManageRecruitFilterType;
+  title: string;
+  recruitEnd: string;
+}
+
+
+interface BizRecruitQuery {
+  totalCount: number;
+  recruits: Recruit[];
+}
+
+
 const ManagePost = () => {
+  const [page, setPage] = useState(0)
   const [selectedFilter, setSelectedFilter] =
     useState<ManageRecruitFilterType>("전체");
-  const [recruits, setRecruits] = useState<Recruit[]>([]);
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
   const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
   const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] =
     useState<boolean>(false);
+
+
+  const queryClient = useQueryClient()
+
 
   const handleFilterClick = (filter: ManageRecruitFilterType) => {
     setSelectedFilter(filter);
@@ -54,7 +76,7 @@ const ManagePost = () => {
       endDate,
     });
 
-    await getCasts(selectedFilter);
+    queryClient.invalidateQueries({queryKey: ["bizRecruits", page, selectedFilter]});
   };
 
   const handleConfirmClick = async () => {
@@ -65,7 +87,7 @@ const ManagePost = () => {
 
     setCloseRecruitModalOpen(false);
 
-    await getCasts(selectedFilter);
+    queryClient.invalidateQueries({queryKey: ["bizRecruits", page, selectedFilter]});
   };
 
   const handleCheckboxClick = (id: number) => {
@@ -86,22 +108,20 @@ const ManagePost = () => {
 
     setCloseRecruitModalOpen(false);
 
-    await getCasts(selectedFilter);
+    queryClient.invalidateQueries({queryKey: ["bizRecruits", page, selectedFilter]});
   };
 
-  const getCasts = async (status: ManageRecruitFilterType) => {
-    const res = await requestRecruits({
-      limit: 10,
-      offset: 0,
-      status: status === "전체" ? "" : status,
-    });
 
-    setRecruits(res.recruits);
+  const { data  } = useQuery<BizRecruitQuery>({
+    queryKey: ["bizRecruits", page, selectedFilter],
+    queryFn: () => requestRecruits({ limit: 10, offset: page, status: selectedFilter === "전체" ? "" : selectedFilter,}),
+  })
+
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
   };
 
-  useEffect(() => {
-    getCasts(selectedFilter);
-  }, [selectedFilter]);
 
   return (
     <ManagePostContainer>
@@ -115,7 +135,7 @@ const ManagePost = () => {
       {isChangeDeadlieModalOpen && selectedRecruitIds.length !== 0 && (
         <DatepickerModal
           defaultValue={
-            recruits.find((item) => item.id === selectedRecruitIds[0])
+            data?.recruits?.find((item) => item.id === selectedRecruitIds[0])
               ?.recruitEnd
           }
           onClose={handleCloseChangeDeadlineClick}
@@ -210,11 +230,12 @@ const ManagePost = () => {
           </Button>
         </ButtonsWrapper>
       </FilterWrapper>
-      <Table
-        recruits={recruits}
+     { data?.recruits && <Table
+        recruits={data.recruits}
         onClickCheckbox={handleCheckboxClick}
         selectedRecruitIds={selectedRecruitIds}
-      />
+      /> }
+         { data && <Paginator page={page} totalCounts={data?.totalCount} itemsPerPage={10} pageGroupSize={5} onChangePage={handlePageChange} /> }
     </ManagePostContainer>
   );
 };

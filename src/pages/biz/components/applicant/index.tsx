@@ -7,7 +7,7 @@ import PassSVG from "@assets/icons/pass.svg?react";
 import FailSVG from "@assets/icons/fail.svg?react";
 import { requestApplications, requestChangingApplyState } from "@/api/biz";
 import PassModal from "./components/passModal";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Paginator from "@/components/paginator";
 
 
@@ -40,6 +40,8 @@ const Applicant = () => {
 
   const [passType, setPassType] = useState<PassType>();
 
+  const queryClient = useQueryClient()
+
   const handleFilterClick = (filter: ApplyStatus) => {
     setSelectedFilter(filter);
   };
@@ -63,7 +65,7 @@ const Applicant = () => {
     });
 
     setSelectedApplyIds([]);
-    // getApplications();
+    queryClient.invalidateQueries({queryKey: ["applications", page]});
 
     setIsPassModalOpen(false);
     setIsProfileModalOpen(false);
@@ -76,7 +78,7 @@ const Applicant = () => {
     });
 
     setSelectedApplyIds([]);
-    // getApplications();
+    queryClient.invalidateQueries({queryKey: ["applications", page]});
 
     setIsFailModalOpen(false);
     setIsProfileModalOpen(false);
@@ -92,8 +94,8 @@ const Applicant = () => {
   };
 
   const { data  } = useQuery({
-    queryKey: ["applications"],
-    queryFn: () => requestApplications({ limit: "10", offset: "0"}),
+    queryKey: ["applications", page],
+    queryFn: () => requestApplications({ limit: "10", offset: `${page}`}),
   })
 
   const handlePageChange = (newPage: number) => {
