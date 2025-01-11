@@ -37,8 +37,6 @@ function App() {
 
   const isAuthenticated = sessionStore.isLoggined;
 
-  console.log(isAuthenticated)
-
   useEffect(() => {
     const intervalId = setInterval(() => {
       sessionStore.logoutSession();

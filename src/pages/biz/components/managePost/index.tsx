@@ -3,9 +3,9 @@ import SearchSVG from "@assets/icons/search.svg?react";
 import TimeSVG from "@assets/icons/time.svg?react";
 import CalendarSVG from "@assets/icons/calendar_s.svg?react";
 import TrashSVG from "@assets/icons/trash.svg?react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "@/components/buttons/button";
-import Table, { Recruit } from "./components/table";
+import Table from "./components/table";
 import {
   requestChangeEndDate,
   requestCloseRecruit,
@@ -112,7 +112,7 @@ const ManagePost = () => {
   };
 
 
-  const { data  } = useQuery<BizRecruitQuery>({
+  const { data } = useQuery<BizRecruitQuery>({
     queryKey: ["bizRecruits", page, selectedFilter],
     queryFn: () => requestRecruits({ limit: 10, offset: page, status: selectedFilter === "전체" ? "" : selectedFilter,}),
   })

@@ -10,6 +10,24 @@ import PassModal from "./components/passModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Paginator from "@/components/paginator";
 
+interface BizApplicationQuery {
+ totalCount:number;
+ applications: Application[];
+}
+
+
+interface Application {
+  applyId: number;
+  profileId: number;
+  recruitId: number;
+  isFavorite: boolean;
+  performerName: string;
+  age: number;
+  gender: "MALE" | "FEMALE";
+  recruitTitle: string;
+  applyDate: string;
+  applyStatus: string;
+}
 
 type ApplyStatus =
   | "APPLIED"
@@ -93,7 +111,7 @@ const Applicant = () => {
     setIsProfileModalOpen(false);
   };
 
-  const { data  } = useQuery({
+  const { data  } = useQuery<BizApplicationQuery>({
     queryKey: ["applications", page],
     queryFn: () => requestApplications({ limit: "10", offset: `${page}`}),
   })
@@ -119,12 +137,16 @@ const Applicant = () => {
     }
   };
 
+
   const filterByApplyStatus = (status: ApplyStatus) => {
-    const filteredArray = data?.applications?.filter(
+    if (data?.applications) {
+    const filteredArray = data.applications.filter(
       (application) => application["applyStatus"] === status
     );
-
     return filteredArray;
+  } else {
+    return []
+  }
   
   };
 
@@ -311,7 +333,7 @@ const Applicant = () => {
         isProfileModalOpen={isProfileModalOpen}
         showingApplicant={showingApplicant!}
       /> }
-      <Paginator page={page} totalCounts={data?.totalCount} itemsPerPage={10} pageGroupSize={5} onChangePage={handlePageChange} />
+     { data && <Paginator page={page} totalCounts={data?.totalCount} itemsPerPage={10} pageGroupSize={5} onChangePage={handlePageChange} /> }
     </ApplicantContainer>
   );
 };
