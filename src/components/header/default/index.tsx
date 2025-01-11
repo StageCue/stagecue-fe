@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Searchbar from "../components/searchbar";
 import Button from "@/components/buttons/button";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import ChevronDownSVG from "@assets/icons/chebron_down_s.svg?react";
 import { useState } from "react";
 

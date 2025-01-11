@@ -2,7 +2,7 @@ import styled from "styled-components";
 import CaretDownSVG from "@assets/icons/caret_down.svg?react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 
 const BizHeader = () => {
   const navigate = useNavigate();

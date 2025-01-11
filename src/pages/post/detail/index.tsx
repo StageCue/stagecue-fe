@@ -14,7 +14,7 @@ import {
 } from "@/api/cast";
 import { useNavigate, useParams } from "react-router-dom";
 import PostImageSlide from "../components/slide";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 
 interface RecruitDetail {
   recruitTitle: string;

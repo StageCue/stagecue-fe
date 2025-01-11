@@ -1,6 +1,6 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { requestRefreshSession } from "./auth";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 
 interface RequestPrams {
   method: "get" | "post" | "put" | "delete";

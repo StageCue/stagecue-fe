@@ -7,7 +7,7 @@ import {
   requestVerifyPhoneToken,
 } from "@/api/users";
 import Button from "@/components/buttons/button";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";

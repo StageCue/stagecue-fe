@@ -2,7 +2,7 @@ import { requestProfileDetail } from "@/api/users";
 import Button from "@/components/buttons/button";
 import Overlay from "@/components/modal/overlay";
 import { ProfileDetailData } from "@/pages/mypage/components/settingProfile/components/profileDetail";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import SlashSVG from "@assets/icons/slash.svg?react";

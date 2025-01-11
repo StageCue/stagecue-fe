@@ -33,7 +33,6 @@ const List = () => {
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  // const [recruits, setRecruits] = useState([]);
 
   const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
   const [selectedZone, setSelectedZone] = useState(["전체지역"]);
@@ -269,7 +268,7 @@ const List = () => {
   
 const queryClient = useQueryClient()
 
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage  } = useInfiniteQuery({
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
   queryKey: ["recruits"],
   queryFn: ({pageParam = 0}) =>requestCasts({offset: `${pageParam}`, limit:"16", category: parsingCategory(selectedGenre),
     locations: appliedZone[0] === "전체지역" ? "" : appliedZone.join(";"),
@@ -366,15 +365,10 @@ const recruits = useMemo(
         threshold: 1.0,
       }
     );
-
-
     const target = loadMoreRef.current; 
-
-
     if (target) {
       observer.observe(target);
     }
-
     return () => {
       if (target) {
         observer.unobserve(target);

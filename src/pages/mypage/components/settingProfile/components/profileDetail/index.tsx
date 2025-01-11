@@ -1,6 +1,6 @@
 import { requestProfileDetail } from "@/api/users";
 import Button from "@/components/buttons/button";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";

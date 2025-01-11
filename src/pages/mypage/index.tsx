@@ -7,7 +7,7 @@ import SettingProfile from "./components/settingProfile";
 import EditAccount from "./components/editAccount";
 import ResetPassword from "./components/resetPassword";
 import DeleteAccount from "./components/deleteAccount";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import ScrapRecruits from "./components/scrapRecruits";
 
 export type mypageMenuType =

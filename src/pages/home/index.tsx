@@ -9,7 +9,7 @@ import StageCue from "./components/stageCue";
 import { requestNotices } from "@/api/notice";
 import { requestBanners } from "@/api/ads";
 import RecommendRecruit from "./components/recommendRecruit";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 
 const Home = () => {
   const { isLoggined } = useSessionStore();

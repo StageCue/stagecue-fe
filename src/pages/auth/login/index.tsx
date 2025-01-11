@@ -4,7 +4,7 @@ import { LoginInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
 import { requestLogin } from "@/api/auth";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import HideSVG from "@assets/icons/hide.svg?react";
 import ShowSVG from "@assets/icons/show.svg?react";
 import CheckboxSVG from "@assets/icons/checkbox.svg?react";

@@ -26,7 +26,7 @@ import ManageTroupe from "./pages/biz/components/manageTroupe";
 import ManagePost from "./pages/biz/components/managePost";
 import EditTroupe from "./pages/biz/components/manageTroupe/components/editTroupe";
 import FindPassword from "./pages/auth/resetPassword";
-import useSessionStore from "./store";
+import useSessionStore from "./store/session";
 import { useEffect } from "react";
 import PrivateRoute from "./components/bizRouter";
 import CreatedTroupe from "./pages/biz/components/manageTroupe/components/createdTroupe";

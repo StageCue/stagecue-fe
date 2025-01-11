@@ -12,7 +12,7 @@ import {
   requestUploadImage,
   requestUploadThumbnail,
 } from "@/api/users";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import ModalPortal from "@/components/modal/portal";
 import SubmitModal from "../modals/submitModal";
 import { useDropzone } from "react-dropzone";

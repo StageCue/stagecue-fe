@@ -14,7 +14,7 @@ import {
   requestUploadThumbnail,
 } from "@/api/users";
 import { ProfileDetailData } from "../profileDetail";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import ModalPortal from "@/components/modal/portal";
 import SubmitModal from "../modals/submitModal";
 import { useDropzone } from "react-dropzone";

@@ -1,4 +1,4 @@
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import styled from "styled-components";
 import FitRecruitSlide from "../fitRecruitSlide";
 

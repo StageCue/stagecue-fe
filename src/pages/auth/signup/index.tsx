@@ -12,7 +12,7 @@ import {
 import CheckboxSVG from "@assets/icons/checkbox.svg?react";
 import CheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
-import useSessionStore from "@/store";
+import useSessionStore from "@/store/session";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
 import Datepicker from "@/components/datepicker";
 import DatePicker from "react-datepicker";

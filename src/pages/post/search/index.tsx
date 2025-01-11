@@ -1,34 +1,75 @@
 import { requestCasts } from "@/api/cast";
 import Cast from "@/pages/home/components/cast";
 import useSearchStore from "@/store/search";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import NoResult from "./noResult";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 const Search = () => {
   const { query } = useSearchStore();
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
 
   const [currentFilter, _] = useState("공고");
-  const [results, setResults] = useState([]);
 
-  const getResults = async () => {
-    const res = await requestCasts({
-      offset: "0",
-      limit: "16",
-      query,
-    });
+  const queryClient = useQueryClient()
 
-    setResults(res.recruits);
-  };
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ["results"],
+    queryFn: ({pageParam = 0}) =>requestCasts({offset: `${pageParam}`, limit:"16", query }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, allPages) => {
+        const totalLoaded = allPages.flatMap((page) => page.data).length; 
+        if (totalLoaded >= lastPage.totalCount) {
+          return undefined; 
+        }
+        return allPages.length;
+      },
+    })
+
+
+    const results = useMemo(
+      () => data?.pages.flatMap((page) => page.recruits) || [],
+      [data]
+    );
 
   useEffect(() => {
-    getResults();
+    queryClient.invalidateQueries({ queryKey: ["results"]}); 
   }, [query]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        root: null, 
+        rootMargin: "200px",
+        threshold: 1.0,
+      }
+    );
+    const target = loadMoreRef.current; 
+    if (target) {
+      observer.observe(target);
+    }
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+ 
 
   return (
     <SearchContainer>
       <FilterWrapper>
-        <Filter $isSelected={currentFilter === "공고"}>공고(0)</Filter>
+        <Filter $isSelected={currentFilter === "공고"}>{`공고(${results.length})`}</Filter>
       </FilterWrapper>
       {results.length > 0 ? (
         <CastGrid>
@@ -55,6 +96,7 @@ const Search = () => {
       ) : (
         <NoResult />
       )}
+     <div ref={loadMoreRef} />
     </SearchContainer>
   );
 };
