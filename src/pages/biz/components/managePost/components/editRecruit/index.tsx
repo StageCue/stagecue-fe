@@ -17,7 +17,7 @@ import {
   requestRecruitFormData,
   requestUploadRecruitImage,
 } from "@/api/biz";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import RangeDatepicker from "@/components/rangeDatepicker";
 import { decimalToBinaryArray } from "@/utils/format";
@@ -49,7 +49,7 @@ interface EditRecruitInputs {
 
 const EditRecruit = () => {
   const { id } = useParams();
-
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -89,9 +89,10 @@ const EditRecruit = () => {
 
   const days = ["월", "화", "수", "목", "금", "토", "일"];
 
-  const [addressValue, partsValue] = watch([
+  const [addressValue, partsValue, stgAddressValue] = watch([
     "practice.address",
     "recruitingParts",
+    "stage.address"
   ]);
 
   const practiceDatepickerRef = useRef<DatePicker | null>(null);
@@ -156,13 +157,16 @@ const EditRecruit = () => {
 
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
     const recruitImages = await requestUploadImageFiles();
-
     const recruitingParts = partsValue.map(({ value }) => value);
-    await requestCreateRecruit({
+    const res = await requestCreateRecruit({
       ...data,
       recruitingParts,
       recruitImages,
     });
+
+    if(res.id) {
+    navigate(`/cast/${id}`)
+    }
   };
 
   const requestUploadImageFiles = async () => {
@@ -322,9 +326,6 @@ const EditRecruit = () => {
 
   const getRecruitFormData = async (id: string) => {
     const res = await requestRecruitFormData(id);
-
-    console.log(res);
-
     setValue("title", res.title);
     setValue("introduce", res.introduce);
     setValue(
@@ -413,6 +414,7 @@ const EditRecruit = () => {
               padding="9px 20px"
               lineHeight={146.7}
               letterSpacing={0.96}
+              type="submit"
             >
               올리기
             </Button>
@@ -652,8 +654,8 @@ const EditRecruit = () => {
               </IconWrapper>
               {isCategorySelectOpen && (
                 <CategorySelector>
-                  {category.map((item) => (
-                    <Category onClick={() => handleCategoryClick(item)}>
+                  {category.map((item, index) => (
+                    <Category key={index} onClick={() => handleCategoryClick(item)}>
                       {item}
                     </Category>
                   ))}
@@ -706,7 +708,7 @@ const EditRecruit = () => {
             onClick={() => handleAddressInputClick("stage")}
             $isDirty={false}
           >
-            {addressValue || "클릭해서 주소를 검색해주세요."}
+            {stgAddressValue || "클릭해서 주소를 검색해주세요."}
           </FakeInput>
           <Input
             type="text"
@@ -773,7 +775,7 @@ const MiddleTitle = styled.div`
   color: #000000;
 `;
 
-const Form = styled.div`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 32px;

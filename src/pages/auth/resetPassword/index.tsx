@@ -13,10 +13,13 @@ const FindPassword = () => {
   const {
     register,
     handleSubmit,
-    // formState: { errors },
-  } = useForm<ResetPasswordInputs>();
+    formState: { errors },
+    watch
+  } = useForm<ResetPasswordInputs>({ mode: "onBlur"});
 
   const [isResetPassword, setIsResetPassword] = useState<boolean>();
+  const [passwordValue, confirmPasswordValue] = watch(["password", "confirmPassword"]);
+
 
   const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
     const params = new URLSearchParams(location.search);
@@ -32,14 +35,11 @@ const FindPassword = () => {
     }
   };
 
-  const validatePassword = (password: string) => {
-    return password.includes("abc");
-  };
-
   const handleGoToLoginClick = () => {
     navigate("/auth/login");
   };
 
+  console.log(errors)
   return (
     <FindPasswordContainer>
       <TitleWrapper>
@@ -50,27 +50,43 @@ const FindPassword = () => {
           <InputWrapper>
             <Label>비밀번호</Label>
             <Input
+            $isDirty={Boolean(confirmPasswordValue)}
+            $isError={Boolean(errors.confirmPassword)}
               {...register("password", {
                 required: true,
-                maxLength: {
-                  value: 8,
-                  message: "비밀번호는 최대 8자까지 입력할 수 있습니다.",
-                },
-                pattern: /[A-Za-z]{3}/,
-                validate: (value) => validatePassword(value),
+                validate: (value) => {
+                  const isValid =
+                    /[A-Z]/.test(value) && 
+                    /[a-z]/.test(value) && 
+                    /\d/.test(value) && 
+                    /[!@#$%^&*]/.test(value) && 
+                    value.length >= 8 &&
+                    value.length <= 32;
+                  return isValid || "영문 대소문자, 숫자, 특수문자를 포함해 8~32자로 입력해주세요."},
+                
               })}
+              type="password"
               placeholder="비밀번호를 입력해주세요"
             />
+          <InputError>{errors.password?.message}</InputError>
           </InputWrapper>
+
           <InputWrapper>
             <Label>비밀번호 확인</Label>
             <Input
+            $isDirty={Boolean(confirmPasswordValue)}
+            $isError={Boolean(errors.confirmPassword)}
               {...register("confirmPassword", {
                 required: true,
+                validate: (value) =>
+                  value === passwordValue || "비밀번호가 일치하지 않습니다.",
               })}
               placeholder="비밀번호 확인"
+              type="password"
             />
+          <InputError>{errors.confirmPassword?.message}</InputError>
           </InputWrapper>
+        
           <Button
             variation="solid"
             btnClass="primary"
@@ -155,12 +171,20 @@ const InputWrapper = styled.div`
   margin-bottom: 32px;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{
+  $isDirty: boolean;
+  $isError: boolean;
+}>`
   padding: 12px 16px;
   width: 340px;
   height: 48px;
   border-radius: 10px;
-  border: 1px solid #70737c;
+  border: ${({ $isError, $isDirty }) =>
+    $isError
+      ? "1px solid #FF4242"
+      : $isDirty
+      ? "1px solid #000000"
+      : "1px solid #e0e0e2"};
   outline: none;
 
   ::placeholder {
@@ -209,4 +233,12 @@ const SubText = styled.div`
   letter-spacing: 0.57%;
   font-weight: var(--font-regular);
   color: #000000;
+`;
+
+const InputError = styled.div`
+  color: #ff4242;
+  font-size: 13px;
+  font-weight: var(--font-regular);
+  letter-spacing: 1.94%;
+  letter-spacing: 138.5%;
 `;

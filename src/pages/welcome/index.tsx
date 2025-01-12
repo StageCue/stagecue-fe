@@ -17,7 +17,6 @@ const Welcome = () => {
   const handleNextClick = async () => {
     if (selectedUserType) {
       const res = await requestChangeUserType({ userType: selectedUserType });
-      console.log("type", res);
       if (res.status === 0) {
         navigate("/");
       }

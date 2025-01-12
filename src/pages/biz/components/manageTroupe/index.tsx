@@ -4,6 +4,7 @@ import TroupeDetail from "./components/troupeDetail";
 import { requestTroupeInfo } from "@/api/biz";
 import Button from "@/components/buttons/button";
 import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
 
 export interface TroupeInfo {
   name: string;
@@ -25,10 +26,12 @@ const ManageTroupe = () => {
 
   const getTroupeInfo = async () => {
     const res = await requestTroupeInfo();
-
-    if (!res.response.data.error) {
-      setTroupeInfo(res);
+    if (res instanceof AxiosError) {
+      return
+    } else {
+      setTroupeInfo(res)
     }
+  
   };
 
   useEffect(() => {
@@ -41,7 +44,7 @@ const ManageTroupe = () => {
 
   return (
     <ManageTroupeContainer>
-      {troupeInfo ? (
+      {troupeInfo?.name ? (
         <TroupeDetail troupe={troupeInfo!} />
       ) : (
         <NoTroupeInfo>

@@ -60,7 +60,8 @@ const Detail = () => {
 
   const handleBookmarkClick = async () => {
     if (isBookmarked) {
-      await requestDeleteScrapCast(id!);
+      const res =await requestDeleteScrapCast(id!);
+      console.log(res)
       setIsBookmarked(false);
     } else {
       await requestScrapCast(id!);

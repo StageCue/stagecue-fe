@@ -22,9 +22,9 @@ const PostImageSlide = ({ images }: PostImageSlideProps) => {
         pagination={{ clickable: true }}
         grabCursor={true}
       >
-        {images.map((image) => {
+        {images.map((image, index) => {
           return (
-            <SwiperSlide>
+            <SwiperSlide key={index}>
               <SlideDiv src={`https://s3.stagecue.co.kr/stagecue/${image}`} />
             </SwiperSlide>
           );

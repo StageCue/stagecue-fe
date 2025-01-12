@@ -58,7 +58,7 @@ const TroupeDetail = ({ troupe }: TroupeDetailInterface) => {
                 <FollowerValue>{troupe?.followerCount}</FollowerValue>
               </FollowerWrapper>
             </TextTitleWrapper>
-            <Description>소개 내용</Description>
+            <Description>{troupe?.description}</Description>
           </TextColumn>
           <SummaryColumn>
             <SummaryPropertyWrapper>

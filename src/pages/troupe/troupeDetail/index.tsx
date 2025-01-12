@@ -66,12 +66,10 @@ const TroupeDetail = () => {
 
     try {
       if (isFollowing) {
-        const res = await requestUnfollowTroupe(troupeName!);
-        console.log(res);
+        await requestUnfollowTroupe(troupeName!);
         setIsFollowing(false);
       } else {
-        const res = await requestFollowTroupe(troupeName!);
-        console.log(res);
+        await requestFollowTroupe(troupeName!);
         setIsFollowing(true);
       }
     } catch (error) {
@@ -210,6 +208,7 @@ const TroupeDetail = () => {
               isScrapping,
             }) => (
               <CastCard
+                key={castId}
                 castId={castId}
                 castTitle={castTitle}
                 artworkName={artworkName}

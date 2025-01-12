@@ -36,7 +36,6 @@ const ProfileDetail = () => {
 
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
-    console.log(res);
     setDetail(res);
   };
 
@@ -96,8 +95,8 @@ const ProfileDetail = () => {
               src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`}
             />
             <Images>
-              {detail?.images.map(({ url }) => (
-                <Image src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+              {detail?.images.map(({ url }, index) => (
+                <Image key={index} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
               ))}
             </Images>
           </ImagesWrapper>
@@ -131,8 +130,8 @@ const ProfileDetail = () => {
           <Information>
             <InformationTitle>경력 (총 개월)</InformationTitle>
             <DataWrapper>
-              {detail?.experiences.map((exp) => (
-                <ExpRow>
+              {detail?.experiences.map((exp, index) => (
+                <ExpRow key={index}>
                   <RoleAndPeriod>
                     <Role>{exp.artworkPart}</Role>
                     <Period>

@@ -24,6 +24,8 @@ const ScrapRecruits = () => {
     setScraps(casts);
   };
 
+  console.log(scraps)
+
   useEffect(() => {
     getScrappedCasts();
   }, []);
