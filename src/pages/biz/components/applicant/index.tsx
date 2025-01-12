@@ -11,10 +11,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Paginator from "@/components/paginator";
 
 interface BizApplicationQuery {
- totalCount:number;
- applications: Application[];
+  totalCount: number;
+  applications: Application[];
 }
-
 
 interface Application {
   applyId: number;
@@ -45,7 +44,7 @@ interface ShowingApplicantState {
   name: string;
 }
 const Applicant = () => {
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(0);
   const [selectedFilter, setSelectedFilter] = useState<ApplyStatus>("전체");
   const [selectedApplyIds, setSelectedApplyIds] = useState<
     { id: number; name: string }[]
@@ -58,7 +57,7 @@ const Applicant = () => {
 
   const [passType, setPassType] = useState<PassType>();
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const handleFilterClick = (filter: ApplyStatus) => {
     setSelectedFilter(filter);
@@ -83,7 +82,7 @@ const Applicant = () => {
     });
 
     setSelectedApplyIds([]);
-    queryClient.invalidateQueries({queryKey: ["applications", page]});
+    queryClient.invalidateQueries({ queryKey: ["applications", page] });
 
     setIsPassModalOpen(false);
     setIsProfileModalOpen(false);
@@ -96,7 +95,7 @@ const Applicant = () => {
     });
 
     setSelectedApplyIds([]);
-    queryClient.invalidateQueries({queryKey: ["applications", page]});
+    queryClient.invalidateQueries({ queryKey: ["applications", page] });
 
     setIsFailModalOpen(false);
     setIsProfileModalOpen(false);
@@ -111,15 +110,14 @@ const Applicant = () => {
     setIsProfileModalOpen(false);
   };
 
-  const { data  } = useQuery<BizApplicationQuery>({
+  const { data } = useQuery<BizApplicationQuery>({
     queryKey: ["applications", page],
-    queryFn: () => requestApplications({ limit: "10", offset: `${page}`}),
-  })
+    queryFn: () => requestApplications({ limit: "10", offset: `${page * 10}` }),
+  });
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
-
 
   const handleCheckboxClick = (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -137,24 +135,21 @@ const Applicant = () => {
     }
   };
 
-
   const filterByApplyStatus = (status: ApplyStatus) => {
     if (data?.applications) {
-    const filteredArray = data.applications.filter(
-      (application) => application["applyStatus"] === status
-    );
-    return filteredArray;
-  } else {
-    return []
-  }
-  
+      const filteredArray = data.applications.filter(
+        (application) => application["applyStatus"] === status
+      );
+      return filteredArray;
+    } else {
+      return [];
+    }
   };
 
   const handleApplicantRowClick = (id: number, name: string) => {
     setIsProfileModalOpen(true);
     setShowingApplicant({ id, name });
   };
-
 
   useEffect(() => {
     if (selectedFilter === "미열람") {
@@ -312,28 +307,38 @@ const Applicant = () => {
             )}
         </ButtonsWrapper>
       </FilterWrapper>
-     { data?.applications && <Table
-        applications={
-          selectedFilter === "전체"
-            ? data?.applications
-            : filterByApplyStatus(selectedFilter)
-        }
-        onClickCheckbox={(
-          e: React.MouseEvent<HTMLElement, MouseEvent>,
-          id: number,
-          name: string
-        ) => handleCheckboxClick(e, id, name)}
-        selectedApplyIds={selectedApplyIds}
-        onClickRow={(id: number, name: string) =>
-          handleApplicantRowClick(id, name)
-        }
-        onClickPass={handlePassClick}
-        onClickFail={handleFailClick}
-        onCloseModal={handleCloseProfileClick}
-        isProfileModalOpen={isProfileModalOpen}
-        showingApplicant={showingApplicant!}
-      /> }
-     { data && <Paginator page={page} totalCounts={data?.totalCount} itemsPerPage={10} pageGroupSize={5} onChangePage={handlePageChange} /> }
+      {data?.applications && (
+        <Table
+          applications={
+            selectedFilter === "전체"
+              ? data?.applications
+              : filterByApplyStatus(selectedFilter)
+          }
+          onClickCheckbox={(
+            e: React.MouseEvent<HTMLElement, MouseEvent>,
+            id: number,
+            name: string
+          ) => handleCheckboxClick(e, id, name)}
+          selectedApplyIds={selectedApplyIds}
+          onClickRow={(id: number, name: string) =>
+            handleApplicantRowClick(id, name)
+          }
+          onClickPass={handlePassClick}
+          onClickFail={handleFailClick}
+          onCloseModal={handleCloseProfileClick}
+          isProfileModalOpen={isProfileModalOpen}
+          showingApplicant={showingApplicant!}
+        />
+      )}
+      {data && (
+        <Paginator
+          page={page}
+          totalCounts={data?.totalCount}
+          itemsPerPage={10}
+          pageGroupSize={5}
+          onChangePage={handlePageChange}
+        />
+      )}
     </ApplicantContainer>
   );
 };
@@ -439,4 +444,3 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
-

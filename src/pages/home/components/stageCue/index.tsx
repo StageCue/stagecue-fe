@@ -1,12 +1,18 @@
 import styled from "styled-components";
 import PlusSVG from "@assets/icons/plus.svg?react";
 import AboutSVG from "@assets/images/about.svg";
+import { useNavigate } from "react-router-dom";
 
 interface StageCueProps {
   notices: any[];
 }
 
 const StageCue = ({ notices }: StageCueProps) => {
+  const navigate = useNavigate();
+
+  const handlePlusClick = () => {
+    navigate("/notice");
+  };
   return (
     <StageCueContainer>
       <Notice>
@@ -14,7 +20,7 @@ const StageCue = ({ notices }: StageCueProps) => {
           <Title>
             공지사항 <Higliting />
           </Title>
-          <IconWrapper>
+          <IconWrapper onClick={handlePlusClick}>
             <PlusSVG />
           </IconWrapper>
         </TitleWrapper>

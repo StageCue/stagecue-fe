@@ -1,9 +1,22 @@
 import request from "..";
 
-export const requestNotices = async () => {
+interface ReqNoticesParam {
+  limit: number;
+  offset: number;
+}
+
+export const requestNotices = async ({ limit, offset }: ReqNoticesParam) => {
   const res = await request({
     method: "get",
-    endpoint: "notices",
+    endpoint: `notices?limit=${limit}&offset=${offset}`,
+  });
+  return res;
+};
+
+export const requestNoticeDetail = async (noticeId: number) => {
+  const res = await request({
+    method: "get",
+    endpoint: `notices?noticeId=${noticeId}`,
   });
   return res;
 };

@@ -30,6 +30,7 @@ import useSessionStore from "./store/session";
 import { useEffect } from "react";
 import PrivateRoute from "./components/bizRouter";
 import CreatedTroupe from "./pages/biz/components/manageTroupe/components/createdTroupe";
+import Notice from "./pages/notice";
 
 function App() {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ function App() {
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<Home />} />
+          <Route path="notice" element={<Notice />} />
           <Route path="search" element={<Search />} />
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="mypage" element={<MyPage />} />

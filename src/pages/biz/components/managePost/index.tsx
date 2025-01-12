@@ -28,15 +28,13 @@ interface Recruit {
   recruitEnd: string;
 }
 
-
 interface BizRecruitQuery {
   totalCount: number;
   recruits: Recruit[];
 }
 
-
 const ManagePost = () => {
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(0);
   const [selectedFilter, setSelectedFilter] =
     useState<ManageRecruitFilterType>("전체");
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
@@ -44,9 +42,7 @@ const ManagePost = () => {
   const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] =
     useState<boolean>(false);
 
-
-  const queryClient = useQueryClient()
-
+  const queryClient = useQueryClient();
 
   const handleFilterClick = (filter: ManageRecruitFilterType) => {
     setSelectedFilter(filter);
@@ -76,7 +72,9 @@ const ManagePost = () => {
       endDate,
     });
 
-    queryClient.invalidateQueries({queryKey: ["bizRecruits", page, selectedFilter]});
+    queryClient.invalidateQueries({
+      queryKey: ["bizRecruits", page, selectedFilter],
+    });
   };
 
   const handleConfirmClick = async () => {
@@ -87,7 +85,9 @@ const ManagePost = () => {
 
     setCloseRecruitModalOpen(false);
 
-    queryClient.invalidateQueries({queryKey: ["bizRecruits", page, selectedFilter]});
+    queryClient.invalidateQueries({
+      queryKey: ["bizRecruits", page, selectedFilter],
+    });
   };
 
   const handleCheckboxClick = (id: number) => {
@@ -108,20 +108,24 @@ const ManagePost = () => {
 
     setCloseRecruitModalOpen(false);
 
-    queryClient.invalidateQueries({queryKey: ["bizRecruits", page, selectedFilter]});
+    queryClient.invalidateQueries({
+      queryKey: ["bizRecruits", page, selectedFilter],
+    });
   };
-
 
   const { data } = useQuery<BizRecruitQuery>({
     queryKey: ["bizRecruits", page, selectedFilter],
-    queryFn: () => requestRecruits({ limit: 10, offset: page, status: selectedFilter === "전체" ? "" : selectedFilter,}),
-  })
-
+    queryFn: () =>
+      requestRecruits({
+        limit: 10,
+        offset: page * 10,
+        status: selectedFilter === "전체" ? "" : selectedFilter,
+      }),
+  });
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
-
 
   return (
     <ManagePostContainer>
@@ -230,12 +234,22 @@ const ManagePost = () => {
           </Button>
         </ButtonsWrapper>
       </FilterWrapper>
-     { data?.recruits && <Table
-        recruits={data.recruits}
-        onClickCheckbox={handleCheckboxClick}
-        selectedRecruitIds={selectedRecruitIds}
-      /> }
-         { data && <Paginator page={page} totalCounts={data?.totalCount} itemsPerPage={10} pageGroupSize={5} onChangePage={handlePageChange} /> }
+      {data?.recruits && (
+        <Table
+          recruits={data.recruits}
+          onClickCheckbox={handleCheckboxClick}
+          selectedRecruitIds={selectedRecruitIds}
+        />
+      )}
+      {data && (
+        <Paginator
+          page={page}
+          totalCounts={data?.totalCount}
+          itemsPerPage={10}
+          pageGroupSize={5}
+          onChangePage={handlePageChange}
+        />
+      )}
     </ManagePostContainer>
   );
 };

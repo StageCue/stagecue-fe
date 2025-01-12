@@ -45,7 +45,7 @@ const Home = () => {
   };
 
   const getNotices = async () => {
-    const { items } = await requestNotices();
+    const { items } = await requestNotices({ limit: 6, offset: 0 });
 
     setNotices(items);
   };
