@@ -1,8 +1,6 @@
 import { requestNoticeDetail, requestNotices } from "@/api/notice";
 import { useState } from "react";
 import styled from "styled-components";
-import PrevSVG from "@assets/icons/pg_caret_prev.svg?react";
-import NextSVG from "@assets/icons/pg_caret_next.svg?react";
 import CaretUpSVG from "@assets/icons/notice_caret_up.svg?react";
 import CaretDownSVG from "@assets/icons/notice_caret_down.svg?react";
 import CaretLeftSVG from "@assets/icons/notice_caret_left.svg?react";
