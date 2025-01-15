@@ -36,6 +36,7 @@ const Login = () => {
       });
     } else {
       if (res.accessToken) {
+        console.log(res.accessToken)
         sessionStorage.setItem("accessToken", res.accessToken);
         sessionStorage.setItem("refreshToken", res.refreshToken);
         sessionStore.loginSession({
@@ -64,8 +65,6 @@ const Login = () => {
   const handleAutoLoginClick = () => {
     setIsAutoLogin((prev) => !prev);
   };
-
-  console.log(errors);
 
   return (
     <LoginContainer>

@@ -29,6 +29,7 @@ const FindPassword = () => {
         newPassword: data.password,
         token,
       });
+      console.log(res)
       if (res) {
         setIsResetPassword(true);
       }
@@ -38,8 +39,6 @@ const FindPassword = () => {
   const handleGoToLoginClick = () => {
     navigate("/auth/login");
   };
-
-  console.log(errors)
   return (
     <FindPasswordContainer>
       <TitleWrapper>

@@ -174,17 +174,23 @@ const NewProfileForm = () => {
   };
 
   const handleSaveExpClick = () => {
+    const newExp =  {
+      id: generateId(),
+      artworkName: artworkNameValue,
+      artworkPart: artworkPartValue,
+      troupe: troupeValue,
+      startDate: startDateValue,
+      endDate: endDateValue,
+    }
+    if (experiencesValue) {
     setValue("experiences", [
       ...experiencesValue,
-      {
-        id: generateId(),
-        artworkName: artworkNameValue,
-        artworkPart: artworkPartValue,
-        troupe: troupeValue,
-        startDate: startDateValue,
-        endDate: endDateValue,
-      },
-    ]);
+     newExp
+    ]); } else {
+      setValue("experiences", [
+       newExp]
+    )}
+
     setIsAddExp(false);
   };
 
@@ -231,6 +237,7 @@ const NewProfileForm = () => {
       images: imagesValue,
       thumbnail: thumbnailValue,
     });
+    console.log(res)
     navigate(`/mypage/profiles/${res.id}`);
   };
 
@@ -466,6 +473,7 @@ const NewProfileForm = () => {
                   fontSize={13}
                   lineHeight={138.5}
                   letterSpacing={1.94}
+                  onClick={() => handleSaveClick("introduce")}
                 >
                   저장
                 </Button>

@@ -545,6 +545,7 @@ const ProfileForm = () => {
                   fontSize={13}
                   lineHeight={138.5}
                   letterSpacing={1.94}
+                  onClick={() => handleSaveClick("introduce")}
                 >
                   저장
                 </Button>
