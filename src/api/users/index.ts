@@ -238,6 +238,7 @@ export const requestDeleteAccount = async (
 };
 
 export const requestCreateProfile = async (data: ReqChangeProfileData) => {
+  console.log(data)
   const res = await request({
     method: "post",
     endpoint: `users/profiles`,
@@ -248,7 +249,6 @@ export const requestCreateProfile = async (data: ReqChangeProfileData) => {
 };
 
 export const requestUploadImage = async (data: FormData) => {
-  console.log(data);
   const res = await request({
     method: "post",
     endpoint: "users/profiles/upload-image",

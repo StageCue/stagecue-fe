@@ -131,10 +131,10 @@ const ProfileForm = () => {
       try {
         const formData = new FormData();
         formData.append("file", thumbnailFile);
-        const url = await requestUploadThumbnail(formData);
+        const { imageUrl } = await requestUploadThumbnail(formData);
+        setValue("thumbnail", imageUrl);
 
-        setValue("thumbnail", url);
-        return url;
+        return imageUrl;
       } catch (error) {
         console.error("Error uploading images:", error);
       }
@@ -276,16 +276,22 @@ const ProfileForm = () => {
   };
 
   const handleConfirmClick = async (data: ProfileInput) => {
+    const { experiences, height, weight, introduce, title } = data
+    const sanitizedExperiences = experiences.map(({ id, ...rest }) => id ? rest : rest);
     setIsSubmitModalOpen(false);
     const imageUrls = await requestUploadImageFiles();
-    const thumbnailRes = await requestUploadThumbnailFile();
-
+    const thumbnailUrl = await requestUploadThumbnailFile();
+   
     await requestSaveProfile(
       {
-        ...data,
+        experiences: sanitizedExperiences,
+        height,
+        weight,
+        introduce,
+        title,
         isDefault: true,
         images: imageUrls!,
-        thumbnail: thumbnailRes ? thumbnailRes.imageUrl : thumbnailValue,
+        thumbnail:thumbnailUrl ? thumbnailUrl : thumbnailValue,
       },
       id!
     );

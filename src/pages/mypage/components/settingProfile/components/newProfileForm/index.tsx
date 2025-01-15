@@ -121,10 +121,10 @@ const NewProfileForm = () => {
       try {
         const formData = new FormData();
         formData.append("file", thumbnailFile);
-        const url = await requestUploadThumbnail(formData);
-        setValue("thumbnail", url);
+        const { imageUrl } = await requestUploadThumbnail(formData);
+        setValue("thumbnail", imageUrl);
 
-        return url;
+        return imageUrl;
       } catch (error) {
         console.error("Error uploading images:", error);
       }
@@ -227,17 +227,23 @@ const NewProfileForm = () => {
   };
 
   const handleConfirmClick = async (data: ProfileInput) => {
+    const { experiences, height, weight, introduce, title } = data
+    const sanitizedExperiences = experiences.map(({ id, ...rest }) => id ? rest : rest);
     setIsSubmitModalOpen(false);
-    await requestUploadImageFiles();
-    await requestUploadThumbnailFile();
-
+    const imageUrls = await requestUploadImageFiles();
+    const thumbnailUrl = await requestUploadThumbnailFile();
+    
     const res = await requestCreateProfile({
-      ...data,
+       experiences: sanitizedExperiences,
+      height,
+      weight,
+      introduce,
+      title,
       isDefault: true,
-      images: imagesValue,
-      thumbnail: thumbnailValue,
+      images: imageUrls!,
+      thumbnail: thumbnailUrl,
     });
-    console.log(res)
+
     navigate(`/mypage/profiles/${res.id}`);
   };
 
@@ -517,8 +523,8 @@ const NewProfileForm = () => {
               </Button>
             </WithButtonTitleWrapper>
             <ExpGrid>
-              {experiencesValue?.map((exp) => (
-                <ExpBox>
+              {experiencesValue?.map((exp, index) => (
+                <ExpBox key={index}>
                   <ExpDataWrapper>
                     <DataRow>
                       <Property>작품제목</Property>
