@@ -40,12 +40,12 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
             <ArtworkName>{selectedRecruit?.artworkName}</ArtworkName>
           </TitleWrapper>
           <Summary>
-            <SummaryRow>
+            <SummaryRow $grid={true}>
               <PropertyWrapper>
                 <Property>지원 가능 배역</Property>
                 <Value>
-                  {selectedRecruit?.recruitingParts.map((part) => (
-                    <Chip>{part}</Chip>
+                  {selectedRecruit?.recruitingParts.map((part, index) => (
+                    <Chip key={index}>{part}</Chip>
                   ))}
                 </Value>
               </PropertyWrapper>
@@ -81,12 +81,13 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
         </SummaryWrapper>
         <Thumbnails>
           {recruits.map((recruit) => (
-            <Thumbnail
-              key={recruit.id}
-              src={`https://s3.stagecue.co.kr/stagecue/${recruit.thumbnailUrl}`}
-              onClick={() => handleThumbnailClick(recruit)}
-              $isSelected={recruit.id === selectedRecruit?.id}
-            />
+            <ThumbnailContainer key={recruit.id}>
+              <Thumbnail
+                src={`https://s3.stagecue.co.kr/stagecue/${recruit.thumbnailUrl}`}
+                onClick={() => handleThumbnailClick(recruit)}
+                $isSelected={recruit.id === selectedRecruit?.id}
+              />
+            </ThumbnailContainer>
           ))}
         </Thumbnails>
       </RightSideWrapper>
@@ -179,19 +180,26 @@ const Thumbnails = styled.div`
   gap: 13px;
 `;
 
+const ThumbnailContainer = styled.div`
+  position: relative;
+`;
+
 const Thumbnail = styled.img<{ $isSelected: boolean }>`
   border-radius: 8px;
   width: 132px;
   height: 198px;
   border: ${({ $isSelected }) => ($isSelected ? "2px solid #B81716" : "none")};
+  opacity: ${({ $isSelected }) => ($isSelected ? 1 : 0.4)};
   cursor: pointer;
 `;
 
-const SummaryRow = styled.div`
+const SummaryRow = styled.div<{ $grid?: boolean }>`
   width: 671px;
   height: 62px;
-  display: flex;
-  gap: 12px;
+  display: ${({ $grid }) => ($grid ? "grid" : "flex")};
+
+  ${({ $grid }) =>
+    $grid ? `grid-template-columns: 45% auto auto` : "gap: 12px"}
 `;
 
 const PropertyWrapper = styled.div`
@@ -226,6 +234,7 @@ const Chip = styled.div`
   background-color: #f4f4f5;
   color: #818184;
   border-radius: 40px;
+  white-space: nowrap;
 `;
 
 const LocationText = styled.div`

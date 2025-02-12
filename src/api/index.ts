@@ -66,7 +66,7 @@ const request = async ({
       return res.data;
     })
     .catch((error) => {
-      return error;
+      return error?.response?.data;
     });
 };
 

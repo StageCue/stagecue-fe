@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from "@/components/buttons/button";
 import styled from "styled-components";
 import CalendarSVG from "@assets/icons/calendar.svg?react";
@@ -49,7 +50,7 @@ interface EditRecruitInputs {
 
 const EditRecruit = () => {
   const { id } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -92,7 +93,7 @@ const EditRecruit = () => {
   const [addressValue, partsValue, stgAddressValue] = watch([
     "practice.address",
     "recruitingParts",
-    "stage.address"
+    "stage.address",
   ]);
 
   const practiceDatepickerRef = useRef<DatePicker | null>(null);
@@ -164,8 +165,8 @@ const EditRecruit = () => {
       recruitImages,
     });
 
-    if(res.id) {
-    navigate(`/cast/${id}`)
+    if (res.id) {
+      navigate(`/cast/${id}`);
     }
   };
 
@@ -477,7 +478,7 @@ const EditRecruit = () => {
         <InputWrapper>
           <Label>공고 관련 이미지</Label>
           <Images>
-            {imageUrlArray.map(({ url, id }, index) => (
+            {imageUrlArray?.map(({ url, id }, index) => (
               <ImageWrapper key={id}>
                 {!imageFileArray[index].file ? (
                   <RecruitImage
@@ -493,7 +494,7 @@ const EditRecruit = () => {
                 </AbsoluteIconWrapper>
               </ImageWrapper>
             ))}
-            {imageUrlArray.length < 4 && (
+            {imageUrlArray?.length < 4 && (
               <>
                 <FileInput
                   ref={inputImageFileRef}
@@ -548,10 +549,10 @@ const EditRecruit = () => {
               {isDaySelectOpen && (
                 <DaySelector>
                   <DaysWrapper>
-                    {days.map((day, index) => (
+                    {days?.map((day, index) => (
                       <Day
-                        $isSelected={practiceDays[index] === "1"}
                         key={day}
+                        $isSelected={practiceDays[index] === "1"}
                         onClick={() => handleDayClick(index)}
                       >
                         {day}
@@ -654,8 +655,11 @@ const EditRecruit = () => {
               </IconWrapper>
               {isCategorySelectOpen && (
                 <CategorySelector>
-                  {category.map((item, index) => (
-                    <Category key={index} onClick={() => handleCategoryClick(item)}>
+                  {category?.map((item, index) => (
+                    <Category
+                      key={index}
+                      onClick={() => handleCategoryClick(item)}
+                    >
                       {item}
                     </Category>
                   ))}

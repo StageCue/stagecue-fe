@@ -1,7 +1,9 @@
 import styled from "styled-components";
-import ChevronRightSVG from "@/assets/icons/chevron_right_red_s.svg?react";
+import { useNavigate } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
 import Button from "@/components/buttons/button";
 import Cast from "../cast";
+import ChevronRightSVG from "@/assets/icons/chevron_right_red_s.svg?react";
 
 export interface Recruit {
   recruitId: number;
@@ -17,6 +19,13 @@ interface NewPostProps {
 }
 
 const NewPost = ({ recruits }: NewPostProps) => {
+  const navigate = useNavigate();
+  const shouldLoop = recruits && recruits?.length >= 5;
+
+  const handleRecruitClick = () => {
+    navigate("/casts");
+  };
+
   return (
     <NewPostContainer>
       <TitleWrapper>
@@ -30,33 +39,57 @@ const NewPost = ({ recruits }: NewPostProps) => {
           width={110}
           height={32}
           padding="4px 7px"
+          onClick={handleRecruitClick}
         >
           공고 더보기
           <ChevronRightSVG />
         </Button>
       </TitleWrapper>
-      <Recruits>
-        {recruits?.map(
-          ({
-            recruitId,
-            thumbnail,
-            recruitTitle,
-            artworkName,
-            practiceLocation,
-            isScrapping,
-          }) => (
-            <Cast
-              key={recruitId}
-              recruitId={recruitId}
-              thumbnail={thumbnail}
-              recruitTitle={recruitTitle}
-              artworkName={artworkName}
-              practiceLocation={practiceLocation}
-              isScrapping={isScrapping}
-            />
-          )
-        )}
-      </Recruits>
+
+      {recruits?.length >= 0 && (
+        <Recruits>
+          <Swiper
+            direction="horizontal"
+            spaceBetween={20}
+            slidesPerView={5}
+            slidesPerGroup={5}
+            centeredSlides={false}
+            loop={shouldLoop}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+            }}
+            navigation={true}
+            grabCursor={true}
+            pagination={{ clickable: true }}
+          >
+            {recruits?.map(
+              (
+                {
+                  recruitId,
+                  thumbnail,
+                  recruitTitle,
+                  artworkName,
+                  practiceLocation,
+                  isScrapping,
+                },
+                index
+              ) => (
+                <SwiperSlide key={index}>
+                  <Cast
+                    recruitId={recruitId}
+                    thumbnail={thumbnail}
+                    recruitTitle={recruitTitle}
+                    artworkName={artworkName}
+                    practiceLocation={practiceLocation}
+                    isScrapping={isScrapping}
+                  />
+                </SwiperSlide>
+              )
+            )}
+          </Swiper>
+        </Recruits>
+      )}
     </NewPostContainer>
   );
 };

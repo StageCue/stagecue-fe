@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from "styled-components";
 import Button from "../../components/buttons/button";
 import { useNavigate } from "react-router-dom";
@@ -140,6 +141,7 @@ const SocialLoginWrapper = styled.div`
 `;
 
 const WithKaKaoBtn = styled.div`
+  cursor: pointer;
   width: 340px;
   height: 48px;
   border-radius: 10px;
@@ -153,6 +155,7 @@ const WithKaKaoBtn = styled.div`
 `;
 
 const WithNaverBtn = styled.div`
+  cursor: pointer;
   width: 340px;
   height: 48px;
   border-radius: 10px;
@@ -166,6 +169,7 @@ const WithNaverBtn = styled.div`
 `;
 
 const WithGoogleBtn = styled.div`
+  cursor: pointer;
   width: 340px;
   height: 48px;
   border-radius: 10px;

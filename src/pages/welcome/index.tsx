@@ -16,10 +16,11 @@ const Welcome = () => {
 
   const handleNextClick = async () => {
     if (selectedUserType) {
-      const res = await requestChangeUserType({ userType: selectedUserType });
-      if (res.status === 0) {
-        navigate("/");
-      }
+      // const res =
+      await requestChangeUserType({ userType: selectedUserType });
+      // if (res.status === 0) {
+      navigate("/");
+      // }
     }
   };
 
@@ -34,7 +35,7 @@ const Welcome = () => {
           onClick={() => handleUserTypeClick("PERFORMER")}
           $isSelected={selectedUserType === "PERFORMER"}
         >
-          <Image />
+          <Image $isSelected={selectedUserType === "PERFORMER"} />
           <TextWrapper>
             <Type>단원</Type>
             <Description>나의 연기를 보여주고 싶어요</Description>
@@ -44,7 +45,7 @@ const Welcome = () => {
           onClick={() => handleUserTypeClick("TROUPE")}
           $isSelected={selectedUserType === "TROUPE"}
         >
-          <Image />
+          <Image $isSelected={selectedUserType === "TROUPE"} />
           <TextWrapper>
             <Type>극단주</Type>
             <Description>극단을 운영하고 있어요</Description>
@@ -140,8 +141,9 @@ const UserTypeBox = styled.div<{ $isSelected: boolean }>`
     $isSelected ? `var(--color-blue9)` : `var(--color-white)`};
 `;
 
-const Image = styled.div`
+const Image = styled.div<{ $isSelected: boolean }>`
   width: 80px;
   height: 80px;
-  background-color: #d9d9d9;
+  background-color: ${({ $isSelected }) =>
+    $isSelected ? `#b81716ff` : `#d9d9d9`};
 `;

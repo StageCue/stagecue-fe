@@ -188,7 +188,7 @@ const ForgotAccount = () => {
                 <Button
                   variation="solid"
                   btnClass="primary"
-                  disabled={certCode.length === 0 || certificatedValue}
+                  // disabled={certCode.length === 0 || certificatedValue}
                   width={112}
                   height={48}
                   fontSize={16}

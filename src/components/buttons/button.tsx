@@ -70,6 +70,7 @@ const ButtonContainer = styled.button<{
   $letterSpacing: number;
   $lineHeight: number;
 }>`
+  white-space: nowrap;
   cursor: pointer;
   border-radius: 10px;
   display: flex;

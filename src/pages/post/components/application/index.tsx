@@ -43,12 +43,12 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
   const getProfileList = async () => {
     const res = await requestProfileList();
     setProfiles(res.profiles);
-    const defaultProfile = res?.profiles.find(
-      (profile: Profile) => profile.isDefault === true
+    const defaultProfile = res?.profiles?.find(
+      (profile: Profile) => profile?.isDefault === true
     );
 
     if (!isApplied) {
-      setCheckedProfileId(defaultProfile.id);
+      setCheckedProfileId(defaultProfile?.id);
     }
   };
 
@@ -83,7 +83,7 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
     <ApplicationContainer>
       {!isApplied && (
         <ApplyWrapper>
-          {profiles.length !== 0 ? (
+          {profiles?.length !== 0 ? (
             <ProfilesWrapper>
               <ProfilesTitle>지원 프로필</ProfilesTitle>
               <Profiles>

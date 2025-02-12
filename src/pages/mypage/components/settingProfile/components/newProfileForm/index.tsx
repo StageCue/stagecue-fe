@@ -174,22 +174,19 @@ const NewProfileForm = () => {
   };
 
   const handleSaveExpClick = () => {
-    const newExp =  {
+    const newExp = {
       id: generateId(),
       artworkName: artworkNameValue,
       artworkPart: artworkPartValue,
       troupe: troupeValue,
       startDate: startDateValue,
       endDate: endDateValue,
-    }
+    };
     if (experiencesValue) {
-    setValue("experiences", [
-      ...experiencesValue,
-     newExp
-    ]); } else {
-      setValue("experiences", [
-       newExp]
-    )}
+      setValue("experiences", [...experiencesValue, newExp]);
+    } else {
+      setValue("experiences", [newExp]);
+    }
 
     setIsAddExp(false);
   };
@@ -227,14 +224,16 @@ const NewProfileForm = () => {
   };
 
   const handleConfirmClick = async (data: ProfileInput) => {
-    const { experiences, height, weight, introduce, title } = data
-    const sanitizedExperiences = experiences.map(({ id, ...rest }) => id ? rest : rest);
+    const { experiences, height, weight, introduce, title } = data;
+    const sanitizedExperiences = experiences.map(({ id, ...rest }) =>
+      id ? rest : rest
+    );
     setIsSubmitModalOpen(false);
     const imageUrls = await requestUploadImageFiles();
     const thumbnailUrl = await requestUploadThumbnailFile();
-    
+
     const res = await requestCreateProfile({
-       experiences: sanitizedExperiences,
+      experiences: sanitizedExperiences,
       height,
       weight,
       introduce,
@@ -872,6 +871,7 @@ const ValueWrapper = styled.div`
 const ContactDataRow = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 `;
 

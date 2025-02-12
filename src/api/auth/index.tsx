@@ -9,6 +9,7 @@ interface ReqSignupParams {
   birthday: string;
   gender: string;
   terms: boolean;
+  userType: string;
 }
 
 interface ReqCellPhoneCertCode {

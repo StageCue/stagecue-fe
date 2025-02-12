@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { requestCasts } from "@/api/cast";
 import Cast from "@/pages/home/components/cast";
 import useSearchStore from "@/store/search";
@@ -10,33 +11,32 @@ const Search = () => {
   const { query } = useSearchStore();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-
   const [currentFilter, _] = useState("공고");
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["results"],
-    queryFn: ({pageParam = 0}) =>requestCasts({offset: `${pageParam}`, limit:"16", query }),
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["results"],
+      queryFn: ({ pageParam = 0 }) =>
+        requestCasts({ offset: `${pageParam}`, limit: "16", query }),
       initialPageParam: 0,
       getNextPageParam: (lastPage, allPages) => {
-        const totalLoaded = allPages.flatMap((page) => page.data).length; 
+        const totalLoaded = allPages.flatMap((page) => page.data).length;
         if (totalLoaded >= lastPage.totalCount) {
-          return undefined; 
+          return undefined;
         }
         return allPages.length;
       },
-    })
+    });
 
-
-    const results = useMemo(
-      () => data?.pages.flatMap((page) => page.recruits) || [],
-      [data]
-    );
+  const results = useMemo(
+    () => data?.pages.flatMap((page) => page.recruits) || [],
+    [data]
+  );
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["results"]}); 
+    queryClient.invalidateQueries({ queryKey: ["results"] });
   }, [query]);
 
   useEffect(() => {
@@ -48,12 +48,12 @@ const Search = () => {
         }
       },
       {
-        root: null, 
+        root: null,
         rootMargin: "200px",
         threshold: 1.0,
       }
     );
-    const target = loadMoreRef.current; 
+    const target = loadMoreRef.current;
     if (target) {
       observer.observe(target);
     }
@@ -64,12 +64,12 @@ const Search = () => {
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
- 
-
   return (
     <SearchContainer>
       <FilterWrapper>
-        <Filter $isSelected={currentFilter === "공고"}>{`공고(${results.length})`}</Filter>
+        <Filter
+          $isSelected={currentFilter === "공고"}
+        >{`공고(${results.length})`}</Filter>
       </FilterWrapper>
       {results.length > 0 ? (
         <CastGrid>
@@ -96,7 +96,7 @@ const Search = () => {
       ) : (
         <NoResult />
       )}
-     <div ref={loadMoreRef} />
+      <div ref={loadMoreRef} />
     </SearchContainer>
   );
 };

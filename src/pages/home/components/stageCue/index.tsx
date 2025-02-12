@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import styled from "styled-components";
 import PlusSVG from "@assets/icons/plus.svg?react";
 import AboutSVG from "@assets/images/about.svg";
@@ -25,8 +26,8 @@ const StageCue = ({ notices }: StageCueProps) => {
           </IconWrapper>
         </TitleWrapper>
         <Posts>
-          {notices?.map(({ title, createdAt }) => (
-            <Post>
+          {notices?.map(({ title, createdAt }, index) => (
+            <Post key={index}>
               <PostTitle>{title}</PostTitle>
               <Date>{createdAt}</Date>
             </Post>
@@ -82,13 +83,18 @@ const Higliting = styled.div`
   z-index: -10;
 `;
 
-const Posts = styled.div``;
+const Posts = styled.div`
+  height: 100%;
+  overflow-y: scroll;
+`;
 
 const Post = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;
 
 const PostTitle = styled.div`

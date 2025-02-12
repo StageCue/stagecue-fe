@@ -47,66 +47,68 @@ const DefaultHeader = () => {
 
   return (
     <DefaultHeaderContainer>
-      <LeftSideWrapper>
-        <Logo
-          onClick={handleLogoClick}
-          src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg"
-        />
-        <PostPageBtn onClick={handlePostPageClick}>모집공고</PostPageBtn>
-      </LeftSideWrapper>
-      <RightSideWrapper>
-        <Searchbar />
-        {sessionStore.isLoggined ? (
-          <ButtonWrapper>
+      <HeaderContainer>
+        <LeftSideWrapper>
+          <Logo
+            onClick={handleLogoClick}
+            src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg"
+          />
+          <PostPageBtn onClick={handlePostPageClick}>모집공고</PostPageBtn>
+        </LeftSideWrapper>
+        <RightSideWrapper>
+          <Searchbar />
+          {sessionStore.isLoggined ? (
+            <ButtonWrapper>
+              <Button
+                variation="outlined"
+                btnClass="primary"
+                width={114}
+                height={32}
+                padding="7px 14px"
+                fontSize={13}
+                onClick={handleMymenuClick}
+              >
+                {sessionStore.username}님
+                <IconWrapper>
+                  <ChevronDownSVG />
+                </IconWrapper>
+              </Button>
+              {isMymenuShowing && (
+                <MyMenu>
+                  <Option onClick={handleMyStageClick}>My Stage</Option>
+                  <Option onClick={handleLogoutClick}>로그아웃</Option>
+                </MyMenu>
+              )}
+            </ButtonWrapper>
+          ) : (
             <Button
-              variation="outlined"
+              variation="solid"
               btnClass="primary"
               width={114}
               height={32}
               padding="7px 14px"
               fontSize={13}
-              onClick={handleMymenuClick}
+              onClick={handleLoginClick}
             >
-              {sessionStore.username}님
-              <IconWrapper>
-                <ChevronDownSVG />
-              </IconWrapper>
+              로그인/회원가입
             </Button>
-            {isMymenuShowing && (
-              <MyMenu>
-                <Option onClick={handleMyStageClick}>My Stage</Option>
-                <Option onClick={handleLogoutClick}>로그아웃</Option>
-              </MyMenu>
-            )}
-          </ButtonWrapper>
-        ) : (
-          <Button
-            variation="solid"
-            btnClass="primary"
-            width={114}
-            height={32}
-            padding="7px 14px"
-            fontSize={13}
-            onClick={handleLoginClick}
-          >
-            로그인/회원가입
-          </Button>
-        )}
+          )}
 
-        {isTroupeUser && (
-          <Button
-            variation="outlined"
-            btnClass="assistive"
-            width={102}
-            height={32}
-            padding="7px 14px"
-            fontSize={13}
-            onClick={handleBizClick}
-          >
-            극단주 서비스
-          </Button>
-        )}
-      </RightSideWrapper>
+          {isTroupeUser && (
+            <Button
+              variation="outlined"
+              btnClass="assistive"
+              width={102}
+              height={32}
+              padding="7px 14px"
+              fontSize={13}
+              onClick={handleBizClick}
+            >
+              극단주 서비스
+            </Button>
+          )}
+        </RightSideWrapper>
+      </HeaderContainer>
     </DefaultHeaderContainer>
   );
 };
@@ -114,16 +116,26 @@ const DefaultHeader = () => {
 export default DefaultHeader;
 
 const DefaultHeaderContainer = styled.div`
-  width: 100%;
-  height: 60px;
-  padding: 14px 190px;
-  background-color: white;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  // TODO: min-width는 일단 HomeContainer의 크기로 해놨는데 반응형으로 하면 바꿔야합니다.
+  min-width: 1440px;
+  height: 60px;
+  background-color: white;
   position: fixed;
-  justify-content: space-between;
   z-index: 400;
   border-bottom: 1px solid #e1e2e4;
+`;
+
+const HeaderContainer = styled.div`
+  width: 1440px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 190px;
 `;
 
 const LeftSideWrapper = styled.div`

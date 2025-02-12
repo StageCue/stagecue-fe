@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import { useForm, Controller } from "react-hook-form";
 import styled from "styled-components";
 import { SignupInputs } from "../../../types/user";
@@ -51,6 +52,21 @@ const Signup = () => {
     );
   };
 
+  const defaultValues = {
+    email: "",
+    name: "",
+    phoneNumber: "",
+    password: "",
+    certificated: false,
+    birthday: "",
+    gender: "",
+    confirmPassword: "",
+    ageCheck: false,
+    agreeServicePolicy: false,
+    agreePrivatePolicy: false,
+    userType: "PERFORMER",
+  };
+
   const {
     register,
     handleSubmit,
@@ -60,7 +76,7 @@ const Signup = () => {
     setError,
     trigger,
     control,
-  } = useForm<SignupInputs>({ mode: "all" });
+  } = useForm<SignupInputs>({ mode: "all", defaultValues });
 
   const [
     emailValue,
@@ -85,6 +101,7 @@ const Signup = () => {
     "agreeServicePolicy",
     "agreePrivatePolicy",
     "birthday",
+    "userType",
   ]);
 
   const isAllInputHasValue = useMemo(() => {
@@ -114,7 +131,8 @@ const Signup = () => {
   ]);
 
   const onSubmitSignup = async (data: SignupInputs) => {
-    const { email, name, phoneNumber, password, birthday, gender } = data;
+    const { email, name, phoneNumber, password, birthday, gender, userType } =
+      data;
 
     const userData = {
       username: name,
@@ -124,7 +142,9 @@ const Signup = () => {
       birthday,
       gender,
       terms: true,
+      userType,
     };
+
     const res = await requestSignup(userData, registerToken);
 
     if (res) {
@@ -214,10 +234,12 @@ const Signup = () => {
       token: certCode,
     });
 
-    if (res) {
+    if (!res?.error) {
       setValue("certificated", true);
       setRegisterToken(res.token);
     } else {
+      console.error(res?.error);
+      setValue("certificated", false);
       setError("certificated", {
         type: "verify",
         message: "인증번호를 확인해주세요.",
@@ -371,7 +393,7 @@ const Signup = () => {
                 <Button
                   variation="solid"
                   btnClass="primary"
-                  disabled={certCode.length === 0 || certificatedValue}
+                  // disabled={certCode.length === 0 || certificatedValue}
                   width={112}
                   height={48}
                   fontSize={16}

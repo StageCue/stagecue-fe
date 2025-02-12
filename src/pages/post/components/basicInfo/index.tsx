@@ -46,8 +46,8 @@ const BasicInfo = ({
           연기 가능 배역
         </Property>
         <Chips>
-          {recruitingParts?.map((part) => (
-            <Chip>{part}</Chip>
+          {recruitingParts?.map((part, index) => (
+            <Chip key={index}>{part}</Chip>
           ))}
         </Chips>
       </InfoWrapper>

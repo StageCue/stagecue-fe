@@ -49,6 +49,7 @@ const CastContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   cursor: pointer;
+  margin-right: 20px;
 `;
 
 const Poster = styled.img`

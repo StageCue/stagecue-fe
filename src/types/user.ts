@@ -17,6 +17,7 @@ export interface SignupInputs {
   ageCheck: boolean;
   agreeServicePolicy: boolean;
   agreePrivatePolicy: boolean;
+  userType: string;
 }
 
 export interface ForgotAccountInputs {

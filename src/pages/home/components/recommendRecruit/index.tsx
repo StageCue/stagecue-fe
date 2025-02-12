@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useSessionStore from "@/store/session";
 import styled from "styled-components";
 import FitRecruitSlide from "../fitRecruitSlide";
 
-const RecommendRecruit = () => {
+const RecommendRecruit = ({ recommendRecruits }: any) => {
   const { username } = useSessionStore();
 
   return (
@@ -10,11 +11,14 @@ const RecommendRecruit = () => {
       <TitleWrapper>
         <Title>
           {username}님을 위한&nbsp;
-          <Strong> 추천공고 </Strong>에요!
-          <Higliting />
+          <Strong>
+            추천공고
+            <Higliting />
+          </Strong>
+          에요!
         </Title>
       </TitleWrapper>
-      <FitRecruitSlide />
+      <FitRecruitSlide recommendRecruits={recommendRecruits} />
     </RecommendRecruitContainer>
   );
 };
@@ -46,12 +50,13 @@ const Title = styled.div`
 `;
 
 const Strong = styled.div`
+  position: relative;
   font-weight: var(--font-bold);
 `;
 
 const Higliting = styled.div`
   position: absolute;
-  left: 110px;
+  left: 0px;
   bottom: 7px;
   width: 100px;
   height: 4px;

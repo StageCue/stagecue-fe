@@ -195,7 +195,7 @@ const PgBtnWrapper = styled.div<{ $isActive: boolean }>`
   align-items: center;
 
   rect {
-    fill-opacity: ${({ $isActive }) => $isActive && "1"};
+    fillopacity: ${({ $isActive }) => $isActive && "1"};
   }
 `;
 

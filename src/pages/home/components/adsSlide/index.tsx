@@ -13,28 +13,30 @@ SwiperCore.use([Autoplay, Navigation, Pagination]);
 const AdsSlide = ({ banners }: AdsSlideProps) => {
   return (
     <AdsSlideContainer>
-      <Swiper
-        direction="horizontal"
-        spaceBetween={20}
-        slidesPerView={1}
-        centeredSlides={true}
-        loop={true}
-        autoplay={{
-          delay: 2500,
-          disableOnInteraction: false,
-        }}
-        navigation={true}
-        pagination={{ clickable: true }}
-        grabCursor={true}
-      >
-        {banners?.map((banner) => (
-          <SwiperSlide>
-            <SlideDiv
-              src={`https://s3.stagecue.co.kr/stagecue/${banner.imageUrl}`}
-            />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      {banners?.length > 0 && (
+        <Swiper
+          direction="horizontal"
+          spaceBetween={20}
+          slidesPerView={"auto"}
+          centeredSlides={true}
+          loop={true}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+          }}
+          navigation={true}
+          pagination={{ clickable: true }}
+          grabCursor={true}
+        >
+          {banners?.map((banner, index) => (
+            <SwiperSlide key={index}>
+              <SlideDiv
+                src={`https://s3.stagecue.co.kr/stagecue/${banner.imageUrl}`}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
     </AdsSlideContainer>
   );
 };

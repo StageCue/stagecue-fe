@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import ChevronDownSVG from "@assets/icons/chevron_down.svg?react";
@@ -10,7 +11,7 @@ import Button from "@components/buttons/button";
 import { requestCasts } from "@/api/cast";
 import Cast from "@/pages/home/components/cast";
 import RangeInput from "./components/rangeInput";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 type genreType = "연극" | "뮤지컬" | "댄스";
 type zoneType =
@@ -33,7 +34,6 @@ const List = () => {
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-
   const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
   const [selectedZone, setSelectedZone] = useState(["전체지역"]);
   const [selectedDayPicker, setSelectedDayPicker] = useState<string>("주말");
@@ -50,7 +50,7 @@ const List = () => {
 
   const [isAppliedZone, setIsAppliedZone] = useState<boolean>(false);
   const [isAppliedDay, setIsAppliedDay] = useState<boolean>(false);
-  const [isAppliedCost] = useState<boolean>(false);
+  const [isAppliedCost, setIsApplicatedCost] = useState<boolean>(false);
 
   const [appliedZone, setAppliedZone] = useState<string[]>(["전체지역"]);
   const [appliedDay, setAppliedDay] = useState<string[]>([
@@ -63,7 +63,6 @@ const List = () => {
     "1",
   ]);
   const [appliedCost, setAppliedCost] = useState<string>("");
-
   const [minCost, setMinCost] = useState<string>("10000");
   const [maxCost, setMaxCost] = useState<string>("500000");
 
@@ -73,7 +72,6 @@ const List = () => {
   const [isDayFilterShowing, setIsDayFilterShowing] = useState<boolean>(false);
   const [isCostFilterShowing, setIsCostFilterShowing] =
     useState<boolean>(false);
-
   const [currentOrderBy, setCurrentOrderBy] = useState<"newest" | "popular">(
     "newest"
   );
@@ -240,7 +238,7 @@ const List = () => {
     setMinCost(cost);
   };
 
-  const onChanageMaxCost = (cost: string) => {
+  const onChangeMaxCost = (cost: string) => {
     setMaxCost(cost);
   };
 
@@ -264,32 +262,43 @@ const List = () => {
     }
   }, [practiceDays]);
 
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: [
+        "recruits",
+        {
+          appliedDay,
+          selectedZone,
+          selectedGenre,
+          currentOrderBy,
+          appliedCost,
+        },
+      ],
+      queryFn: ({ pageParam = 0 }) =>
+        requestCasts({
+          offset: `${pageParam}`,
+          limit: "16",
+          category: parsingCategory(selectedGenre),
+          locations: selectedZone?.find((zone) => zone === "전체지역")
+            ? ""
+            : selectedZone?.join(","),
+          orderBy: currentOrderBy,
+          feeRange: appliedCost,
+        }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, allPages) => {
+        const totalLoaded = allPages.flatMap((page) => page.data).length;
+        if (totalLoaded >= lastPage.totalCount) {
+          return undefined;
+        }
+        return allPages.length;
+      },
+    });
 
-  
-const queryClient = useQueryClient()
-
-const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-  queryKey: ["recruits"],
-  queryFn: ({pageParam = 0}) =>requestCasts({offset: `${pageParam}`, limit:"16", category: parsingCategory(selectedGenre),
-    locations: appliedZone[0] === "전체지역" ? "" : appliedZone.join(";"),
-    orderBy: currentOrderBy,
-    feeRange: appliedCost, }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      const totalLoaded = allPages.flatMap((page) => page.data).length; 
-      if (totalLoaded >= lastPage.totalCount) {
-        return undefined; 
-      }
-      return allPages.length;
-    },
-  })
-
-
-const recruits = useMemo(
-  () => data?.pages.flatMap((page) => page.recruits) || [],
-  [data]
-);
-
+  const recruits = useMemo(
+    () => data?.pages.flatMap((page) => page.recruits) || [],
+    [data]
+  );
 
   const parsingCategory = (category: string) => {
     switch (category) {
@@ -321,16 +330,16 @@ const recruits = useMemo(
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
-      popupMenuRef.current &&
-      !popupMenuRef.current.contains(event.target as Node) &&
-      genreButtonRef.current &&
-      !genreButtonRef.current.contains(event.target as Node) &&
-      dayButtonRef.current &&
-      !dayButtonRef.current.contains(event.target as Node) &&
-      zoneButtonRef.current &&
-      !zoneButtonRef.current.contains(event.target as Node) &&
-      costButtonRef.current &&
-      !costButtonRef.current.contains(event.target as Node)
+      popupMenuRef?.current &&
+      !popupMenuRef?.current?.contains(event.target as Node) &&
+      genreButtonRef?.current &&
+      !genreButtonRef?.current?.contains(event.target as Node) &&
+      dayButtonRef?.current &&
+      !dayButtonRef?.current?.contains(event.target as Node) &&
+      zoneButtonRef?.current &&
+      !zoneButtonRef?.current?.contains(event.target as Node) &&
+      costButtonRef?.current &&
+      !costButtonRef?.current?.contains(event.target as Node)
     ) {
       setIsGenreMenuShowing(false);
       setIsZoneFilterShowing(false);
@@ -347,25 +356,21 @@ const recruits = useMemo(
   }, []);
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["recruits"]}); 
-  }, [appliedDay, selectedZone, selectedGenre, currentOrderBy, appliedCost]);
-
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       },
       {
-        root: null, 
+        root: null,
         rootMargin: "200px",
         threshold: 1.0,
       }
     );
-    const target = loadMoreRef.current; 
+
+    const target = loadMoreRef.current;
     if (target) {
       observer.observe(target);
     }
@@ -375,8 +380,6 @@ const recruits = useMemo(
       }
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
- 
 
   return (
     <ListContainer>
@@ -515,7 +518,7 @@ const recruits = useMemo(
               <RangeInput
                 minCost={minCost}
                 maxCost={maxCost}
-                onChangeMaxCost={onChanageMaxCost}
+                onChangeMaxCost={onChangeMaxCost}
                 onChangeMinCost={onChangeMinCost}
               />
               <FilterMenuFooter>
@@ -553,34 +556,38 @@ const recruits = useMemo(
             </Button>
           </ResetFilterWrapper>
         </FilterWrapper>
-        <OrderByWrapper>
+        <OrderByWrapper $isSelected={currentOrderBy === "newest"}>
+          <ChecklineSVG />
           <IconWrapper
             onClick={handleNewestClick}
             $isSelected={currentOrderBy === "newest"}
           >
-            <ChecklineSVG />
             최신순
           </IconWrapper>
+          <ElipsisSVG />
           <IconWrapper
             onClick={handlePopularClick}
             $isSelected={currentOrderBy === "popular"}
           >
-            <ElipsisSVG />
             인기순
           </IconWrapper>
         </OrderByWrapper>
       </FilterOrderByWrapper>
       <CastGrid>
         {recruits?.map(
-          ({
-            recruitId,
-            recruitTitle,
-            artworkName,
-            practiceLocation,
-            isScrapping,
-            thumbnail,
-          }) => (
+          (
+            {
+              recruitId,
+              recruitTitle,
+              artworkName,
+              practiceLocation,
+              isScrapping,
+              thumbnail,
+            },
+            index
+          ) => (
             <Cast
+              key={index}
               recruitId={recruitId}
               recruitTitle={recruitTitle}
               artworkName={artworkName}
@@ -857,7 +864,6 @@ const Day = styled.div<{ $isSelected: boolean }>`
   cursor: pointer;
 `;
 
-
 const CastGrid = styled.div`
   display: grid;
   width: 920px;
@@ -870,28 +876,29 @@ const ResetFilterWrapper = styled.div`
   margin-left: 16px;
 `;
 
-const OrderByWrapper = styled.div`
+const OrderByWrapper = styled.div<{ $isSelected: boolean }>`
   display: flex;
   gap: 4px;
-  align-items: center;
-`;
-
-const IconWrapper = styled.div<{ $isSelected: boolean }>`
-  cursor: pointer;
-  width: 64px;
-  height: 24px;
-  display: flex;
   align-items: center;
 
   svg {
     path {
-      stroke: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#c7c8c9")};
+      stroke: #b81716;
     }
 
     circle {
-      fill: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#c7c8c9")};
+      fill: #c7c8c9;
     }
   }
+`;
+
+const IconWrapper = styled.div<{ $isSelected: boolean }>`
+  cursor: pointer;
+  width: 40px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 
   color: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#c7c8c9")};
 `;
