@@ -34,15 +34,11 @@ pipeline {
                 script {
 
                 echo 'cloning git repository...'
-                // git branch: "${env.BRANCH_NAME}",
-                // url: "${env.GIT_REPO_URL}",
-                // credentialsId: "${env.GIT_CREDENTIALS}"
-                git branch: "main",
+                git branch: "${env.BRANCH_NAME}",
                 url: "${env.GIT_REPO_URL}",
-                credentialsId: "github-jenkins"
+                credentialsId: "${env.GIT_CREDENTIALS}"
 
-                // echo "Cloned ${env.BRANCH_NAME} repository successfully."
-                echo "Cloned main repository successfully."
+                echo "Cloned ${env.BRANCH_NAME} repository successfully."
                 }
             }
         }
@@ -53,10 +49,7 @@ pipeline {
             steps {
                 script {
                     echo "installing dependencies..."
-                    sh """
-                        npm install -g yarn
-                        yarn install
-                    """
+                    yarn "install"
                     echo "Installed successfully dependencies"
                 }
             }
