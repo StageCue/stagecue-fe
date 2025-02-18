@@ -41,7 +41,8 @@ pipeline {
                 url: "${env.GIT_REPO_URL}",
                 credentialsId: "github-jenkins"
 
-                echo "Cloned ${env.BRANCH_NAME} repository successfully."
+                // echo "Cloned ${env.BRANCH_NAME} repository successfully."
+                echo "Cloned main repository successfully."
                 }
             }
         }
