@@ -34,9 +34,12 @@ pipeline {
                 script {
 
                 echo 'cloning git repository...'
-                git branch: "${env.BRANCH_NAME}",
+                // git branch: "${env.BRANCH_NAME}",
+                // url: "${env.GIT_REPO_URL}",
+                // credentialsId: "${env.GIT_CREDENTIALS}"
+                git branch: "main",
                 url: "${env.GIT_REPO_URL}",
-                credentialsId: "${env.GIT_CREDENTIALS}"
+                credentialsId: "github-jenkins"
 
                 echo "Cloned ${env.BRANCH_NAME} repository successfully."
                 }
