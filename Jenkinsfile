@@ -7,7 +7,7 @@ pipeline {
     //    DOCKERHUB_CREDENTIALS = credentials("dockerhub_jenkins")
        DOCKERHUB_CREDENTIALS = "dockerhub_jenkins"
        DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-       DOCKERHUB_REPO = 'dudn1933/stagecue-fe'
+       DOCKERHUB_REPO = 'flgksrmf/stagecue-fe'
 
        PROD_SERVER = "129.154.49.243"
        PROD_USER = "ubuntu"
@@ -83,8 +83,12 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId:"dockerhub_jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                         echo "Pushing Docker Image...."
-                        sh "docker login -u $USERNAME -p $PASSWORD"
-                        sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
+                        // sh "docker login -u $USERNAME -p $PASSWORD"
+                        // sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
+                        sh """
+                            echo "$PASSWORD" | docker login -u "$USERNAME" --password-stdin
+                            docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}
+                        """
                         echo "Pushed Docker image Dockerhub sccessfully."
                     }
                 }
