@@ -2,11 +2,11 @@ pipeline {
 
     environment {
        GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
-       GIT_CREDENTIALS = credentials("github-jenkins")
+       GIT_CREDENTIALS = credentials("github_jenkins")
 
-       DOCKERHUB_CREDENTIALS = credentials("dockerhub-jenkins")
+       DOCKERHUB_CREDENTIALS = credentials("dockerhub_jenkins")
        DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
-       DOCKERHUB_REPO = 'beomseokchoi/stagecue-fe'
+       DOCKERHUB_REPO = 'dudn1933/stagecue-fe'
 
        PROD_SERVER = "129.154.49.243"
        PROD_USER = "ubuntu"
