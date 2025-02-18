@@ -2,9 +2,10 @@ pipeline {
 
     environment {
        GIT_REPO_URL = 'https://github.com/StageCue/stagecue-fe.git'
-       GIT_CREDENTIALS = credentials("github_jenkins")
+    //    GIT_CREDENTIALS = credentials("github_jenkins")
 
-       DOCKERHUB_CREDENTIALS = credentials("dockerhub_jenkins")
+    //    DOCKERHUB_CREDENTIALS = credentials("dockerhub_jenkins")
+       DOCKERHUB_CREDENTIALS = "dockerhub_jenkins"
        DOCKER_IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
        DOCKERHUB_REPO = 'dudn1933/stagecue-fe'
 
@@ -36,7 +37,8 @@ pipeline {
                 echo 'cloning git repository...'
                 git branch: "${env.BRANCH_NAME}",
                 url: "${env.GIT_REPO_URL}",
-                credentialsId: "${env.GIT_CREDENTIALS}"
+                // credentialsId: "${env.GIT_CREDENTIALS}"
+                credentialsId: "github_jenkins"
 
                 echo "Cloned ${env.BRANCH_NAME} repository successfully."
                 }
@@ -79,7 +81,7 @@ pipeline {
         stage("Pushing Docker Image to Dockerhub"){
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
+                    withCredentials([usernamePassword(credentialsId:"dockerhub_jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                         echo "Pushing Docker Image...."
                         sh "docker login -u $USERNAME -p $PASSWORD"
                         sh "docker push ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}"
@@ -109,7 +111,7 @@ pipeline {
                script {
                     echo 'deploying application to prod server...'
                   
-                        withCredentials([usernamePassword(credentialsId:"dockerhub-jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
+                        withCredentials([usernamePassword(credentialsId:"dockerhub_jenkins", usernameVariable: "USERNAME", passwordVariable: "PASSWORD" )]) {
                             sh """
                                 ssh ${STG_USER}@${STG_SERVER} << 'EOF'
                                 docker stop stagecue-fe || true
