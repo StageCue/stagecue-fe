@@ -53,7 +53,10 @@ pipeline {
             steps {
                 script {
                     echo "installing dependencies..."
-                    sh "yarn install"
+                    sh """
+                        npm install -g yarn
+                        yarn install
+                    """
                     echo "Installed successfully dependencies"
                 }
             }
