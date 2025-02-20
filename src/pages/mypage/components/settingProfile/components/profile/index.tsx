@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import ChevronRightSVG from "@assets/icons/chevron_right.svg?react";
+import Button from "@/components/buttons/button";
 
 interface ProfileProps {
   id: number;
@@ -11,10 +12,12 @@ interface ProfileProps {
   weight: number;
   thumbnail: string;
   isDefault: boolean;
+  handleRemoveProfile: (id: string | number) => void;
   onClick: () => void;
 }
 
 const Profile = ({
+  id,
   title,
   duration,
   birthday,
@@ -23,10 +26,22 @@ const Profile = ({
   weight,
   thumbnail,
   isDefault,
+  handleRemoveProfile,
   onClick,
 }: ProfileProps) => {
   return (
     <ProfileContainer>
+      <PositionBox>
+        <Button
+          variation="solid"
+          btnClass="primary"
+          width={80}
+          height={28}
+          onClick={() => handleRemoveProfile(id)}
+        >
+          Delete
+        </Button>
+      </PositionBox>
       {isDefault && <DefaultProfileTag>기본프로필</DefaultProfileTag>}
       <ProfileWrapper>
         <ProfileImage src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`} />
@@ -63,6 +78,7 @@ const Profile = ({
 export default Profile;
 
 const ProfileContainer = styled.div`
+  position: relative;
   width: 685px;
   min-height: 210px;
   border-radius: 12px;
@@ -72,6 +88,12 @@ const ProfileContainer = styled.div`
   align-items: flex-start;
   flex-direction: column;
   gap: 9.7px;
+`;
+
+const PositionBox = styled.div`
+  position: absolute;
+  right: 16px;
+  top: 16px;
 `;
 
 const ProfileImage = styled.img`

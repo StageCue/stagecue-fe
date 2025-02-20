@@ -9,6 +9,10 @@ import {
   requestDeleteAccountToken,
   requestVerifyDeleteAccount,
 } from "@/api/users";
+import ModalPortal from "@/components/modal/portal";
+import Overlay from "@/components/modal/overlay";
+import { useNavigate } from "react-router-dom";
+import useSessionStore from "@/store/session";
 
 interface DeleteAccountInputs {
   email: string;
@@ -17,38 +21,39 @@ interface DeleteAccountInputs {
 }
 
 const DeleteAccount = () => {
+  const navigate = useNavigate();
+  const sessionStore = useSessionStore();
+  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
+
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [emailRequestToken, setEmailRequestToken] = useState("");
   const [deleteUpdateToken, setDeleteUpdateToken] = useState("");
   const {
     register,
-    handleSubmit,
     getValues,
     clearErrors,
     setError,
     formState: { errors, dirtyFields },
     setValue,
+    watch,
   } = useForm<DeleteAccountInputs>();
+
+  const isAgreed = watch("isAgreed");
 
   const handleCheckboxClick = () => {
     if (isVerified) {
       const isAgreed = getValues("isAgreed");
-      if (isAgreed) {
-        setValue("isAgreed", false);
-      } else {
-        setValue("isAgreed", true);
-      }
+      setValue("isAgreed", !isAgreed);
     }
   };
 
   const handleSendEmailClick = async () => {
     const email = getValues("email");
-    console.log(email);
-    const { requestToken } = await requestDeleteAccountToken(email);
+    const res = await requestDeleteAccountToken(email);
 
-    if (requestToken) {
-      setEmailRequestToken(requestToken);
+    if (res?.requestToken) {
+      setEmailRequestToken(res.requestToken);
       setIsCodeSent(true);
     }
   };
@@ -69,13 +74,27 @@ const DeleteAccount = () => {
     }
   };
 
-  const onSubmitDeleteAccout = async () => {
-    const res = await requestDeleteAccount(
-      getValues("isAgreed"),
-      deleteUpdateToken
-    );
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isDeleteAccount, setIsDeleteAccount] = useState(false);
 
-    return res;
+  const handleIsOpenModal = () => {
+    setIsOpenModal(true);
+  };
+
+  const onSubmitDeleteAccount = async () => {
+    const res = await requestDeleteAccount(isAgreed, deleteUpdateToken);
+
+    if (res?.error) {
+      return;
+    }
+
+    setIsDeleteAccount(true);
+  };
+
+  const handleMoveToLoginPage = () => {
+    sessionStore.logoutSession();
+    clearUserSessionStorage();
+    navigate("/");
   };
 
   return (
@@ -109,7 +128,7 @@ const DeleteAccount = () => {
         <Article>본인 확인</Article>
         <Description>본인 확인을 위해 이메일 인증을 완료해주세요.</Description>
       </Paragraph>
-      <Form onSubmit={handleSubmit(onSubmitDeleteAccout)}>
+      <Form>
         <Inputs>
           <Label>이메일</Label>
           <ShortInputWrapper>
@@ -150,6 +169,7 @@ const DeleteAccount = () => {
               >
                 <VerifyInput {...register("code")} />
                 <Button
+                  type="button"
                   variation="text"
                   btnClass="primary"
                   width={56}
@@ -172,25 +192,133 @@ const DeleteAccount = () => {
           )}
         </Inputs>
         <CheckboxInputWrapper onClick={handleCheckboxClick}>
-          {getValues("isAgreed") ? <RadioCheckedSVG /> : <RadioSVG />}
+          {isAgreed ? (
+            <RadioCheckedSVG fill="#b81716" />
+          ) : (
+            <RadioSVG fill="transparent" />
+          )}
           <CheckboxLabel>
             안내 사항을 모두 확인했으며, 이에 동의합니다.
           </CheckboxLabel>
         </CheckboxInputWrapper>
         <Button
+          type="button"
           variation="solid"
           btnClass="primary"
           width={340}
-          disabled={!isVerified}
+          disabled={!isVerified || !isAgreed}
+          onClick={handleIsOpenModal}
         >
           탈퇴하기
         </Button>
       </Form>
+      {isOpenModal && (
+        <ModalPortal>
+          <Overlay>
+            <DeleteModal>
+              <DeleteModalContent>
+                <DeleteModalTitle>
+                  {isDeleteAccount
+                    ? "탈퇴가 완료되었습니다."
+                    : "탈퇴 하시겠습니까?"}
+                </DeleteModalTitle>
+                <DeleteModalSubTitle>
+                  {isDeleteAccount ? (
+                    <>
+                      <div>이용해주셔서 감사합니다.</div>
+                      <div>더 좋은 서비스가 되도록 노력하겠습니다.</div>
+                    </>
+                  ) : (
+                    "탈퇴시 모든 정보는 복구가 불가능합니다."
+                  )}
+                </DeleteModalSubTitle>
+              </DeleteModalContent>
+              {isDeleteAccount ? (
+                <Button
+                  variation="solid"
+                  btnClass="primary"
+                  type="button"
+                  width={300}
+                  height={48}
+                  onClick={handleMoveToLoginPage}
+                >
+                  홈으로
+                </Button>
+              ) : (
+                <Buttons>
+                  <Button
+                    variation="outlined"
+                    btnClass="primary"
+                    type="button"
+                    width={146}
+                    height={48}
+                    onClick={() => setIsOpenModal(false)}
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    type="button"
+                    variation="solid"
+                    btnClass="primary"
+                    width={146}
+                    height={48}
+                    onClick={onSubmitDeleteAccount}
+                  >
+                    탈퇴
+                  </Button>
+                </Buttons>
+              )}
+            </DeleteModal>
+          </Overlay>
+        </ModalPortal>
+      )}
     </DeleteAccountContainer>
   );
 };
 
 export default DeleteAccount;
+
+const DeleteModal = styled.div`
+  display: inline-block;
+  width: 340px;
+  min-height: 176px;
+  max-height: fit-content;
+  border-radius: 16px;
+  padding: 20px;
+  background-color: #ffffffff;
+`;
+
+const DeleteModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+`;
+
+const DeleteModalTitle = styled.div`
+  text-align: center;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -1.2%;
+`;
+
+const DeleteModalSubTitle = styled.div`
+  text-align: center;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  letter-spacing: 0.96%;
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
 
 const DeleteAccountContainer = styled.div`
   display: flex;
@@ -247,7 +375,7 @@ const Paragraph = styled.div`
   width: 355px;
 `;
 
-const Form = styled.div`
+const Form = styled.form`
   width: 355px;
   margin-top: 28px;
 `;

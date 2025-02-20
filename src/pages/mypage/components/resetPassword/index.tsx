@@ -3,9 +3,13 @@ import {
   requestConfrimCurrentPassword,
 } from "@/api/users";
 import Button from "@/components/buttons/button";
+import Overlay from "@/components/modal/overlay";
+import ModalPortal from "@/components/modal/portal";
+import useSessionStore from "@/store/session";
 import { ResetPasswordInputs } from "@/types/user";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 interface CurrentPasswordInput {
@@ -13,6 +17,10 @@ interface CurrentPasswordInput {
 }
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
+  const sessionStore = useSessionStore();
+  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
+
   const {
     register,
     handleSubmit,
@@ -32,11 +40,16 @@ const ResetPassword = () => {
   const [isVerifiedCurrentPassword, setIsVerifiedCurrentPassword] =
     useState(false);
   const [updateToken, setUpdateToken] = useState("");
+  const [isUpdatedModal, setIsUpdatedModal] = useState(false);
 
   const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
     const res = await requestChangePassword(data, updateToken);
 
-    console.log(res);
+    if (res?.error) {
+      return;
+    }
+
+    setIsUpdatedModal(true);
   };
 
   const onSubmitCurrentPassword = async (data: CurrentPasswordInput) => {
@@ -44,7 +57,7 @@ const ResetPassword = () => {
     const res = await requestConfrimCurrentPassword(password);
 
     if (res.updateToken) {
-      setUpdateToken(updateToken);
+      setUpdateToken(res?.updateToken);
       setIsVerifiedCurrentPassword(true);
     } else {
       setCurrentPasswordError("password", {
@@ -55,11 +68,17 @@ const ResetPassword = () => {
   };
 
   const validatePassword = (confirmPassword: string) => {
-    if (confirmPassword === getValues("password")) {
+    if (confirmPassword === getValues("newPassword")) {
       return true;
     } else {
       return "비밀번호가 일치하지 않습니다.";
     }
+  };
+
+  const handleMoveToLoginPage = () => {
+    sessionStore.logoutSession();
+    clearUserSessionStorage();
+    navigate("/auth/starting");
   };
 
   return (
@@ -97,7 +116,7 @@ const ResetPassword = () => {
               <InputWrapper>
                 <Label>비밀번호</Label>
                 <Input
-                  {...register("password", {
+                  {...register("newPassword", {
                     required: true,
                     // maxLength: {
                     //   value: 8,
@@ -105,14 +124,14 @@ const ResetPassword = () => {
                     // },
                     pattern: /[A-Za-z]{3}/,
                   })}
-                  $isDirty={Boolean(dirtyFields.password)}
-                  $isError={Boolean(errors.password)}
+                  $isDirty={Boolean(dirtyFields.newPassword)}
+                  $isError={Boolean(errors.newPassword)}
                   placeholder="비밀번호를 입력해주세요"
                   type="password"
                 />
               </InputWrapper>
-              <Message $isError={Boolean(errors.password)}>
-                {errors.password?.message}
+              <Message $isError={Boolean(errors.newPassword)}>
+                {errors.newPassword?.message}
               </Message>
             </WithMessageWrapper>
             <WithMessageWrapper>
@@ -139,11 +158,75 @@ const ResetPassword = () => {
           {isVerifiedCurrentPassword ? "변경완료" : "다음단계"}
         </Button>
       </Form>
+      {isUpdatedModal && (
+        <ModalPortal>
+          <Overlay>
+            <UpdatedModal>
+              <ModalContent>
+                <ModalContentTitle>
+                  비밀번호 변경이 완료되었습니다.
+                </ModalContentTitle>
+                <ModalContentSubTitle>
+                  <div>변경이 완료되었습니다.</div>
+                  <div>재로그인후 이용해주세요.</div>
+                </ModalContentSubTitle>
+              </ModalContent>
+              <Button
+                variation="solid"
+                btnClass="primary"
+                type="button"
+                width={300}
+                height={48}
+                onClick={handleMoveToLoginPage}
+              >
+                로그인 화면으로 이동
+              </Button>
+            </UpdatedModal>
+          </Overlay>
+        </ModalPortal>
+      )}
     </ResetPasswordContainer>
   );
 };
 
 export default ResetPassword;
+
+const UpdatedModal = styled.div`
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  width: 340px;
+  min-height: 200px;
+  max-height: fit-content;
+  background-color: #ffffffff;
+  padding: 20px;
+  border-radius: 16px;
+`;
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+`;
+
+const ModalContentTitle = styled.div`
+  text-align: center;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -1.2%;
+`;
+
+const ModalContentSubTitle = styled.div`
+  text-align: center;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  letter-spacing: 0.96%;
+`;
 
 const ResetPasswordContainer = styled.div`
   display: flex;

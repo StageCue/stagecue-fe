@@ -39,7 +39,7 @@ interface ReqChangeProfileData {
 }
 
 interface ReqChangePasswordBody {
-  password: string;
+  newPassword: string;
   confirmPassword: string;
 }
 
@@ -183,7 +183,7 @@ export const requestChangePhone = async (token: string) => {
 export const requestConfrimCurrentPassword = async (password: string) => {
   const res = await request({
     method: "post",
-    endpoint: `users/change-password?password=${password}`,
+    endpoint: `users/change-password?password=${encodeURIComponent(password)}`,
   });
 
   return res;
@@ -237,12 +237,19 @@ export const requestDeleteAccount = async (
   return res;
 };
 
-export const requestCreateProfile = async (data: ReqChangeProfileData) => {
-  console.log(data)
+export const requestCreateProfile = async () => {
   const res = await request({
     method: "post",
     endpoint: `users/profiles`,
-    data,
+  });
+
+  return res;
+};
+
+export const requestDeleteProfile = async (profileId: string | number) => {
+  const res = await request({
+    method: "delete",
+    endpoint: `users/profiles/${profileId}`,
   });
 
   return res;

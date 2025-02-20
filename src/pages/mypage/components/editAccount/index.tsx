@@ -8,17 +8,20 @@ import {
 } from "@/api/users";
 import Button from "@/components/buttons/button";
 import useSessionStore from "@/store/session";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 type accountDataType = "이메일" | "휴대폰 번호";
 
 const EditAccount = () => {
+  const navigate = useNavigate();
   const [selectedData, setSelectedData] = useState<accountDataType>("이메일");
   const sessionStore = useSessionStore();
   const [isChangeMail, setIsChangeMail] = useState(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
+  const [certTime, setCertTime] = useState<number>(300);
   const [requestEmailToken, setRequestEmailToken] = useState("");
   const [updateEmailToken, setUpdateEmailToken] = useState("");
   const [isVerifiedCode, setIsVerifiedCode] = useState(false);
@@ -31,6 +34,7 @@ const EditAccount = () => {
   const [isVerifiedPhoneCode, setIsVerifiedPhoneCode] = useState(false);
   const [isErrorPhoneVerify, setIsErrorPhoneVerify] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
   const {
     register: emailRegister,
@@ -98,16 +102,17 @@ const EditAccount = () => {
     if (requestToken) {
       setRequestEmailToken(requestToken);
       setIsCodeSent(true);
+      setCertTime(300);
     }
   };
 
   const handleSendPhoneCodeClick = async () => {
-    console.log(phoneNumberValue);
     const { requestToken } = await requestChangePhoneToken(phoneNumberValue);
 
     if (requestToken) {
       setRequestPhoneToken(requestToken);
       setIsPhoneCodeSent(true);
+      setCertTime(300);
     }
   };
 
@@ -118,6 +123,7 @@ const EditAccount = () => {
       setUpdateEmailToken(res.updateToken);
       setIsVerifiedCode(true);
       setIsErrorEmailVerify(false);
+      setCertTime(0);
     } else {
       setIsErrorEmailVerify(true);
     }
@@ -130,23 +136,38 @@ const EditAccount = () => {
       setUpdatePhoneToken(res.updateToken);
       setIsVerifiedPhoneCode(true);
       setIsErrorPhoneVerify(false);
+      setCertTime(0);
     } else {
       setIsErrorPhoneVerify(true);
     }
   };
 
   const handleEmailSubmitClick = async () => {
-    await requestChangeEmail(updateEmailToken);
+    const res = await requestChangeEmail(updateEmailToken);
+
+    if (!res?.error) {
+      handleLogoutClick();
+    }
   };
 
   const handlePhoneSubmitClick = async () => {
-    await requestChangePhone(updatePhoneToken);
+    const res = await requestChangePhone(updatePhoneToken);
+
+    if (!res?.error) {
+      handleLogoutClick();
+    }
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
     const rawValue = event.target.value.replace(/\D/g, "");
     setPhoneNumber(formatPhoneNumber(event.target.value));
     setValue("phoneNumber", rawValue);
+  };
+
+  const handleLogoutClick = () => {
+    sessionStore.logoutSession();
+    clearUserSessionStorage();
+    navigate("/");
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -157,6 +178,23 @@ const EditAccount = () => {
     }
     return value;
   };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  };
+
+  useEffect(() => {
+    if (certTime === 0) return;
+
+    const timer = setInterval(() => {
+      setCertTime((prevTime) => prevTime - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [certTime, isCodeSent, isPhoneCodeSent]);
+
   return (
     <EditAccountContainer>
       <Title>기본정보 변경</Title>
@@ -188,6 +226,7 @@ const EditAccount = () => {
               <ShortInputWrapper>
                 <CurrentValue>{sessionStore.email}</CurrentValue>
                 <Button
+                  type="button"
                   variation="outlined"
                   btnClass="primary"
                   width={116}
@@ -207,6 +246,7 @@ const EditAccount = () => {
                   />
                   {isCodeSent ? (
                     <Button
+                      type="button"
                       variation="outlined"
                       btnClass="assistive"
                       width={116}
@@ -214,7 +254,6 @@ const EditAccount = () => {
                       lineHeight={150}
                       letterSpacing={0.57}
                       fontWeight="var(--font-medium)"
-                      type="button"
                       onClick={handleSendEmailCodeClick}
                       disabled={!emailValue}
                     >
@@ -222,13 +261,13 @@ const EditAccount = () => {
                     </Button>
                   ) : (
                     <Button
+                      type="button"
                       variation="solid"
                       btnClass="primary"
                       width={116}
                       fontSize={15}
                       lineHeight={150}
                       letterSpacing={0.57}
-                      type="button"
                       onClick={handleSendEmailCodeClick}
                       disabled={!emailValue}
                     >
@@ -243,8 +282,13 @@ const EditAccount = () => {
                     $isDirty={codeValue}
                     $isError={!isVerifiedCode}
                   >
-                    <VerifyInput {...emailRegister("code")} />
+                    <InputWrapper>
+                      <VerifyInput {...emailRegister("code")} />
+                      {isCodeSent && <Timer>{formatTime(certTime)}</Timer>}
+                    </InputWrapper>
+
                     <Button
+                      type="button"
                       variation="text"
                       btnClass="primary"
                       width={56}
@@ -287,6 +331,7 @@ const EditAccount = () => {
               <ShortInputWrapper>
                 <CurrentValue>{sessionStore.phoneNumber}</CurrentValue>
                 <Button
+                  type="button"
                   variation="outlined"
                   btnClass="primary"
                   width={140}
@@ -308,6 +353,7 @@ const EditAccount = () => {
                   />
                   {isPhoneCodeSent ? (
                     <Button
+                      type="button"
                       variation="outlined"
                       btnClass="assistive"
                       width={140}
@@ -316,7 +362,6 @@ const EditAccount = () => {
                       letterSpacing={0.57}
                       fontWeight="var(--font-medium)"
                       padding="13px 22px"
-                      type="button"
                       onClick={handleSendPhoneCodeClick}
                       disabled={false}
                     >
@@ -324,6 +369,7 @@ const EditAccount = () => {
                     </Button>
                   ) : (
                     <Button
+                      type="button"
                       variation="solid"
                       btnClass="primary"
                       width={140}
@@ -331,7 +377,6 @@ const EditAccount = () => {
                       lineHeight={150}
                       letterSpacing={0.57}
                       fontWeight="var(--font-medium)"
-                      type="button"
                       padding="12px 26px"
                       onClick={handleSendPhoneCodeClick}
                       disabled={false}
@@ -347,8 +392,12 @@ const EditAccount = () => {
                     $isDirty={phoneCodeValue}
                     $isError={isErrorPhoneVerify}
                   >
-                    <VerifyInput {...phoneRegister("code")} />
+                    <InputWrapper>
+                      <VerifyInput {...phoneRegister("code")} />
+                      {isPhoneCodeSent && <Timer>{formatTime(certTime)}</Timer>}
+                    </InputWrapper>
                     <Button
+                      type="button"
                       variation="text"
                       btnClass="primary"
                       width={56}
@@ -375,7 +424,6 @@ const EditAccount = () => {
               variation="solid"
               btnClass="primary"
               width={340}
-              onClick={handlePhoneSubmitClick}
             >
               변경완료
             </Button>
@@ -387,6 +435,19 @@ const EditAccount = () => {
 };
 
 export default EditAccount;
+
+const Timer = styled.div`
+  font-size: 16px;
+  font-weight: var(--font-regular);
+  letter-spacing: 0.57%;
+  line-height: 150%;
+  width: 43px;
+  height: 24px;
+  color: #c7c7c8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const EditAccountContainer = styled.div`
   display: flex;
@@ -444,7 +505,7 @@ const Description = styled.div`
   letter-spacing: 1.94%;
 `;
 
-const Form = styled.div`
+const Form = styled.form`
   margin-top: 10px;
   display: flex;
   flex-direction: column;
@@ -505,7 +566,8 @@ const VerifyInputWrapper = styled.div<{
   width: 355px;
   height: 48px;
   padding: 12px 16px;
-  display: flex;
+  display: grid;
+  grid-template-columns: calc(100% - 56px - 12px) 56px;
   border: ${({ $isDirty, $isError }) =>
     $isError
       ? "1px solid #FF4242"
@@ -514,6 +576,12 @@ const VerifyInputWrapper = styled.div<{
       : "1px solid #e0e0E2"};
   gap: 12px;
   border-radius: 10px;
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const VerifyInput = styled.input`

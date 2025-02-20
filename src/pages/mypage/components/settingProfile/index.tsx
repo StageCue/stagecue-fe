@@ -1,14 +1,26 @@
 import Button from "@/components/buttons/button";
 import styled from "styled-components";
 import NoScrappedSVG from "@assets/images/noscrappedd.svg?react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Profile from "./components/profile";
-import { requestProfileList } from "@api/users";
+import { requestDeleteProfile, requestProfileList } from "@api/users";
 import { useNavigate } from "react-router-dom";
+
+interface Profile {
+  id: number | string;
+  title: string;
+  duration: string;
+  height: number;
+  weight: number;
+  thumbnail: string;
+  birthday: string;
+  isDefault: boolean;
+  dateCreated: string;
+}
 
 const SettingProfile = () => {
   const navigate = useNavigate();
-  const [profiles, setProfiles] = useState([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
 
   const getProfiles = async () => {
     const res = await requestProfileList();
@@ -24,6 +36,25 @@ const SettingProfile = () => {
     navigate("/mypage/profiles/form");
   };
 
+  const handleRemoveProfile = useCallback(
+    async (id: string | number) => {
+      try {
+        const res = await requestDeleteProfile(id);
+
+        if (res?.error) {
+          console.error(res?.error);
+          return;
+        }
+
+        const newProfiles = profiles.filter((profile) => profile.id !== id);
+        setProfiles(newProfiles);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [profiles]
+  );
+
   useEffect(() => {
     getProfiles();
   }, []);
@@ -37,6 +68,7 @@ const SettingProfile = () => {
           width={180}
           height={48}
           onClick={handleCreateProfileClick}
+          disabled={profiles?.length >= 3}
         >
           새 프로필 생성하기
         </Button>
@@ -65,6 +97,7 @@ const SettingProfile = () => {
               weight={weight}
               thumbnail={thumbnail}
               isDefault={isDefault}
+              handleRemoveProfile={handleRemoveProfile}
               onClick={() => handleProfileClick(id)}
             />
           )
