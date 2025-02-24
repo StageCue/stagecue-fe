@@ -8,15 +8,7 @@ import RecruitRow from "./components/recruitRow";
 import NoPost from "./components/noPost";
 import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
 import CaretUpSVG from "@assets/icons/caret_up.svg?react";
-
-export interface Recruit {
-  id: number;
-  isFavorite: boolean;
-  title: string;
-  applyCount: number;
-  status: string;
-  recruitEnd: string;
-}
+import { Recruit } from "@/types/biz";
 
 interface TableProps {
   recruits: Recruit[];
@@ -288,6 +280,7 @@ const StateColumn = styled.div`
 
 const Body = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   height: 100%;
+  width: 100%;
 `;

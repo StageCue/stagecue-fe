@@ -16,17 +16,9 @@ import CloseModal from "./components/closeModal";
 import DatepickerModal from "@/components/datepickerModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Paginator from "@/components/paginator";
+import { Recruit } from "@/types/biz";
 
 type ManageRecruitFilterType = "TEMP" | "RECRUIT" | "CLOSED" | "전체";
-
-interface Recruit {
-  id: number;
-  applyCount: number;
-  isFavorite: false;
-  status: ManageRecruitFilterType;
-  title: string;
-  recruitEnd: string;
-}
 
 interface BizRecruitQuery {
   totalCount: number;

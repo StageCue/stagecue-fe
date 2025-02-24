@@ -32,7 +32,7 @@ interface EditRecruitInputs {
   monthlyFee: number;
   artworkName: string;
   category: string;
-  recruitStatus: RecruitStatus;
+  recruitStatus: keyof typeof RecruitStatus;
   recruitImages?: string[];
   practice: {
     start: string;
