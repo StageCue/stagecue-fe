@@ -22,6 +22,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import RangeDatepicker from "@/components/rangeDatepicker";
 import { decimalToBinaryArray } from "@/utils/format";
+import { CATEGORY, RecruitStatus } from "@/types/biz";
 
 interface EditRecruitInputs {
   title: string;
@@ -31,7 +32,7 @@ interface EditRecruitInputs {
   monthlyFee: number;
   artworkName: string;
   category: string;
-  recruitStatus: string;
+  recruitStatus: RecruitStatus;
   recruitImages?: string[];
   practice: {
     start: string;
@@ -83,10 +84,11 @@ const EditRecruit = () => {
     "0",
     "0",
   ]);
-  const category = ["연극", "뮤지컬", "드라마"];
+
+  const category = Object.keys(CATEGORY);
 
   const [daysText, setDaysText] = useState("선택해주세요.");
-  const [categoryText, setCategoryText] = useState("선택해주세요.");
+  const [categoryText, setCategoryText] = useState("");
 
   const days = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -95,6 +97,7 @@ const EditRecruit = () => {
     "recruitingParts",
     "stage.address",
   ]);
+  const [recruitStatus, setRecruitStatus] = useState("");
 
   const practiceDatepickerRef = useRef<DatePicker | null>(null);
   const [practiceDataRange, setPracticeDataRange] = useState<
@@ -163,6 +166,7 @@ const EditRecruit = () => {
       ...data,
       recruitingParts,
       recruitImages,
+      recruitStatus,
     });
 
     if (res.id) {
@@ -303,7 +307,6 @@ const EditRecruit = () => {
 
     if (file) {
       const url = convertFileToURL(file);
-
       const id = generateId();
 
       setImageUrlArray((prev) => [...prev, { url, id }]);
@@ -403,6 +406,8 @@ const EditRecruit = () => {
               padding="9px 20px"
               lineHeight={146.7}
               letterSpacing={0.96}
+              type="button"
+              onClick={() => setRecruitStatus("TEMP")}
             >
               임시저장
             </Button>
@@ -416,6 +421,7 @@ const EditRecruit = () => {
               lineHeight={146.7}
               letterSpacing={0.96}
               type="submit"
+              onClick={() => setRecruitStatus("RECRUIT")}
             >
               올리기
             </Button>
@@ -649,18 +655,18 @@ const EditRecruit = () => {
               $isDirty={Boolean(dirtyFields.category)}
               $isError={false}
             >
-              {categoryText}
+              {categoryText ? CATEGORY[categoryText] : "선택해주세요"}
               <IconWrapper onClick={handleCategoryInputClick}>
                 <CaretDownSVG />
               </IconWrapper>
               {isCategorySelectOpen && (
                 <CategorySelector>
-                  {category?.map((item, index) => (
+                  {category?.map((key) => (
                     <Category
-                      key={index}
-                      onClick={() => handleCategoryClick(item)}
+                      key={key}
+                      onClick={() => handleCategoryClick(key)}
                     >
-                      {item}
+                      {CATEGORY[key]}
                     </Category>
                   ))}
                 </CategorySelector>

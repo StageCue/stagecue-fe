@@ -197,6 +197,9 @@ export const requestUploadRecruitImage = (data: FormData) => {
     method: "put",
     endpoint: "biz/recruits/images",
     data,
+    header: {
+      "Content-Type": "multipart/form-data",
+    },
   });
 
   return res;
@@ -204,7 +207,7 @@ export const requestUploadRecruitImage = (data: FormData) => {
 
 export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   const res = request({ method: "post", endpoint: "biz/recruits", data });
-
+  
   return res;
 };
 
