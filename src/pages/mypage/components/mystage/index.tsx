@@ -263,6 +263,7 @@ const Scraps = styled.div`
 
 const CastWrapper = styled.div`
   position: relative;
+  width: 196px;
 `;
 const DdayTag = styled.div`
   position: absolute;

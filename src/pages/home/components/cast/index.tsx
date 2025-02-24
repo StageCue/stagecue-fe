@@ -41,7 +41,7 @@ const Recruit = ({
 export default Recruit;
 
 const CastContainer = styled.div`
-  width: 196px;
+  width: 100%;
   height: 394px;
   display: flex;
   flex-direction: column;
@@ -59,7 +59,7 @@ const Poster = styled.img`
 const TextWrapper = styled.div``;
 
 const Title = styled.div`
-  width: 196px;
+  width: 100%;
   min-height: 24px;
   color: #171719;
   font-weight: var(--font-semibold);
