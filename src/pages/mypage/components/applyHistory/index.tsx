@@ -12,7 +12,7 @@ export type applyPhaseType =
   | "REJECTED"
   | "CANCEL";
 
-export type filterType = "전체" | "APPLIED" | "CANCEL" | "READ";
+export type filterType = "전체" | "CANCEL" | "READ" | "UNREAD";
 
 const ApplyHistory = () => {
   const [recruitsStatus, setRecruitsStatus] = useState<RecruitsStatus>();
@@ -51,8 +51,10 @@ const ApplyHistory = () => {
     switch (filter) {
       case "전체":
         return "전체";
-      case "APPLIED":
-        return "지원완료";
+      case "READ":
+        return "열람";
+      case "UNREAD":
+        return "미열람";
       case "CANCEL":
         return "지원취소";
     }
@@ -121,7 +123,7 @@ const ApplyHistory = () => {
                   <Option onClick={() => handleFilterClick("READ")}>
                     열람
                   </Option>
-                  <Option onClick={() => handleFilterClick("APPLIED")}>
+                  <Option onClick={() => handleFilterClick("UNREAD")}>
                     미열람
                   </Option>
                   <Option onClick={() => handleFilterClick("CANCEL")}>
@@ -240,9 +242,7 @@ const FilterMenu = styled.div`
   border-radius: 10px;
   padding: 12px 10px;
   background-color: white;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.11), 0 2px 2px rgba(0, 0, 0, 0.11),
-    0 4px 4px rgba(0, 0, 0, 0.11), 0 6px 8px rgba(0, 0, 0, 0.11),
-    0 8px 16px rgba(0, 0, 0, 0.11);
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 4px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -253,10 +253,14 @@ const Option = styled.div`
   width: 91px;
   height: 28px;
   border-radius: 5px;
-  color: #37383c;
+  color: #37383c9b;
   font-weight: var(--font-semibold);
   font-size: 14px;
   line-height: 142.9%;
   letter-spacing: 1.45%;
   cursor: pointer;
+
+  &:hover {
+    background-color: #f6f6f6;
+  }
 `;
