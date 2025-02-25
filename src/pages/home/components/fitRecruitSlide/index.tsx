@@ -267,8 +267,8 @@ const RecruitSlide = styled.div<{
   border-radius: ${({ $isFirst, $isLast }) =>
     $isFirst ? "8px 0 0 8px" : $isLast ? "0 8px 8px 0" : "0"};
 
-  background: ${({ $isActive }) => ($isActive ? "#6200ea" : "#ddd")};
-  background-image: url("https://s3-alpha-sig.figma.com/img/6097/c856/acbbe48ca76176374f2533235c7f6848?Expires=1740355200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=iSkE6e3SJoKe0WWUm7P20TutjYTDflnCiUsuzFOalOAJPrfV-uM7koQXaYsORkSrkuIZaNdCgxFI3waEKWBJgqzSV9M7O3aTO~atfrKlxvGI4bN2AvWB1U1tJpUcF3e9lQfaFRlYq6X5DDftvuOsHkMW6xUiyMKmflr8eeZqBO63hbRgCGI8ZMkhuYjhxKgMCBGmNIyn~MIaFgp1xNsSjjKlSZWPzAxJT8CHWeoE6XP6mWuhftpcKLcqBvYd0i6ZojOIAqA1fBYuP0InRUx5PxecgLsnn5f189enaiel6s9bbsudusEPmRC1taMtClWdtTE88nWx3SI8LSfhVQ1jdg__");
+  background: ${({ $isActive }) => ($isActive ? "#000000b2" : "#ddd")};
+  background-image: url("https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

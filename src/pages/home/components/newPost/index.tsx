@@ -26,8 +26,6 @@ const NewPost = ({ recruits }: NewPostProps) => {
     navigate("/casts");
   };
 
-  console.log(recruits);
-
   return (
     <NewPostContainer>
       <TitleWrapper>
