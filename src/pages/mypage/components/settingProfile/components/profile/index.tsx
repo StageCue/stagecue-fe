@@ -3,7 +3,7 @@ import ChevronRightSVG from "@assets/icons/chevron_right.svg?react";
 import Button from "@/components/buttons/button";
 
 interface ProfileProps {
-  id: number;
+  id: string | number;
   title: string;
   duration: string;
   birthday: string;

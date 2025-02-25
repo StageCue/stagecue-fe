@@ -26,6 +26,8 @@ const NewPost = ({ recruits }: NewPostProps) => {
     navigate("/casts");
   };
 
+  console.log(recruits);
+
   return (
     <NewPostContainer>
       <TitleWrapper>
@@ -77,10 +79,10 @@ const NewPost = ({ recruits }: NewPostProps) => {
               ) => (
                 <SwiperSlide key={index}>
                   <Cast
-                    recruitId={recruitId}
+                    recruitId={String(recruitId)}
                     thumbnail={thumbnail}
                     recruitTitle={recruitTitle}
-                    artworkName={artworkName}
+                    troupeName={artworkName}
                     practiceLocation={practiceLocation}
                     isScrapping={isScrapping}
                   />

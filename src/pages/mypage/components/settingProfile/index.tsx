@@ -28,7 +28,7 @@ const SettingProfile = () => {
     setProfiles(res.profiles);
   };
 
-  const handleProfileClick = (id: number) => {
+  const handleProfileClick = (id: string | number) => {
     navigate(`profiles/${id}`);
   };
 
