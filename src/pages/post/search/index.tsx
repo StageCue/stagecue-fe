@@ -85,7 +85,7 @@ const Search = () => {
               <Cast
                 recruitId={recruitId}
                 recruitTitle={recruitTitle}
-                artworkName={artworkName}
+                troupeName={artworkName}
                 practiceLocation={practiceLocation}
                 isScrapping={isScrapping}
                 thumbnail={thumbnail}
