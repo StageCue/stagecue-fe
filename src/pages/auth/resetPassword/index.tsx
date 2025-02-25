@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { ResetPasswordInputs } from "../../../types/user";
+import { PasswordInputs } from "../../../types/user";
 import Button from "../../../components/buttons/button";
 import { requestResetPasswordFromMail } from "@/api/auth";
 import { useState } from "react";
@@ -14,22 +14,23 @@ const FindPassword = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch
-  } = useForm<ResetPasswordInputs>({ mode: "onBlur"});
+    watch,
+  } = useForm<PasswordInputs>({ mode: "onBlur" });
 
   const [isResetPassword, setIsResetPassword] = useState<boolean>();
-  const [passwordValue, confirmPasswordValue] = watch(["password", "confirmPassword"]);
+  const [passwordValue, confirmPasswordValue] = watch([
+    "password",
+    "confirmPassword",
+  ]);
 
-
-  const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
+  const onSubmitNewPassword = async (data: PasswordInputs) => {
     const params = new URLSearchParams(location.search);
     const token = params.get("token");
     if (token) {
       const res = await requestResetPasswordFromMail({
-        newPassword: data.password,
+        newPassword: data?.password,
         token,
       });
-      console.log(res)
       if (res) {
         setIsResetPassword(true);
       }
@@ -49,32 +50,35 @@ const FindPassword = () => {
           <InputWrapper>
             <Label>비밀번호</Label>
             <Input
-            $isDirty={Boolean(confirmPasswordValue)}
-            $isError={Boolean(errors.confirmPassword)}
+              $isDirty={Boolean(confirmPasswordValue)}
+              $isError={Boolean(errors.confirmPassword)}
               {...register("password", {
                 required: true,
                 validate: (value) => {
                   const isValid =
-                    /[A-Z]/.test(value) && 
-                    /[a-z]/.test(value) && 
-                    /\d/.test(value) && 
-                    /[!@#$%^&*]/.test(value) && 
+                    /[A-Z]/.test(value) &&
+                    /[a-z]/.test(value) &&
+                    /\d/.test(value) &&
+                    /[!@#$%^&*]/.test(value) &&
                     value.length >= 8 &&
                     value.length <= 32;
-                  return isValid || "영문 대소문자, 숫자, 특수문자를 포함해 8~32자로 입력해주세요."},
-                
+                  return (
+                    isValid ||
+                    "영문 대소문자, 숫자, 특수문자를 포함해 8~32자로 입력해주세요."
+                  );
+                },
               })}
               type="password"
               placeholder="비밀번호를 입력해주세요"
             />
-          <InputError>{errors.password?.message}</InputError>
+            <InputError>{errors.password?.message}</InputError>
           </InputWrapper>
 
           <InputWrapper>
             <Label>비밀번호 확인</Label>
             <Input
-            $isDirty={Boolean(confirmPasswordValue)}
-            $isError={Boolean(errors.confirmPassword)}
+              $isDirty={Boolean(confirmPasswordValue)}
+              $isError={Boolean(errors.confirmPassword)}
               {...register("confirmPassword", {
                 required: true,
                 validate: (value) =>
@@ -83,9 +87,9 @@ const FindPassword = () => {
               placeholder="비밀번호 확인"
               type="password"
             />
-          <InputError>{errors.confirmPassword?.message}</InputError>
+            <InputError>{errors.confirmPassword?.message}</InputError>
           </InputWrapper>
-        
+
           <Button
             variation="solid"
             btnClass="primary"

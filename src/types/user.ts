@@ -30,7 +30,12 @@ export interface ForgotPasswordInput {
   email: string;
 }
 
-export interface ResetPasswordInputs {
+export interface PasswordInputs {
   password: string;
+  confirmPassword: string;
+}
+
+export interface ResetPasswordInputs {
+  newPassword: string;
   confirmPassword: string;
 }

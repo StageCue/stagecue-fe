@@ -65,7 +65,7 @@ const Applied = () => {
                 recruitId={recruitId}
                 thumbnail={thumbnail}
                 recruitTitle={castTitle}
-                artworkName={artworkName}
+                troupeName={artworkName}
                 practiceLocation={practiceLocation}
                 isScrapping={isScrapping}
               />

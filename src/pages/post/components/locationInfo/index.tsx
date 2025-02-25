@@ -16,10 +16,8 @@ const LocationInfo = ({
 }: LocationInfoProps) => {
   // const [map, setMap] = useState();
 
-  // console.log(lat, lng);
   // const getMap = async () => {
   //   const res = await requestStaticMap({ lat, lng });
-  //   console.log("map", res);
   // };
 
   // useEffect(() => {

@@ -48,6 +48,7 @@ const request = async ({
   const url = `/v1/${endpoint}`;
 
   const accessToken = sessionStorage.getItem("accessToken");
+
   if (accessToken) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   }
