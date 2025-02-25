@@ -36,12 +36,12 @@ const CastCard = ({
 
     try {
       if (isBookmarked) {
-        const res = await requestDeleteScrapCast(`${castId!}`);
-        console.log(res);
+        // const res = await requestDeleteScrapCast(`${castId!}`);
+        await requestDeleteScrapCast(`${castId!}`);
         setIsBookmarked(false);
       } else {
-        const res = await requestScrapCast(`${castId!}`);
-        console.log(res);
+        // const res = await requestScrapCast(`${castId!}`);
+        await requestScrapCast(`${castId!}`);
         setIsBookmarked(true);
       }
     } catch (error) {

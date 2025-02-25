@@ -19,8 +19,6 @@ const TroupeDetail = ({ troupe }: TroupeDetailInterface) => {
     navigate("/biz/troupe/form");
   };
 
-  console.log(troupe);
-
   return (
     <TroupeDetailContainer>
       <CoverImageWrapper>

@@ -50,7 +50,6 @@ const ForgotAccount = () => {
     });
 
     if (res) {
-      console.log(res);
       setValue("certificated", true);
       setFindAccountToken(res.findAccountToken);
     } else {

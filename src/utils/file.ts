@@ -4,6 +4,5 @@ export const convertFileToURL = (file: File) => {
 
 export const seperateFileNameFromPath = (path: string) => {
   const segment = path.split("\\");
-  console.log("seg", segment);
   return segment[segment.length - 1] || "";
 };

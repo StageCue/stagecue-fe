@@ -22,6 +22,7 @@ import { convertFileToURL } from "@/utils/file";
 import CloseSVG from "@assets/icons/close_black.svg?react";
 import ImageSVG from "@assets/icons/image.svg?react";
 import { generateId } from "@/utils/dev";
+import LoadingModal from "@/components/modal/\bLoading/Loading";
 
 export interface ProfileInput {
   birthday: string;
@@ -63,6 +64,7 @@ const ProfileForm = () => {
   const [imageFileArray, setImageFileArray] = useState<
     { file: File | null; id: string }[]
   >([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { register, handleSubmit, setValue, watch, getValues } =
     useForm<ProfileInput>();
@@ -151,7 +153,6 @@ const ProfileForm = () => {
     introduceValue,
     experiencesValue,
     thumbnailValue,
-    imagesValue,
   ] = watch([
     "title",
     "birthday",
@@ -276,44 +277,41 @@ const ProfileForm = () => {
   };
 
   const handleConfirmClick = async (data: ProfileInput) => {
-    const { experiences, height, weight, introduce, title } = data
-    const sanitizedExperiences = experiences.map(({ id, ...rest }) => id ? rest : rest);
-    setIsSubmitModalOpen(false);
-    const imageUrls = await requestUploadImageFiles();
-    const thumbnailUrl = await requestUploadThumbnailFile();
-   
-    await requestSaveProfile(
-      {
-        experiences: sanitizedExperiences,
-        height,
-        weight,
-        introduce,
-        title,
-        isDefault: true,
-        images: imageUrls!,
-        thumbnail:thumbnailUrl ? thumbnailUrl : thumbnailValue,
-      },
-      id!
-    );
-    navigate(`/mypage/profiles/${id}`);
+    try {
+      setIsLoading(true);
+      const { experiences, height, weight, introduce, title } = data;
+      const sanitizedExperiences = experiences.map(({ id, ...rest }) =>
+        id ? rest : rest
+      );
+      setIsSubmitModalOpen(false);
+      const imageUrls = await requestUploadImageFiles();
+      const thumbnailUrl = await requestUploadThumbnailFile();
+
+      await requestSaveProfile(
+        {
+          experiences: sanitizedExperiences,
+          height,
+          weight,
+          introduce,
+          title,
+          isDefault: true,
+          images: imageUrls!,
+          thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
+        },
+        id!
+      );
+
+      setIsLoading(false);
+      navigate(`/mypage/profiles/${id}`);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleCloseClick = async (data: ProfileInput) => {
+  const handleCloseClick = async () => {
     setIsSubmitModalOpen(false);
-    await requestUploadImageFiles();
-    const thumbnailRes = await requestUploadThumbnailFile();
-
-    await requestSaveProfile(
-      {
-        ...data,
-        isDefault: false,
-        images: imagesValue,
-        thumbnail: thumbnailRes.imageUrl,
-      },
-      id!
-    );
-
-    navigate(`/mypage/profiles/${id}`);
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -359,6 +357,7 @@ const ProfileForm = () => {
 
   return (
     <ProfileFormContainer>
+      {isLoading && <LoadingModal />}
       {isSubmitModalOpen && (
         <ModalPortal>
           <SubmitModal
