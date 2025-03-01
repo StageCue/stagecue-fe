@@ -1,29 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
-import ChevronDownSVG from "@assets/icons/chevron_down.svg?react";
-import ChevronDownSSVG from "@assets/icons/chebron_down_s.svg?react";
-import RadioSVG from "@assets/icons/radio.svg?react";
-import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
-import ChecklineSVG from "@assets/icons/checkline.svg?react";
-import ElipsisSVG from "@assets/icons/elipsis.svg?react";
-import Button from "@components/buttons/button";
-import { requestCasts } from "@/api/cast";
-import Cast from "@/pages/home/components/cast";
-import RangeInput from "./components/rangeInput";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import styled from 'styled-components';
+import ChevronDownSVG from '@assets/icons/chevron_down.svg?react';
+import ChevronDownSSVG from '@assets/icons/chebron_down_s.svg?react';
+import RadioSVG from '@assets/icons/radio.svg?react';
+import RadioCheckedSVG from '@assets/icons/radio_checked.svg?react';
+import ChecklineSVG from '@assets/icons/checkline.svg?react';
+import ElipsisSVG from '@assets/icons/elipsis.svg?react';
+import Button from '@components/buttons/button';
+import { requestCasts } from '@/api/cast';
+import Cast from '@/pages/home/components/cast';
+import RangeInput from './components/rangeInput';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-type genreType = "연극" | "뮤지컬" | "댄스";
-type zoneType =
-  | "전체지역"
-  | "서울"
-  | "경기"
-  | "인천"
-  | "강원"
-  | "경상"
-  | "전라"
-  | "제주"
-  | "충청";
+type genreType = '연극' | '뮤지컬' | '댄스';
+type zoneType = '전체지역' | '서울' | '경기' | '인천' | '강원' | '경상' | '전라' | '제주' | '충청';
 
 const List = () => {
   const popupMenuRef = useRef<HTMLDivElement | null>(null);
@@ -34,65 +25,42 @@ const List = () => {
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const [selectedGenre, setSelectedGenre] = useState<genreType>("연극");
-  const [selectedZone, setSelectedZone] = useState(["전체지역"]);
-  const [selectedDayPicker, setSelectedDayPicker] = useState<string>("주말");
+  const [selectedGenre, setSelectedGenre] = useState<genreType>('연극');
+  const [selectedZone, setSelectedZone] = useState(['전체지역']);
+  const [selectedDayPicker, setSelectedDayPicker] = useState<string>('주말');
 
-  const [practiceDays, setPracticeDays] = useState([
-    "0",
-    "0",
-    "0",
-    "0",
-    "0",
-    "1",
-    "1",
-  ]);
+  const [practiceDays, setPracticeDays] = useState(['0', '0', '0', '0', '0', '1', '1']);
 
   const [isAppliedZone, setIsAppliedZone] = useState<boolean>(false);
   const [isAppliedDay, setIsAppliedDay] = useState<boolean>(false);
   const [isAppliedCost, setIsApplicatedCost] = useState<boolean>(false);
 
-  const [appliedZone, setAppliedZone] = useState<string[]>(["전체지역"]);
-  const [appliedDay, setAppliedDay] = useState<string[]>([
-    "0",
-    "0",
-    "0",
-    "0",
-    "0",
-    "1",
-    "1",
-  ]);
-  const [appliedCost, setAppliedCost] = useState<string>("");
-  const [minCost, setMinCost] = useState<string>("10000");
-  const [maxCost, setMaxCost] = useState<string>("500000");
+  const [appliedZone, setAppliedZone] = useState<string[]>(['전체지역']);
+  const [appliedDay, setAppliedDay] = useState<string[]>(['0', '0', '0', '0', '0', '1', '1']);
+  const [appliedCost, setAppliedCost] = useState<string>('');
+  const [minCost, setMinCost] = useState<string>('10000');
+  const [maxCost, setMaxCost] = useState<string>('500000');
 
   const [isGenreMenuShowing, setIsGenreMenuShowing] = useState<boolean>(false);
-  const [isZoneFilterShowing, setIsZoneFilterShowing] =
-    useState<boolean>(false);
+  const [isZoneFilterShowing, setIsZoneFilterShowing] = useState<boolean>(false);
   const [isDayFilterShowing, setIsDayFilterShowing] = useState<boolean>(false);
-  const [isCostFilterShowing, setIsCostFilterShowing] =
-    useState<boolean>(false);
-  const [currentOrderBy, setCurrentOrderBy] = useState<"newest" | "popular">(
-    "newest"
-  );
+  const [isCostFilterShowing, setIsCostFilterShowing] = useState<boolean>(false);
+  const [currentOrderBy, setCurrentOrderBy] = useState<'newest' | 'popular'>('newest');
 
-  const genreOptions: genreType[] = ["연극", "뮤지컬", "댄스"];
+  const genreOptions: genreType[] = ['연극', '뮤지컬', '댄스'];
   const zoneOptions: zoneType[] = [
-    "전체지역",
-    "서울",
-    "경기",
-    "인천",
-    "강원",
-    "경상",
-    "전라",
-    "제주",
-    "충청",
+    '전체지역',
+    '서울',
+    '경기',
+    '인천',
+    '강원',
+    '경상',
+    '전라',
+    '제주',
+    '충청',
   ];
-  const dayPickerOptions = ["전체요일", "주말", "평일"];
-  const daysOptions = useMemo(
-    () => ["월", "화", "수", "목", "금", "토", "일"],
-    []
-  );
+  const dayPickerOptions = ['전체요일', '주말', '평일'];
+  const daysOptions = useMemo(() => ['월', '화', '수', '목', '금', '토', '일'], []);
 
   const handleGenreOptionChange = (genre: genreType) => {
     setSelectedGenre(genre);
@@ -144,15 +112,15 @@ const List = () => {
   };
 
   const handleZoneClick = (option: zoneType) => {
-    setSelectedZone((prev) => {
-      if (option !== "전체지역" && prev.includes("전체지역")) {
+    setSelectedZone(prev => {
+      if (option !== '전체지역' && prev.includes('전체지역')) {
         const newSelectedZone = [option];
         return newSelectedZone;
-      } else if (prev.includes(option) && option !== "전체지역") {
-        const newSelectedZone = prev.filter((zone) => zone !== option);
+      } else if (prev.includes(option) && option !== '전체지역') {
+        const newSelectedZone = prev.filter(zone => zone !== option);
         return newSelectedZone;
-      } else if (option === "전체지역") {
-        return ["전체지역"];
+      } else if (option === '전체지역') {
+        return ['전체지역'];
       } else {
         return [...prev, option];
       }
@@ -160,13 +128,13 @@ const List = () => {
   };
 
   const handleResetZoneClick = () => {
-    setSelectedZone(["전체지역"]);
+    setSelectedZone(['전체지역']);
     setIsAppliedZone(false);
   };
 
   const handleResetDayClick = () => {
     setIsAppliedDay(false);
-    setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
+    setPracticeDays(['0', '0', '0', '0', '0', '1', '1']);
   };
 
   const handleApplyZoneClick = () => {
@@ -186,49 +154,41 @@ const List = () => {
   };
 
   const handleDayClick = (index: number) => {
-    setPracticeDays((prevDays) => {
+    setPracticeDays(prevDays => {
       const updatedDays = [...prevDays];
-      updatedDays[index] = updatedDays[index] === "0" ? "1" : "0";
+      updatedDays[index] = updatedDays[index] === '0' ? '1' : '0';
       return updatedDays;
     });
   };
 
   useEffect(() => {
-    if (selectedDayPicker === "주말") {
-      setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
+    if (selectedDayPicker === '주말') {
+      setPracticeDays(['0', '0', '0', '0', '0', '1', '1']);
     }
-    if (selectedDayPicker === "평일") {
-      setPracticeDays(["1", "1", "1", "1", "1", "0", "0"]);
+    if (selectedDayPicker === '평일') {
+      setPracticeDays(['1', '1', '1', '1', '1', '0', '0']);
     }
-    if (selectedDayPicker === "전체요일") {
-      setPracticeDays(["1", "1", "1", "1", "1", "1", "1"]);
+    if (selectedDayPicker === '전체요일') {
+      setPracticeDays(['1', '1', '1', '1', '1', '1', '1']);
     }
   }, [selectedDayPicker]);
 
   useEffect(() => {
-    if (
-      practiceDays.every(
-        (day, index) => day === ["1", "1", "1", "1", "1", "0", "0"][index]
-      )
-    ) {
-      setSelectedDayPicker("평일");
+    if (practiceDays.every((day, index) => day === ['1', '1', '1', '1', '1', '0', '0'][index])) {
+      setSelectedDayPicker('평일');
     } else if (
-      practiceDays.every(
-        (day, index) => day === ["0", "0", "0", "0", "0", "1", "1"][index]
-      )
+      practiceDays.every((day, index) => day === ['0', '0', '0', '0', '0', '1', '1'][index])
     ) {
-      setSelectedDayPicker("주말");
+      setSelectedDayPicker('주말');
     } else if (
-      practiceDays.every(
-        (day, index) => day === ["1", "1", "1", "1", "1", "1", "1"][index]
-      )
+      practiceDays.every((day, index) => day === ['1', '1', '1', '1', '1', '1', '1'][index])
     ) {
-      setSelectedDayPicker("전체요일");
+      setSelectedDayPicker('전체요일');
     } else {
       const activeDays = practiceDays
-        .map((value, index) => (value === "1" ? daysOptions[index] : null))
-        .filter((day) => day !== null)
-        .join("·");
+        .map((value, index) => (value === '1' ? daysOptions[index] : null))
+        .filter(day => day !== null)
+        .join('·');
 
       setSelectedDayPicker(activeDays);
     }
@@ -243,8 +203,8 @@ const List = () => {
   };
 
   const handleResetCostClick = () => {
-    setMinCost("10000");
-    setMaxCost("500000");
+    setMinCost('10000');
+    setMaxCost('500000');
   };
 
   const handleCostApplyClick = () => {
@@ -253,79 +213,69 @@ const List = () => {
   };
 
   useEffect(() => {
-    if (
-      practiceDays.every(
-        (day, index) => day === ["0", "0", "0", "0", "0", "0", "0"][index]
-      )
-    ) {
-      setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
+    if (practiceDays.every((day, index) => day === ['0', '0', '0', '0', '0', '0', '0'][index])) {
+      setPracticeDays(['0', '0', '0', '0', '0', '1', '1']);
     }
   }, [practiceDays]);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: [
-        "recruits",
-        {
-          appliedDay,
-          selectedZone,
-          selectedGenre,
-          currentOrderBy,
-          appliedCost,
-        },
-      ],
-      queryFn: ({ pageParam = 0 }) =>
-        requestCasts({
-          offset: `${pageParam}`,
-          limit: "16",
-          category: parsingCategory(selectedGenre),
-          locations: selectedZone?.find((zone) => zone === "전체지역")
-            ? ""
-            : selectedZone?.join(","),
-          orderBy: currentOrderBy,
-          feeRange: appliedCost,
-        }),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage, allPages) => {
-        const totalLoaded = allPages.flatMap((page) => page.data).length;
-        if (totalLoaded >= lastPage.totalCount) {
-          return undefined;
-        }
-        return allPages.length;
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: [
+      'recruits',
+      {
+        appliedDay,
+        selectedZone,
+        selectedGenre,
+        currentOrderBy,
+        appliedCost,
       },
-    });
+    ],
+    queryFn: ({ pageParam = 0 }) =>
+      requestCasts({
+        offset: `${pageParam}`,
+        limit: '16',
+        category: parsingCategory(selectedGenre),
+        locations: selectedZone?.find(zone => zone === '전체지역') ? '' : selectedZone?.join(','),
+        orderBy: currentOrderBy,
+        feeRange: appliedCost,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoaded = allPages.flatMap(page => page.data).length;
+      if (totalLoaded >= lastPage.totalCount) {
+        return undefined;
+      }
+      return allPages.length;
+    },
+  });
 
-  const recruits = useMemo(
-    () => data?.pages.flatMap((page) => page.recruits) || [],
-    [data]
-  );
+  const recruits = useMemo(() => data?.pages.flatMap(page => page.recruits) || [], [data]);
 
   const parsingCategory = (category: string) => {
     switch (category) {
-      case "연극":
-        return "THEATRE";
-      case "뮤지컬":
-        return "MUSICAL";
-      case "댄스":
-        return "DANCE";
+      case '연극':
+        return 'THEATRE';
+      case '뮤지컬':
+        return 'MUSICAL';
+      case '댄스':
+        return 'DANCE';
     }
   };
 
   const handleResetFilterClick = () => {
-    setPracticeDays(["0", "0", "0", "0", "0", "1", "1"]);
-    setAppliedDay(["0", "0", "0", "0", "0", "1", "1"]);
-    setAppliedZone(["전체지역"]);
-    setSelectedZone(["전체지역"]);
+    setPracticeDays(['0', '0', '0', '0', '0', '1', '1']);
+    setAppliedDay(['0', '0', '0', '0', '0', '1', '1']);
+    setAppliedZone(['전체지역']);
+    setSelectedZone(['전체지역']);
     setIsAppliedDay(false);
     setIsAppliedZone(false);
   };
 
   const handleNewestClick = () => {
-    setCurrentOrderBy("newest");
+    setCurrentOrderBy('newest');
   };
 
   const handlePopularClick = () => {
-    setCurrentOrderBy("popular");
+    setCurrentOrderBy('popular');
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -349,15 +299,15 @@ const List = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         const entry = entries[0];
         if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
@@ -365,7 +315,7 @@ const List = () => {
       },
       {
         root: null,
-        rootMargin: "200px",
+        rootMargin: '200px',
         threshold: 1.0,
       }
     );
@@ -390,11 +340,8 @@ const List = () => {
         </SelectGenreBtn>
         {isGenreMenuShowing && (
           <GenreMenu ref={popupMenuRef}>
-            {genreOptions.map((option) => (
-              <GenreOption
-                key={option}
-                onClick={() => handleGenreOptionChange(option)}
-              >
+            {genreOptions.map(option => (
+              <GenreOption key={option} onClick={() => handleGenreOptionChange(option)}>
                 {option}
               </GenreOption>
             ))}
@@ -409,8 +356,8 @@ const List = () => {
             $isOpen={isZoneFilterShowing}
             ref={zoneButtonRef}
           >
-            {appliedZone[0] === "전체지역"
-              ? "연습지역"
+            {appliedZone[0] === '전체지역'
+              ? '연습지역'
               : `${appliedZone[0]} 외 ${appliedZone.length}`}
             <ChevronDownSSVG />
           </ZoneFilterBtn>
@@ -420,7 +367,7 @@ const List = () => {
             $isOpen={isDayFilterShowing}
             ref={dayButtonRef}
           >
-            {isAppliedDay ? selectedDayPicker : "요일"}
+            {isAppliedDay ? selectedDayPicker : '요일'}
             <ChevronDownSSVG />
           </DayFilterBtn>
           <CostFilterBtn
@@ -435,7 +382,7 @@ const List = () => {
           {isZoneFilterShowing && (
             <FilterMenu ref={popupMenuRef}>
               <Chips>
-                {zoneOptions.map((option) => (
+                {zoneOptions.map(option => (
                   <Chip
                     key={option}
                     $isSelected={selectedZone.includes(option)}
@@ -467,17 +414,10 @@ const List = () => {
             <FilterMenu ref={popupMenuRef}>
               <PickerWrapper>
                 <DayPickers>
-                  {dayPickerOptions.map((option) => (
-                    <Picker
-                      key={option}
-                      onClick={() => handleClickDayPicker(option)}
-                    >
+                  {dayPickerOptions.map(option => (
+                    <Picker key={option} onClick={() => handleClickDayPicker(option)}>
                       <RadioWrapper>
-                        {selectedDayPicker.includes(option) ? (
-                          <RadioCheckedSVG />
-                        ) : (
-                          <RadioSVG />
-                        )}
+                        {selectedDayPicker.includes(option) ? <RadioCheckedSVG /> : <RadioSVG />}
                       </RadioWrapper>
                       <PickerName>{option}</PickerName>
                     </Picker>
@@ -488,7 +428,7 @@ const List = () => {
                     <Day
                       key={option}
                       onClick={() => handleDayClick(index)}
-                      $isSelected={practiceDays[index] === "1"}
+                      $isSelected={practiceDays[index] === '1'}
                     >
                       {option}
                     </Day>
@@ -556,19 +496,13 @@ const List = () => {
             </Button>
           </ResetFilterWrapper>
         </FilterWrapper>
-        <OrderByWrapper $isSelected={currentOrderBy === "newest"}>
+        <OrderByWrapper $isSelected={currentOrderBy === 'newest'}>
           <ChecklineSVG />
-          <IconWrapper
-            onClick={handleNewestClick}
-            $isSelected={currentOrderBy === "newest"}
-          >
+          <IconWrapper onClick={handleNewestClick} $isSelected={currentOrderBy === 'newest'}>
             최신순
           </IconWrapper>
           <ElipsisSVG />
-          <IconWrapper
-            onClick={handlePopularClick}
-            $isSelected={currentOrderBy === "popular"}
-          >
+          <IconWrapper onClick={handlePopularClick} $isSelected={currentOrderBy === 'popular'}>
             인기순
           </IconWrapper>
         </OrderByWrapper>
@@ -576,14 +510,7 @@ const List = () => {
       <CastGrid>
         {recruits?.map(
           (
-            {
-              recruitId,
-              recruitTitle,
-              artworkName,
-              practiceLocation,
-              isScrapping,
-              thumbnail,
-            },
+            { recruitId, recruitTitle, artworkName, practiceLocation, isScrapping, thumbnail },
             index
           ) => (
             <Cast
@@ -697,14 +624,12 @@ const ZoneFilterBtn = styled.div<{ $isDirty: boolean; $isOpen: boolean }>`
   gap: 6px;
   cursor: pointer;
   background-color: ${({ $isDirty, $isOpen }) =>
-    $isOpen ? "#f4f4f5" : $isDirty ? "#171719" : "white"};
-  color: ${({ $isDirty, $isOpen }) =>
-    $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+    $isOpen ? '#f4f4f5' : $isDirty ? '#171719' : 'white'};
+  color: ${({ $isDirty, $isOpen }) => ($isOpen ? '#171719' : $isDirty ? 'white' : '#171719')};
 
   svg {
     rect {
-      fill: ${({ $isDirty, $isOpen }) =>
-        $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+      fill: ${({ $isDirty, $isOpen }) => ($isOpen ? '#171719' : $isDirty ? 'white' : '#171719')};
     }
   }
 `;
@@ -720,14 +645,12 @@ const DayFilterBtn = styled.div<{ $isDirty: boolean; $isOpen: boolean }>`
   gap: 6px;
   cursor: pointer;
   background-color: ${({ $isDirty, $isOpen }) =>
-    $isOpen ? "#f4f4f5" : $isDirty ? "#171719" : "white"};
-  color: ${({ $isDirty, $isOpen }) =>
-    $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+    $isOpen ? '#f4f4f5' : $isDirty ? '#171719' : 'white'};
+  color: ${({ $isDirty, $isOpen }) => ($isOpen ? '#171719' : $isDirty ? 'white' : '#171719')};
 
   svg {
     rect {
-      fill: ${({ $isDirty, $isOpen }) =>
-        $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+      fill: ${({ $isDirty, $isOpen }) => ($isOpen ? '#171719' : $isDirty ? 'white' : '#171719')};
     }
   }
 `;
@@ -743,14 +666,12 @@ const CostFilterBtn = styled.div<{ $isDirty: boolean; $isOpen: boolean }>`
   gap: 6px;
   cursor: pointer;
   background-color: ${({ $isDirty, $isOpen }) =>
-    $isOpen ? "#f4f4f5" : $isDirty ? "#171719" : "white"};
-  color: ${({ $isDirty, $isOpen }) =>
-    $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+    $isOpen ? '#f4f4f5' : $isDirty ? '#171719' : 'white'};
+  color: ${({ $isDirty, $isOpen }) => ($isOpen ? '#171719' : $isDirty ? 'white' : '#171719')};
 
   svg {
     rect {
-      fill: ${({ $isDirty, $isOpen }) =>
-        $isOpen ? "#171719" : $isDirty ? "white" : "#171719"};
+      fill: ${({ $isDirty, $isOpen }) => ($isOpen ? '#171719' : $isDirty ? 'white' : '#171719')};
     }
   }
 `;
@@ -779,10 +700,9 @@ const Chip = styled.div<{ $isSelected: boolean }>`
   min-width: 49px;
   height: 32px;
   border-radius: 1000px;
-  border: ${({ $isSelected }) =>
-    $isSelected ? "1px solid #B81716;" : "1px solid #70737c"};
-  background-color: ${({ $isSelected }) => ($isSelected ? "#f9ecec" : "white")};
-  color: ${({ $isSelected }) => ($isSelected ? "#B81716;" : "#171719")};
+  border: ${({ $isSelected }) => ($isSelected ? '1px solid #B81716;' : '1px solid #70737c')};
+  background-color: ${({ $isSelected }) => ($isSelected ? '#f9ecec' : 'white')};
+  color: ${({ $isSelected }) => ($isSelected ? '#B81716;' : '#171719')};
 
   display: flex;
   align-items: center;
@@ -858,9 +778,8 @@ const Day = styled.div<{ $isSelected: boolean }>`
   font-weight: var(--font-medium);
   letter-spacing: 1.94%;
   line-height: 138.5%;
-  border: ${({ $isSelected }) =>
-    $isSelected ? "1px solid #B81716" : "1px solid #70737c;"};
-  color: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#171719;")};
+  border: ${({ $isSelected }) => ($isSelected ? '1px solid #B81716' : '1px solid #70737c;')};
+  color: ${({ $isSelected }) => ($isSelected ? '#B81716' : '#171719;')};
   cursor: pointer;
 `;
 
@@ -900,7 +819,7 @@ const IconWrapper = styled.div<{ $isSelected: boolean }>`
   align-items: center;
   white-space: nowrap;
 
-  color: ${({ $isSelected }) => ($isSelected ? "#B81716" : "#c7c8c9")};
+  color: ${({ $isSelected }) => ($isSelected ? '#B81716' : '#c7c8c9')};
 `;
 
 const FilterOrderByWrapper = styled.div`

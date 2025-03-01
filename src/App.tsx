@@ -1,36 +1,39 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import Login from "./pages/auth/login";
-import Welcome from "./pages/welcome";
-import Signup from "./pages/auth/signup";
-import Starting from "./pages/starting";
-import ForgotAccount from "./pages/auth/forgotAccount";
-import ForgotPassword from "./pages/auth/forgotPassword";
-import ResetPassword from "./pages/auth/resetPassword";
-import Home from "./pages/home";
-import MyPage from "./pages/mypage";
-import DefaultLayout from "./components/layout/default";
-import AuthLayout from "./components/layout/auth";
-import BizLayout from "./components/layout/biz";
-import Detail from "./pages/post/detail";
-import Applied from "./pages/post/applied";
-import ProfileDetail from "./pages/mypage/components/settingProfile/components/profileDetail";
-import ProfileForm from "./pages/mypage/components/settingProfile/components/profileForm";
-import NewProfileForm from "./pages/mypage/components/settingProfile/components/newProfileForm";
-import TroupeDetail from "./pages/troupe/troupeDetail";
-import List from "./pages/post";
-import Search from "./pages/post/search";
-import EditRecruit from "./pages/biz/components/managePost/components/editRecruit";
-import Applicant from "./pages/biz/components/applicant";
-import ManageTroupe from "./pages/biz/components/manageTroupe";
-import ManagePost from "./pages/biz/components/managePost";
-import EditTroupe from "./pages/biz/components/manageTroupe/components/editTroupe";
-import FindPassword from "./pages/auth/resetPassword";
-import useSessionStore from "./store/session";
-import { useEffect } from "react";
-import PrivateRoute from "./components/bizRouter";
-import CreatedTroupe from "./pages/biz/components/manageTroupe/components/createdTroupe";
-import Notice from "./pages/notice";
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Login from './pages/auth/login';
+import Welcome from './pages/welcome';
+import Signup from './pages/auth/signup';
+import Starting from './pages/starting';
+import ForgotAccount from './pages/auth/forgotAccount';
+import ForgotPassword from './pages/auth/forgotPassword';
+import ResetPassword from './pages/auth/resetPassword';
+import Home from './pages/home';
+import MyPage from './pages/mypage';
+import DefaultLayout from './components/layout/default';
+import AuthLayout from './components/layout/auth';
+import BizLayout from './components/layout/biz';
+import Detail from './pages/post/detail';
+import Applied from './pages/post/applied';
+import ProfileDetail from './pages/mypage/components/settingProfile/components/profileDetail';
+import ProfileForm from './pages/mypage/components/settingProfile/components/profileForm';
+import NewProfileForm from './pages/mypage/components/settingProfile/components/newProfileForm';
+import TroupeDetail from './pages/troupe/troupeDetail';
+import List from './pages/post';
+import Search from './pages/post/search';
+import EditRecruit from './pages/biz/components/managePost/components/editRecruit';
+import Applicant from './pages/biz/components/applicant';
+import ManageTroupe from './pages/biz/components/manageTroupe';
+import ManagePost from './pages/biz/components/managePost';
+import EditTroupe from './pages/biz/components/manageTroupe/components/editTroupe';
+import FindPassword from './pages/auth/resetPassword';
+import useSessionStore from './store/session';
+import { useEffect } from 'react';
+import PrivateRoute from './components/bizRouter';
+import CreatedTroupe from './pages/biz/components/manageTroupe/components/createdTroupe';
+import Notice from './pages/notice';
+import ServiceInfo from './pages/service-info';
+import Blog from './pages/blog';
+import PrivacyPolicy from './pages/privacy-policy';
 
 function App() {
   const navigate = useNavigate();
@@ -42,7 +45,7 @@ function App() {
     const intervalId = setInterval(() => {
       sessionStore.logoutSession();
 
-      navigate("/auth/login");
+      navigate('/auth/login');
     }, 1000 * 60 * 30);
 
     return () => {
@@ -56,6 +59,9 @@ function App() {
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<Home />} />
           <Route path="notice" element={<Notice />} />
+          <Route path="service-info" element={<ServiceInfo />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="search" element={<Search />} />
           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="mypage" element={<MyPage />} />
@@ -83,14 +89,8 @@ function App() {
           <Route index element={<Applicant />} />
           <Route path="apply" element={<Applicant />} />
           <Route path="troupe" element={<ManageTroupe />} />
-          <Route
-            path="troupe/form"
-            element={<EditTroupe isInitial={false} />}
-          />
-          <Route
-            path="troupe/form/new"
-            element={<EditTroupe isInitial={true} />}
-          />
+          <Route path="troupe/form" element={<EditTroupe isInitial={false} />} />
+          <Route path="troupe/form/new" element={<EditTroupe isInitial={true} />} />
           <Route path="troupe/created" element={<CreatedTroupe />} />
           <Route path="cast" element={<ManagePost />} />
           <Route path="cast/form" element={<EditRecruit />} />

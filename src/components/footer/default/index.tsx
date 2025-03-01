@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 const DefaultFooter = () => {
   return (
@@ -19,10 +20,10 @@ const DefaultFooter = () => {
         </LeftSideWrapper>
         <RightSideWrapper>
           <Menu>
-            <Option>서비스 소개</Option>
-            <Option>블로그</Option>
-            <Option>공지사항</Option>
-            <Option>개인정보처리방침</Option>
+            <Option to="/service-info">서비스 소개</Option>
+            <Option to="/blog">블로그</Option>
+            <Option to="/notice">공지사항</Option>
+            <Option to="/privacy-policy">개인정보처리방침</Option>
           </Menu>
         </RightSideWrapper>
       </FooterRow>
@@ -75,7 +76,7 @@ const Menu = styled.div`
   gap: 20px;
 `;
 
-const Option = styled.div`
+const Option = styled(Link)`
   color: #171719;
   font-weight: var(--font-medium);
   line-height: 142.9%;

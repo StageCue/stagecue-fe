@@ -1,20 +1,16 @@
-import Button from "@/components/buttons/button";
-import Overlay from "@/components/modal/overlay";
-import { UseFormHandleSubmit } from "react-hook-form";
-import styled from "styled-components";
-import { ProfileInput } from "../../profileForm";
+import Button from '@/components/buttons/button';
+import Overlay from '@/components/modal/overlay';
+import { UseFormHandleSubmit } from 'react-hook-form';
+import styled from 'styled-components';
+import { ProfileInput } from '../../profileForm';
 
 interface SubmitModalProps {
-  onClose: (data: ProfileInput) => void;
+  onClose: () => void;
   onConfirm: (data: ProfileInput) => void;
   handleSubmit: UseFormHandleSubmit<ProfileInput, undefined>;
 }
 
-const SubmitModal = ({
-  onClose,
-  onConfirm,
-  handleSubmit,
-}: SubmitModalProps) => {
+const SubmitModal = ({ onClose, onConfirm, handleSubmit }: SubmitModalProps) => {
   return (
     <SubmitModalContainer>
       <Overlay>
@@ -25,15 +21,17 @@ const SubmitModal = ({
           </TextWrapper>
           <ButtonWrapper>
             <Button
+              type="submit"
               variation="outlined"
               btnClass="primary"
-              onClick={handleSubmit(onClose)}
+              onClick={() => onClose()}
               width={146}
               height={48}
             >
               취소
             </Button>
             <Button
+              type="submit"
               variation="solid"
               btnClass="primary"
               onClick={handleSubmit(onConfirm)}

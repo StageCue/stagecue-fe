@@ -1,12 +1,12 @@
-import { requestProfileDetail } from "@/api/users";
-import Button from "@/components/buttons/button";
-import useSessionStore from "@/store/session";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
-import SlashSVG from "@assets/icons/slash.svg?react";
-import MailSVG from "@assets/icons/mail_lg.svg?react";
-import MobileSVG from "@assets/icons/mobile.svg?react";
+import { requestDeleteProfile, requestProfileDetail } from '@/api/users';
+import Button from '@/components/buttons/button';
+import useSessionStore from '@/store/session';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import SlashSVG from '@assets/icons/slash.svg?react';
+import MailSVG from '@assets/icons/mail_lg.svg?react';
+import MobileSVG from '@assets/icons/mobile.svg?react';
 
 export interface ProfileDetailData {
   birthday: string;
@@ -40,23 +40,18 @@ const ProfileDetail = () => {
   };
 
   const handleClickEdit = () => {
-    navigate("form");
+    navigate('form');
   };
 
   const calculateKoreanAge = (birthDateString: string) => {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
     const currentDay = new Date().getDate();
-    const [birthYear, birthMonth, birthDay] = birthDateString
-      .split("-")
-      .map(Number);
+    const [birthYear, birthMonth, birthDay] = birthDateString.split('-').map(Number);
 
     let koreanAge = currentYear - birthYear + 1;
 
-    if (
-      currentMonth < birthMonth ||
-      (currentMonth === birthMonth && currentDay < birthDay)
-    ) {
+    if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
       koreanAge--;
     }
 
@@ -66,6 +61,22 @@ const ProfileDetail = () => {
   useEffect(() => {
     getProfileDetail(id!);
   }, [id]);
+
+  const handleDeleteUser = async () => {
+    try {
+      const res = await requestDeleteProfile(id as string | number);
+
+      if (res?.error) {
+        console?.error(res?.error);
+        navigate('/mypage');
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      navigate('/mypage');
+    }
+  };
 
   return (
     <ProfileDetailContainer>
@@ -86,14 +97,24 @@ const ProfileDetail = () => {
       <ProfileBodyWrapper>
         <Body>
           <NameWrapper>
-            <Name>{sessionStore.username}</Name>
-            <SlashSVG />
-            <Age>{detail && calculateKoreanAge(detail.birthday)}</Age>
+            <NameAge>
+              <Name>{sessionStore?.username}</Name>
+              <SlashSVG />
+              <Age>{detail && calculateKoreanAge(detail?.birthday)}</Age>
+            </NameAge>
+            <Button
+              type="button"
+              variation="outlined"
+              btnClass="assistive"
+              width={67}
+              height={40}
+              onClick={handleDeleteUser}
+            >
+              삭제
+            </Button>
           </NameWrapper>
           <ImagesWrapper>
-            <Thumbnail
-              src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`}
-            />
+            <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
             <Images>
               {detail?.images.map(({ url }, index) => (
                 <Image key={index} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
@@ -210,9 +231,16 @@ const NameWrapper = styled.div`
   border: 1px solid #f4f4f5;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
   border-radius: 12px;
   padding: 20px;
+  gap: 8px;
+`;
+
+const NameAge = styled.div`
+  display: flex;
+  align-items: center;
   gap: 8px;
 `;
 
