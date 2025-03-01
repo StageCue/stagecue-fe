@@ -10,6 +10,7 @@ import ShowSVG from "@assets/icons/show.svg?react";
 import CheckboxSVG from "@assets/icons/checkbox.svg?react";
 import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
 import { useState } from "react";
+import Checkbox from "@/components/checkbox";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -99,10 +100,11 @@ const Login = () => {
               </PasswordIconWrapper>
             </PasswordInputWrapper>
             <InputError>{errors.root?.serverError?.message}</InputError>
-            <CheckboxInputWrapper onClick={handleAutoLoginClick}>
-              {isAutoLogin ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
-              <CheckboxLabel>로그인 유지하기</CheckboxLabel>
-            </CheckboxInputWrapper>
+            <Checkbox
+              checked={isAutoLogin}
+              onChange={handleAutoLoginClick}
+              label="로그인 유지하기"
+            />
           </InputWrapper>
         </Inputs>
         <Button

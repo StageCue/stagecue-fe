@@ -23,6 +23,7 @@ import DatePicker from "react-datepicker";
 import RangeDatepicker from "@/components/rangeDatepicker";
 import { decimalToBinaryArray } from "@/utils/format";
 import { CATEGORY, RecruitStatus } from "@/types/biz";
+import Checkbox from "@/components/checkbox";
 
 interface EditRecruitInputs {
   title: string;
@@ -98,6 +99,12 @@ const EditRecruit = () => {
     "stage.address",
   ]);
   const [recruitStatus, setRecruitStatus] = useState("");
+  const [isAlwaysRecruit, setIsAlwaysRecruit] = useState(false);
+
+  const recruitDatepickerRef = useRef<DatePicker | null>(null);
+  const [recruitDataRange, setRecruitDataRange] = useState<
+    [Date | null, Date | null]
+  >([new Date(Date.now()), new Date(Date.now())]);
 
   const practiceDatepickerRef = useRef<DatePicker | null>(null);
   const [practiceDataRange, setPracticeDataRange] = useState<
@@ -109,6 +116,12 @@ const EditRecruit = () => {
     [Date | null, Date | null]
   >([new Date(Date.now()), new Date(Date.now())]);
 
+  const handleRecruitCalendarClick = () => {
+    if (recruitDatepickerRef.current) {
+      recruitDatepickerRef.current.setOpen(true);
+    }
+  };
+
   const handlePracticeCalendarClick = () => {
     if (practiceDatepickerRef.current) {
       practiceDatepickerRef.current.setOpen(true);
@@ -118,6 +131,24 @@ const EditRecruit = () => {
   const handleStageCalendarClick = () => {
     if (stageDatepickerRef.current) {
       stageDatepickerRef.current.setOpen(true);
+    }
+  };
+
+  const handleRecruitRangeChange = (range: [Date | null, Date | null]) => {
+    setRecruitDataRange(range);
+    if (range) {
+      const stringDate = range.map((date) =>
+        date
+          ?.toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })
+          .replace(/\./g, "-")
+          .replace(/\s/g, "")
+          .replace(/-$/, "")
+      );
+      setValue("recruitEnd", stringDate[1]!);
     }
   };
 
@@ -516,6 +547,37 @@ const EditRecruit = () => {
             )}
           </Images>
         </InputWrapper>
+        <PairInputWrapper>
+          <InputWrapper>
+            <RequiredLabel>
+              모집기간
+              <RequiedRedDot />
+            </RequiredLabel>
+            <WithIconInputWrapper
+              $isDirty={Boolean(dirtyFields.practice?.start)}
+              $isError={false}
+            >
+              <RangeDatepicker
+                ref={recruitDatepickerRef}
+                selectedRange={recruitDataRange}
+                onChangeDate={(range: [Date | null, Date | null]) => {
+                  handleRecruitRangeChange(range);
+                }}
+                pickerText="연습기간을 입력해주세요"
+              />
+              <IconWrapper onClick={handleRecruitCalendarClick}>
+                <CalendarSVG />
+              </IconWrapper>
+            </WithIconInputWrapper>
+          </InputWrapper>
+          <CheckboxWrapper>
+            <Checkbox
+              checked={isAlwaysRecruit}
+              onChange={() => setIsAlwaysRecruit(!isAlwaysRecruit)}
+              label="상시모집"
+            />
+          </CheckboxWrapper>
+        </PairInputWrapper>
         <PairInputWrapper>
           <InputWrapper>
             <RequiredLabel>
@@ -1235,4 +1297,9 @@ const FeeInput = styled.input`
   letter-spacing: 0.57%;
   color: #171719;
   text-align: end;
+`;
+
+const CheckboxWrapper = styled.div`
+  margin-top: auto;
+  height: 40px;
 `;
