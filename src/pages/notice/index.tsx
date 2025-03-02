@@ -57,7 +57,7 @@ const Notice = () => {
 
   const getContents = async (id: number) => {
     const res = await requestNoticeDetail(id);
-    setContents(res.contents);
+    setContents(res?.content);
   };
 
   const handlePostClick = async (id: number) => {
@@ -86,7 +86,7 @@ const Notice = () => {
                 {post.id === openPostId ? <CaretUpSVG /> : <CaretDownSVG />}
               </RightSideWrapper>
             </Post>
-            {post.id === openPostId && <Contents>{contents}</Contents>}
+            {post?.id === openPostId && <Contents>{contents}</Contents>}
           </PostItem>
         ))}
       </List>

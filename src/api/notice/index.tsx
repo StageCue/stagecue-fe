@@ -1,4 +1,4 @@
-import request from "..";
+import request from '..';
 
 interface ReqNoticesParam {
   limit: number;
@@ -7,7 +7,7 @@ interface ReqNoticesParam {
 
 export const requestNotices = async ({ limit, offset }: ReqNoticesParam) => {
   const res = await request({
-    method: "get",
+    method: 'get',
     endpoint: `notices?limit=${limit}&offset=${offset}`,
   });
   return res;
@@ -15,8 +15,8 @@ export const requestNotices = async ({ limit, offset }: ReqNoticesParam) => {
 
 export const requestNoticeDetail = async (noticeId: number) => {
   const res = await request({
-    method: "get",
-    endpoint: `notices?noticeId=${noticeId}`,
+    method: 'get',
+    endpoint: `notices/${noticeId}`,
   });
   return res;
 };

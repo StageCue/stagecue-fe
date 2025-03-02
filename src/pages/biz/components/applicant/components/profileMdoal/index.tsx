@@ -1,14 +1,15 @@
-import Button from "@/components/buttons/button";
-import styled from "styled-components";
-import CloseSVG from "@assets/icons/close_black.svg?react";
-import Overlay from "@/components/modal/overlay";
-import SlashSVG from "@assets/icons/slash.svg?react";
-import { ProfileDetailData } from "@/pages/mypage/components/settingProfile/components/profileDetail";
-import { useEffect, useState } from "react";
-import { requestProfileDetail } from "@/api/users";
-import MailSVG from "@assets/icons/mail_lg.svg?react";
-import MobileSVG from "@assets/icons/mobile.svg?react";
-import StatusTag from "../statusTag";
+import Button from '@/components/buttons/button';
+import styled from 'styled-components';
+import CloseSVG from '@assets/icons/close_black.svg?react';
+import Overlay from '@/components/modal/overlay';
+import SlashSVG from '@assets/icons/slash.svg?react';
+import { ProfileDetailData } from '@/pages/mypage/components/settingProfile/components/profileDetail';
+import { useEffect, useState } from 'react';
+import { requestProfileDetail } from '@/api/users';
+import MailSVG from '@assets/icons/mail_lg.svg?react';
+import MobileSVG from '@assets/icons/mobile.svg?react';
+import StatusTag from '../statusTag';
+import calculateKoreanAge from '@/utils/calculateKoreanAge';
 
 interface ProfileModalProps {
   id: string;
@@ -28,26 +29,6 @@ const ProfileModal = ({
   applyStatus,
 }: ProfileModalProps) => {
   const [detail, setDetail] = useState<ProfileDetailData>();
-
-  const calculateKoreanAge = (birthDateString: string) => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
-    const currentDay = new Date().getDate();
-    const [birthYear, birthMonth, birthDay] = birthDateString
-      .split("-")
-      .map(Number);
-
-    let koreanAge = currentYear - birthYear + 1;
-
-    if (
-      currentMonth < birthMonth ||
-      (currentMonth === birthMonth && currentDay < birthDay)
-    ) {
-      koreanAge--;
-    }
-
-    return `${birthYear}년생 (${koreanAge}세)`;
-  };
 
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
@@ -106,9 +87,7 @@ const ProfileModal = ({
               </ButtonsWrapper>
             </NameAgeBox>
             <ImagesWrapper>
-              <Thumbnail
-                src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`}
-              />
+              <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
               <Images>
                 {detail?.images.map(({ url }) => (
                   <Image src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
@@ -145,7 +124,7 @@ const ProfileModal = ({
             <Information>
               <InformationTitle>경력 (총 개월)</InformationTitle>
               <DataWrapper>
-                {detail?.experiences.map((exp) => (
+                {detail?.experiences.map(exp => (
                   <ExpRow>
                     <RoleAndPeriod>
                       <Role>{exp.artworkPart}</Role>

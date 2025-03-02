@@ -22,6 +22,7 @@ import CloseSVG from '@assets/icons/close_black.svg?react';
 import ImageSVG from '@assets/icons/image.svg?react';
 import { generateId } from '@/utils/dev';
 import LoadingModal from '@/components/modal/\bLoading/Loading';
+import calculateKoreanAge from '@/utils/calculateKoreanAge';
 
 export interface ProfileInput {
   birthday: string;
@@ -127,24 +128,8 @@ const NewProfileForm = () => {
     }
   };
 
-  const [
-    titleValue,
-    birthdayValue,
-    weightValue,
-    heightValue,
-    introduceValue,
-    experiencesValue,
-    thumbnailValue,
-  ] = watch([
-    'title',
-    'birthday',
-    'weight',
-    'height',
-    'introduce',
-    'experiences',
-    'thumbnail',
-    'images',
-  ]);
+  const [titleValue, weightValue, heightValue, introduceValue, experiencesValue, thumbnailValue] =
+    watch(['title', 'weight', 'height', 'introduce', 'experiences', 'thumbnail', 'images']);
 
   const [artworkNameValue, artworkPartValue, troupeValue, startDateValue, endDateValue] = expWatch([
     'artworkName',
@@ -153,6 +138,9 @@ const NewProfileForm = () => {
     'startDate',
     'endDate',
   ]);
+
+  const isSaveDisabled =
+    !artworkNameValue || !artworkPartValue || !troupeValue || !startDateValue || !endDateValue;
 
   const handleInfoEditClick = (section: string) => {
     if (section === 'personalInfo') {
@@ -204,9 +192,9 @@ const NewProfileForm = () => {
     expReset();
   };
 
-  const handleCancelAddExpClick = () => {
-    setIsAddExp(false);
-  };
+  // const handleCancelAddExpClick = () => {
+  //   setIsAddExp(false);
+  // };
 
   const handleSubmitClick = async () => {
     setIsSubmitModalOpen(true);
@@ -341,7 +329,7 @@ const NewProfileForm = () => {
                   <DataRows>
                     <DataRow>
                       <Property>생년월일</Property>
-                      <Value>{birthdayValue}</Value>
+                      <Value>{calculateKoreanAge(sessionStore.birthday as string)}</Value>
                     </DataRow>
                     <DataRow>
                       <Property>이름</Property>
@@ -598,7 +586,7 @@ const NewProfileForm = () => {
                     </DataRows>
                   </FormLabel>
                   <ExpBtnsWrapper>
-                    <Button
+                    {/* <Button
                       variation="outlined"
                       btnClass="assistive"
                       width={53}
@@ -611,8 +599,9 @@ const NewProfileForm = () => {
                       onClick={handleCancelAddExpClick}
                     >
                       취소
-                    </Button>
+                    </Button> */}
                     <Button
+                      type="button"
                       variation="solid"
                       btnClass="primary"
                       width={53}
@@ -623,7 +612,7 @@ const NewProfileForm = () => {
                       lineHeight={138.5}
                       letterSpacing={1.94}
                       onClick={handleSaveExpClick}
-                      type="button"
+                      disabled={isSaveDisabled}
                     >
                       저장
                     </Button>

@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import SlashSVG from '@assets/icons/slash.svg?react';
 import MailSVG from '@assets/icons/mail_lg.svg?react';
 import MobileSVG from '@assets/icons/mobile.svg?react';
+import calculateKoreanAge from '@/utils/calculateKoreanAge';
 
 export interface ProfileDetailData {
   birthday: string;
@@ -41,21 +42,6 @@ const ProfileDetail = () => {
 
   const handleClickEdit = () => {
     navigate('form');
-  };
-
-  const calculateKoreanAge = (birthDateString: string) => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
-    const currentDay = new Date().getDate();
-    const [birthYear, birthMonth, birthDay] = birthDateString.split('-').map(Number);
-
-    let koreanAge = currentYear - birthYear + 1;
-
-    if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
-      koreanAge--;
-    }
-
-    return `${birthYear}년생 (${koreanAge}세)`;
   };
 
   useEffect(() => {

@@ -1,15 +1,15 @@
-import { useForm } from "react-hook-form";
-import styled from "styled-components";
-import { LoginInputs } from "../../../types/user";
-import Button from "../../../components/buttons/button";
-import { useNavigate } from "react-router-dom";
-import { requestLogin } from "@/api/auth";
-import useSessionStore from "@/store/session";
-import HideSVG from "@assets/icons/hide.svg?react";
-import ShowSVG from "@assets/icons/show.svg?react";
-import CheckboxSVG from "@assets/icons/checkbox.svg?react";
-import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
-import { useState } from "react";
+import { useForm } from 'react-hook-form';
+import styled from 'styled-components';
+import { LoginInputs } from '../../../types/user';
+import Button from '../../../components/buttons/button';
+import { useNavigate } from 'react-router-dom';
+import { requestLogin } from '@/api/auth';
+import useSessionStore from '@/store/session';
+import HideSVG from '@assets/icons/hide.svg?react';
+import ShowSVG from '@assets/icons/show.svg?react';
+import CheckboxSVG from '@assets/icons/checkbox.svg?react';
+import CheckboxCheckedSVG from '@assets/icons/checkbox_checked.svg?react';
+import { useState } from 'react';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Login = () => {
   } = useForm<LoginInputs>();
   const sessionStore = useSessionStore();
 
-  const [emailValue, passwordValue] = watch(["email", "password"]);
+  const [emailValue, passwordValue] = watch(['email', 'password']);
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const [isAutoLogin, setIsAutoLogin] = useState(false);
 
@@ -30,39 +30,41 @@ const Login = () => {
     const res = await requestLogin(data);
 
     if (res?.error) {
-      setError("root.serverError", {
-        type: "400",
+      setError('root.serverError', {
+        type: '400',
         message: `이메일 또는 비밀번호가 올바르지 않습니다.\n입력한 내용을 다시 확인해주세요.`,
       });
     } else {
+      console.log(res);
       if (res?.accessToken) {
-        sessionStorage.setItem("accessToken", res.accessToken);
-        sessionStorage.setItem("refreshToken", res.refreshToken);
+        sessionStorage.setItem('accessToken', res.accessToken);
+        sessionStorage.setItem('refreshToken', res.refreshToken);
         sessionStore.loginSession({
           email: emailValue,
-          username: res.username,
-          phoneNumber: res.cell,
-          userType: res.userType,
+          username: res?.username,
+          phoneNumber: res?.cell,
+          userType: res?.userType,
+          birthday: res?.birthday,
         });
-        navigate("/");
+        navigate('/');
       }
     }
   };
 
   const handleSignupClick = () => {
-    navigate("/auth/signup");
+    navigate('/auth/signup');
   };
 
   const handleForgotPasswordClick = () => {
-    navigate("/auth/forgotpassword");
+    navigate('/auth/forgotpassword');
   };
 
   const handleHidePasswordClick = () => {
-    setIsPasswordHidden((prev) => !prev);
+    setIsPasswordHidden(prev => !prev);
   };
 
   const handleAutoLoginClick = () => {
-    setIsAutoLogin((prev) => !prev);
+    setIsAutoLogin(prev => !prev);
   };
 
   return (
@@ -73,7 +75,7 @@ const Login = () => {
           <InputWrapper>
             <Label>이메일</Label>
             <Input
-              {...register("email", {
+              {...register('email', {
                 required: true,
               })}
               placeholder="이메일을 입력해주세요"
@@ -83,16 +85,13 @@ const Login = () => {
           </InputWrapper>
           <InputWrapper>
             <Label>비밀번호</Label>
-            <PasswordInputWrapper
-              $isDirty={Boolean(passwordValue)}
-              $isError={Boolean(errors.root)}
-            >
+            <PasswordInputWrapper $isDirty={Boolean(passwordValue)} $isError={Boolean(errors.root)}>
               <PasswordInput
-                {...register("password", {
+                {...register('password', {
                   required: true,
                 })}
                 placeholder="비밀번호를 입력해주세요"
-                type={isPasswordHidden ? "password" : "text"}
+                type={isPasswordHidden ? 'password' : 'text'}
               />
               <PasswordIconWrapper onClick={handleHidePasswordClick}>
                 {isPasswordHidden ? <HideSVG /> : <ShowSVG />}
@@ -189,11 +188,7 @@ const Input = styled.input<{ $isDirty: boolean; $isError: boolean }>`
   height: 48px;
   border-radius: 10px;
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   font-size: 16px;
   line-height: 150%;
   letter-spacing: 0.57%;
@@ -286,11 +281,7 @@ const PasswordInputWrapper = styled.div<{
   width: 340px;
   height: 48px;
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   display: flex;
   justify-content: space-between;
   align-items: center;
