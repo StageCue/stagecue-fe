@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
 
 const DefaultFooter = () => {
   return (
     <FooterContainer>
       <FooterRow>
         <LeftSideWrapper>
-          <Logo src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg" />
+          <Logo>
+            <BlackLogoSVG />
+          </Logo>
           <TextWrapper>
             <TextRow>
               (주)노소리 <TextDivder>|</TextDivder> 대표 노영준
@@ -84,8 +87,8 @@ const Option = styled(Link)`
   font-size: 14px;
 `;
 
-const Logo = styled.img`
-  width: 82.4px;
+const Logo = styled.div`
+  width: 66px;
 `;
 
 const TextWrapper = styled.div`

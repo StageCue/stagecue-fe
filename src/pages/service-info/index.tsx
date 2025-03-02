@@ -11,15 +11,19 @@ const ServiceInfo = () => {
   const navigate = useNavigate();
   const headSectionHeight = 715;
 
-  const handleRoute = () => {
-    navigate('/auth/starting');
+  const handleRoute = (type?: string) => {
+    if (type === 'home') {
+      navigate('/');
+    } else {
+      navigate('/auth/starting');
+    }
   };
 
   return (
     <ServiceInfoContainer>
       <Section $height={headSectionHeight} $imageURL={BulbImage}>
         <Header>
-          <WhiteLogoSVG />
+          <WhiteLogoSVG onClick={() => handleRoute('home')} />
         </Header>
         <HeadSectionContent>
           <HeadSectionTitle>극단 활동의 편리를 더해줄</HeadSectionTitle>
@@ -384,6 +388,10 @@ const Header = styled.div`
   padding: 17.2px 190px;
   background-color: transparent;
   backdrop-filter: blur(4px);
+
+  svg {
+    cursor: pointer;
+  }
 `;
 
 const Content = styled.div<{ $gap: number; $paddingTop: number }>`
