@@ -1,10 +1,11 @@
-import StarSVG from "@assets/icons/star.svg?react";
-import CheckboxSVG from "@assets/icons/checkbox_gray.svg?react";
-import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
-import styled from "styled-components";
-import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
-import Chip from "@/components/chip/chip";
-import { RecruitStatus } from "@/types/biz";
+import StarSVG from '@assets/icons/star.svg?react';
+import CheckboxSVG from '@assets/icons/checkbox_gray.svg?react';
+import CheckboxCheckedSVG from '@assets/icons/checkbox_checked.svg?react';
+import styled from 'styled-components';
+import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
+import Chip from '@/components/chip/chip';
+import { RecruitStatus } from '@/types/biz';
+import { useNavigate } from 'react-router-dom';
 
 interface RecruitRowProps {
   title: string;
@@ -29,26 +30,35 @@ const RecruitRow = ({
   onClickCheckbox,
   onClickStar,
 }: RecruitRowProps) => {
+  const navigate = useNavigate();
+  const STATUS_THEME_MAP: Record<keyof typeof RecruitStatus, 'red' | 'yellow' | 'green'> = {
+    TEMP: 'yellow',
+    RECRUIT: 'green',
+    CLOSED: 'red',
+  };
 
-  const STATUS_THEME_MAP: Record<
-    keyof typeof RecruitStatus,
-    "red" | "yellow" | "green"
-  > = {
-    TEMP: "yellow",
-    RECRUIT: "green",
-    CLOSED: "red",
+  const handleRecruitDetailRoute = () => {
+    navigate(`${id}/form`);
   };
 
   return (
-    <RecruitRowContainer>
+    <RecruitRowContainer onClick={handleRecruitDetailRoute}>
       <CheckboxInRow>
-        <CheckIconWrapper onClick={() => onClickCheckbox(id)}>
+        <CheckIconWrapper
+          onClick={e => {
+            e.stopPropagation();
+            onClickCheckbox(id);
+          }}
+        >
           <CheckedIconWrapper $isChecked={isSelected}>
             {isSelected ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
           </CheckedIconWrapper>
         </CheckIconWrapper>
         <StarIconWrapper
-          onClick={(e) => onClickStar(e, id)}
+          onClick={e => {
+            e.stopPropagation();
+            onClickStar(e, id);
+          }}
           $isMarked={isFavorite}
         >
           {isFavorite ? <StarMarkedSVG /> : <StarSVG />}
@@ -74,6 +84,7 @@ const RecruitRowContainer = styled.div`
   display: flex;
   padding: 6px 24px;
   gap: 16px;
+  cursor: pointer;
 `;
 
 const CheckboxInRow = styled.div`
@@ -126,12 +137,12 @@ const CheckIconWrapper = styled.div`
 
 const StarIconWrapper = styled.div<{ $isMarked: boolean }>`
   rect {
-    fill: ${({ $isMarked }) => !$isMarked && "#e0e0e2"};
+    fill: ${({ $isMarked }) => !$isMarked && '#e0e0e2'};
   }
 `;
 
 const CheckedIconWrapper = styled.div<{ $isChecked: boolean }>`
   rect {
-    stroke: ${({ $isChecked }) => !$isChecked && "#e0e0e2"};
+    stroke: ${({ $isChecked }) => !$isChecked && '#e0e0e2'};
   }
 `;

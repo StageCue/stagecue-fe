@@ -337,6 +337,9 @@ const ProfileForm = () => {
     }
   }, [editingExpId, expSetValue, experiencesValue]);
 
+  const isDisabled =
+    !titleValue || !weightValue || !heightValue || !introduceValue || !experiencesValue?.length;
+
   return (
     <ProfileFormContainer>
       {isLoading && <LoadingModal />}
@@ -360,6 +363,7 @@ const ProfileForm = () => {
               height={48}
               type="button"
               onClick={handleSubmitClick}
+              disabled={isDisabled}
             >
               프로필 저장
             </Button>

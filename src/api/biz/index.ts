@@ -1,4 +1,4 @@
-import request from "..";
+import request from '..';
 
 interface ReqApplicationsParams {
   limit: string;
@@ -13,7 +13,7 @@ interface ReqApplicationsParams {
 
 interface ReqChangingApplyState {
   applyIds: string;
-  applyStatus: "DOCUMENT_PASSED" | "FINAL_ACCEPTED" | "REJECTED";
+  applyStatus: 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED' | 'REJECTED';
 }
 
 interface ReqEditTroupeData {
@@ -35,7 +35,7 @@ interface ReqEditTroupeData {
 interface ReqRecruitsParams {
   limit: number;
   offset: number;
-  status?: "TEMP" | "RECRUIT" | "CLOSED" | "";
+  status?: 'TEMP' | 'RECRUIT' | 'CLOSED' | '';
 }
 
 interface ReqEditRecruitParams {
@@ -64,12 +64,12 @@ interface ReqEditRecruitParams {
 }
 
 interface ReqDeleteRecruitsBody {
-  applyIds: string;
+  applyIds: number[];
 }
 
 interface ReqChangeRecruitStatusBody {
   recruitIds: number[];
-  status: "TEMP" | "RECRUIT" | "CLOSED";
+  status: 'TEMP' | 'RECRUIT' | 'CLOSED';
 }
 
 interface ReqChangeEndDateBody {
@@ -77,23 +77,17 @@ interface ReqChangeEndDateBody {
   endDate: string;
 }
 
-export const requestApplications = ({
-  limit,
-  offset,
-}: ReqApplicationsParams) => {
+export const requestApplications = ({ limit, offset }: ReqApplicationsParams) => {
   const res = request({
-    method: "get",
+    method: 'get',
     endpoint: `biz/recruits/applications?limit=${limit}&offset=${offset}`,
   });
   return res;
 };
 
-export const requestChangingApplyState = ({
-  applyIds,
-  applyStatus,
-}: ReqChangingApplyState) => {
+export const requestChangingApplyState = ({ applyIds, applyStatus }: ReqChangingApplyState) => {
   const res = request({
-    method: "put",
+    method: 'put',
     endpoint: `biz/recruits/applications?applyIds=${applyIds}&applyStatus=${applyStatus}`,
   });
   return res;
@@ -101,11 +95,11 @@ export const requestChangingApplyState = ({
 
 export const requestUploadLogo = (data: FormData) => {
   const res = request({
-    method: "put",
-    endpoint: "biz/troupes/info/upload-logo",
+    method: 'put',
+    endpoint: 'biz/troupes/info/upload-logo',
     data,
     header: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   });
 
@@ -114,11 +108,11 @@ export const requestUploadLogo = (data: FormData) => {
 
 export const requestUploadCover = (data: FormData) => {
   const res = request({
-    method: "put",
-    endpoint: "biz/troupes/info/upload-cover",
+    method: 'put',
+    endpoint: 'biz/troupes/info/upload-cover',
     data,
     header: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   });
 
@@ -127,11 +121,11 @@ export const requestUploadCover = (data: FormData) => {
 
 export const requestUploadRegistration = (data: FormData) => {
   const res = request({
-    method: "put",
-    endpoint: "biz/troupes/info/upload-registration",
+    method: 'put',
+    endpoint: 'biz/troupes/info/upload-registration',
     data,
     header: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   });
 
@@ -140,8 +134,8 @@ export const requestUploadRegistration = (data: FormData) => {
 
 export const requestEditTroupe = (data: ReqEditTroupeData) => {
   const res = request({
-    method: "put",
-    endpoint: "biz/troupes/info",
+    method: 'put',
+    endpoint: 'biz/troupes/info',
     data,
   });
 
@@ -150,8 +144,8 @@ export const requestEditTroupe = (data: ReqEditTroupeData) => {
 
 export const requestTroupeInfo = () => {
   const res = request({
-    method: "get",
-    endpoint: "biz/troupes/info",
+    method: 'get',
+    endpoint: 'biz/troupes/info',
   });
 
   return res;
@@ -159,32 +153,25 @@ export const requestTroupeInfo = () => {
 
 export const requestTroupeEditInfo = () => {
   const res = request({
-    method: "get",
-    endpoint: "biz/troupes/info/edit",
+    method: 'get',
+    endpoint: 'biz/troupes/info/edit',
   });
 
   return res;
 };
 
-export const requestRecruits = ({
-  limit,
-  offset,
-  status,
-}: ReqRecruitsParams) => {
+export const requestRecruits = ({ limit, offset, status }: ReqRecruitsParams) => {
   const res = request({
-    method: "get",
+    method: 'get',
     endpoint: `biz/recruits?limit=${limit}&offset=${offset}&status=${status}`,
   });
 
   return res;
 };
 
-export const requestEditRecruit = (
-  data: ReqEditRecruitParams,
-  recruitId: string
-) => {
+export const requestEditRecruit = (data: ReqEditRecruitParams, recruitId: string) => {
   const res = request({
-    method: "put",
+    method: 'put',
     endpoint: `biz/recruits?recruitId=${recruitId}`,
     data,
   });
@@ -194,11 +181,11 @@ export const requestEditRecruit = (
 
 export const requestUploadRecruitImage = (data: FormData) => {
   const res = request({
-    method: "put",
-    endpoint: "biz/recruits/images",
+    method: 'put',
+    endpoint: 'biz/recruits/images',
     data,
     header: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   });
 
@@ -206,15 +193,15 @@ export const requestUploadRecruitImage = (data: FormData) => {
 };
 
 export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
-  const res = request({ method: "post", endpoint: "biz/recruits", data });
-  
+  const res = request({ method: 'post', endpoint: 'biz/recruits', data });
+
   return res;
 };
 
 export const requestCloseRecruit = (data: ReqChangeRecruitStatusBody) => {
   const res = request({
-    method: "put",
-    endpoint: "biz/recruits/status",
+    method: 'put',
+    endpoint: 'biz/recruits/status',
     data,
   });
 
@@ -223,8 +210,8 @@ export const requestCloseRecruit = (data: ReqChangeRecruitStatusBody) => {
 
 export const requestDeleteRecruit = (data: ReqDeleteRecruitsBody) => {
   const res = request({
-    method: "delete",
-    endpoint: `biz/recruits/applyIds=${data.applyIds}`,
+    method: 'delete',
+    endpoint: `biz/recruits`,
     data,
   });
 
@@ -233,7 +220,7 @@ export const requestDeleteRecruit = (data: ReqDeleteRecruitsBody) => {
 
 export const requestRecruitFormData = async (recruitId: string) => {
   const res = await request({
-    method: "get",
+    method: 'get',
     endpoint: `biz/recruits/${recruitId}/edit`,
   });
 
@@ -242,8 +229,8 @@ export const requestRecruitFormData = async (recruitId: string) => {
 
 export const requestChangeEndDate = async (data: ReqChangeEndDateBody) => {
   const res = await request({
-    method: "put",
-    endpoint: "biz/recruits/endData",
+    method: 'put',
+    endpoint: 'biz/recruits/endData',
     data,
   });
 

@@ -1,12 +1,12 @@
-import Button from "@/components/buttons/button";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import Button from '@/components/buttons/button';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const NoApplicant = () => {
   const navigate = useNavigate();
 
   const handleUploadPostClick = () => {
-    navigate("/biz/uploadpost");
+    navigate('/biz/cast/form');
   };
   return (
     <NoApplicantContainer>

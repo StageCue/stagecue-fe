@@ -1,24 +1,27 @@
-import styled from "styled-components";
-import CheckboxSVG from "@assets/icons/checkbox_gray.svg?react";
-import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
-import StarSVG from "@assets/icons/star.svg?react";
-import CaretDownSVG from "@assets/icons/caret_down.svg?react";
-import { useEffect, useState } from "react";
-import RecruitRow from "./components/recruitRow";
-import NoPost from "./components/noPost";
-import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
-import CaretUpSVG from "@assets/icons/caret_up.svg?react";
-import { Recruit } from "@/types/biz";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import styled from 'styled-components';
+import CheckboxSVG from '@assets/icons/checkbox_gray.svg?react';
+import CheckboxCheckedSVG from '@assets/icons/checkbox_checked.svg?react';
+import StarSVG from '@assets/icons/star.svg?react';
+import CaretDownSVG from '@assets/icons/caret_down.svg?react';
+import { useEffect, useState } from 'react';
+import RecruitRow from './components/recruitRow';
+import NoPost from './components/noPost';
+import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
+import CaretUpSVG from '@assets/icons/caret_up.svg?react';
+import { Recruit } from '@/types/biz';
 
 interface TableProps {
   recruits: Recruit[];
   onClickCheckbox: (id: number) => void;
+  onClickAllCheckbox: (value: boolean) => void;
   selectedRecruitIds: number[];
 }
 
 const Table = ({
   recruits,
   onClickCheckbox,
+  onClickAllCheckbox,
   selectedRecruitIds,
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
@@ -29,50 +32,42 @@ const Table = ({
   const [isDateAsc, setIsDateAsc] = useState(true);
   const [isStatusAsc, setIsStatusAsc] = useState(true);
 
-  const orderAsc = ["TEMP", "RECRUIT", "CLOSED"];
+  const orderAsc = ['TEMP', 'RECRUIT', 'CLOSED'];
   const orderDesc = [...orderAsc].reverse();
 
   const handleCountSortClick = () => {
-    setIsCountAsc((prev) => !prev);
+    setIsCountAsc(prev => !prev);
 
     if (isCountAsc) {
-      setSortedRecruits((prev) =>
-        prev.sort((a, b) => a.applyCount - b.applyCount)
-      );
+      setSortedRecruits(prev => prev.sort((a, b) => a.applyCount - b.applyCount));
     } else {
-      setSortedRecruits((prev) =>
-        prev.sort((a, b) => b.applyCount - a.applyCount)
-      );
+      setSortedRecruits(prev => prev.sort((a, b) => b.applyCount - a.applyCount));
     }
   };
 
   const handleDateSortClick = () => {
-    setIsDateAsc((prev) => !prev);
+    setIsDateAsc(prev => !prev);
 
     if (isDateAsc) {
-      setSortedRecruits((prev) =>
-        prev.sort(
-          (a, b) =>
-            new (Date as any)(a.recruitEnd) - new (Date as any)(b.recruitEnd)
-        )
+      setSortedRecruits(prev =>
+        prev.sort((a, b) => new (Date as any)(a.recruitEnd) - new (Date as any)(b.recruitEnd))
       );
     } else {
-      setSortedRecruits((prev) =>
-        prev.sort(
-          (a, b) =>
-            new (Date as any)(b.recruitEnd) - new (Date as any)(a.recruitEnd)
-        )
+      setSortedRecruits(prev =>
+        prev.sort((a, b) => new (Date as any)(b.recruitEnd) - new (Date as any)(a.recruitEnd))
       );
     }
   };
 
   const handleCheckboxClick = () => {
-    setIsCheckedAll((prev) => !prev);
-    recruits.map(({ id }) => onClickCheckbox(id));
+    setIsCheckedAll(prev => {
+      onClickAllCheckbox(!prev);
+      return !prev;
+    });
   };
 
   const handleAllStarClick = () => {
-    setIsStarAll((prev) => !prev);
+    setIsStarAll(prev => !prev);
     if (!isStarAll) {
       setStarMarkedIds(recruits.map(({ id }) => id));
     } else {
@@ -81,40 +76,30 @@ const Table = ({
   };
 
   const handleStatusSortClick = () => {
-    setIsStatusAsc((prev) => !prev);
+    setIsStatusAsc(prev => !prev);
 
     if (isStatusAsc) {
-      setSortedRecruits((prev) =>
-        prev.sort(
-          (a, b) => orderAsc.indexOf(a.status) - orderAsc.indexOf(b.status)
-        )
+      setSortedRecruits(prev =>
+        prev.sort((a, b) => orderAsc.indexOf(a.status) - orderAsc.indexOf(b.status))
       );
     } else {
-      setSortedRecruits((prev) =>
-        prev.sort(
-          (a, b) => orderDesc.indexOf(a.status) - orderDesc.indexOf(b.status)
-        )
+      setSortedRecruits(prev =>
+        prev.sort((a, b) => orderDesc.indexOf(a.status) - orderDesc.indexOf(b.status))
       );
     }
   };
 
-  const handleStarClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    recruitId: number
-  ) => {
+  const handleStarClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, recruitId: number) => {
     e.stopPropagation();
     if (starMarkedIds.includes(recruitId)) {
-      setStarMarkedIds((prev) => prev.filter((id) => id !== recruitId));
+      setStarMarkedIds(prev => prev.filter(id => id !== recruitId));
     } else {
-      setStarMarkedIds((prev) => [...prev, recruitId]);
+      setStarMarkedIds(prev => [...prev, recruitId]);
     }
   };
 
   useEffect(() => {
-    if (
-      selectedRecruitIds.length !== 0 &&
-      selectedRecruitIds.length === recruits.length
-    ) {
+    if (selectedRecruitIds.length !== 0 && selectedRecruitIds.length === recruits.length) {
       setIsCheckedAll(true);
     } else {
       setIsCheckedAll(false);
@@ -122,10 +107,7 @@ const Table = ({
   }, [selectedRecruitIds, recruits]);
 
   useEffect(() => {
-    if (
-      starMarkedIds.length !== 0 &&
-      starMarkedIds.length === recruits.length
-    ) {
+    if (starMarkedIds.length !== 0 && starMarkedIds.length === recruits.length) {
       setIsStarAll(true);
     } else {
       setIsStarAll(false);
@@ -135,9 +117,7 @@ const Table = ({
   useEffect(() => {
     if (recruits?.length > 0) {
       setSortedRecruits(recruits);
-      const favoriteIds = recruits
-        .filter((recruit) => recruit.isFavorite)
-        .map((recruit) => recruit.id);
+      const favoriteIds = recruits.filter(recruit => recruit.isFavorite).map(recruit => recruit.id);
 
       setStarMarkedIds(favoriteIds);
     } else {
@@ -150,7 +130,11 @@ const Table = ({
       <Header>
         <CheckboxColumn>
           <CheckboxWrapper onClick={handleCheckboxClick}>
-            {isCheckedAll ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
+            {isCheckedAll ? (
+              <CheckboxCheckedSVG width={28} height={28} />
+            ) : (
+              <CheckboxSVG width={28} height={28} />
+            )}
           </CheckboxWrapper>
           <StarWrapper onClick={handleAllStarClick}>
             {isStarAll ? <StarMarkedSVG /> : <StarSVG />}
@@ -159,40 +143,32 @@ const Table = ({
         <PostTitleColumn>공고명</PostTitleColumn>
         <ApplicantColumn onClick={handleCountSortClick}>
           지원 건수
-          <CaretWrapper>
-            {isCountAsc ? <CaretDownSVG /> : <CaretUpSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isCountAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
         </ApplicantColumn>
         <DateColumn onClick={handleDateSortClick}>
           마감일
-          <CaretWrapper>
-            {isDateAsc ? <CaretDownSVG /> : <CaretUpSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isDateAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
         </DateColumn>
         <StateColumn onClick={handleStatusSortClick}>
           상태
-          <CaretWrapper>
-            {isStatusAsc ? <CaretDownSVG /> : <CaretUpSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isStatusAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
         </StateColumn>
       </Header>
       <Body>
-        {sortedRecruits?.map(
-          ({ title, id, applyCount, recruitEnd, status }) => (
-            <RecruitRow
-              key={id}
-              title={title}
-              id={id}
-              applyCount={applyCount}
-              recruitEnd={recruitEnd}
-              status={status}
-              isFavorite={starMarkedIds.includes(id)}
-              onClickStar={(e, id) => handleStarClick(e, id)}
-              isSelected={selectedRecruitIds.includes(id)}
-              onClickCheckbox={onClickCheckbox}
-            />
-          )
-        )}
+        {sortedRecruits?.map(({ title, id, applyCount, recruitEnd, status }) => (
+          <RecruitRow
+            key={id}
+            title={title}
+            id={id}
+            applyCount={applyCount}
+            recruitEnd={recruitEnd}
+            status={status}
+            isFavorite={starMarkedIds.includes(id)}
+            onClickStar={(e, id) => handleStarClick(e, id)}
+            isSelected={selectedRecruitIds.includes(id)}
+            onClickCheckbox={onClickCheckbox}
+          />
+        ))}
         {recruits?.length === 0 && <NoPost />}
       </Body>
     </TableContainer>
