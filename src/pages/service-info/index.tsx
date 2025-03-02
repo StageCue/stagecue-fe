@@ -41,7 +41,7 @@ const ServiceInfo = () => {
         </SvgPosition>
       </Section>
 
-      <Section $height={2310}>
+      <Section $height={2430}>
         <ImageSection />
         <SectionItemContainer>
           <SectionItem $paddingY={120} $backgroundColor="#070707e5">
