@@ -139,11 +139,6 @@ const EditRecruit = () => {
     !stgEndValue ||
     !stgAddressValue;
 
-  const recruitMentDatepickerRef = useRef<DatePicker | null>(null);
-  const [recruitMentDataRange, setRecruitMentDataRange] = useState<[Date | null, Date | null]>([
-    null,
-    null,
-  ]);
   const [recruitStatus, setRecruitStatus] = useState('');
   const [isAlwaysRecruit, setIsAlwaysRecruit] = useState(false);
 
@@ -161,12 +156,6 @@ const EditRecruit = () => {
 
   const stageDatepickerRef = useRef<DatePicker | null>(null);
   const [stageDateRange, setStageDateRange] = useState<[Date | null, Date | null]>([null, null]);
-
-  const handleRecruitMentCalendarClick = () => {
-    if (recruitMentDatepickerRef.current) {
-      recruitMentDatepickerRef.current.setOpen(true);
-    }
-  };
 
   const handleRecruitCalendarClick = () => {
     if (recruitDatepickerRef.current) {
@@ -201,25 +190,6 @@ const EditRecruit = () => {
           .replace(/-$/, '')
       );
       setValue('recruitEnd', stringDate[1]!);
-    }
-  };
-  
-  const handleRecruitMentRangeChange = (range: [Date | null, Date | null]) => {
-    setRecruitMentDataRange(range);
-    if (range) {
-      const stringDate = range.map(date =>
-        date
-          ?.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          })
-          .replace(/\./g, '-')
-          .replace(/\s/g, '')
-          .replace(/-$/, '')
-      );
-      setValue('recruitMent.start', stringDate[0]!);
-      setValue('recruitMent.end', stringDate[1]!);
     }
   };
 
@@ -458,7 +428,7 @@ const EditRecruit = () => {
     if (res.monthlyFee !== 0) {
       setIsMontlyFee(true);
     }
-    handleRecruitMentRangeChange([new Date(), new Date(res.recruitEnd)]);
+    handleRecruitRangeChange([new Date(), new Date(res.recruitEnd)]);
     handlePracticeRangeChange([new Date(res.practice.start), new Date(res.practice.end)]);
     setValue('practice.dayOfWeek', res.practice.daysOfWeek);
     setPracticeDays(decimalToBinaryArray(res.practice.dayOfWeek));
@@ -697,25 +667,6 @@ const EditRecruit = () => {
             )}
           </Images>
         </InputWrapper>
-        <InputWrapper>
-          <RequiredLabel>
-            모집기간
-            <RequiedRedDot />
-          </RequiredLabel>
-          <WithIconInputWrapper $isDirty={Boolean(dirtyFields.recruitMent?.start)} $isError={false}>
-            <RangeDatepicker
-              ref={recruitMentDatepickerRef}
-              selectedRange={recruitMentDataRange}
-              onChangeDate={(range: [Date | null, Date | null]) => {
-                handleRecruitMentRangeChange(range);
-              }}
-              pickerText="모집기간을 입력해주세요"
-            />
-            <IconWrapper onClick={handleRecruitMentCalendarClick}>
-              <CalendarSVG />
-            </IconWrapper>
-          </WithIconInputWrapper>
-        </InputWrapper>
         <PairInputWrapper>
           <InputWrapper>
             <RequiredLabel>
@@ -729,7 +680,7 @@ const EditRecruit = () => {
                 onChangeDate={(range: [Date | null, Date | null]) => {
                   handleRecruitRangeChange(range);
                 }}
-                pickerText="연습기간을 입력해주세요"
+                pickerText="모집기간을 입력해주세요"
               />
               <IconWrapper onClick={handleRecruitCalendarClick}>
                 <CalendarSVG />
