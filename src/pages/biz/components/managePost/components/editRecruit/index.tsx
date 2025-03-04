@@ -227,24 +227,34 @@ const EditRecruit = () => {
     }
   };
 
+  const [isLoading, setIsLoading] = useState(false);
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
-    const recruitImages = (await requestUploadImageFiles())?.map((image: any) => image?.fileName);
-    const recruitingParts = partsValue?.map(({ value }) => value);
+    if (isLoading) return;
 
-    const { ...fieldData } = data;
+    setIsLoading(true);
+    try {
+      const recruitImages = (await requestUploadImageFiles())?.map((image: any) => image?.fileName);
+      const recruitingParts = partsValue?.map(({ value }) => value);
 
-    const res = await requestCreateRecruit({
-      ...fieldData,
-      monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
-      recruitingParts,
-      recruitImages,
-      recruitStatus,
-    });
+      const { ...fieldData } = data;
 
-    setIsNewRecruitModalOpen(false);
+      const res = await requestCreateRecruit({
+        ...fieldData,
+        monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
+        recruitingParts,
+        recruitImages,
+        recruitStatus,
+      });
 
-    if (res?.id) {
-      navigate(`/biz/cast/${res?.id}/form`);
+      setIsNewRecruitModalOpen(false);
+
+      if (res?.id) {
+        navigate(`/biz/cast/${res?.id}/form`);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
