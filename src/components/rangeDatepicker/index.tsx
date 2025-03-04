@@ -35,6 +35,7 @@ const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
           ref={ref}
           dateFormat="yyyy.MM.dd"
           selectsRange
+          placeholderText="선택해주세요."
           startDate={startDate!}
           endDate={endDate!}
           onChange={update => onChangeDate(update)}

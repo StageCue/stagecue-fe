@@ -1,14 +1,14 @@
-import DatePicker from "react-datepicker";
-import CaretLeft from "@assets/icons/caret_left_cal.svg?react";
-import CaretRight from "@assets/icons/caret_right_cal.svg?react";
+import DatePicker from 'react-datepicker';
+import CaretLeft from '@assets/icons/caret_left_cal.svg?react';
+import CaretRight from '@assets/icons/caret_right_cal.svg?react';
 
-import "react-datepicker/dist/react-datepicker.css";
-import styled from "styled-components";
-import Button from "../buttons/button";
-import { forwardRef } from "react";
+import 'react-datepicker/dist/react-datepicker.css';
+import styled from 'styled-components';
+import Button from '../buttons/button';
+import { forwardRef } from 'react';
 
 interface DatepickerProps {
-  selectedDate: Date;
+  selectedDate: Date | null;
   onChangeDate: (date: Date | null) => void;
   minDate?: Date;
   maxDate?: Date;
@@ -18,7 +18,7 @@ interface DatepickerProps {
 const Datepicker = forwardRef<DatePicker, DatepickerProps>(
   ({ selectedDate, onChangeDate, pickerText }, ref) => {
     const handleApplyClick = () => {
-      if (ref && "current" in ref && ref.current) {
+      if (ref && 'current' in ref && ref.current) {
         ref.current.setOpen(false);
       }
     };
@@ -34,6 +34,7 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
           dateFormat="yyyy.MM.dd"
           selected={selectedDate}
           onChange={onChangeDate}
+          placeholderText="선택해주세요."
           shouldCloseOnSelect={false}
           disabledKeyboardNavigation
           customInputRef=""
@@ -114,9 +115,7 @@ const CustomHeader = ({
         <IconWrapper onClick={decreaseMonth}>
           <CaretLeft />
         </IconWrapper>
-        <YearMonth>
-          {date.toLocaleString("ko-KR", { year: "numeric", month: "long" })}
-        </YearMonth>
+        <YearMonth>{date.toLocaleString('ko-KR', { year: 'numeric', month: 'long' })}</YearMonth>
         <IconWrapper onClick={increaseMonth}>
           <CaretRight />
         </IconWrapper>
