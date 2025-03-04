@@ -203,6 +203,9 @@ export const requestCloseRecruit = (data: ReqChangeRecruitStatusBody) => {
     method: 'put',
     endpoint: 'biz/recruits/status',
     data,
+    header: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
   return res;
