@@ -1,51 +1,44 @@
-import Button from "@/components/buttons/button";
-import styled from "styled-components";
-import PlusSVG from "@assets/icons/plus_red.svg?react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import Button from '@/components/buttons/button';
+import styled from 'styled-components';
+import PlusSVG from '@assets/icons/plus_red.svg?react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-type bizMenuOption = "지원자 관리" | "내 극단 관리" | "공고 관리" | "My Stage";
+type bizMenuOption = '지원자 관리' | '내 극단 관리' | '공고 관리' | 'My Stage';
 
 const Sidemenu = () => {
   const navigate = useNavigate();
-  const [currentMenu, setCurrentMenu] = useState("지원자 관리");
+  const [currentMenu, setCurrentMenu] = useState('지원자 관리');
 
   const location = useLocation();
 
-
-  const menuOption: bizMenuOption[] = [
-    "지원자 관리",
-    "내 극단 관리",
-    "공고 관리",
-    "My Stage",
-  ];
+  const menuOption: bizMenuOption[] = ['지원자 관리', '내 극단 관리', '공고 관리', 'My Stage'];
 
   const handleCreateRecruitClick = () => {
-    navigate("/biz/cast/form");
+    navigate('/biz/cast/form');
   };
 
   const handleOptionClick = (option: bizMenuOption) => {
-    if (option === "지원자 관리") {
-      navigate("/biz/apply");
-    } else if (option === "내 극단 관리") {
-      navigate("/biz/troupe");
-    } else if (option === "공고 관리") {
-      navigate("/biz/cast");
+    if (option === '지원자 관리') {
+      navigate('/biz/apply');
+    } else if (option === '내 극단 관리') {
+      navigate('/biz/troupe');
+    } else if (option === '공고 관리') {
+      navigate('/biz/cast');
     }
 
     setCurrentMenu(option);
   };
 
-
   useEffect(() => {
-    if (location.pathname.startsWith("/biz/apply")) {
-      setCurrentMenu("지원자 관리");
-    } else if (location.pathname.startsWith("/biz/troupe")) {
-      setCurrentMenu("내 극단 관리");
-    } else if (location.pathname.startsWith("/biz/cast")) {
-      setCurrentMenu("공고 관리");
-    } else if (location.pathname.startsWith("/biz/my-stage")) {
-      setCurrentMenu("My Stage");
+    if (location.pathname.startsWith('/biz/apply')) {
+      setCurrentMenu('지원자 관리');
+    } else if (location.pathname.startsWith('/biz/troupe')) {
+      setCurrentMenu('내 극단 관리');
+    } else if (location.pathname.startsWith('/biz/cast')) {
+      setCurrentMenu('공고 관리');
+    } else if (location.pathname.startsWith('/biz/my-stage')) {
+      setCurrentMenu('My Stage');
     }
   }, [location.pathname]);
   return (
@@ -83,8 +76,9 @@ const Sidemenu = () => {
         </Button>
       </UploadPostWrapper>
       <Menu>
-        {menuOption.map((option: bizMenuOption) => (
+        {menuOption.map((option: bizMenuOption, index) => (
           <Option
+            key={index}
             onClick={() => handleOptionClick(option)}
             $isSelected={currentMenu === option}
           >
@@ -166,9 +160,9 @@ const Option = styled.div<{ $isSelected: boolean }>`
   font-size: 16px;
   line-height: 150%;
   letter-spacing: 0.57%;
-  color: ${({ $isSelected }) => ($isSelected ? "#171719" : "#858688")};
+  color: ${({ $isSelected }) => ($isSelected ? '#171719' : '#858688')};
   cursor: pointer;
-  background-color: ${({ $isSelected }) => ($isSelected ? "#eaeaea" : "white")};
+  background-color: ${({ $isSelected }) => ($isSelected ? '#eaeaea' : 'white')};
   display: flex;
   align-items: center;
   border-radius: 5px;

@@ -1,15 +1,16 @@
-import { requestProfileDetail } from "@/api/users";
-import Button from "@/components/buttons/button";
-import Overlay from "@/components/modal/overlay";
-import { ProfileDetailData } from "@/pages/mypage/components/settingProfile/components/profileDetail";
-import useSessionStore from "@/store/session";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import SlashSVG from "@assets/icons/slash.svg?react";
-import MailSVG from "@assets/icons/mail_lg.svg?react";
-import MobileSVG from "@assets/icons/mobile.svg?react";
-import CloseSVG from "@assets/icons/close_black.svg?react";
-import { useNavigate } from "react-router-dom";
+import { requestProfileDetail } from '@/api/users';
+import Button from '@/components/buttons/button';
+import Overlay from '@/components/modal/overlay';
+import { ProfileDetailData } from '@/pages/mypage/components/settingProfile/components/profileDetail';
+import useSessionStore from '@/store/session';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import SlashSVG from '@assets/icons/slash.svg?react';
+import MailSVG from '@assets/icons/mail_lg.svg?react';
+import MobileSVG from '@assets/icons/mobile.svg?react';
+import CloseSVG from '@assets/icons/close_black.svg?react';
+import { useNavigate } from 'react-router-dom';
+import calculateKoreanAge from '@/utils/calculateKoreanAge';
 
 interface ProfileModalProps {
   id: string;
@@ -25,26 +26,6 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
   const getProfileDetail = async (id: string) => {
     const res = await requestProfileDetail(id);
     setDetail(res);
-  };
-
-  const calculateKoreanAge = (birthDateString: string) => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1;
-    const currentDay = new Date().getDate();
-    const [birthYear, birthMonth, birthDay] = birthDateString
-      .split("-")
-      .map(Number);
-
-    let koreanAge = currentYear - birthYear + 1;
-
-    if (
-      currentMonth < birthMonth ||
-      (currentMonth === birthMonth && currentDay < birthDay)
-    ) {
-      koreanAge--;
-    }
-
-    return `${birthYear}년생 (${koreanAge}세)`;
   };
 
   const handleEditClick = () => {
@@ -75,7 +56,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
               height={32}
               lineHeight={138.5}
               letterSpacing={1.94}
-              fontWeight={"var(--font-medium)"}
+              fontWeight={'var(--font-medium)'}
               fontSize={13}
               onClick={handleEditClick}
             >
@@ -89,9 +70,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
               <Age>{detail && calculateKoreanAge(detail.birthday)}</Age>
             </NameWrapper>
             <ImagesWrapper>
-              <Thumbnail
-                src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`}
-              />
+              <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
               <Images>
                 {detail?.images.map(({ url }) => (
                   <Image src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
@@ -128,7 +107,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
             <Information>
               <InformationTitle>경력 (총 개월)</InformationTitle>
               <DataWrapper>
-                {detail?.experiences.map((exp) => (
+                {detail?.experiences.map(exp => (
                   <ExpRow>
                     <RoleAndPeriod>
                       <Role>{exp.artworkPart}</Role>

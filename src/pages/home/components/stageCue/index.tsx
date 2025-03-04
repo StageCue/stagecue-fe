@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import styled from "styled-components";
-import PlusSVG from "@assets/icons/plus.svg?react";
-import AboutSVG from "@assets/images/about.svg";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import PlusSVG from '@assets/icons/plus.svg?react';
+import AboutSVG from '@assets/images/about.svg';
+import { useNavigate } from 'react-router-dom';
 
 interface StageCueProps {
   notices: any[];
@@ -12,7 +12,7 @@ const StageCue = ({ notices }: StageCueProps) => {
   const navigate = useNavigate();
 
   const handlePlusClick = () => {
-    navigate("/notice");
+    navigate('/notice');
   };
   return (
     <StageCueContainer>

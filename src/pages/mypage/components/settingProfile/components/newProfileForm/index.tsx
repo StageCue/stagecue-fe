@@ -1,27 +1,28 @@
-import styled from "styled-components";
-import { useForm } from "react-hook-form";
-import Button from "@/components/buttons/button";
-import { useCallback, useEffect, useState } from "react";
-import SlashSVG from "@assets/icons/slash.svg?react";
-import EditSVG from "@assets/icons/edit.svg?react";
-import RequiredSVG from "@assets/icons/required_orange.svg?react";
-import TrashSVG from "@assets/icons/trash_lg.svg?react";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
+import Button from '@/components/buttons/button';
+import { useCallback, useEffect, useState } from 'react';
+import SlashSVG from '@assets/icons/slash.svg?react';
+import EditSVG from '@assets/icons/edit.svg?react';
+import RequiredSVG from '@assets/icons/required_orange.svg?react';
+import TrashSVG from '@assets/icons/trash_lg.svg?react';
+import { useNavigate } from 'react-router-dom';
 import {
   requestCreateProfile,
   requestSaveProfile,
   requestUploadImage,
   requestUploadThumbnail,
-} from "@/api/users";
-import useSessionStore from "@/store/session";
-import ModalPortal from "@/components/modal/portal";
-import SubmitModal from "../modals/submitModal";
-import { useDropzone } from "react-dropzone";
-import { convertFileToURL } from "@/utils/file";
-import CloseSVG from "@assets/icons/close_black.svg?react";
-import ImageSVG from "@assets/icons/image.svg?react";
-import { generateId } from "@/utils/dev";
-import LoadingModal from "@/components/modal/\bLoading/Loading";
+} from '@/api/users';
+import useSessionStore from '@/store/session';
+import ModalPortal from '@/components/modal/portal';
+import SubmitModal from '../modals/submitModal';
+import { useDropzone } from 'react-dropzone';
+import { convertFileToURL } from '@/utils/file';
+import CloseSVG from '@assets/icons/close_black.svg?react';
+import ImageSVG from '@assets/icons/image.svg?react';
+import { generateId } from '@/utils/dev';
+import LoadingModal from '@/components/modal/\bLoading/Loading';
+import calculateKoreanAge from '@/utils/calculateKoreanAge';
 
 export interface ProfileInput {
   birthday: string;
@@ -49,18 +50,14 @@ const NewProfileForm = () => {
   const sessionStore = useSessionStore();
   const [isEditPersonalInfo, setIsEditPersonalInfo] = useState<boolean>(false);
   const [isEditIntroduce, setIsEditIntroduce] = useState<boolean>(false);
-  const [editingExpId, setEditingExpId] = useState<string>("");
+  const [editingExpId, setEditingExpId] = useState<string>('');
   const [isAddExp, setIsAddExp] = useState<boolean>(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
 
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string>();
-  const [imageUrlArray, setImageUrlArray] = useState<
-    { url: string; id: string }[]
-  >([]);
-  const [imageFileArray, setImageFileArray] = useState<
-    { file: File; id: string }[]
-  >([]);
+  const [imageUrlArray, setImageUrlArray] = useState<{ url: string; id: string }[]>([]);
+  const [imageFileArray, setImageFileArray] = useState<{ file: File; id: string }[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { register, handleSubmit, setValue, watch } = useForm<ProfileInput>();
@@ -79,42 +76,39 @@ const NewProfileForm = () => {
       setThumbnailPreview(url);
     }
   }, []);
-  const {
-    getRootProps: getThumbnailRootProps,
-    getInputProps: getThumbnailInputProps,
-  } = useDropzone({
-    onDrop: onDropThumbnail,
-  });
+  const { getRootProps: getThumbnailRootProps, getInputProps: getThumbnailInputProps } =
+    useDropzone({
+      onDrop: onDropThumbnail,
+    });
 
   const onDropImages = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
       const url = convertFileToURL(file);
       const id = generateId();
-      setImageFileArray((prev) => [...prev, { file, id }]);
-      setImageUrlArray((prev) => [...prev, { url, id }]);
+      setImageFileArray(prev => [...prev, { file, id }]);
+      setImageUrlArray(prev => [...prev, { url, id }]);
     }
   }, []);
-  const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } =
-    useDropzone({
-      onDrop: onDropImages,
-    });
+  const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } = useDropzone({
+    onDrop: onDropImages,
+  });
 
   const requestUploadImageFiles = async () => {
     if (imageFileArray.length !== 0) {
       try {
         const urls = await Promise.all(
-          imageFileArray.map(async (item) => {
+          imageFileArray.map(async item => {
             const formData = new FormData();
-            formData.append("file", item.file);
+            formData.append('file', item.file);
             const { imageUrl } = await requestUploadImage(formData);
             return imageUrl;
           })
         );
-        setValue("images", urls);
+        setValue('images', urls);
         return urls;
       } catch (error) {
-        console.error("Error uploading images:", error);
+        console.error('Error uploading images:', error);
       }
     }
   };
@@ -123,54 +117,35 @@ const NewProfileForm = () => {
     if (thumbnailFile) {
       try {
         const formData = new FormData();
-        formData.append("file", thumbnailFile);
+        formData.append('file', thumbnailFile);
         const { imageUrl } = await requestUploadThumbnail(formData);
-        setValue("thumbnail", imageUrl);
+        setValue('thumbnail', imageUrl);
 
         return imageUrl;
       } catch (error) {
-        console.error("Error uploading images:", error);
+        console.error('Error uploading images:', error);
       }
     }
   };
 
-  const [
-    titleValue,
-    birthdayValue,
-    weightValue,
-    heightValue,
-    introduceValue,
-    experiencesValue,
-    thumbnailValue,
-  ] = watch([
-    "title",
-    "birthday",
-    "weight",
-    "height",
-    "introduce",
-    "experiences",
-    "thumbnail",
-    "images",
+  const [titleValue, weightValue, heightValue, introduceValue, experiencesValue, thumbnailValue] =
+    watch(['title', 'weight', 'height', 'introduce', 'experiences', 'thumbnail', 'images']);
+
+  const [artworkNameValue, artworkPartValue, troupeValue, startDateValue, endDateValue] = expWatch([
+    'artworkName',
+    'artworkPart',
+    'troupe',
+    'startDate',
+    'endDate',
   ]);
 
-  const [
-    artworkNameValue,
-    artworkPartValue,
-    troupeValue,
-    startDateValue,
-    endDateValue,
-  ] = expWatch([
-    "artworkName",
-    "artworkPart",
-    "troupe",
-    "startDate",
-    "endDate",
-  ]);
+  const isSaveDisabled =
+    !artworkNameValue || !artworkPartValue || !troupeValue || !startDateValue || !endDateValue;
 
   const handleInfoEditClick = (section: string) => {
-    if (section === "personalInfo") {
+    if (section === 'personalInfo') {
       setIsEditPersonalInfo(true);
-    } else if (section === "introduce") {
+    } else if (section === 'introduce') {
       setIsEditIntroduce(true);
     }
   };
@@ -185,18 +160,18 @@ const NewProfileForm = () => {
       endDate: endDateValue,
     };
     if (experiencesValue) {
-      setValue("experiences", [...experiencesValue, newExp]);
+      setValue('experiences', [...experiencesValue, newExp]);
     } else {
-      setValue("experiences", [newExp]);
+      setValue('experiences', [newExp]);
     }
 
     setIsAddExp(false);
   };
 
-  const handleSaveClick = (section: "personalInfo" | "introduce") => {
-    if (section === "personalInfo") {
+  const handleSaveClick = (section: 'personalInfo' | 'introduce') => {
+    if (section === 'personalInfo') {
       setIsEditPersonalInfo(false);
-    } else if (section === "introduce") {
+    } else if (section === 'introduce') {
       setIsEditIntroduce(false);
     }
   };
@@ -207,19 +182,19 @@ const NewProfileForm = () => {
   };
 
   const handleDeleteExpClick = (id: string) => {
-    const filteredExpArr = experiencesValue.filter((exp) => exp.id !== id);
-    setValue("experiences", filteredExpArr);
+    const filteredExpArr = experiencesValue.filter(exp => exp.id !== id);
+    setValue('experiences', filteredExpArr);
   };
 
   const handleAddExpClick = () => {
     setIsAddExp(true);
-    setEditingExpId("");
+    setEditingExpId('');
     expReset();
   };
 
-  const handleCancleAddExpClick = () => {
-    setIsAddExp(false);
-  };
+  // const handleCancelAddExpClick = () => {
+  //   setIsAddExp(false);
+  // };
 
   const handleSubmitClick = async () => {
     setIsSubmitModalOpen(true);
@@ -229,9 +204,7 @@ const NewProfileForm = () => {
     try {
       setIsLoading(true);
       const { experiences, height, weight, introduce, title } = data;
-      const sanitizedExperiences = experiences?.map(({ id, ...rest }) =>
-        id ? rest : rest
-      );
+      const sanitizedExperiences = experiences?.map(({ id, ...rest }) => (id ? rest : rest));
       setIsSubmitModalOpen(false);
       const imageUrls = await requestUploadImageFiles();
       const thumbnailUrl = await requestUploadThumbnailFile();
@@ -265,7 +238,7 @@ const NewProfileForm = () => {
   };
 
   const formatPhoneNumber = (value: string) => {
-    const cleaned = ("" + value).replace(/\D/g, "");
+    const cleaned = ('' + value).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
     if (match) {
       return `${match[1]}-${match[2]}-${match[3]}`;
@@ -275,28 +248,29 @@ const NewProfileForm = () => {
 
   const handleDeleteThumbanailClick = () => {
     setThumbnailFile(null);
-    setThumbnailPreview("");
+    setThumbnailPreview('');
   };
 
   const handleDeleteImageClick = (id: string) => {
-    setImageUrlArray((prevArray) => prevArray.filter((item) => item.id !== id));
-    setImageFileArray((prevArray) =>
-      prevArray.filter((item) => item.id !== id)
-    );
+    setImageUrlArray(prevArray => prevArray.filter(item => item.id !== id));
+    setImageFileArray(prevArray => prevArray.filter(item => item.id !== id));
   };
 
   useEffect(() => {
     if (editingExpId && experiencesValue.length !== 0) {
-      const exp = experiencesValue.find((exp) => exp.id === editingExpId);
+      const exp = experiencesValue.find(exp => exp.id === editingExpId);
 
-      expSetValue("artworkName", exp!.artworkName);
-      expSetValue("artworkPart", exp!.artworkPart);
-      expSetValue("startDate", exp!.startDate);
-      expSetValue("endDate", exp!.endDate);
-      expSetValue("troupe", exp!.troupe);
-      expSetValue("id", exp!.id);
+      expSetValue('artworkName', exp!.artworkName);
+      expSetValue('artworkPart', exp!.artworkPart);
+      expSetValue('startDate', exp!.startDate);
+      expSetValue('endDate', exp!.endDate);
+      expSetValue('troupe', exp!.troupe);
+      expSetValue('id', exp!.id);
     }
   }, [editingExpId, expSetValue, experiencesValue]);
+
+  const isDisabled =
+    !titleValue || !weightValue || !heightValue || !introduceValue || !experiencesValue?.length;
 
   return (
     <NewProfileFormContainer>
@@ -313,16 +287,15 @@ const NewProfileForm = () => {
       <Form>
         <ProfileHeaderWrapper>
           <TitleWrapper>
-            <TitleInput
-              {...register("title", { required: true, value: titleValue })}
-            />
+            <TitleInput {...register('title', { required: true, value: titleValue })} />
             <Button
+              type="button"
               variation="solid"
               btnClass="primary"
               width={180}
               height={48}
-              type="button"
               onClick={handleSubmitClick}
+              disabled={isDisabled}
             >
               프로필 저장
             </Button>
@@ -345,22 +318,18 @@ const NewProfileForm = () => {
                 ) : (
                   <ThumbnailDropzone {...getThumbnailRootProps()}>
                     <ImageSVG />
-                    <DropzoneText>
-                      {`파일을 선택하거나 \n 여기로 끌어다 놓으세요`}
-                    </DropzoneText>
+                    <DropzoneText>{`파일을 선택하거나 \n 여기로 끌어다 놓으세요`}</DropzoneText>
                     <ThumbnailInput {...getThumbnailInputProps()} />
                   </ThumbnailDropzone>
                 )}
                 <PersonalInfoBox>
-                  <EditIconAbsWrapper
-                    onClick={() => handleInfoEditClick("personalInfo")}
-                  >
+                  <EditIconAbsWrapper onClick={() => handleInfoEditClick('personalInfo')}>
                     {!isEditPersonalInfo && <EditSVG />}
                   </EditIconAbsWrapper>
                   <DataRows>
                     <DataRow>
                       <Property>생년월일</Property>
-                      <Value>{birthdayValue}</Value>
+                      <Value>{calculateKoreanAge(sessionStore.birthday as string)}</Value>
                     </DataRow>
                     <DataRow>
                       <Property>이름</Property>
@@ -374,7 +343,7 @@ const NewProfileForm = () => {
                             <Value>{heightValue}</Value>
                           ) : (
                             <BodyInfoInput
-                              {...register("height", { required: true })}
+                              {...register('height', { required: true })}
                               placeholder="키"
                             />
                           )}
@@ -388,7 +357,7 @@ const NewProfileForm = () => {
                             <Value>{weightValue}</Value>
                           ) : (
                             <BodyInfoInput
-                              {...register("weight", {
+                              {...register('weight', {
                                 required: true,
                               })}
                               placeholder="몸무게"
@@ -409,7 +378,7 @@ const NewProfileForm = () => {
                       fontSize={13}
                       lineHeight={138.5}
                       letterSpacing={1.94}
-                      onClick={() => handleSaveClick("personalInfo")}
+                      onClick={() => handleSaveClick('personalInfo')}
                       type="button"
                     >
                       저장
@@ -439,9 +408,7 @@ const NewProfileForm = () => {
                     <ContactDataRow>
                       <ContactValueWrapper>
                         <Property>연락처</Property>
-                        <Value>
-                          {formatPhoneNumber(sessionStore.phoneNumber!)}
-                        </Value>
+                        <Value>{formatPhoneNumber(sessionStore.phoneNumber!)}</Value>
                       </ContactValueWrapper>
                       <Button
                         variation="outlined"
@@ -468,9 +435,7 @@ const NewProfileForm = () => {
                 <GuideText>(최대 3000자)</GuideText>
               </WithButtonTextWrapper>
               {!isEditIntroduce ? (
-                <EditIconWrapper
-                  onClick={() => handleInfoEditClick("introduce")}
-                >
+                <EditIconWrapper onClick={() => handleInfoEditClick('introduce')}>
                   <EditSVG />
                 </EditIconWrapper>
               ) : (
@@ -483,7 +448,7 @@ const NewProfileForm = () => {
                   fontSize={13}
                   lineHeight={138.5}
                   letterSpacing={1.94}
-                  onClick={() => handleSaveClick("introduce")}
+                  onClick={() => handleSaveClick('introduce')}
                 >
                   저장
                 </Button>
@@ -491,7 +456,7 @@ const NewProfileForm = () => {
             </WithButtonTitleWrapper>
             {isEditIntroduce ? (
               <IntroduceInput
-                {...register("introduce", {
+                {...register('introduce', {
                   required: true,
                 })}
                 placeholder="자기소개서 내용을 작성해주세요 (최대 3000자)"
@@ -550,9 +515,7 @@ const NewProfileForm = () => {
                     </DataRow>
                   </ExpDataWrapper>
                   <ExpIconsWrapper>
-                    <TrashIconWrapper
-                      onClick={() => handleDeleteExpClick(exp.id)}
-                    >
+                    <TrashIconWrapper onClick={() => handleDeleteExpClick(exp.id)}>
                       <TrashSVG />
                     </TrashIconWrapper>
                     <EditIconWrapper onClick={() => handleEditExpClick(exp.id)}>
@@ -573,7 +536,7 @@ const NewProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpTextInput
-                          {...expRegister("artworkName", { required: true })}
+                          {...expRegister('artworkName', { required: true })}
                           placeholder="작품제목을 입력해주세요."
                         />
                       </DataRow>
@@ -585,7 +548,7 @@ const NewProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpTextInput
-                          {...expRegister("artworkPart", { required: true })}
+                          {...expRegister('artworkPart', { required: true })}
                           placeholder="맡은 배역을 입력해주세요. 예) 주연"
                         />
                       </DataRow>
@@ -597,7 +560,7 @@ const NewProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpTextInput
-                          {...expRegister("troupe", { required: true })}
+                          {...expRegister('troupe', { required: true })}
                           placeholder="활동한 극단 이름을 입력해주세요."
                         />
                       </DataRow>
@@ -609,13 +572,13 @@ const NewProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpDateInput
-                          {...expRegister("startDate", { required: true })}
+                          {...expRegister('startDate', { required: true })}
                           placeholder="YYYY.MM"
                           type="month"
                         />
                         ~
                         <ExpDateInput
-                          {...expRegister("endDate", { required: true })}
+                          {...expRegister('endDate', { required: true })}
                           placeholder="YYYY.MM"
                           type="month"
                         />
@@ -623,7 +586,7 @@ const NewProfileForm = () => {
                     </DataRows>
                   </FormLabel>
                   <ExpBtnsWrapper>
-                    <Button
+                    {/* <Button
                       variation="outlined"
                       btnClass="assistive"
                       width={53}
@@ -633,11 +596,12 @@ const NewProfileForm = () => {
                       fontWeight="var(--font-medium)"
                       lineHeight={138.5}
                       letterSpacing={1.94}
-                      onClick={handleCancleAddExpClick}
+                      onClick={handleCancelAddExpClick}
                     >
                       취소
-                    </Button>
+                    </Button> */}
                     <Button
+                      type="button"
                       variation="solid"
                       btnClass="primary"
                       width={53}
@@ -648,7 +612,7 @@ const NewProfileForm = () => {
                       lineHeight={138.5}
                       letterSpacing={1.94}
                       onClick={handleSaveExpClick}
-                      type="button"
+                      disabled={isSaveDisabled}
                     >
                       저장
                     </Button>

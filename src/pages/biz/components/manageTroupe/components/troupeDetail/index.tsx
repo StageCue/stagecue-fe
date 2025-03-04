@@ -1,12 +1,12 @@
-import styled from "styled-components";
-import CalendarSVG from "@assets/icons/calendar_xs.svg?react";
-import LinkSVG from "@assets/icons/link.svg?react";
-import LocationSVG from "@assets/icons/location.svg?react";
-import PersonSVG from "@assets/icons/person.svg?react";
-import MailSVG from "@assets/icons/mail.svg?react";
-import Button from "@/components/buttons/button";
-import { TroupeInfo } from "../..";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import CalendarSVG from '@assets/icons/calendar_xs.svg?react';
+import LinkSVG from '@assets/icons/link.svg?react';
+import LocationSVG from '@assets/icons/location.svg?react';
+import PersonSVG from '@assets/icons/person.svg?react';
+import MailSVG from '@assets/icons/mail.svg?react';
+import Button from '@/components/buttons/button';
+import { TroupeInfo } from '../..';
+import { useNavigate } from 'react-router-dom';
 
 interface TroupeDetailInterface {
   troupe: TroupeInfo;
@@ -16,20 +16,16 @@ const TroupeDetail = ({ troupe }: TroupeDetailInterface) => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
-    navigate("/biz/troupe/form");
+    navigate('/biz/troupe/form');
   };
 
   return (
     <TroupeDetailContainer>
       <CoverImageWrapper>
         <CoverImageWrapper>
-          <Cover
-            src={`https://s3.stagecue.co.kr/stagecue/${troupe?.coverImg}`}
-          />
+          <Cover src={`https://s3.stagecue.co.kr/stagecue/${troupe?.coverImg}`} />
           <LogoWrapper>
-            <Logo
-              src={`https://s3.stagecue.co.kr/stagecue/${troupe?.logoImg}`}
-            />
+            <Logo src={`https://s3.stagecue.co.kr/stagecue/${troupe?.logoImg}`} />
           </LogoWrapper>
         </CoverImageWrapper>
       </CoverImageWrapper>

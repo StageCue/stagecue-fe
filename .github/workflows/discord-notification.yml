@@ -1,0 +1,33 @@
+name: StageCue GitHub 알림
+
+on:
+  push:
+    branches: [main, dev]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Discord 알림 전송
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: |
+            ### 🚀 Frontend 업데이트 알림
+
+            **이벤트 타입**
+            ${{ github.event_name == 'pull_request' && '📌 Pull Request (dev → main)' || format('📌 {0} 브랜치로 Push', github.ref_name) }}
+
+            **상세 정보**
+            📁 레포지토리: `${{ github.repository }}`
+
+            🌿 브랜치: `${{ github.ref_name }}`
+
+            👨‍💻 작성자: `${{ github.actor }}`
+
+            **변경사항**
+            ${{ github.event_name == 'pull_request' && format('💬 PR 제목: {0}', github.event.pull_request.title) || format('💬 커밋 메시지: {0}', github.event.head_commit.message) }}
+
+            🔗 ${{ github.event.pull_request.html_url || github.event.head_commit.url }}

@@ -1,8 +1,10 @@
-import styled from "styled-components";
-import CaretDownSVG from "@assets/icons/caret_down.svg?react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import useSessionStore from "@/store/session";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+
+import useSessionStore from '@/store/session';
+import CaretDownSVG from '@assets/icons/caret_down.svg?react';
+import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
 
 const BizHeader = () => {
   const navigate = useNavigate();
@@ -11,26 +13,25 @@ const BizHeader = () => {
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
   const handleLogoClick = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const handleMymenuClick = () => {
-    setIsMymenuShowing((prev) => !prev);
+    setIsMymenuShowing(prev => !prev);
   };
 
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
     clearUserSessionStorage();
-    navigate("/");
+    navigate('/');
   };
 
   return (
     <BizHeaderContainer>
       <LeftSideWrapper>
-        <Logo
-          src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg"
-          onClick={handleLogoClick}
-        />
+        <Logo onClick={handleLogoClick}>
+          <BlackLogoSVG />
+        </Logo>
         <Title>극단주 서비스</Title>
       </LeftSideWrapper>
       <RightSideWrapper>
@@ -101,7 +102,7 @@ const AuthMenuBtn = styled.div`
   cursor: pointer;
 `;
 
-const Logo = styled.img`
+const Logo = styled.div`
   width: 66px;
   cursor: pointer;
 `;

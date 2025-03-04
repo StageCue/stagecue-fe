@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import { useEffect, useState } from "react";
-import { RecruitDetail } from "../popularPost";
-import LocationSVG from "@assets/icons/location.svg?react";
-import Button from "@/components/buttons/button";
-import ArrowRightSVG from "@assets/icons/arrow_right_red.svg?react";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { useEffect, useState } from 'react';
+import { RecruitDetail } from '../popularPost';
+import LocationSVG from '@assets/icons/location.svg?react';
+import Button from '@/components/buttons/button';
+import ArrowRightSVG from '@assets/icons/arrow_right_red.svg?react';
+import { useNavigate } from 'react-router-dom';
 
 interface RankedRecruitsProps {
   recruits: RecruitDetail[];
@@ -53,9 +53,7 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
                 <Property>연습 위치</Property>
                 <Value>
                   <LocationSVG />
-                  <LocationText>
-                    {selectedRecruit?.practiceAddress}
-                  </LocationText>
+                  <LocationText>{selectedRecruit?.practiceAddress}</LocationText>
                 </Value>
               </PropertyWrapper>
               <Button
@@ -80,7 +78,7 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
           </Summary>
         </SummaryWrapper>
         <Thumbnails>
-          {recruits.map((recruit) => (
+          {recruits.map(recruit => (
             <ThumbnailContainer key={recruit.id}>
               <Thumbnail
                 src={`https://s3.stagecue.co.kr/stagecue/${recruit.thumbnailUrl}`}
@@ -188,7 +186,7 @@ const Thumbnail = styled.img<{ $isSelected: boolean }>`
   border-radius: 8px;
   width: 132px;
   height: 198px;
-  border: ${({ $isSelected }) => ($isSelected ? "2px solid #B81716" : "none")};
+  border: ${({ $isSelected }) => ($isSelected ? '2px solid #B81716' : 'none')};
   opacity: ${({ $isSelected }) => ($isSelected ? 1 : 0.4)};
   cursor: pointer;
 `;
@@ -196,10 +194,9 @@ const Thumbnail = styled.img<{ $isSelected: boolean }>`
 const SummaryRow = styled.div<{ $grid?: boolean }>`
   width: 671px;
   height: 62px;
-  display: ${({ $grid }) => ($grid ? "grid" : "flex")};
+  display: ${({ $grid }) => ($grid ? 'grid' : 'flex')};
 
-  ${({ $grid }) =>
-    $grid ? `grid-template-columns: 45% auto auto` : "gap: 12px"}
+  ${({ $grid }) => ($grid ? `grid-template-columns: 45% auto auto` : 'gap: 12px')}
 `;
 
 const PropertyWrapper = styled.div`

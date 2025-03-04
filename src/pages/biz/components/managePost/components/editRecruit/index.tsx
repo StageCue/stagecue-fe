@@ -1,29 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Button from "@/components/buttons/button";
-import styled from "styled-components";
-import CalendarSVG from "@assets/icons/calendar.svg?react";
-import CaretDownSVG from "@assets/icons/caret_down.svg?react";
-import PlusSVG from "@assets/icons/plus_circle.svg?react";
-import MinusSVG from "@assets/icons/minus.svg?react";
-import RadioSVG from "@assets/icons/radio.svg?react";
-import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
-import { useForm } from "react-hook-form";
-import { useDaumPostcodePopup } from "react-daum-postcode";
-import DeleteSVG from "@assets/icons/delete_circle.svg?react";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { generateId } from "@/utils/dev";
-import { convertFileToURL } from "@/utils/file";
+import Button from '@/components/buttons/button';
+import styled from 'styled-components';
+import CalendarSVG from '@assets/icons/calendar.svg?react';
+import CaretDownSVG from '@assets/icons/caret_down.svg?react';
+import PlusSVG from '@assets/icons/plus_circle.svg?react';
+import MinusSVG from '@assets/icons/minus.svg?react';
+import RadioSVG from '@assets/icons/radio.svg?react';
+import RadioCheckedSVG from '@assets/icons/radio_checked.svg?react';
+import { useForm } from 'react-hook-form';
+import { useDaumPostcodePopup } from 'react-daum-postcode';
+import DeleteSVG from '@assets/icons/delete_circle.svg?react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { generateId } from '@/utils/dev';
+import { convertFileToURL } from '@/utils/file';
 import {
   requestCreateRecruit,
+  // requestDeleteRecruit,
   requestRecruitFormData,
   requestUploadRecruitImage,
-} from "@/api/biz";
-import { useNavigate, useParams } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import RangeDatepicker from "@/components/rangeDatepicker";
-import { decimalToBinaryArray } from "@/utils/format";
-import { CATEGORY, RecruitStatus } from "@/types/biz";
-import Checkbox from "@/components/checkbox";
+} from '@/api/biz';
+import Checkbox from '@/components/checkbox';
+import { useNavigate, useParams } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import RangeDatepicker from '@/components/rangeDatepicker';
+import { decimalToBinaryArray } from '@/utils/format';
+import { CATEGORY, RecruitStatus } from '@/types/biz';
+import ModalPortal from '@/components/modal/portal';
+import Overlay from '@/components/modal/overlay';
 
 interface EditRecruitInputs {
   title: string;
@@ -35,6 +38,10 @@ interface EditRecruitInputs {
   category: string;
   recruitStatus: keyof typeof RecruitStatus;
   recruitImages?: string[];
+  recruitMent: {
+    start: string;
+    end: string;
+  };
   practice: {
     start: string;
     end: string;
@@ -62,59 +69,104 @@ const EditRecruit = () => {
   } = useForm<EditRecruitInputs>();
 
   const inputImageFileRef = useRef<HTMLInputElement | null>(null);
+  const inputModalRef = useRef<HTMLDivElement | null>(null);
+
+  const [isDetailRecruit, setIsDetailRecruit] = useState(false);
 
   const open = useDaumPostcodePopup();
-  const [part, setPart] = useState<string>("");
+  const [part, setPart] = useState<string>('');
   const [isMontlyFee, setIsMontlyFee] = useState<boolean>(false);
 
-  const [imageUrlArray, setImageUrlArray] = useState<
-    { url: string; id: string }[]
-  >([]);
-  const [imageFileArray, setImageFileArray] = useState<
-    { file: File | null; id: string }[]
-  >([]);
+  const [imageUrlArray, setImageUrlArray] = useState<{ url: string; id: string }[]>([]);
+  const [imageFileArray, setImageFileArray] = useState<{ file: File | null; id: string }[]>([]);
 
   const [isDaySelectOpen, setIsDaySelectOpen] = useState(false);
   const [isCategorySelectOpen, setIsCategorySelectOpen] = useState(false);
-  const [practiceDays, setPracticeDays] = useState([
-    "0",
-    "0",
-    "0",
-    "0",
-    "0",
-    "0",
-    "0",
-  ]);
+  const [practiceDays, setPracticeDays] = useState(['0', '0', '0', '0', '0', '0', '0']);
 
   const category = Object.keys(CATEGORY);
 
-  const [daysText, setDaysText] = useState("선택해주세요.");
-  const [categoryText, setCategoryText] = useState("");
+  const [daysText, setDaysText] = useState('선택해주세요.');
+  const [categoryText, setCategoryText] = useState('');
+  const [isNewRecruitModalOpen, setIsNewRecruitModalOpen] = useState(false);
 
-  const days = ["월", "화", "수", "목", "금", "토", "일"];
+  const days = ['월', '화', '수', '목', '금', '토', '일'];
 
-  const [addressValue, partsValue, stgAddressValue] = watch([
-    "practice.address",
-    "recruitingParts",
-    "stage.address",
+  const [
+    titleValue,
+    partsValue,
+    introduceValue,
+    recruitStartValue,
+    recruitEndValue,
+    practiceStartValue,
+    practiceEndValue,
+    addressValue,
+    monthlyFeeValue,
+    categoryValue,
+    artworkNameValue,
+    stgStartValue,
+    stgEndValue,
+    stgAddressValue,
+  ] = watch([
+    'title',
+    'recruitingParts',
+    'introduce',
+    'recruitMent.start',
+    'recruitMent.end',
+    'practice.start',
+    'practice.end',
+    'practice.address',
+    'monthlyFee',
+    'category',
+    'artworkName',
+    'stage.start',
+    'stage.end',
+    'stage.address',
   ]);
-  const [recruitStatus, setRecruitStatus] = useState("");
+
+  const isSaveDisabled =
+    !titleValue ||
+    !partsValue ||
+    !introduceValue ||
+    !recruitStartValue ||
+    !recruitEndValue ||
+    !practiceStartValue ||
+    !practiceEndValue ||
+    !addressValue ||
+    !categoryValue ||
+    !artworkNameValue ||
+    !stgStartValue ||
+    !stgEndValue ||
+    !stgAddressValue;
+
+  const recruitMentDatepickerRef = useRef<DatePicker | null>(null);
+  const [recruitMentDataRange, setRecruitMentDataRange] = useState<[Date | null, Date | null]>([
+    null,
+    null,
+  ]);
+  const [recruitStatus, setRecruitStatus] = useState('');
   const [isAlwaysRecruit, setIsAlwaysRecruit] = useState(false);
 
   const recruitDatepickerRef = useRef<DatePicker | null>(null);
-  const [recruitDataRange, setRecruitDataRange] = useState<
-    [Date | null, Date | null]
-  >([new Date(Date.now()), new Date(Date.now())]);
+  const [recruitDataRange, setRecruitDataRange] = useState<[Date | null, Date | null]>([
+    new Date(Date.now()),
+    new Date(Date.now()),
+  ]);
 
   const practiceDatepickerRef = useRef<DatePicker | null>(null);
-  const [practiceDataRange, setPracticeDataRange] = useState<
-    [Date | null, Date | null]
-  >([new Date(Date.now()), new Date(Date.now())]);
+  const [practiceDataRange, setPracticeDataRange] = useState<[Date | null, Date | null]>([
+    null,
+    null,
+  ]);
 
   const stageDatepickerRef = useRef<DatePicker | null>(null);
-  const [stageDateRange, setStageDateRange] = useState<
-    [Date | null, Date | null]
-  >([new Date(Date.now()), new Date(Date.now())]);
+  const [stageDateRange, setStageDateRange] = useState<[Date | null, Date | null]>([null, null]);
+
+  const handleRecruitMentCalendarClick = () => {
+    if (recruitMentDatepickerRef.current) {
+      recruitMentDatepickerRef.current.setOpen(true);
+    }
+  };
 
   const handleRecruitCalendarClick = () => {
     if (recruitDatepickerRef.current) {
@@ -137,111 +189,139 @@ const EditRecruit = () => {
   const handleRecruitRangeChange = (range: [Date | null, Date | null]) => {
     setRecruitDataRange(range);
     if (range) {
-      const stringDate = range.map((date) =>
+      const stringDate = range.map(date =>
         date
-          ?.toLocaleDateString("ko-KR", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
+          ?.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
           })
-          .replace(/\./g, "-")
-          .replace(/\s/g, "")
-          .replace(/-$/, "")
+          .replace(/\./g, '-')
+          .replace(/\s/g, '')
+          .replace(/-$/, '')
       );
-      setValue("recruitEnd", stringDate[1]!);
+      setValue('recruitEnd', stringDate[1]!);
+    }
+  };
+  
+  const handleRecruitMentRangeChange = (range: [Date | null, Date | null]) => {
+    setRecruitMentDataRange(range);
+    if (range) {
+      const stringDate = range.map(date =>
+        date
+          ?.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+          .replace(/\./g, '-')
+          .replace(/\s/g, '')
+          .replace(/-$/, '')
+      );
+      setValue('recruitMent.start', stringDate[0]!);
+      setValue('recruitMent.end', stringDate[1]!);
     }
   };
 
   const handlePracticeRangeChange = (range: [Date | null, Date | null]) => {
     setPracticeDataRange(range);
     if (range) {
-      const stringDate = range.map((date) =>
+      const stringDate = range.map(date =>
         date
-          ?.toLocaleDateString("ko-KR", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
+          ?.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
           })
-          .replace(/\./g, "-")
-          .replace(/\s/g, "")
-          .replace(/-$/, "")
+          .replace(/\./g, '-')
+          .replace(/\s/g, '')
+          .replace(/-$/, '')
       );
-      setValue("practice.start", stringDate[0]!);
-      setValue("practice.end", stringDate[1]!);
+      setValue('practice.start', stringDate[0]!);
+      setValue('practice.end', stringDate[1]!);
     }
   };
 
   const handleStageRangeChange = (range: [Date | null, Date | null]) => {
     setStageDateRange(range);
     if (range) {
-      const stringDate = range.map((date) =>
+      const stringDate = range.map(date =>
         date
-          ?.toLocaleDateString("ko-KR", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
+          ?.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
           })
-          .replace(/\./g, "-")
-          .replace(/\s/g, "")
-          .replace(/-$/, "")
+          .replace(/\./g, '-')
+          .replace(/\s/g, '')
+          .replace(/-$/, '')
       );
-      setValue("stage.start", stringDate[0]!);
-      setValue("stage.end", stringDate[1]!);
+      setValue('stage.start', stringDate[0]!);
+      setValue('stage.end', stringDate[1]!);
     }
   };
 
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
-    const recruitImages = await requestUploadImageFiles();
-    const recruitingParts = partsValue.map(({ value }) => value);
+    const recruitImages = (await requestUploadImageFiles())?.map((image: any) => image?.fileName);
+    const recruitingParts = partsValue?.map(({ value }) => value);
+
+    const { recruitMent, ...fieldData } = data;
+
     const res = await requestCreateRecruit({
-      ...data,
+      ...fieldData,
+      monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
+      recruitEnd: recruitMent?.end,
       recruitingParts,
       recruitImages,
       recruitStatus,
     });
 
-    if (res.id) {
-      navigate(`/cast/${id}`);
+    setIsNewRecruitModalOpen(false);
+
+    if (res?.id) {
+      navigate(`/biz/cast/${res?.id}/form`);
     }
   };
 
   const requestUploadImageFiles = async () => {
     try {
       const urls = await Promise.all(
-        imageFileArray.map(async (item) => {
+        imageFileArray.map(async item => {
           const formData = new FormData();
-          formData.append("file", item.file!);
+          formData.append('file', item.file!);
           const url = (await requestUploadRecruitImage(formData)) as string;
           return url;
         })
       );
-      setValue("recruitImages", urls);
+      setValue('recruitImages', urls);
       return urls;
     } catch (error) {
-      console.error("Error uploading images:", error);
+      console.error('Error uploading images:', error);
     }
   };
 
-  const handleDayInputClick = () => {
-    setIsDaySelectOpen((prev) => !prev);
+  const handleDayInputClick = (e: React.MouseEvent) => {
+    inputModalRef.current = e?.target as HTMLDivElement;
+    setIsDaySelectOpen(prev => !prev);
   };
 
-  const handleCategoryInputClick = () => {
-    setIsCategorySelectOpen((prev) => !prev);
+  const handleCategoryInputClick = (e: React.MouseEvent) => {
+    inputModalRef.current = e?.target as HTMLDivElement;
+    setIsCategorySelectOpen(prev => !prev);
   };
 
   const handlePartsKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing) return;
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       const id = generateId();
 
       if (partsValue) {
-        setValue("recruitingParts", [...partsValue, { value: part, id }]);
+        setValue('recruitingParts', [...partsValue, { value: part, id }]);
       } else {
-        setValue("recruitingParts", [{ value: part, id }]);
+        setValue('recruitingParts', [{ value: part, id }]);
       }
 
-      setPart("");
+      setPart('');
     }
   };
 
@@ -251,79 +331,78 @@ const EditRecruit = () => {
 
   const handleDeleteChipClick = (id: string) => {
     setValue(
-      "recruitingParts",
-      partsValue.filter((part) => part.id !== id)
+      'recruitingParts',
+      partsValue.filter(part => part.id !== id)
     );
   };
 
   const handleAddressComplete = (data: any, input: string) => {
     let fullAddress = data.address;
-    let extraAddress = "";
+    let extraAddress = '';
 
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
         extraAddress += data.bname;
       }
-      if (data.buildingName !== "") {
-        extraAddress +=
-          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      if (data.buildingName !== '') {
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
       }
-      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
 
-    if (input === "practice") {
-      setValue("practice.address", fullAddress);
-    } else if (input === "stage") {
-      setValue("stage.address", fullAddress);
+    if (input === 'practice') {
+      setValue('practice.address', fullAddress);
+    } else if (input === 'stage') {
+      setValue('stage.address', fullAddress);
     }
   };
 
   const handleAddressInputClick = (input: string) => {
-    open({ onComplete: (data) => handleAddressComplete(data, input) });
+    open({ onComplete: data => handleAddressComplete(data, input) });
   };
 
   const handleDayClick = (index: number) => {
-    setPracticeDays((prevDays) => {
+    setPracticeDays(prevDays => {
       const updatedDays = [...prevDays];
-      updatedDays[index] = updatedDays[index] === "0" ? "1" : "0";
+      updatedDays[index] = updatedDays[index] === '0' ? '1' : '0';
       return updatedDays;
     });
   };
 
   const handleCategoryClick = (category: string) => {
-    setValue("category", category);
+    setValue('category', category);
     setCategoryText(category);
     setIsCategorySelectOpen(false);
   };
 
   const handleDayResetClick = () => {
-    setPracticeDays(["0", "0", "0", "0", "0", "0", "0"]);
+    setPracticeDays(['0', '0', '0', '0', '0', '0', '0']);
   };
 
   const getActiveDays = (daysArray: string[]): string => {
-    const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
+    const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
 
     return daysArray
-      .map((day, index) => (day === "1" ? daysOfWeek[index] : null))
+      ?.map((day, index) => (day === '1' ? daysOfWeek[index] : null))
       .filter(Boolean)
-      .join(", ");
+      .join(', ');
   };
 
   const daysArrayToDecimal = (daysArray: string[]): number => {
-    const binaryString = daysArray.join("");
+    const binaryString = daysArray.join('');
     return parseInt(binaryString, 2);
   };
 
-  const handleApplyDayClick = () => {
-    const activeDays = getActiveDays(practiceDays);
+  const handleApplyDayClick = (days?: string[]) => {
+    const activeDays = getActiveDays(days ?? practiceDays);
 
     if (activeDays) {
       setDaysText(`매주 / ${activeDays}`);
     } else {
-      setDaysText("선택해주세요.");
+      setDaysText('선택해주세요.');
     }
 
-    setValue("practice.dayOfWeek", daysArrayToDecimal(practiceDays));
+    setValue('practice.dayOfWeek', daysArrayToDecimal(practiceDays));
     setIsDaySelectOpen(false);
   };
 
@@ -340,56 +419,65 @@ const EditRecruit = () => {
       const url = convertFileToURL(file);
       const id = generateId();
 
-      setImageUrlArray((prev) => [...prev, { url, id }]);
-      setImageFileArray((prev) => [...prev, { file, id }]);
+      setImageUrlArray(prev => [...prev, { url, id }]);
+      setImageFileArray(prev => [...prev, { file, id }]);
     }
   };
 
   const handleDeleteImageClick = (id: string) => {
-    setImageUrlArray((prevArray) => prevArray.filter((item) => item.id !== id));
-    setImageFileArray((prevArray) =>
-      prevArray.filter((item) => item.id !== id)
-    );
+    setImageUrlArray(prevArray => prevArray.filter(item => item.id !== id));
+    setImageFileArray(prevArray => prevArray.filter(item => item.id !== id));
   };
 
   const handleMontlyFeeRadioClick = (isMontlyFee: boolean) => {
     setIsMontlyFee(isMontlyFee);
     if (!isMontlyFee) {
-      setValue("monthlyFee", 0);
+      setValue('monthlyFee', 0);
     }
+  };
+
+  const handleDeleteRecruit = async () => {
+    // TODO: 추후 개발
+    // await requestDeleteRecruit({
+    //   applyIds: [id!],
+    // });
   };
 
   const getRecruitFormData = async (id: string) => {
     const res = await requestRecruitFormData(id);
-    setValue("title", res.title);
-    setValue("introduce", res.introduce);
+    setValue('title', res.title);
+    setValue('introduce', res.introduce);
     setValue(
-      "recruitingParts",
+      'recruitingParts',
       res.recruitingParts.map((part: string) => {
         const id = generateId();
         return { value: part, id };
       })
     );
-    setValue("monthlyFee", res.monthlyFee);
+    setValue('monthlyFee', res.monthlyFee);
     if (res.monthlyFee !== 0) {
       setIsMontlyFee(true);
     }
-    setValue("practice.start", res.practice.start);
-    setValue("practice.end", res.practice.end);
-    setValue("practice.dayOfWeek", res.practice.daysOfWeek);
+    handleRecruitMentRangeChange([new Date(), new Date(res.recruitEnd)]);
+    handlePracticeRangeChange([new Date(res.practice.start), new Date(res.practice.end)]);
+    setValue('practice.dayOfWeek', res.practice.daysOfWeek);
     setPracticeDays(decimalToBinaryArray(res.practice.dayOfWeek));
-    setValue("practice.address", res.practice.address);
-    setValue("practice.addressDetail", res.practice.addressDetail);
-    setValue("stage.start", res.stage.start);
-    setValue("stage.end", res.stage.end);
-    setValue("stage.address", res.stage.address);
-    setValue("stage.addressDetail", res.stage.addressDetail);
+    handleApplyDayClick(decimalToBinaryArray(res.practice.dayOfWeek));
+    setValue('practice.address', res.practice.address);
+    setValue('practice.addressDetail', res.practice.addressDetail);
+    setValue('category', res.category);
+    setCategoryText(res.category);
+    setValue('artworkName', res.artworkName);
+    handleStageRangeChange([new Date(res.stage.start), new Date(res.stage.end)]);
+    setValue('stage.address', res.stage.address);
+    setValue('stage.addressDetail', res.stage.addressDetail);
 
-    const currentImagesArray: { id: string; url: string }[] =
-      res.recruitImages.map((url: string) => {
+    const currentImagesArray: { id: string; url: string }[] = res.recruitImages.map(
+      (url: string) => {
         const id = generateId();
         return { id, url };
-      });
+      }
+    );
 
     const currentFileArray = currentImagesArray.map(({ id }) => {
       return { id, file: null };
@@ -401,61 +489,133 @@ const EditRecruit = () => {
 
   useEffect(() => {
     if (id) {
+      setIsDetailRecruit(true);
       getRecruitFormData(id!);
     }
   }, [id]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (inputModalRef?.current && !inputModalRef?.current?.contains(event?.target as Node)) {
+        setIsDaySelectOpen(false);
+        setIsCategorySelectOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDaySelectOpen]);
 
   return (
     <EditRecruitContainer>
       <Form onSubmit={handleSubmit(onSubmitEditRecruit)}>
         <TitleWrapper>
           <Title>
-            <Text>새 모집 공고 올리기</Text>
+            <Text>{isDetailRecruit ? '공고 상세정보' : '새 모집 공고 올리기'}</Text>
             <SubText>
               <RedDot /> 표시는 필수 입력 항목입니다.
             </SubText>
           </Title>
           <ButtonsWrapper>
-            <Button
-              variation="text"
-              btnClass="assistive"
-              width={58}
-              height={32}
-              fontSize={15}
-              padding="0px 3px"
-              lineHeight={146.7}
-              letterSpacing={0.96}
-            >
-              미리보기
-            </Button>
-            <Button
-              variation="outlined"
-              btnClass="primary"
-              width={94}
-              height={40}
-              fontSize={15}
-              padding="9px 20px"
-              lineHeight={146.7}
-              letterSpacing={0.96}
-              type="button"
-              onClick={() => setRecruitStatus("TEMP")}
-            >
-              임시저장
-            </Button>
-            <Button
-              variation="solid"
-              btnClass="primary"
-              width={81}
-              height={40}
-              fontSize={15}
-              padding="9px 20px"
-              lineHeight={146.7}
-              letterSpacing={0.96}
-              type="submit"
-              onClick={() => setRecruitStatus("RECRUIT")}
-            >
-              올리기
-            </Button>
+            {isDetailRecruit ? (
+              <>
+                <Button
+                  type="button"
+                  variation="text"
+                  btnClass="assistive"
+                  width={58}
+                  height={32}
+                  fontSize={15}
+                  padding="0px 3px"
+                  lineHeight={146.7}
+                  letterSpacing={0.96}
+                  onClick={handleDeleteRecruit}
+                >
+                  삭제
+                </Button>
+                <Button
+                  type="submit"
+                  variation="outlined"
+                  btnClass="primary"
+                  width={94}
+                  height={40}
+                  fontSize={15}
+                  padding="9px 20px"
+                  lineHeight={146.7}
+                  letterSpacing={0.96}
+                  onClick={() => setRecruitStatus('TEMP')}
+                >
+                  공고마감
+                </Button>
+                <Button
+                  type="submit"
+                  variation="solid"
+                  btnClass="primary"
+                  width={81}
+                  height={40}
+                  fontSize={15}
+                  padding="9px 20px"
+                  lineHeight={146.7}
+                  letterSpacing={0.96}
+                  onClick={() => setRecruitStatus('RECRUIT')}
+                  disabled={isSaveDisabled}
+                >
+                  저장
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  variation="text"
+                  btnClass="assistive"
+                  width={58}
+                  height={32}
+                  fontSize={15}
+                  padding="0px 3px"
+                  lineHeight={146.7}
+                  letterSpacing={0.96}
+                >
+                  미리보기
+                </Button>
+                <Button
+                  type="button"
+                  variation="outlined"
+                  btnClass="primary"
+                  width={94}
+                  height={40}
+                  fontSize={15}
+                  padding="9px 20px"
+                  lineHeight={146.7}
+                  letterSpacing={0.96}
+                  onClick={() => setRecruitStatus('TEMP')}
+                  // TODO: <2025-03-02> 백에서 수정이 필요한 부분이여서 disabled true로 설정
+                  disabled={true}
+                >
+                  임시저장
+                </Button>
+                <Button
+                  type="button"
+                  variation="solid"
+                  btnClass="primary"
+                  width={81}
+                  height={40}
+                  fontSize={15}
+                  padding="9px 20px"
+                  lineHeight={146.7}
+                  letterSpacing={0.96}
+                  onClick={() => {
+                    setRecruitStatus('RECRUIT');
+                    setIsNewRecruitModalOpen(true);
+                  }}
+                  disabled={isSaveDisabled}
+                >
+                  올리기
+                </Button>
+              </>
+            )}
           </ButtonsWrapper>
         </TitleWrapper>
         <MiddleTitle>공고정보</MiddleTitle>
@@ -468,7 +628,7 @@ const EditRecruit = () => {
             $isDirty={Boolean(dirtyFields.title)}
             $isError={Boolean(errors.title)}
             placeholder="공고명을 입력해주세요"
-            {...register("title", { required: true })}
+            {...register('title', { required: true })}
           />
         </InputWrapper>
         <InputWrapper>
@@ -476,10 +636,7 @@ const EditRecruit = () => {
             모집 배역
             <RequiedRedDot />
           </RequiredLabel>
-          <ChipInputWrapper
-            $isDirty={Boolean(dirtyFields.recruitingParts)}
-            $isError={false}
-          >
+          <ChipInputWrapper $isDirty={Boolean(dirtyFields.recruitingParts)} $isError={false}>
             {partsValue?.map(({ value, id }) => (
               <Chip key={id}>
                 {value}
@@ -507,7 +664,7 @@ const EditRecruit = () => {
           >
             <TextAreaInput
               placeholder="공고 내용을 작성해주세요"
-              {...register("introduce", { required: true, maxLength: 3000 })}
+              {...register('introduce', { required: true, maxLength: 3000 })}
             />
             <Counter>0/ 3000</Counter>
           </TextAreaWrapper>
@@ -518,10 +675,7 @@ const EditRecruit = () => {
             {imageUrlArray?.map(({ url, id }, index) => (
               <ImageWrapper key={id}>
                 {!imageFileArray[index].file ? (
-                  <RecruitImage
-                    key={id}
-                    src={`https://s3.stagecue.co.kr/stagecue/${url}`}
-                  />
+                  <RecruitImage key={id} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
                 ) : (
                   <RecruitImage key={id} src={url} />
                 )}
@@ -533,11 +687,7 @@ const EditRecruit = () => {
             ))}
             {imageUrlArray?.length < 4 && (
               <>
-                <FileInput
-                  ref={inputImageFileRef}
-                  type="file"
-                  onChange={handleImageChange}
-                />
+                <FileInput ref={inputImageFileRef} type="file" onChange={handleImageChange} />
                 <AddImageInput onClick={handleAddImageClick}>
                   <IconWrapper>
                     <PlusSVG />
@@ -547,16 +697,32 @@ const EditRecruit = () => {
             )}
           </Images>
         </InputWrapper>
+        <InputWrapper>
+          <RequiredLabel>
+            모집기간
+            <RequiedRedDot />
+          </RequiredLabel>
+          <WithIconInputWrapper $isDirty={Boolean(dirtyFields.recruitMent?.start)} $isError={false}>
+            <RangeDatepicker
+              ref={recruitMentDatepickerRef}
+              selectedRange={recruitMentDataRange}
+              onChangeDate={(range: [Date | null, Date | null]) => {
+                handleRecruitMentRangeChange(range);
+              }}
+              pickerText="모집기간을 입력해주세요"
+            />
+            <IconWrapper onClick={handleRecruitMentCalendarClick}>
+              <CalendarSVG />
+            </IconWrapper>
+          </WithIconInputWrapper>
+        </InputWrapper>
         <PairInputWrapper>
           <InputWrapper>
             <RequiredLabel>
               모집기간
               <RequiedRedDot />
             </RequiredLabel>
-            <WithIconInputWrapper
-              $isDirty={Boolean(dirtyFields.practice?.start)}
-              $isError={false}
-            >
+            <WithIconInputWrapper $isDirty={Boolean(dirtyFields.practice?.start)} $isError={false}>
               <RangeDatepicker
                 ref={recruitDatepickerRef}
                 selectedRange={recruitDataRange}
@@ -584,10 +750,7 @@ const EditRecruit = () => {
               연습기간
               <RequiedRedDot />
             </RequiredLabel>
-            <WithIconInputWrapper
-              $isDirty={Boolean(dirtyFields.practice?.start)}
-              $isError={false}
-            >
+            <WithIconInputWrapper $isDirty={Boolean(dirtyFields.practice?.start)} $isError={false}>
               <RangeDatepicker
                 ref={practiceDatepickerRef}
                 selectedRange={practiceDataRange}
@@ -609,9 +772,10 @@ const EditRecruit = () => {
             <WithIconInputWrapper
               $isDirty={Boolean(dirtyFields.practice?.dayOfWeek)}
               $isError={false}
+              onClick={handleDayInputClick}
             >
               {daysText}
-              <IconWrapper onClick={handleDayInputClick}>
+              <IconWrapper>
                 <CaretDownSVG />
               </IconWrapper>
               {isDaySelectOpen && (
@@ -620,15 +784,19 @@ const EditRecruit = () => {
                     {days?.map((day, index) => (
                       <Day
                         key={day}
-                        $isSelected={practiceDays[index] === "1"}
-                        onClick={() => handleDayClick(index)}
+                        $isSelected={practiceDays[index] === '1'}
+                        onClick={e => {
+                          e?.stopPropagation();
+                          handleDayClick(index);
+                        }}
                       >
                         {day}
                       </Day>
                     ))}
                   </DaysWrapper>
-                  <SelelctorActionWrapper>
+                  <SelelctorActionWrapper onClick={e => e?.stopPropagation()}>
                     <Button
+                      type="button"
                       variation="text"
                       btnClass="assistive"
                       width={38}
@@ -642,6 +810,7 @@ const EditRecruit = () => {
                       초기화
                     </Button>
                     <Button
+                      type="button"
                       variation="text"
                       btnClass="primary"
                       width={25}
@@ -650,7 +819,7 @@ const EditRecruit = () => {
                       fontSize={14}
                       lineHeight={142.9}
                       letterSpacing={1.45}
-                      onClick={handleApplyDayClick}
+                      onClick={() => handleApplyDayClick()}
                     >
                       적용
                     </Button>
@@ -666,16 +835,16 @@ const EditRecruit = () => {
             <RequiedRedDot />
           </RequiredLabel>
           <FakeInput
-            onClick={() => handleAddressInputClick("practice")}
+            onClick={() => handleAddressInputClick('practice')}
             $isDirty={Boolean(dirtyFields.practice?.address)}
           >
-            {addressValue || "클릭해서 주소를 검색해주세요."}
+            {addressValue || '클릭해서 주소를 검색해주세요.'}
           </FakeInput>
           <Input
             type="text"
             $isDirty={Boolean(dirtyFields.practice?.addressDetail)}
             $isError={Boolean(errors.practice?.addressDetail)}
-            {...register("practice.addressDetail", { required: true })}
+            {...register('practice.addressDetail', { required: true })}
           />
         </InputWrapper>
         <InputWrapper>
@@ -690,17 +859,16 @@ const EditRecruit = () => {
               회비가 없어요
             </RadioInputWrapper>
             <WithTextInputWrapper>
-              <RadioInputWrapper
-                onClick={() => handleMontlyFeeRadioClick(true)}
-              >
+              <RadioInputWrapper onClick={() => handleMontlyFeeRadioClick(true)}>
                 {isMontlyFee ? <RadioCheckedSVG /> : <RadioSVG />}
                 회비가 있어요
               </RadioInputWrapper>
               <FeeInputWrapper
                 $isDirty={Boolean(dirtyFields.monthlyFee)}
                 $isError={false}
+                $isDisabled={!isMontlyFee}
               >
-                <FeeInput {...register("monthlyFee")} />원
+                <FeeInput disabled={!isMontlyFee} {...register('monthlyFee')} />원
               </FeeInputWrapper>
             </WithTextInputWrapper>
           </RadioInputs>
@@ -708,25 +876,25 @@ const EditRecruit = () => {
         <Divider />
         <MiddleTitle>작품정보</MiddleTitle>
         <PairInputWrapper>
-          <InputWrapper>
+          <InputWrapper onClick={handleCategoryInputClick}>
             <RequiredLabel>
               카테고리
               <RequiedRedDot />
             </RequiredLabel>
-            <WithIconShortInputWrapper
-              $isDirty={Boolean(dirtyFields.category)}
-              $isError={false}
-            >
-              {categoryText ? CATEGORY[categoryText] : "선택해주세요"}
-              <IconWrapper onClick={handleCategoryInputClick}>
+            <WithIconShortInputWrapper $isDirty={Boolean(dirtyFields.category)} $isError={false}>
+              {categoryText ? CATEGORY[categoryText] : '선택해주세요'}
+              <IconWrapper>
                 <CaretDownSVG />
               </IconWrapper>
               {isCategorySelectOpen && (
                 <CategorySelector>
-                  {category?.map((key) => (
+                  {category?.map(key => (
                     <Category
                       key={key}
-                      onClick={() => handleCategoryClick(key)}
+                      onClick={e => {
+                        e?.stopPropagation();
+                        handleCategoryClick(key);
+                      }}
                     >
                       {CATEGORY[key]}
                     </Category>
@@ -745,7 +913,7 @@ const EditRecruit = () => {
               $isError={false}
               type="text"
               placeholder="작품명을 입력해주세요"
-              {...register("artworkName", { required: true })}
+              {...register('artworkName', { required: true })}
             />
           </InputWrapper>
         </PairInputWrapper>
@@ -754,10 +922,7 @@ const EditRecruit = () => {
             공연기간
             <RequiedRedDot />
           </RequiredLabel>
-          <WithIconInputWrapper
-            $isDirty={Boolean(dirtyFields.stage?.start)}
-            $isError={false}
-          >
+          <WithIconInputWrapper $isDirty={Boolean(dirtyFields.stage?.start)} $isError={false}>
             <RangeDatepicker
               ref={stageDatepickerRef}
               selectedRange={stageDateRange}
@@ -776,25 +941,91 @@ const EditRecruit = () => {
             공연위치
             <RequiedRedDot />
           </RequiredLabel>
-          <FakeInput
-            onClick={() => handleAddressInputClick("stage")}
-            $isDirty={false}
-          >
-            {stgAddressValue || "클릭해서 주소를 검색해주세요."}
+          <FakeInput onClick={() => handleAddressInputClick('stage')} $isDirty={false}>
+            {stgAddressValue || '클릭해서 주소를 검색해주세요.'}
           </FakeInput>
           <Input
             type="text"
             $isDirty={Boolean(dirtyFields.practice?.addressDetail)}
             $isError={Boolean(errors.practice?.addressDetail)}
-            {...register("stage.addressDetail", { required: true })}
+            {...register('stage.addressDetail', { required: true })}
           />
         </InputWrapper>
+        {isNewRecruitModalOpen && (
+          <ModalPortal>
+            <Overlay>
+              <Modal>
+                <ModalTitle>공고 올리기</ModalTitle>
+                <ModalSubTitle>작성하신 내용으로 공고를 올려볼까요?</ModalSubTitle>
+                <ButtonContainer>
+                  <Button
+                    type="button"
+                    variation="outlined"
+                    btnClass="assistive"
+                    width={146}
+                    height={48}
+                    onClick={() => setIsNewRecruitModalOpen(false)}
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    type="button"
+                    variation="solid"
+                    btnClass="primary"
+                    width={146}
+                    height={48}
+                    onClick={handleSubmit(onSubmitEditRecruit)}
+                  >
+                    올리기
+                  </Button>
+                </ButtonContainer>
+              </Modal>
+            </Overlay>
+          </ModalPortal>
+        )}
       </Form>
     </EditRecruitContainer>
   );
 };
 
 export default EditRecruit;
+
+const Modal = styled.div`
+  width: 340px;
+  height: fit-content;
+  min-height: 176px;
+  border-radius: 16px;
+  padding: 24px 20px 20px 20px;
+
+  background: var(--Background-Normal-Normal, #ffffffff);
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.12);
+`;
+
+const ModalTitle = styled.div`
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  color: #171719ff;
+  text-align: center;
+`;
+
+const ModalSubTitle = styled.div`
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: #2e2f33e0;
+  text-align: center;
+`;
+
+const ButtonContainer = styled.div`
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
 
 const EditRecruitContainer = styled.div`
   width: 692px;
@@ -891,11 +1122,7 @@ const Input = styled.input<{
   letter-spacing: 0.57%;
   color: #171719;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
   outline: none;
 
   ::placeholder {
@@ -964,6 +1191,7 @@ const WithIconInputWrapper = styled.div<{
   $isDirty: boolean;
   $isError: boolean;
 }>`
+  cursor: pointer;
   position: relative;
   width: 340px;
   height: 48px;
@@ -974,11 +1202,7 @@ const WithIconInputWrapper = styled.div<{
   justify-content: space-between;
   gap: 12px;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
 `;
 
 const WithIconShortInputWrapper = styled.div<{
@@ -995,11 +1219,7 @@ const WithIconShortInputWrapper = styled.div<{
   justify-content: space-between;
   gap: 12px;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
 `;
 
 const FakeInput = styled.div<{ $isDirty: boolean }>`
@@ -1010,9 +1230,8 @@ const FakeInput = styled.div<{ $isDirty: boolean }>`
   font-size: 16px;
   line-height: 162.5%;
   letter-spacing: 0.57%;
-  border: ${({ $isDirty }) =>
-    $isDirty ? "1px solid #000000" : "1px solid #e0e0E2"};
-  color: ${({ $isDirty }) => ($isDirty ? "#171719;" : "#dadada;")};
+  border: ${({ $isDirty }) => ($isDirty ? '1px solid #000000' : '1px solid #e0e0E2')};
+  color: ${({ $isDirty }) => ($isDirty ? '#171719;' : '#dadada;')};
 `;
 
 const Divider = styled.div`
@@ -1034,11 +1253,7 @@ const MiddleInput = styled.input<{
   letter-spacing: 0.57%;
   color: #171719;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
   outline: none;
 
   ::placeholder {
@@ -1064,11 +1279,7 @@ const ChipInputWrapper = styled.div<{
   align-items: center;
   color: #171719;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
   outline: none;
   display: flex;
   gap: 12px;
@@ -1153,8 +1364,7 @@ const DaysWrapper = styled.div`
 const Day = styled.div<{ $isSelected: boolean }>`
   width: 40px;
   height: 32px;
-  border: ${({ $isSelected }) =>
-    $isSelected ? "1px solid #B81716" : "1px solid #e1e2e4"};
+  border: ${({ $isSelected }) => ($isSelected ? '1px solid #B81716' : '1px solid #e1e2e4')};
   border-radius: 6px;
   display: flex;
   justify-content: center;
@@ -1163,8 +1373,7 @@ const Day = styled.div<{ $isSelected: boolean }>`
   font-weight: var(--font-semibold);
   line-height: 138.5%;
   letter-spacing: 1.94%;
-  color: ${({ $isSelected }) =>
-    $isSelected ? " #B81716" : "1px solid #171719"};
+  color: ${({ $isSelected }) => ($isSelected ? ' #B81716' : '1px solid #171719')};
   cursor: pointer;
   z-index: 200;
 `;
@@ -1256,6 +1465,7 @@ const RadioInputs = styled.div`
 `;
 
 const RadioInputWrapper = styled.div`
+  width: fit-content;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1267,7 +1477,7 @@ const WithTextInputWrapper = styled.div`
   gap: 12px;
 `;
 
-const FeeInputWrapper = styled.div<{ $isDirty: boolean; $isError: boolean }>`
+const FeeInputWrapper = styled.div<{ $isDirty: boolean; $isError: boolean; $isDisabled: boolean }>`
   width: 120px;
   height: 48px;
   padding: 12px 16px;
@@ -1275,16 +1485,23 @@ const FeeInputWrapper = styled.div<{ $isDirty: boolean; $isError: boolean }>`
   font-size: 16px;
   line-height: 150%;
   letter-spacing: 0.57%;
-  color: ${({ $isDirty }) => ($isDirty ? " #171719;" : " #e0e0E2")};
-  border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
+  color: ${({ $isDirty, $isDisabled }) =>
+    $isDisabled ? ' #e0e0E2' : $isDirty ? ' #171719;' : ' #e0e0E2'};
+  border: ${({ $isDirty, $isError, $isDisabled }) =>
+    $isDisabled
+      ? '1px solid #e0e0E2'
+      : $isError
+      ? '1px solid #FF4242'
       : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+      ? '1px solid #000000'
+      : '1px solid #e0e0E2'};
 
   display: flex;
   gap: 5px;
+
+  input {
+    color: ${({ $isDisabled }) => ($isDisabled ? ' #e0e0E2' : '')};
+  }
 `;
 
 const FeeInput = styled.input`

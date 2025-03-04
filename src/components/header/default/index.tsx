@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import Searchbar from "../components/searchbar";
-import Button from "@/components/buttons/button";
-import useSessionStore from "@/store/session";
-import ChevronDownSVG from "@assets/icons/chebron_down_s.svg?react";
-import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Searchbar from '../components/searchbar';
+import Button from '@/components/buttons/button';
+import useSessionStore from '@/store/session';
+import ChevronDownSVG from '@assets/icons/chebron_down_s.svg?react';
+import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
+import { useState } from 'react';
 
 const DefaultHeader = () => {
   const navigate = useNavigate();
@@ -12,36 +13,36 @@ const DefaultHeader = () => {
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
-  const isTroupeUser = sessionStore.userType === "TROUPE";
+  const isTroupeUser = sessionStore.userType === 'TROUPE';
 
   const handlePostPageClick = () => {
-    navigate("/casts");
+    navigate('/casts');
   };
 
   const handleLoginClick = () => {
-    navigate("/auth/starting");
+    navigate('/auth/starting');
   };
 
   const handleBizClick = () => {
-    navigate("/biz");
+    navigate('/biz');
   };
 
   const handleLogoClick = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const handleMymenuClick = () => {
-    setIsMymenuShowing((prev) => !prev);
+    setIsMymenuShowing(prev => !prev);
   };
 
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
     clearUserSessionStorage();
-    navigate("/");
+    navigate('/');
   };
 
   const handleMyStageClick = () => {
-    navigate("/mypage");
+    navigate('/mypage');
     setIsMymenuShowing(false);
   };
 
@@ -49,10 +50,9 @@ const DefaultHeader = () => {
     <DefaultHeaderContainer>
       <HeaderContainer>
         <LeftSideWrapper>
-          <Logo
-            onClick={handleLogoClick}
-            src="https://s3.stagecue.co.kr/stagecue/troupe-logos/08c8c037-d47d-4ef7-9f05-42c97fa9ab5b.jpg"
-          />
+          <Logo onClick={handleLogoClick}>
+            <BlackLogoSVG />
+          </Logo>
           <PostPageBtn onClick={handlePostPageClick}>모집공고</PostPageBtn>
         </LeftSideWrapper>
         <RightSideWrapper>
@@ -150,7 +150,7 @@ const RightSideWrapper = styled.div`
   align-items: center;
 `;
 
-const Logo = styled.img`
+const Logo = styled.div`
   width: 66px;
   cursor: pointer;
 `;

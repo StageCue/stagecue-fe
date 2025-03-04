@@ -1,6 +1,8 @@
-import styled from "styled-components";
-import ChevronRightSVG from "@assets/icons/chevron_right.svg?react";
-import Button from "@/components/buttons/button";
+import styled from 'styled-components';
+import ChevronRightSVG from '@assets/icons/chevron_right.svg?react';
+import Button from '@/components/buttons/button';
+import DotMenuSvg from '@assets/icons/dotmenu.svg?react';
+import { useState } from 'react';
 
 interface ProfileProps {
   id: string | number;
@@ -29,18 +31,60 @@ const Profile = ({
   handleRemoveProfile,
   onClick,
 }: ProfileProps) => {
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
+
+  const handleOpenMenu = () => {
+    setIsOpenMenu(prev => !prev);
+  };
+
   return (
     <ProfileContainer>
       <PositionBox>
-        <Button
-          variation="solid"
-          btnClass="primary"
-          width={80}
-          height={28}
-          onClick={() => handleRemoveProfile(id)}
-        >
-          Delete
-        </Button>
+        <MenuContainer>
+          <Button
+            variation="text"
+            btnClass="assistive"
+            width={24}
+            height={24}
+            padding={'0px'}
+            onClick={handleOpenMenu}
+          >
+            <DotMenuSvg />
+          </Button>
+          {isOpenMenu && (
+            <Menu>
+              <Button
+                type="button"
+                variation="text"
+                btnClass="assistive"
+                width={79}
+                height={28}
+                padding="4px 6px"
+                borderRadius={'5px'}
+                fontSize={14}
+                fontWeight="600"
+                justifyContent="start"
+              >
+                수정
+              </Button>
+              <Button
+                type="button"
+                variation="text"
+                btnClass="assistive"
+                width={79}
+                height={28}
+                padding="4px 6px"
+                borderRadius={'5px'}
+                fontSize={14}
+                fontWeight="600"
+                justifyContent="start"
+                onClick={() => handleRemoveProfile(id)}
+              >
+                삭제
+              </Button>
+            </Menu>
+          )}
+        </MenuContainer>
       </PositionBox>
       {isDefault && <DefaultProfileTag>기본프로필</DefaultProfileTag>}
       <ProfileWrapper>
@@ -94,6 +138,30 @@ const PositionBox = styled.div`
   position: absolute;
   right: 16px;
   top: 16px;
+`;
+
+const MenuContainer = styled.div`
+  position: relative;
+`;
+
+const Menu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+
+  width: 111px;
+  height: fit-content;
+  min-height: 88px;
+  padding: 12px 16px;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  background-color: white;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.08), 0px 1px 4px rgba(0, 0, 0, 0.08);
 `;
 
 const ProfileImage = styled.img`

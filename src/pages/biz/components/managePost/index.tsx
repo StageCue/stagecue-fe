@@ -1,24 +1,24 @@
-import styled from "styled-components";
-import SearchSVG from "@assets/icons/search.svg?react";
-import TimeSVG from "@assets/icons/time.svg?react";
-import CalendarSVG from "@assets/icons/calendar_s.svg?react";
-import TrashSVG from "@assets/icons/trash.svg?react";
-import { useState } from "react";
-import Button from "@/components/buttons/button";
-import Table from "./components/table";
+import styled from 'styled-components';
+import SearchSVG from '@assets/icons/search.svg?react';
+import TimeSVG from '@assets/icons/time.svg?react';
+import CalendarSVG from '@assets/icons/calendar_s.svg?react';
+import TrashSVG from '@assets/icons/trash.svg?react';
+import { useState } from 'react';
+import Button from '@/components/buttons/button';
+import Table from './components/table';
 import {
   requestChangeEndDate,
   requestCloseRecruit,
   requestDeleteRecruit,
   requestRecruits,
-} from "@/api/biz";
-import CloseModal from "./components/closeModal";
-import DatepickerModal from "@/components/datepickerModal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Paginator from "@/components/paginator";
-import { Recruit } from "@/types/biz";
+} from '@/api/biz';
+import CloseModal from './components/closeModal';
+import DatepickerModal from '@/components/datepickerModal';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Paginator from '@/components/paginator';
+import { Recruit } from '@/types/biz';
 
-type ManageRecruitFilterType = "TEMP" | "RECRUIT" | "CLOSED" | "전체";
+type ManageRecruitFilterType = 'TEMP' | 'RECRUIT' | 'CLOSED' | '전체';
 
 interface BizRecruitQuery {
   totalCount: number;
@@ -27,12 +27,10 @@ interface BizRecruitQuery {
 
 const ManagePost = () => {
   const [page, setPage] = useState(0);
-  const [selectedFilter, setSelectedFilter] =
-    useState<ManageRecruitFilterType>("전체");
+  const [selectedFilter, setSelectedFilter] = useState<ManageRecruitFilterType>('전체');
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
   const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
-  const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] =
-    useState<boolean>(false);
+  const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
 
@@ -65,27 +63,27 @@ const ManagePost = () => {
     });
 
     queryClient.invalidateQueries({
-      queryKey: ["bizRecruits", page, selectedFilter],
+      queryKey: ['bizRecruits', page, selectedFilter],
     });
   };
 
   const handleConfirmClick = async () => {
     await requestCloseRecruit({
       recruitIds: selectedRecruitIds,
-      status: "CLOSED",
+      status: 'CLOSED',
     });
 
     setCloseRecruitModalOpen(false);
 
     queryClient.invalidateQueries({
-      queryKey: ["bizRecruits", page, selectedFilter],
+      queryKey: ['bizRecruits', page, selectedFilter],
     });
   };
 
   const handleCheckboxClick = (id: number) => {
     if (selectedRecruitIds.includes(id)) {
-      setSelectedRecruitIds((prev) => {
-        const newArray = prev.filter((recruitId) => recruitId !== id);
+      setSelectedRecruitIds(prev => {
+        const newArray = prev.filter(recruitId => recruitId !== id);
         return newArray;
       });
     } else {
@@ -93,25 +91,33 @@ const ManagePost = () => {
     }
   };
 
+  const handleAllCheckBoxClick = (value: boolean) => {
+    if (value) {
+      setSelectedRecruitIds(data?.recruits.map(item => item?.id) as number[]);
+    } else {
+      setSelectedRecruitIds([]);
+    }
+  };
+
   const handleDeleteClick = async () => {
     await requestDeleteRecruit({
-      applyIds: `[${selectedRecruitIds}]`,
+      applyIds: selectedRecruitIds,
     });
 
     setCloseRecruitModalOpen(false);
 
     queryClient.invalidateQueries({
-      queryKey: ["bizRecruits", page, selectedFilter],
+      queryKey: ['bizRecruits', page, selectedFilter],
     });
   };
 
   const { data } = useQuery<BizRecruitQuery>({
-    queryKey: ["bizRecruits", page, selectedFilter],
+    queryKey: ['bizRecruits', page, selectedFilter],
     queryFn: () =>
       requestRecruits({
         limit: 10,
         offset: page * 10,
-        status: selectedFilter === "전체" ? "" : selectedFilter,
+        status: selectedFilter === '전체' ? '' : selectedFilter,
       }),
   });
 
@@ -130,10 +136,7 @@ const ManagePost = () => {
       )}
       {isChangeDeadlieModalOpen && selectedRecruitIds.length !== 0 && (
         <DatepickerModal
-          defaultValue={
-            data?.recruits?.find((item) => item.id === selectedRecruitIds[0])
-              ?.recruitEnd
-          }
+          defaultValue={data?.recruits?.find(item => item.id === selectedRecruitIds[0])?.recruitEnd}
           onClose={handleCloseChangeDeadlineClick}
           onConfirm={handleDeadlineConfirm}
         />
@@ -147,30 +150,24 @@ const ManagePost = () => {
       </TitleWrapper>
       <FilterWrapper>
         <Filters>
-          <Option
-            onClick={() => handleFilterClick("전체")}
-            $isSelected={selectedFilter === "전체"}
-          >
+          <Option onClick={() => handleFilterClick('전체')} $isSelected={selectedFilter === '전체'}>
             전체
           </Option>
           <FilterDivider />
-          <Option
-            onClick={() => handleFilterClick("TEMP")}
-            $isSelected={selectedFilter === "TEMP"}
-          >
+          <Option onClick={() => handleFilterClick('TEMP')} $isSelected={selectedFilter === 'TEMP'}>
             임시저장
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("RECRUIT")}
-            $isSelected={selectedFilter === "RECRUIT"}
+            onClick={() => handleFilterClick('RECRUIT')}
+            $isSelected={selectedFilter === 'RECRUIT'}
           >
             모집중
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("CLOSED")}
-            $isSelected={selectedFilter === "CLOSED"}
+            onClick={() => handleFilterClick('CLOSED')}
+            $isSelected={selectedFilter === 'CLOSED'}
           >
             모집종료
           </Option>
@@ -230,6 +227,7 @@ const ManagePost = () => {
         <Table
           recruits={data.recruits}
           onClickCheckbox={handleCheckboxClick}
+          onClickAllCheckbox={handleAllCheckBoxClick}
           selectedRecruitIds={selectedRecruitIds}
         />
       )}
@@ -315,10 +313,9 @@ const Option = styled.div<{ $isSelected: boolean }>`
   letter-spacing: 1.45%;
   line-height: 142.9%;
   color: #171719;
-  font-weight: ${({ $isSelected }) =>
-    $isSelected ? "var(--font-bold)" : "var(--font-regular)"};
+  font-weight: ${({ $isSelected }) => ($isSelected ? 'var(--font-bold)' : 'var(--font-regular)')};
   cursor: pointer;
-  background-color: ${({ $isSelected }) => ($isSelected ? "#f4f4f5" : "white")};
+  background-color: ${({ $isSelected }) => ($isSelected ? '#f4f4f5' : 'white')};
 
   &:first-child {
     border-bottom-left-radius: 8px;

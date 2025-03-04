@@ -1,11 +1,11 @@
-import DatePicker from "react-datepicker";
-import CaretLeft from "@assets/icons/caret_left_cal.svg?react";
-import CaretRight from "@assets/icons/caret_right_cal.svg?react";
+import DatePicker from 'react-datepicker';
+import CaretLeft from '@assets/icons/caret_left_cal.svg?react';
+import CaretRight from '@assets/icons/caret_right_cal.svg?react';
 
-import "react-datepicker/dist/react-datepicker.css";
-import styled from "styled-components";
-import Button from "../buttons/button";
-import { forwardRef } from "react";
+import 'react-datepicker/dist/react-datepicker.css';
+import styled from 'styled-components';
+import Button from '../buttons/button';
+import { forwardRef } from 'react';
 
 interface RangeDatepickerProps {
   selectedRange: [Date | null, Date | null];
@@ -20,7 +20,7 @@ const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
     const [startDate, endDate] = selectedRange;
 
     const handleApplyClick = () => {
-      if (ref && "current" in ref && ref.current) {
+      if (ref && 'current' in ref && ref.current) {
         ref.current.setOpen(false);
       }
     };
@@ -37,7 +37,7 @@ const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
           selectsRange
           startDate={startDate!}
           endDate={endDate!}
-          onChange={(update) => onChangeDate(update)}
+          onChange={update => onChangeDate(update)}
           shouldCloseOnSelect={false}
           disabledKeyboardNavigation
           customInputRef=""
@@ -59,7 +59,23 @@ const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
 
 export default RangeDatepicker;
 
-const RangeDatePickerContainer = styled.div``;
+const RangeDatePickerContainer = styled.div`
+  .react-datepicker__day--in-range:not(.react-datepicker__day--range-start) {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      height: 33px;
+      width: 7px;
+      top: 0;
+      left: -6px;
+      bottom: 0;
+      background: #d47473;
+      border-radius: 0;
+    }
+  }
+`;
 
 interface CustomHeaderProps {
   date: Date;
@@ -118,9 +134,7 @@ const CustomHeader = ({
         <IconWrapper onClick={decreaseMonth}>
           <CaretLeft />
         </IconWrapper>
-        <YearMonth>
-          {date.toLocaleString("ko-KR", { year: "numeric", month: "long" })}
-        </YearMonth>
+        <YearMonth>{date.toLocaleString('ko-KR', { year: 'numeric', month: 'long' })}</YearMonth>
         <IconWrapper onClick={increaseMonth}>
           <CaretRight />
         </IconWrapper>

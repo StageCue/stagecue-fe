@@ -1,20 +1,16 @@
-import styled from "styled-components";
-import ChevronRightSVG from "@assets/icons/chevron_right.svg?react";
-import BookmarkSVG from "@assets/icons/bookmark.svg?react";
-import BookmarkFilledSVG from "@assets/icons/bookmark_filled.svg?react";
-import { useEffect, useState } from "react";
-import BasicInfo from "../components/basicInfo";
-import LocationInfo from "../components/locationInfo";
-import PracticeInfo from "../components/practiceInfo";
-import Application from "../components/application";
-import {
-  requestCastDetail,
-  requestDeleteScrapCast,
-  requestScrapCast,
-} from "@/api/cast";
-import { useNavigate, useParams } from "react-router-dom";
-import PostImageSlide from "../components/slide";
-import useSessionStore from "@/store/session";
+import styled from 'styled-components';
+import ChevronRightSVG from '@assets/icons/chevron_right.svg?react';
+import BookmarkSVG from '@assets/icons/bookmark.svg?react';
+import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg?react';
+import { useEffect, useState } from 'react';
+import BasicInfo from '../components/basicInfo';
+import LocationInfo from '../components/locationInfo';
+import PracticeInfo from '../components/practiceInfo';
+import Application from '../components/application';
+import { requestCastDetail, requestDeleteScrapCast, requestScrapCast } from '@/api/cast';
+import { useNavigate, useParams } from 'react-router-dom';
+import PostImageSlide from '../components/slide';
+import useSessionStore from '@/store/session';
 
 interface RecruitDetail {
   recruitTitle: string;
@@ -49,7 +45,7 @@ const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recruitDetail, setRecruitDetail] = useState<RecruitDetail>();
-  const [selectedTab, setSelectedTab] = useState("공연 기본 정보");
+  const [selectedTab, setSelectedTab] = useState('공연 기본 정보');
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   const { isLoggined } = useSessionStore();
@@ -117,37 +113,35 @@ const Detail = () => {
               </IconWrapper>
             </TroupeName>
           </TroupeWrapper>
-          {recruitDetail && (
-            <PostImageSlide images={recruitDetail?.recruitImages} />
-          )}
+          {recruitDetail && <PostImageSlide images={recruitDetail?.recruitImages} />}
         </Header>
         <Content>
           <ContentTab>
             <Option
-              onClick={() => handleTabClick("공연 기본 정보")}
-              $isSelected={selectedTab === "공연 기본 정보"}
+              onClick={() => handleTabClick('공연 기본 정보')}
+              $isSelected={selectedTab === '공연 기본 정보'}
             >
               공연 기본 정보
-              {selectedTab === "공연 기본 정보" && <SelectedBorder />}
+              {selectedTab === '공연 기본 정보' && <SelectedBorder />}
             </Option>
             <Option
-              onClick={() => handleTabClick("공연 위치 정보")}
-              $isSelected={selectedTab === "공연 위치 정보"}
+              onClick={() => handleTabClick('공연 위치 정보')}
+              $isSelected={selectedTab === '공연 위치 정보'}
             >
               공연 위치 정보
-              {selectedTab === "공연 위치 정보" && <SelectedBorder />}
+              {selectedTab === '공연 위치 정보' && <SelectedBorder />}
             </Option>
             <Option
-              onClick={() => handleTabClick("연습 장소 정보")}
-              $isSelected={selectedTab === "연습 장소 정보"}
+              onClick={() => handleTabClick('연습 장소 정보')}
+              $isSelected={selectedTab === '연습 장소 정보'}
             >
               연습 장소 정보
-              {selectedTab === "연습 장소 정보" && <SelectedBorder />}
+              {selectedTab === '연습 장소 정보' && <SelectedBorder />}
             </Option>
           </ContentTab>
           {recruitDetail && (
             <ContentBody>
-              {selectedTab === "공연 기본 정보" && (
+              {selectedTab === '공연 기본 정보' && (
                 <BasicInfo
                   introduce={recruitDetail.introduce}
                   start={recruitDetail.stage.dateStart}
@@ -156,7 +150,7 @@ const Detail = () => {
                   recruitingParts={recruitDetail.recruitingParts}
                 />
               )}
-              {selectedTab === "공연 위치 정보" && (
+              {selectedTab === '공연 위치 정보' && (
                 <LocationInfo
                   address={recruitDetail.stage.address}
                   addressDetail={recruitDetail.stage.addressDetail}
@@ -164,7 +158,7 @@ const Detail = () => {
                   lng={recruitDetail.stage.lng}
                 />
               )}
-              {selectedTab === "연습 장소 정보" && (
+              {selectedTab === '연습 장소 정보' && (
                 <PracticeInfo
                   start={recruitDetail.practice.dateStart}
                   end={recruitDetail.practice.dateEnd}
@@ -295,7 +289,7 @@ const Option = styled.div<{ $isSelected: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${({ $isSelected }) => ($isSelected ? "#171719" : "#999ba2")};
+  color: ${({ $isSelected }) => ($isSelected ? '#171719' : '#999ba2')};
   cursor: pointer;
   position: relative;
 `;

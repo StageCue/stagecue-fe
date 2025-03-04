@@ -1,11 +1,11 @@
-import { requestNoticeDetail, requestNotices } from "@/api/notice";
-import { useState } from "react";
-import styled from "styled-components";
-import CaretUpSVG from "@assets/icons/notice_caret_up.svg?react";
-import CaretDownSVG from "@assets/icons/notice_caret_down.svg?react";
-import CaretLeftSVG from "@assets/icons/notice_caret_left.svg?react";
-import CaretRightSVG from "@assets/icons/notice_caret_right.svg?react";
-import { useQuery } from "@tanstack/react-query";
+import { requestNoticeDetail, requestNotices } from '@/api/notice';
+import { useState } from 'react';
+import styled from 'styled-components';
+import CaretUpSVG from '@assets/icons/notice_caret_up.svg?react';
+import CaretDownSVG from '@assets/icons/notice_caret_down.svg?react';
+import CaretLeftSVG from '@assets/icons/notice_caret_left.svg?react';
+import CaretRightSVG from '@assets/icons/notice_caret_right.svg?react';
+import { useQuery } from '@tanstack/react-query';
 
 interface Notice {
   id: number;
@@ -28,7 +28,7 @@ const Notice = () => {
   const itemsPerPage = 10;
 
   const { data } = useQuery<NoticeQuery>({
-    queryKey: ["notices", page],
+    queryKey: ['notices', page],
     queryFn: () => requestNotices({ limit: 10, offset: page * itemsPerPage }),
   });
 
@@ -57,7 +57,7 @@ const Notice = () => {
 
   const getContents = async (id: number) => {
     const res = await requestNoticeDetail(id);
-    setContents(res.contents);
+    setContents(res?.content);
   };
 
   const handlePostClick = async (id: number) => {
@@ -74,9 +74,9 @@ const Notice = () => {
     <NoticeContainer>
       <Title>공지사항</Title>
       <List>
-        {data?.items?.map((post) => (
-          <>
-            <Post key={post.id} onClick={() => handlePostClick(post.id)}>
+        {data?.items?.map(post => (
+          <PostItem key={post?.id}>
+            <Post onClick={() => handlePostClick(post.id)}>
               <LeftSideWrapper>
                 <Tag>공지사항</Tag>
                 <PostTitle>{post.title}</PostTitle>
@@ -86,19 +86,16 @@ const Notice = () => {
                 {post.id === openPostId ? <CaretUpSVG /> : <CaretDownSVG />}
               </RightSideWrapper>
             </Post>
-            {post.id === openPostId && <Contents>{contents}</Contents>}
-          </>
+            {post?.id === openPostId && <Contents>{contents}</Contents>}
+          </PostItem>
         ))}
       </List>
       <Paginator>
-        <PgBtnWrapper
-          $isActive={page > 0}
-          onClick={() => page > 0 && handlePageClick(page - 1)}
-        >
+        <PgBtnWrapper $isActive={page > 0} onClick={() => page > 0 && handlePageClick(page - 1)}>
           <CaretLeftSVG />
         </PgBtnWrapper>
         <PageNumbers>
-          {pageNumbers?.map((number) => (
+          {pageNumbers?.map(number => (
             <PgNumber
               key={number}
               onClick={() => handlePageClick(number)}
@@ -110,9 +107,7 @@ const Notice = () => {
         </PageNumbers>
         <PgBtnWrapper
           $isActive={!(page === totalPages - 1)}
-          onClick={() =>
-            !(page === totalPages - 1) && handlePageClick(page + 1)
-          }
+          onClick={() => !(page === totalPages - 1) && handlePageClick(page + 1)}
         >
           <CaretRightSVG />
         </PgBtnWrapper>
@@ -141,6 +136,8 @@ const List = styled.div`
   width: 920px;
   border-top: 1px solid #e8e9ea;
 `;
+
+const PostItem = styled.div``;
 
 const Post = styled.div`
   width: 100%;
@@ -195,15 +192,15 @@ const PgBtnWrapper = styled.div<{ $isActive: boolean }>`
   align-items: center;
 
   rect {
-    fillopacity: ${({ $isActive }) => $isActive && "1"};
+    fillopacity: ${({ $isActive }) => $isActive && '1'};
   }
 `;
 
 const PgNumber = styled.div<{ $isCurrent: boolean }>`
   width: 32px;
   height: 32px;
-  color: ${({ $isCurrent }) => ($isCurrent ? "#171719" : "#858688")};
-  background-color: ${({ $isCurrent }) => ($isCurrent ? "#EAEAEA" : "none")};
+  color: ${({ $isCurrent }) => ($isCurrent ? '#171719' : '#858688')};
+  background-color: ${({ $isCurrent }) => ($isCurrent ? '#EAEAEA' : 'none')};
   border-radius: 4px;
   display: flex;
   justify-content: center;
