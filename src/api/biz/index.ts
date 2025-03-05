@@ -203,6 +203,9 @@ export const requestCloseRecruit = (data: ReqChangeRecruitStatusBody) => {
     method: 'put',
     endpoint: 'biz/recruits/status',
     data,
+    header: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
   return res;
@@ -230,7 +233,7 @@ export const requestRecruitFormData = async (recruitId: string) => {
 export const requestChangeEndDate = async (data: ReqChangeEndDateBody) => {
   const res = await request({
     method: 'put',
-    endpoint: 'biz/recruits/endData',
+    endpoint: 'biz/recruits/endDate',
     data,
   });
 

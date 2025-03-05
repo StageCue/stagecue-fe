@@ -30,7 +30,6 @@ const RecruitRow = ({
   onClickCheckbox,
   onClickStar,
 }: RecruitRowProps) => {
-  const navigate = useNavigate();
   const STATUS_THEME_MAP: Record<keyof typeof RecruitStatus, 'red' | 'yellow' | 'green'> = {
     TEMP: 'yellow',
     RECRUIT: 'green',
@@ -40,6 +39,8 @@ const RecruitRow = ({
   const handleRecruitDetailRoute = () => {
     navigate(`${id}/form`);
   };
+
+  const navigate = useNavigate();
 
   return (
     <RecruitRowContainer onClick={handleRecruitDetailRoute}>
@@ -64,7 +65,7 @@ const RecruitRow = ({
           {isFavorite ? <StarMarkedSVG /> : <StarSVG />}
         </StarIconWrapper>
       </CheckboxInRow>
-      <PostTitle>{title}</PostTitle>
+      <PostTitle onClick={() => navigate(`/biz/cast/${id}/form`)}>{title}</PostTitle>
       <Applicant>{applyCount}건</Applicant>
       <Date>{recruitEnd}</Date>
       <State>
@@ -102,6 +103,7 @@ const PostTitle = styled.div`
   align-items: center;
   width: 564px;
   height: 36px;
+  cursor: pointer;
 `;
 
 const Applicant = styled.div`
