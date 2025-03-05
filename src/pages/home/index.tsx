@@ -49,7 +49,7 @@ const Home = () => {
   const getBanners = async () => {
     const { banners } = await requestBanners();
 
-    const test: any = Array.from({ length: 10 }).map(() => banners[0]);
+    const test: any = Array.from({ length: 10 }).map(() => banners?.[0]);
 
     setBanners(test);
   };
@@ -61,7 +61,7 @@ const Home = () => {
       orderBy: 'newest',
     });
 
-    const test: any = Array.from({ length: 20 }).map(() => recruits[0]);
+    const test: any = Array.from({ length: recruits?.length })?.map(() => recruits?.[0]);
 
     setNewestRecruits(test);
   };

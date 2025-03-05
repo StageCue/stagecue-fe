@@ -35,7 +35,6 @@ const Login = () => {
         message: `이메일 또는 비밀번호가 올바르지 않습니다.\n입력한 내용을 다시 확인해주세요.`,
       });
     } else {
-      console.log(res);
       if (res?.accessToken) {
         sessionStorage.setItem('accessToken', res.accessToken);
         sessionStorage.setItem('refreshToken', res.refreshToken);
