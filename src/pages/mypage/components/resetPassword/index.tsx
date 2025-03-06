@@ -1,16 +1,13 @@
-import {
-  requestChangePassword,
-  requestConfrimCurrentPassword,
-} from "@/api/users";
-import Button from "@/components/buttons/button";
-import Overlay from "@/components/modal/overlay";
-import ModalPortal from "@/components/modal/portal";
-import useSessionStore from "@/store/session";
-import { ResetPasswordInputs } from "@/types/user";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import { requestChangePassword, requestConfrimCurrentPassword } from '@/api/users';
+import Button from '@/components/buttons/button';
+import Overlay from '@/components/modal/overlay';
+import ModalPortal from '@/components/modal/portal';
+import useSessionStore from '@/store/session';
+import { ResetPasswordInputs } from '@/types/user';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 interface CurrentPasswordInput {
   password: string;
@@ -26,20 +23,17 @@ const ResetPassword = () => {
     handleSubmit,
     getValues,
     formState: { errors, dirtyFields },
-  } = useForm<ResetPasswordInputs>();
+  } = useForm<ResetPasswordInputs>({ mode: 'onBlur' });
+
   const {
     register: passwordRegister,
     handleSubmit: passwordHandleSubmit,
-    formState: {
-      errors: currentPasswordErrors,
-      isDirty: isDirtyCurrentPassword,
-    },
+    formState: { errors: currentPasswordErrors, isDirty: isDirtyCurrentPassword },
     setError: setCurrentPasswordError,
   } = useForm<CurrentPasswordInput>();
 
-  const [isVerifiedCurrentPassword, setIsVerifiedCurrentPassword] =
-    useState(false);
-  const [updateToken, setUpdateToken] = useState("");
+  const [isVerifiedCurrentPassword, setIsVerifiedCurrentPassword] = useState(false);
+  const [updateToken, setUpdateToken] = useState('');
   const [isUpdatedModal, setIsUpdatedModal] = useState(false);
 
   const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
@@ -60,25 +54,25 @@ const ResetPassword = () => {
       setUpdateToken(res?.updateToken);
       setIsVerifiedCurrentPassword(true);
     } else {
-      setCurrentPasswordError("password", {
-        type: "match",
-        message: "비밀번호가 일치하지 않습니다.",
+      setCurrentPasswordError('password', {
+        type: 'match',
+        message: '비밀번호가 일치하지 않습니다.',
       });
     }
   };
 
   const validatePassword = (confirmPassword: string) => {
-    if (confirmPassword === getValues("newPassword")) {
+    if (confirmPassword === getValues('newPassword')) {
       return true;
     } else {
-      return "비밀번호가 일치하지 않습니다.";
+      return '비밀번호가 일치하지 않습니다.';
     }
   };
 
   const handleMoveToLoginPage = () => {
     sessionStore.logoutSession();
     clearUserSessionStorage();
-    navigate("/auth/starting");
+    navigate('/auth/starting');
   };
 
   return (
@@ -96,7 +90,7 @@ const ResetPassword = () => {
             <InputWrapper>
               <Label>현재 비밀번호 확인</Label>
               <Input
-                {...passwordRegister("password", {
+                {...passwordRegister('password', {
                   required: true,
                 })}
                 type="password"
@@ -116,13 +110,21 @@ const ResetPassword = () => {
               <InputWrapper>
                 <Label>비밀번호</Label>
                 <Input
-                  {...register("newPassword", {
+                  {...register('newPassword', {
                     required: true,
-                    // maxLength: {
-                    //   value: 8,
-                    //   message: "비밀번호는 최대 8자까지 입력할 수 있습니다.",
-                    // },
-                    pattern: /[A-Za-z]{3}/,
+                    validate: value => {
+                      const isValid =
+                        /[A-Z]/.test(value) &&
+                        /[a-z]/.test(value) &&
+                        /\d/.test(value) &&
+                        /[!@#$%^&*]/.test(value) &&
+                        value.length >= 8 &&
+                        value.length <= 32;
+
+                      return (
+                        isValid || '영문 대소문자, 숫자, 특수문자를 포함해 8~32자로 입력해주세요.'
+                      );
+                    },
                   })}
                   $isDirty={Boolean(dirtyFields.newPassword)}
                   $isError={Boolean(errors.newPassword)}
@@ -138,9 +140,9 @@ const ResetPassword = () => {
               <InputWrapper>
                 <Label>비밀번호 확인</Label>
                 <Input
-                  {...register("confirmPassword", {
+                  {...register('confirmPassword', {
                     required: true,
-                    validate: (value) => validatePassword(value),
+                    validate: value => validatePassword(value),
                   })}
                   placeholder="비밀번호 확인"
                   $isDirty={Boolean(dirtyFields.confirmPassword)}
@@ -155,7 +157,7 @@ const ResetPassword = () => {
           </Inputs>
         )}
         <Button variation="solid" btnClass="primary" type="submit" width={340}>
-          {isVerifiedCurrentPassword ? "변경완료" : "다음단계"}
+          {isVerifiedCurrentPassword ? '변경완료' : '다음단계'}
         </Button>
       </Form>
       {isUpdatedModal && (
@@ -163,9 +165,7 @@ const ResetPassword = () => {
           <Overlay>
             <UpdatedModal>
               <ModalContent>
-                <ModalContentTitle>
-                  비밀번호 변경이 완료되었습니다.
-                </ModalContentTitle>
+                <ModalContentTitle>비밀번호 변경이 완료되었습니다.</ModalContentTitle>
                 <ModalContentSubTitle>
                   <div>변경이 완료되었습니다.</div>
                   <div>재로그인후 이용해주세요.</div>
@@ -277,11 +277,7 @@ const Input = styled.input<{ $isDirty: boolean; $isError: boolean }>`
   height: 48px;
   border-radius: 10px;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
   outline: none;
 
   ::placeholder {
@@ -303,5 +299,5 @@ const Message = styled.div<{ $isError: boolean }>`
   font-size: 13px;
   letter-spacing: 1.94%;
   line-height: 138.5%;
-  color: ${({ $isError }) => ($isError ? "#FF4242" : "#00bf40;")};
+  color: ${({ $isError }) => ($isError ? '#FF4242' : '#00bf40;')};
 `;

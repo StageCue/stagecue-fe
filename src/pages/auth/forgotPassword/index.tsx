@@ -1,62 +1,152 @@
-import styled from "styled-components";
-import { useForm } from "react-hook-form";
-import { ForgotPasswordInput } from "../../../types/user";
-import Button from "../../../components/buttons/button";
-import { requestResetPasswordEmail } from "@/api/auth";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { useForm } from 'react-hook-form';
+import { ForgotPasswordInput } from '../../../types/user';
+import Button from '../../../components/buttons/button';
+import { requestResetPasswordEmail } from '@/api/auth';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = () => {
-  const navigate = useNavigate()
-  const { register, handleSubmit, watch } = useForm<ForgotPasswordInput>();
-  const [isSentEmail, setIsSentEmail] = useState(false)
-  const [emailValue] = watch(["email"]);
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    setValue,
+    formState: { errors },
+    clearErrors,
+  } = useForm<ForgotPasswordInput>();
+  const [isSentEmail, setIsSentEmail] = useState(false);
+  const [foundAccount, setFoundAccount] = useState<boolean>(true);
+  const [emailValue] = watch(['email']);
 
   const onSubmitEmail = async (data: ForgotPasswordInput) => {
-    await requestResetPasswordEmail(data.email);
-    setIsSentEmail(true)
+    const res = await requestResetPasswordEmail(data.email);
+    setIsSentEmail(true);
+
+    if (res?.error) {
+      setFoundAccount(false);
+    }
   };
 
   const handleLoginClick = () => {
-    navigate("/auth/login")
-  }
+    navigate('/auth/login');
+  };
+
+  const handleSignupClick = () => {
+    navigate('/auth/starting');
+  };
+
+  const handleRetryClick = () => {
+    setValue('email', '');
+    setIsSentEmail(false);
+  };
+
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailValue?.length > 0 && !emailRegex.test(emailValue)) {
+      setError('email', {
+        type: 'validate',
+        message: '올바른 이메일을 입력해주세요.',
+      });
+    } else {
+      clearErrors('email');
+    }
+  }, [emailValue]);
 
   return (
     <ResetPasswordContainer>
       <TitleWrapper>
         <Title>비밀번호 재설정</Title>
-        <Description>
-        {!isSentEmail ? "비밀번호 재설정을 진행할 계정의 이메일을 입력해주세요." : `비밀번호 재설정을 위한 이메일을 아래의 메일로 전송했어요.\n이메일이 오지 않았다면, 스팸메일함 또는 메일주소를 확인해주세요.`}
-        </Description>
+        {foundAccount && (
+          <Description>
+            {!isSentEmail
+              ? '비밀번호 재설정을 진행할 계정의 이메일을 입력해주세요.'
+              : `비밀번호 재설정을 위한 이메일을 아래의 메일로 전송했어요.\n이메일이 오지 않았다면, 스팸메일함 또는 메일주소를 확인해주세요.`}
+          </Description>
+        )}
       </TitleWrapper>
-      { !isSentEmail ?  <Form onSubmit={handleSubmit(onSubmitEmail)}>
-        <InputWrapper>
-          <Label>이메일</Label>
-          <Input
-            {...register("email", {
-              required: true,
-            })}
-            placeholder="stagecue@example.com"
-          />
-        </InputWrapper>
-        <Button
-          variation="solid"
-          btnClass="primary"
-          width={340}
-          disabled={!emailValue}
-        >
-          비밀번호 변경
-        </Button>
-      </Form> : <><AccountBox>{emailValue}</AccountBox>
-      <Button
-          variation="solid"
-          btnClass="primary"
-          width={340}
-          disabled={!emailValue}
-          onClick={handleLoginClick}
-        >
-         로그인으로 이동
-        </Button></>}
+      {!isSentEmail ? (
+        <Form onSubmit={handleSubmit(onSubmitEmail)}>
+          <InputWrapper>
+            <Label>이메일</Label>
+            <Input
+              type="email"
+              $isError={!!errors?.email?.message}
+              {...register('email', {
+                required: true,
+              })}
+              placeholder="stagecue@example.com"
+            />
+            <Message $isSuccess={!errors?.email?.message}>{errors?.email?.message}</Message>
+          </InputWrapper>
+          <Button
+            variation="solid"
+            btnClass="primary"
+            width={340}
+            disabled={!emailValue || !!errors?.email?.message}
+          >
+            비밀번호 변경
+          </Button>
+        </Form>
+      ) : (
+        <>
+          {!foundAccount ? (
+            <>
+              <NotFoundBox>
+                <TextWrapper>
+                  <MainText>가입되어 있는 계정이 없어요.</MainText>
+                  <SubText>다른 전화번호로 시도해주시거나 새로 가입해주세요.</SubText>
+                </TextWrapper>
+              </NotFoundBox>
+              <Button
+                btnClass="primary"
+                variation="outlined"
+                width={340}
+                height={48}
+                padding="12px"
+                lineHeight={150}
+                fontSize={16}
+                letterSpacing={0.57}
+                fontWeight="var(--font-semibold)"
+                onClick={handleRetryClick}
+              >
+                다시찾기
+              </Button>
+              <BtnWrapper>
+                <Button
+                  btnClass="primary"
+                  variation="solid"
+                  width={340}
+                  height={48}
+                  padding="12px"
+                  lineHeight={150}
+                  fontSize={16}
+                  letterSpacing={0.57}
+                  fontWeight="var(--font-semibold)"
+                  onClick={handleSignupClick}
+                >
+                  회원가입
+                </Button>
+              </BtnWrapper>
+            </>
+          ) : (
+            <>
+              <AccountBox>{emailValue}</AccountBox>
+              <Button
+                variation="solid"
+                btnClass="primary"
+                width={340}
+                disabled={!emailValue}
+                onClick={handleLoginClick}
+              >
+                로그인으로 이동
+              </Button>
+            </>
+          )}
+        </>
+      )}
     </ResetPasswordContainer>
   );
 };
@@ -114,12 +204,12 @@ const InputWrapper = styled.div`
   margin-bottom: 32px;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ $isError: boolean }>`
   padding: 12px 16px;
   width: 340px;
   height: 48px;
   border-radius: 10px;
-  border: 1px solid #70737c;
+  border: ${({ $isError }) => ($isError ? '1px solid #FF4242' : '1px solid #70737c')};
   outline: none;
 
   ::placeholder {
@@ -129,7 +219,6 @@ const Input = styled.input`
     font-size: 16px;
   }
 `;
-
 
 const AccountBox = styled.div`
   width: 520px;
@@ -147,4 +236,54 @@ const AccountBox = styled.div`
   font-weight: var(font-semibold);
   line-height: 144.5%;
   letter-spacing: -0.02%;
+`;
+
+const Message = styled.div<{ $isSuccess: boolean }>`
+  font-weight: var(--font-regular);
+  font-size: 13px;
+  letter-spacing: 1.94%;
+  line-height: 138.5%;
+  color: ${({ $isSuccess }) => ($isSuccess ? '#00bf40;' : '#FF4242')};
+`;
+
+const NotFoundBox = styled.div`
+  width: 520px;
+  height: 106px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #f7f7f8;
+  padding: 24px;
+  gap: 8px;
+  border-radius: 10px;
+  margin-bottom: 56px;
+`;
+
+const TextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const MainText = styled.div`
+  font-size: 18px;
+  line-height: 144.5%;
+  letter-spacing: -0.02%;
+  font-weight: var(--font-semibold);
+  color: #000000;
+`;
+
+const SubText = styled.div`
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  font-weight: var(--font-regular);
+  color: #000000;
+`;
+
+const BtnWrapper = styled.div`
+  margin-top: 16px;
 `;

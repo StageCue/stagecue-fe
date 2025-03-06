@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import Button from "@/components/buttons/button";
-import Cast from "../cast";
-import ChevronRightSVG from "@/assets/icons/chevron_right_red_s.svg?react";
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import Button from '@/components/buttons/button';
+import Cast from '../cast';
+import ChevronRightSVG from '@/assets/icons/chevron_right_red_s.svg?react';
 
 export interface Recruit {
   recruitId: number;
@@ -23,7 +23,7 @@ const NewPost = ({ recruits }: NewPostProps) => {
   const shouldLoop = recruits && recruits?.length >= 5;
 
   const handleRecruitClick = () => {
-    navigate("/casts");
+    navigate('/casts');
   };
 
   return (
@@ -63,30 +63,31 @@ const NewPost = ({ recruits }: NewPostProps) => {
             grabCursor={true}
             pagination={{ clickable: true }}
           >
-            {recruits?.map(
-              (
-                {
-                  recruitId,
-                  thumbnail,
-                  recruitTitle,
-                  artworkName,
-                  practiceLocation,
-                  isScrapping,
-                },
-                index
-              ) => (
+            {recruits?.map((recruit, index) => {
+              const {
+                recruitId,
+                thumbnail,
+                recruitTitle,
+                artworkName,
+                practiceLocation,
+                isScrapping,
+              } = recruit;
+
+              return (
                 <SwiperSlide key={index}>
-                  <Cast
-                    recruitId={String(recruitId)}
-                    thumbnail={thumbnail}
-                    recruitTitle={recruitTitle}
-                    troupeName={artworkName}
-                    practiceLocation={practiceLocation}
-                    isScrapping={isScrapping}
-                  />
+                  {recruit && (
+                    <Cast
+                      recruitId={String(recruitId)}
+                      thumbnail={thumbnail}
+                      recruitTitle={recruitTitle}
+                      troupeName={artworkName}
+                      practiceLocation={practiceLocation}
+                      isScrapping={isScrapping}
+                    />
+                  )}
                 </SwiperSlide>
-              )
-            )}
+              );
+            })}
           </Swiper>
         </Recruits>
       )}

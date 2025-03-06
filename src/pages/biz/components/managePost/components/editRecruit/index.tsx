@@ -27,6 +27,7 @@ import { decimalToBinaryArray } from '@/utils/format';
 import { CATEGORY, RecruitStatus } from '@/types/biz';
 import ModalPortal from '@/components/modal/portal';
 import Overlay from '@/components/modal/overlay';
+import Datepicker from '@/components/datepicker';
 
 interface EditRecruitInputs {
   title: string;
@@ -38,10 +39,6 @@ interface EditRecruitInputs {
   category: string;
   recruitStatus: keyof typeof RecruitStatus;
   recruitImages?: string[];
-  recruitMent: {
-    start: string;
-    end: string;
-  };
   practice: {
     start: string;
     end: string;
@@ -96,62 +93,58 @@ const EditRecruit = () => {
     titleValue,
     partsValue,
     introduceValue,
-    recruitStartValue,
     recruitEndValue,
     practiceStartValue,
     practiceEndValue,
     addressValue,
+    addressDetailValue,
     monthlyFeeValue,
     categoryValue,
     artworkNameValue,
     stgStartValue,
     stgEndValue,
     stgAddressValue,
+    stgAddressDetailValue,
   ] = watch([
     'title',
     'recruitingParts',
     'introduce',
-    'recruitMent.start',
-    'recruitMent.end',
+    'recruitEnd',
     'practice.start',
     'practice.end',
     'practice.address',
+    'practice.addressDetail',
     'monthlyFee',
     'category',
     'artworkName',
     'stage.start',
     'stage.end',
     'stage.address',
+    'stage.addressDetail',
   ]);
 
   const isSaveDisabled =
     !titleValue ||
     !partsValue ||
     !introduceValue ||
-    !recruitStartValue ||
     !recruitEndValue ||
     !practiceStartValue ||
     !practiceEndValue ||
+    !practiceDays ||
     !addressValue ||
+    !addressDetailValue ||
     !categoryValue ||
     !artworkNameValue ||
     !stgStartValue ||
     !stgEndValue ||
-    !stgAddressValue;
+    !stgAddressValue ||
+    !stgAddressDetailValue;
 
-  const recruitMentDatepickerRef = useRef<DatePicker | null>(null);
-  const [recruitMentDataRange, setRecruitMentDataRange] = useState<[Date | null, Date | null]>([
-    null,
-    null,
-  ]);
   const [recruitStatus, setRecruitStatus] = useState('');
   const [isAlwaysRecruit, setIsAlwaysRecruit] = useState(false);
 
-  const recruitDatepickerRef = useRef<DatePicker | null>(null);
-  const [recruitDataRange, setRecruitDataRange] = useState<[Date | null, Date | null]>([
-    new Date(Date.now()),
-    new Date(Date.now()),
-  ]);
+  const recruitEndDatepickerRef = useRef<DatePicker | null>(null);
+  const [recruitEnd, setRecruitEnd] = useState<Date | null>(null);
 
   const practiceDatepickerRef = useRef<DatePicker | null>(null);
   const [practiceDataRange, setPracticeDataRange] = useState<[Date | null, Date | null]>([
@@ -162,15 +155,9 @@ const EditRecruit = () => {
   const stageDatepickerRef = useRef<DatePicker | null>(null);
   const [stageDateRange, setStageDateRange] = useState<[Date | null, Date | null]>([null, null]);
 
-  const handleRecruitMentCalendarClick = () => {
-    if (recruitMentDatepickerRef.current) {
-      recruitMentDatepickerRef.current.setOpen(true);
-    }
-  };
-
   const handleRecruitCalendarClick = () => {
-    if (recruitDatepickerRef.current) {
-      recruitDatepickerRef.current.setOpen(true);
+    if (recruitEndDatepickerRef.current) {
+      recruitEndDatepickerRef.current.setOpen(true);
     }
   };
 
@@ -186,40 +173,19 @@ const EditRecruit = () => {
     }
   };
 
-  const handleRecruitRangeChange = (range: [Date | null, Date | null]) => {
-    setRecruitDataRange(range);
-    if (range) {
-      const stringDate = range.map(date =>
-        date
-          ?.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          })
-          .replace(/\./g, '-')
-          .replace(/\s/g, '')
-          .replace(/-$/, '')
-      );
-      setValue('recruitEnd', stringDate[1]!);
-    }
-  };
-  
-  const handleRecruitMentRangeChange = (range: [Date | null, Date | null]) => {
-    setRecruitMentDataRange(range);
-    if (range) {
-      const stringDate = range.map(date =>
-        date
-          ?.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-          })
-          .replace(/\./g, '-')
-          .replace(/\s/g, '')
-          .replace(/-$/, '')
-      );
-      setValue('recruitMent.start', stringDate[0]!);
-      setValue('recruitMent.end', stringDate[1]!);
+  const handleRecruitEndChange = (date: Date | null) => {
+    setRecruitEnd(date);
+    if (date) {
+      const stringDate = date
+        .toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+        .replace(/\./g, '-')
+        .replace(/\s/g, '')
+        .replace(/-$/, '');
+      setValue('recruitEnd', stringDate);
     }
   };
 
@@ -261,25 +227,34 @@ const EditRecruit = () => {
     }
   };
 
+  const [isLoading, setIsLoading] = useState(false);
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
-    const recruitImages = (await requestUploadImageFiles())?.map((image: any) => image?.fileName);
-    const recruitingParts = partsValue?.map(({ value }) => value);
+    if (isLoading) return;
 
-    const { recruitMent, ...fieldData } = data;
+    setIsLoading(true);
+    try {
+      const recruitImages = (await requestUploadImageFiles())?.map((image: any) => image?.fileName);
+      const recruitingParts = partsValue?.map(({ value }) => value);
 
-    const res = await requestCreateRecruit({
-      ...fieldData,
-      monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
-      recruitEnd: recruitMent?.end,
-      recruitingParts,
-      recruitImages,
-      recruitStatus,
-    });
+      const { ...fieldData } = data;
 
-    setIsNewRecruitModalOpen(false);
+      const res = await requestCreateRecruit({
+        ...fieldData,
+        monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
+        recruitingParts,
+        recruitImages,
+        recruitStatus,
+      });
 
-    if (res?.id) {
-      navigate(`/biz/cast/${res?.id}/form`);
+      setIsNewRecruitModalOpen(false);
+
+      if (res?.id) {
+        navigate(`/biz/cast/${res?.id}/form`);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -377,6 +352,7 @@ const EditRecruit = () => {
 
   const handleDayResetClick = () => {
     setPracticeDays(['0', '0', '0', '0', '0', '0', '0']);
+    setDaysText('선택해주세요.');
   };
 
   const getActiveDays = (daysArray: string[]): string => {
@@ -458,19 +434,25 @@ const EditRecruit = () => {
     if (res.monthlyFee !== 0) {
       setIsMontlyFee(true);
     }
-    handleRecruitMentRangeChange([new Date(), new Date(res.recruitEnd)]);
-    handlePracticeRangeChange([new Date(res.practice.start), new Date(res.practice.end)]);
-    setValue('practice.dayOfWeek', res.practice.daysOfWeek);
+    setValue('recruitEnd', res.recruitEnd);
+    setValue('practice.start', res.practice.start);
+    setValue('practice.end', res.practice.end);
+    setValue('practice.dayOfWeek', res.practice.dayOfWeek);
     setPracticeDays(decimalToBinaryArray(res.practice.dayOfWeek));
-    handleApplyDayClick(decimalToBinaryArray(res.practice.dayOfWeek));
     setValue('practice.address', res.practice.address);
     setValue('practice.addressDetail', res.practice.addressDetail);
     setValue('category', res.category);
     setCategoryText(res.category);
     setValue('artworkName', res.artworkName);
-    handleStageRangeChange([new Date(res.stage.start), new Date(res.stage.end)]);
+    setValue('stage.start', res.stage.start);
+    setValue('stage.end', res.stage.end);
     setValue('stage.address', res.stage.address);
     setValue('stage.addressDetail', res.stage.addressDetail);
+
+    handleRecruitEndChange(new Date(res.recruitEnd));
+    handlePracticeRangeChange([new Date(res.practice.start), new Date(res.practice.end)]);
+    handleApplyDayClick(decimalToBinaryArray(res.practice.dayOfWeek));
+    handleStageRangeChange([new Date(res.stage.start), new Date(res.stage.end)]);
 
     const currentImagesArray: { id: string; url: string }[] = res.recruitImages.map(
       (url: string) => {
@@ -697,39 +679,20 @@ const EditRecruit = () => {
             )}
           </Images>
         </InputWrapper>
-        <InputWrapper>
-          <RequiredLabel>
-            모집기간
-            <RequiedRedDot />
-          </RequiredLabel>
-          <WithIconInputWrapper $isDirty={Boolean(dirtyFields.recruitMent?.start)} $isError={false}>
-            <RangeDatepicker
-              ref={recruitMentDatepickerRef}
-              selectedRange={recruitMentDataRange}
-              onChangeDate={(range: [Date | null, Date | null]) => {
-                handleRecruitMentRangeChange(range);
-              }}
-              pickerText="모집기간을 입력해주세요"
-            />
-            <IconWrapper onClick={handleRecruitMentCalendarClick}>
-              <CalendarSVG />
-            </IconWrapper>
-          </WithIconInputWrapper>
-        </InputWrapper>
         <PairInputWrapper>
           <InputWrapper>
             <RequiredLabel>
-              모집기간
+              모집마감
               <RequiedRedDot />
             </RequiredLabel>
             <WithIconInputWrapper $isDirty={Boolean(dirtyFields.practice?.start)} $isError={false}>
-              <RangeDatepicker
-                ref={recruitDatepickerRef}
-                selectedRange={recruitDataRange}
-                onChangeDate={(range: [Date | null, Date | null]) => {
-                  handleRecruitRangeChange(range);
+              <Datepicker
+                ref={recruitEndDatepickerRef}
+                selectedDate={recruitEnd}
+                onChangeDate={(date: Date | null) => {
+                  handleRecruitEndChange(date);
                 }}
-                pickerText="연습기간을 입력해주세요"
+                pickerText="모집 마감일을 입력해주세요"
               />
               <IconWrapper onClick={handleRecruitCalendarClick}>
                 <CalendarSVG />

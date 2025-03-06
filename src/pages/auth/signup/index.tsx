@@ -1,33 +1,29 @@
 /* eslint-disable no-useless-escape */
-import { useForm, Controller } from "react-hook-form";
-import styled from "styled-components";
-import { SignupInputs } from "../../../types/user";
-import Button from "../../../components/buttons/button";
-import { useNavigate } from "react-router-dom";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import {
-  requestCellPhoneCertCode,
-  requestSignup,
-  requestVerifySignup,
-} from "@/api/auth";
-import CheckboxSVG from "@assets/icons/checkbox.svg?react";
-import CheckedSVG from "@assets/icons/checkbox_checked.svg?react";
-import ChevronRight from "@assets/icons/chevron_right_gray_s.svg?react";
-import useSessionStore from "@/store/session";
-import CalendarSVG from "@assets/icons/calendar.svg?react";
-import Datepicker from "@/components/datepicker";
-import DatePicker from "react-datepicker";
+import { useForm, Controller } from 'react-hook-form';
+import styled from 'styled-components';
+import { SignupInputs } from '../../../types/user';
+import Button from '../../../components/buttons/button';
+import { useNavigate } from 'react-router-dom';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { requestCellPhoneCertCode, requestSignup, requestVerifySignup } from '@/api/auth';
+import CheckboxSVG from '@assets/icons/checkbox.svg?react';
+import CheckedSVG from '@assets/icons/checkbox_checked.svg?react';
+import ChevronRight from '@assets/icons/chevron_right_gray_s.svg?react';
+import useSessionStore from '@/store/session';
+import CalendarSVG from '@assets/icons/calendar.svg?react';
+import Datepicker from '@/components/datepicker';
+import DatePicker from 'react-datepicker';
 
 const Signup = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
   const [isSentCertCode, setIsSentCertCode] = useState<boolean>(false);
   const [certTime, setCertTime] = useState<number>(300);
-  const [certCode, setCertCode] = useState<string>("");
+  const [certCode, setCertCode] = useState<string>('');
   // const [isCertificated, setIsCertificagted] = useState<false>(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [isAllAgree, setIsAllAgree] = useState(false);
-  const [registerToken, setRegisterToken] = useState("");
+  const [registerToken, setRegisterToken] = useState('');
 
   const datepickerRef = useRef<DatePicker | null>(null);
   const [date, setDate] = useState<Date>(new Date(Date.now()));
@@ -38,33 +34,33 @@ const Signup = () => {
 
   const handleServicePolicyLinkClick = () => {
     window.open(
-      "https://www.notion.so/023d21af0ea24dafb2bcff260e2fe4eb?pvs=4",
-      "_blank",
-      "rel=nooopener noreferrer"
+      'https://www.notion.so/023d21af0ea24dafb2bcff260e2fe4eb?pvs=4',
+      '_blank',
+      'rel=nooopener noreferrer'
     );
   };
 
   const handlePrivatePolicyLinkClick = () => {
     window.open(
-      "https://www.notion.so/aeca057f02914c52bf9a0f627cf01e40?pvs=4",
-      "_blank",
-      "rel=nooopener noreferrer"
+      'https://www.notion.so/aeca057f02914c52bf9a0f627cf01e40?pvs=4',
+      '_blank',
+      'rel=nooopener noreferrer'
     );
   };
 
   const defaultValues = {
-    email: "",
-    name: "",
-    phoneNumber: "",
-    password: "",
+    email: '',
+    name: '',
+    phoneNumber: '',
+    password: '',
     certificated: false,
-    birthday: "",
-    gender: "",
-    confirmPassword: "",
+    birthday: '',
+    gender: '',
+    confirmPassword: '',
     ageCheck: false,
     agreeServicePolicy: false,
     agreePrivatePolicy: false,
-    userType: "PERFORMER",
+    userType: 'PERFORMER',
   };
 
   const {
@@ -76,7 +72,8 @@ const Signup = () => {
     setError,
     trigger,
     control,
-  } = useForm<SignupInputs>({ mode: "all", defaultValues });
+    clearErrors,
+  } = useForm<SignupInputs>({ mode: 'all', defaultValues });
 
   const [
     emailValue,
@@ -90,18 +87,18 @@ const Signup = () => {
     agreeServicePolicyValue,
     agreePrivatePolicyValue,
   ] = watch([
-    "email",
-    "name",
-    "phoneNumber",
-    "certificated",
-    "gender",
-    "password",
-    "confirmPassword",
-    "ageCheck",
-    "agreeServicePolicy",
-    "agreePrivatePolicy",
-    "birthday",
-    "userType",
+    'email',
+    'name',
+    'phoneNumber',
+    'certificated',
+    'gender',
+    'password',
+    'confirmPassword',
+    'ageCheck',
+    'agreeServicePolicy',
+    'agreePrivatePolicy',
+    'birthday',
+    'userType',
   ]);
 
   const isAllInputHasValue = useMemo(() => {
@@ -131,8 +128,7 @@ const Signup = () => {
   ]);
 
   const onSubmitSignup = async (data: SignupInputs) => {
-    const { email, name, phoneNumber, password, birthday, gender, userType } =
-      data;
+    const { email, name, phoneNumber, password, birthday, gender, userType } = data;
 
     const userData = {
       username: name,
@@ -148,17 +144,21 @@ const Signup = () => {
     const res = await requestSignup(userData, registerToken);
 
     if (res) {
+      sessionStorage.setItem('accessToken', res.accessToken);
+      sessionStorage.setItem('refreshToken', res.refreshToken);
       sessionStore.loginSession({
         email: emailValue,
-        username: res.username,
-        phoneNumber: res.cell,
+        username: res?.username,
+        phoneNumber: res?.cell,
+        userType: res?.userType,
+        birthday: res?.birthday,
       });
-      navigate("/auth/welcome");
+      navigate('/auth/welcome');
     }
   };
 
   const handleGenderClick = (gender: string) => {
-    setValue("gender", gender);
+    setValue('gender', gender);
   };
 
   const handleSendCertClick = async () => {
@@ -171,28 +171,28 @@ const Signup = () => {
   };
 
   const handleAllAgreeClick = () => {
-    setIsAllAgree((prev) => {
+    setIsAllAgree(prev => {
       if (prev) {
-        setValue("ageCheck", false);
-        setValue("agreePrivatePolicy", false);
-        setValue("agreeServicePolicy", false);
+        setValue('ageCheck', false);
+        setValue('agreePrivatePolicy', false);
+        setValue('agreeServicePolicy', false);
       } else {
-        setValue("ageCheck", true);
-        setValue("agreePrivatePolicy", true);
-        setValue("agreeServicePolicy", true);
+        setValue('ageCheck', true);
+        setValue('agreePrivatePolicy', true);
+        setValue('agreeServicePolicy', true);
       }
       return !prev;
     });
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const rawValue = event.target.value.replace(/\D/g, "");
+    const rawValue = event.target.value.replace(/\D/g, '');
     setPhoneNumber(formatPhoneNumber(event.target.value));
-    setValue("phoneNumber", rawValue);
+    setValue('phoneNumber', rawValue);
   };
 
   const formatPhoneNumber = (value: string) => {
-    const cleaned = ("" + value).replace(/\D/g, "");
+    const cleaned = ('' + value).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
     if (match) {
       return `${match[1]}-${match[2]}-${match[3]}`;
@@ -202,25 +202,25 @@ const Signup = () => {
 
   const handleAgeCheckClick = () => {
     if (ageCheckValue) {
-      setValue("ageCheck", false);
+      setValue('ageCheck', false);
     } else {
-      setValue("ageCheck", true);
+      setValue('ageCheck', true);
     }
   };
 
   const handleServicePolicyClick = () => {
     if (agreeServicePolicyValue) {
-      setValue("agreeServicePolicy", false);
+      setValue('agreeServicePolicy', false);
     } else {
-      setValue("agreeServicePolicy", true);
+      setValue('agreeServicePolicy', true);
     }
   };
 
   const handlePrivatePolicyClick = () => {
     if (agreePrivatePolicyValue) {
-      setValue("agreePrivatePolicy", false);
+      setValue('agreePrivatePolicy', false);
     } else {
-      setValue("agreePrivatePolicy", true);
+      setValue('agreePrivatePolicy', true);
     }
   };
 
@@ -235,14 +235,15 @@ const Signup = () => {
     });
 
     if (!res?.error) {
-      setValue("certificated", true);
+      setValue('certificated', true);
       setRegisterToken(res.token);
+      clearErrors(['certificated']);
     } else {
       console.error(res?.error);
-      setValue("certificated", false);
-      setError("certificated", {
-        type: "verify",
-        message: "인증번호를 확인해주세요.",
+      setValue('certificated', false);
+      setError('certificated', {
+        type: 'verify',
+        message: '인증번호를 확인해주세요.',
       });
     }
   };
@@ -257,9 +258,9 @@ const Signup = () => {
     if (confirmPassword === passwordValue) {
       return true;
     } else {
-      setError("confirmPassword", {
-        type: "confirmPassword",
-        message: "비밀번호가 일치하지 않습니다.",
+      setError('confirmPassword', {
+        type: 'confirmPassword',
+        message: '비밀번호가 일치하지 않습니다.',
       });
       return false;
     }
@@ -275,7 +276,7 @@ const Signup = () => {
     if (certTime === 0 || !isSentCertCode) return;
 
     const timer = setInterval(() => {
-      setCertTime((prevTime) => prevTime - 1);
+      setCertTime(prevTime => prevTime - 1);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -304,17 +305,17 @@ const Signup = () => {
               <RequiedRedDot />
             </RequiredLabel>
             <Input
-              {...register("email", {
+              {...register('email', {
                 required: true,
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "올바른 이메일 형식이 아닙니다.",
+                  message: '올바른 이메일 형식이 아닙니다.',
                 },
               })}
               placeholder="stagecue@example.com"
               $isError={Boolean(errors.email?.message)}
               $isDirty={Boolean(emailValue)}
-              onBlur={() => trigger("email")}
+              onBlur={() => trigger('email')}
             />
             <InputError>{errors.email?.message}</InputError>
           </InputWrapper>
@@ -324,13 +325,13 @@ const Signup = () => {
               <RequiedRedDot />
             </RequiredLabel>
             <Input
-              {...register("name", {
+              {...register('name', {
                 required: true,
               })}
               placeholder="홍길동"
               $isError={Boolean(errors.name?.message)}
               $isDirty={Boolean(nameValue)}
-              onBlur={() => trigger("name")}
+              onBlur={() => trigger('name')}
             />
           </InputWrapper>
           <InputWrapper>
@@ -340,11 +341,11 @@ const Signup = () => {
             </RequiredLabel>
             <PhoneNumberInputWrapper>
               <ShortInput
-                {...register("phoneNumber", {
+                {...register('phoneNumber', {
                   required: true,
                   pattern: {
                     value: /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/,
-                    message: "올바른 휴대폰 번호 형식이 아닙니다",
+                    message: '올바른 휴대폰 번호 형식이 아닙니다',
                   },
                 })}
                 placeholder="010-1234-5678"
@@ -352,21 +353,19 @@ const Signup = () => {
                 value={phoneNumber}
                 $isError={Boolean(errors.phoneNumber?.message)}
                 $isDirty={Boolean(phoneNumberValue)}
-                onBlur={() => trigger("phoneNumber")}
+                onBlur={() => trigger('phoneNumber')}
               />
               <Button
-                variation={isSentCertCode ? "outlined" : "solid"}
+                variation={isSentCertCode ? 'outlined' : 'solid'}
                 btnClass="primary"
                 width={140}
                 padding="12px 20px"
                 fontSize={15}
                 type="button"
-                disabled={
-                  Boolean(!phoneNumberValue) || Boolean(errors.phoneNumber)
-                }
+                disabled={Boolean(!phoneNumberValue) || Boolean(errors.phoneNumber)}
                 onClick={handleSendCertClick}
               >
-                {isSentCertCode ? "인증번호 재전송" : "인증번호 받기"}
+                {isSentCertCode ? '인증번호 재전송' : '인증번호 받기'}
               </Button>
             </PhoneNumberInputWrapper>
             <ShortInputWrapper>
@@ -379,11 +378,9 @@ const Signup = () => {
                   <CertInput
                     name="certCode"
                     type="text"
-                    onChange={(event) => handleCertInputChange(event)}
+                    onChange={event => handleCertInputChange(event)}
                     disabled={!isSentCertCode}
-                    placeholder={
-                      isSentCertCode ? "" : "인증번호를 입력해주세요"
-                    }
+                    placeholder={isSentCertCode ? '' : '인증번호를 입력해주세요'}
                     $isSentCode={isSentCertCode}
                   />
                   {isSentCertCode && !certificatedValue ? (
@@ -426,14 +423,14 @@ const Signup = () => {
                       handleDateChange(date!);
                       field.onChange(
                         date
-                          ?.toLocaleDateString("ko-KR", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
+                          ?.toLocaleDateString('ko-KR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
                           })
-                          .replace(/\./g, "-")
-                          .replace(/\s/g, "")
-                          .replace(/-$/, "")
+                          .replace(/\./g, '-')
+                          .replace(/\s/g, '')
+                          .replace(/-$/, '')
                       );
                     }}
                     pickerText="생년월일을 입력해주세요"
@@ -449,14 +446,14 @@ const Signup = () => {
             <Label>성별</Label>
             <GenderButtonWrapper>
               <GenderButton
-                onClick={() => handleGenderClick("MALE")}
-                $isSelected={genderValue === "MALE"}
+                onClick={() => handleGenderClick('MALE')}
+                $isSelected={genderValue === 'MALE'}
               >
                 남성
               </GenderButton>
               <GenderButton
-                onClick={() => handleGenderClick("FEMALE")}
-                $isSelected={genderValue === "FEMALE"}
+                onClick={() => handleGenderClick('FEMALE')}
+                $isSelected={genderValue === 'FEMALE'}
               >
                 여성
               </GenderButton>
@@ -468,7 +465,7 @@ const Signup = () => {
               <RequiedRedDot />
             </RequiredLabel>
             <Input
-              {...register("password", {
+              {...register('password', {
                 required: true,
                 pattern:
                   /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\[\]{};':"\\|,.<>\/?]).{8,24}$/,
@@ -476,7 +473,7 @@ const Signup = () => {
               placeholder="비밀번호를 입력해주세요"
               $isError={Boolean(errors.password)}
               $isDirty={Boolean(passwordValue)}
-              onBlur={() => trigger("password")}
+              onBlur={() => trigger('password')}
               type="password"
             />
             <ValidationGuide $isError={Boolean(errors.password)}>
@@ -489,14 +486,14 @@ const Signup = () => {
               <RequiedRedDot />
             </RequiredLabel>
             <Input
-              {...register("confirmPassword", {
+              {...register('confirmPassword', {
                 required: true,
-                validate: (value) => validateConfrimPassword(value),
+                validate: value => validateConfrimPassword(value),
               })}
               placeholder="비밀번호를 다시 한번 입력해주세요"
               $isError={Boolean(errors.confirmPassword)}
               $isDirty={Boolean(confirmPasswordValue)}
-              onBlur={() => trigger("confirmPassword")}
+              onBlur={() => trigger('confirmPassword')}
               type="password"
             />
           </InputWrapper>
@@ -515,10 +512,7 @@ const Signup = () => {
                   만 14세 이상입니다 <RequiredText>(필수)</RequiredText>
                 </CheckboxLabel>
               </CheckboxWrapper>
-              <CheckboxInput
-                type="checkbox"
-                {...register("ageCheck", { required: true })}
-              />
+              <CheckboxInput type="checkbox" {...register('ageCheck', { required: true })} />
             </CheckboxInputWrapper>
             <CheckboxInputWrapper>
               <CheckboxWrapper onClick={handleServicePolicyClick}>
@@ -556,16 +550,10 @@ const Signup = () => {
         </Button>
         <CheckboxInput
           type="checkbox"
-          {...register("certificated", { required: true, value: false })}
+          {...register('certificated', { required: true, value: false })}
         />
-        <CheckboxInput
-          type="checkbox"
-          {...register("agreeServicePolicy", { required: true })}
-        />
-        <CheckboxInput
-          type="checkbox"
-          {...register("agreePrivatePolicy", { required: true })}
-        />
+        <CheckboxInput type="checkbox" {...register('agreeServicePolicy', { required: true })} />
+        <CheckboxInput type="checkbox" {...register('agreePrivatePolicy', { required: true })} />
       </SignupForm>
     </SignupContainer>
   );
@@ -624,11 +612,7 @@ const Input = styled.input<{ $isError: boolean; $isDirty: boolean }>`
   height: 48px;
   border-radius: 10px;
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   outline: none;
 
   &::placeholder {
@@ -645,11 +629,7 @@ const ShortInput = styled.input<{ $isError: boolean; $isDirty: boolean }>`
   height: 48px;
   border-radius: 10px;
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   outline: none;
 
   &::placeholder {
@@ -693,7 +673,7 @@ const ValidationGuide = styled.div<{ $isError: boolean }>`
   width: 340px;
   height: 36px;
   margin-top: 8px;
-  color: ${({ $isError }) => ($isError ? "#FF4242" : "#c7c7c8")};
+  color: ${({ $isError }) => ($isError ? '#FF4242' : '#c7c7c8')};
   font-size: 13px;
   line-height: 138%.5;
   letter-spacing: 1.94%;
@@ -741,14 +721,9 @@ const CertInputWrapper = styled.div<{
   padding: 12px 16px;
   width: 220px;
   height: 48px;
-  background-color: ${({ $isDisabled }) =>
-    $isDisabled ? "#f4f4f5;" : "white"};
+  background-color: ${({ $isDisabled }) => ($isDisabled ? '#f4f4f5;' : 'white')};
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -760,7 +735,7 @@ const CertInput = styled.input<{
   // $isDirty: boolean;
   $isSentCode: boolean;
 }>`
-  width: ${({ $isSentCode }) => ($isSentCode ? "133px" : "188px")};
+  width: ${({ $isSentCode }) => ($isSentCode ? '133px' : '188px')};
   height: 24px;
   outline: none;
   border: none;
@@ -813,9 +788,9 @@ const GenderButtonWrapper = styled.div`
 const GenderButton = styled.div<{ $isSelected: boolean }>`
   width: 164px;
   height: 48px;
-  background-color: ${({ $isSelected }) => ($isSelected ? "#b81716" : "white")};
-  color: ${({ $isSelected }) => ($isSelected ? "white" : "#dfdfe0")};
-  border: ${({ $isSelected }) => ($isSelected ? "none" : "1px solid #dfdfe0")};
+  background-color: ${({ $isSelected }) => ($isSelected ? '#b81716' : 'white')};
+  color: ${({ $isSelected }) => ($isSelected ? 'white' : '#dfdfe0')};
+  border: ${({ $isSelected }) => ($isSelected ? 'none' : '1px solid #dfdfe0')};
   border-radius: 8px;
   display: flex;
   justify-content: center;

@@ -1,23 +1,23 @@
-import { useForm } from "react-hook-form";
-import styled from "styled-components";
-import { ForgotAccountInputs } from "../../../types/user";
-import Button from "../../../components/buttons/button";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useForm } from 'react-hook-form';
+import styled from 'styled-components';
+import { ForgotAccountInputs } from '../../../types/user';
+import Button from '../../../components/buttons/button';
+import { ChangeEvent, useEffect, useState } from 'react';
 import {
   requestFindAccount,
   requestFindAccountCode,
   requestVerifyFindAccountCode,
-} from "@/api/auth";
-import { useNavigate } from "react-router-dom";
+} from '@/api/auth';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotAccount = () => {
   const navigate = useNavigate();
   const [isSentCode, setIsSentCode] = useState(false);
   const [certTime, setCertTime] = useState<number>(300);
-  const [certCode, setCertCode] = useState<string>("");
-  const [findAccountToken, setFindAccountToken] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [foundAccount, setFoundAccount] = useState("");
+  const [certCode, setCertCode] = useState<string>('');
+  const [findAccountToken, setFindAccountToken] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [foundAccount, setFoundAccount] = useState<string | null>('');
   const [isResultStep, setIsResultStep] = useState(false);
 
   const {
@@ -28,12 +28,10 @@ const ForgotAccount = () => {
     formState: { errors, dirtyFields },
     setError,
     trigger,
+    clearErrors,
   } = useForm<ForgotAccountInputs>();
 
-  const [phoneNumberValue, certificatedValue] = watch([
-    "phoneNumber",
-    "certificated",
-  ]);
+  const [phoneNumberValue, certificatedValue] = watch(['phoneNumber', 'certificated']);
 
   const handleSendCodeClick = async () => {
     await requestFindAccountCode({
@@ -49,13 +47,25 @@ const ForgotAccount = () => {
       token: certCode,
     });
 
-    if (res) {
-      setValue("certificated", true);
+    if (res?.error?.includes('없습니다')) {
+      clearErrors('certificated');
+      setIsResultStep(true);
+      setFoundAccount(null);
+      setCertTime(0);
+      setIsSentCode(false);
+      setValue('certCode', '');
+      return;
+    }
+
+    if (res?.findAccountToken) {
+      setValue('certificated', true);
       setFindAccountToken(res.findAccountToken);
+      clearErrors('certificated');
     } else {
-      setError("certificated", {
-        type: "verify",
-        message: "인증번호를 확인해주세요.",
+      setValue('certificated', false);
+      setError('certificated', {
+        type: 'verify',
+        message: '인증번호를 확인해주세요.',
       });
     }
   };
@@ -71,13 +81,13 @@ const ForgotAccount = () => {
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const rawValue = event.target.value.replace(/\D/g, "");
+    const rawValue = event.target.value.replace(/\D/g, '');
     setPhoneNumber(formatPhoneNumber(event.target.value));
-    setValue("phoneNumber", rawValue);
+    setValue('phoneNumber', rawValue);
   };
 
   const formatPhoneNumber = (value: string) => {
-    const cleaned = ("" + value).replace(/\D/g, "");
+    const cleaned = ('' + value).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
     if (match) {
       return `${match[1]}-${match[2]}-${match[3]}`;
@@ -98,36 +108,33 @@ const ForgotAccount = () => {
     if (certTime === 0 || !isSentCode) return;
 
     const timer = setInterval(() => {
-      setCertTime((prevTime) => prevTime - 1);
+      setCertTime(prevTime => prevTime - 1);
     }, 1000);
 
     return () => clearInterval(timer);
   }, [certTime, isSentCode]);
 
   const handleLoginClick = () => {
-    navigate("/auth/login");
+    navigate('/auth/login');
   };
 
   const handleForgotPasswordClick = () => {
-    navigate("/auth/forgotpassword");
+    navigate('/auth/forgotpassword');
   };
 
   const handleSignupClick = () => {
-    navigate("/auth/starting");
+    navigate('/auth/starting');
   };
 
   const handleRetryClick = () => {
     setIsResultStep(false);
   };
+
   return (
     <ForgotAccountContainer>
       <TitleWrapper>
         <Title>계정 찾기</Title>
-        {!isResultStep && (
-          <Description>
-            회원 가입시 인증했던 전화번호를 입력해주세요.
-          </Description>
-        )}
+        {!isResultStep && <Description>회원 가입시 인증했던 전화번호를 입력해주세요.</Description>}
       </TitleWrapper>
       {!isResultStep && (
         <Form onSubmit={handleSubmit(onSubmitFindAccount)}>
@@ -135,11 +142,11 @@ const ForgotAccount = () => {
             <Label>휴대폰번호</Label>
             <ShortInputWrapper>
               <ShortInput
-                {...register("phoneNumber", {
+                {...register('phoneNumber', {
                   required: true,
                   pattern: {
                     value: /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/,
-                    message: "올바른 휴대폰 번호 형식이 아닙니다",
+                    message: '올바른 휴대폰 번호 형식이 아닙니다',
                   },
                 })}
                 placeholder="010-1234-5678"
@@ -147,7 +154,7 @@ const ForgotAccount = () => {
                 $isError={Boolean(errors.phoneNumber?.message)}
                 $isDirty={Boolean(dirtyFields.phoneNumber)}
                 value={phoneNumber}
-                onBlur={() => trigger("phoneNumber")}
+                onBlur={() => trigger('phoneNumber')}
               />
               <Button
                 variation="solid"
@@ -156,35 +163,32 @@ const ForgotAccount = () => {
                 padding="12px 20px"
                 fontSize={15}
                 type="button"
-                disabled={
-                  Boolean(!phoneNumberValue) || Boolean(errors.phoneNumber)
-                }
+                disabled={Boolean(!phoneNumberValue) || Boolean(errors.phoneNumber)}
                 onClick={handleSendCodeClick}
               >
-                {isSentCode ? "인증번호 재전송" : "인증번호 받기"}
+                {isSentCode ? '인증번호 재전송' : '인증번호 받기'}
               </Button>
             </ShortInputWrapper>
             <WithCertInputWrapper>
               <VerifyWrapper>
                 <CertInputWrapper
-                  $isError={false}
+                  $isError={!!errors.certificated}
                   $isDirty={isSentCode}
                   $isDisabled={!isSentCode}
                 >
                   <CertInput
-                    {...register("certCode", { required: true })}
-                    placeholder={isSentCode ? "" : "인증번호를 입력해주세요"}
+                    {...register('certCode', { required: true })}
+                    placeholder={isSentCode ? '' : '인증번호를 입력해주세요'}
                     $isSentCode={isSentCode}
                     disabled={!isSentCode}
                     name="certCode"
                     type="text"
-                    onChange={(event) => handleCertInputChange(event)}
+                    onChange={event => handleCertInputChange(event)}
                   />
-                  {isSentCode && !certificatedValue ? (
-                    <Timer>{formatTime(certTime)}</Timer>
-                  ) : null}
+                  {isSentCode && !certificatedValue ? <Timer>{formatTime(certTime)}</Timer> : null}
                 </CertInputWrapper>
                 <Button
+                  type="button"
                   variation="solid"
                   btnClass="primary"
                   // disabled={certCode.length === 0 || certificatedValue}
@@ -193,7 +197,6 @@ const ForgotAccount = () => {
                   fontSize={16}
                   padding="12px 28px"
                   onClick={handleVerifyClick}
-                  type="button"
                 >
                   인증확인
                 </Button>
@@ -202,12 +205,7 @@ const ForgotAccount = () => {
               {certificatedValue && <SuccessCert>인증되었습니다.</SuccessCert>}
             </WithCertInputWrapper>
           </InputWrapper>
-          <Button
-            variation="solid"
-            btnClass="primary"
-            width={340}
-            disabled={!certificatedValue}
-          >
+          <Button variation="solid" btnClass="primary" width={340} disabled={!certificatedValue}>
             계속
           </Button>
         </Form>
@@ -259,9 +257,7 @@ const ForgotAccount = () => {
           <NotFoundBox>
             <TextWrapper>
               <MainText>가입되어 있는 계정이 없어요.</MainText>
-              <SubText>
-                다른 전화번호로 시도해주시거나 새로 가입해주세요.
-              </SubText>
+              <SubText>다른 전화번호로 시도해주시거나 새로 가입해주세요.</SubText>
             </TextWrapper>
           </NotFoundBox>
           <Button
@@ -348,7 +344,7 @@ const CertInput = styled.input<{
   // $isDirty: boolean;
   $isSentCode: boolean;
 }>`
-  width: ${({ $isSentCode }) => ($isSentCode ? "133px" : "188px")};
+  width: ${({ $isSentCode }) => ($isSentCode ? '133px' : '188px')};
   height: 24px;
   outline: none;
   border: none;
@@ -387,11 +383,7 @@ const ShortInput = styled.input<{ $isError: boolean; $isDirty: boolean }>`
   height: 48px;
   border-radius: 10px;
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   outline: none;
 
   &::placeholder {
@@ -420,13 +412,9 @@ const CertInputWrapper = styled.div<{
   padding: 12px 16px;
   width: 220px;
   height: 48px;
-  background-color: ${({ $isDisabled }) => ($isDisabled ? "#f4f4f5;" : "none")};
+  background-color: ${({ $isDisabled }) => ($isDisabled ? '#f4f4f5;' : 'none')};
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   border-radius: 10px;
   display: flex;
   align-items: center;

@@ -1,10 +1,10 @@
-import { useForm } from "react-hook-form";
-import styled from "styled-components";
-import { PasswordInputs } from "../../../types/user";
-import Button from "../../../components/buttons/button";
-import { requestResetPasswordFromMail } from "@/api/auth";
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+import styled from 'styled-components';
+import { PasswordInputs } from '../../../types/user';
+import Button from '../../../components/buttons/button';
+import { requestResetPasswordFromMail } from '@/api/auth';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const FindPassword = () => {
   const navigate = useNavigate();
@@ -15,17 +15,14 @@ const FindPassword = () => {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<PasswordInputs>({ mode: "onBlur" });
+  } = useForm<PasswordInputs>({ mode: 'onBlur' });
 
   const [isResetPassword, setIsResetPassword] = useState<boolean>();
-  const [passwordValue, confirmPasswordValue] = watch([
-    "password",
-    "confirmPassword",
-  ]);
+  const [passwordValue, confirmPasswordValue] = watch(['password', 'confirmPassword']);
 
   const onSubmitNewPassword = async (data: PasswordInputs) => {
     const params = new URLSearchParams(location.search);
-    const token = params.get("token");
+    const token = params.get('token');
     if (token) {
       const res = await requestResetPasswordFromMail({
         newPassword: data?.password,
@@ -38,7 +35,7 @@ const FindPassword = () => {
   };
 
   const handleGoToLoginClick = () => {
-    navigate("/auth/login");
+    navigate('/auth/login');
   };
   return (
     <FindPasswordContainer>
@@ -52,9 +49,9 @@ const FindPassword = () => {
             <Input
               $isDirty={Boolean(confirmPasswordValue)}
               $isError={Boolean(errors.confirmPassword)}
-              {...register("password", {
+              {...register('password', {
                 required: true,
-                validate: (value) => {
+                validate: value => {
                   const isValid =
                     /[A-Z]/.test(value) &&
                     /[a-z]/.test(value) &&
@@ -62,10 +59,7 @@ const FindPassword = () => {
                     /[!@#$%^&*]/.test(value) &&
                     value.length >= 8 &&
                     value.length <= 32;
-                  return (
-                    isValid ||
-                    "영문 대소문자, 숫자, 특수문자를 포함해 8~32자로 입력해주세요."
-                  );
+                  return isValid || '영문 대소문자, 숫자, 특수문자를 포함해 8~32자로 입력해주세요.';
                 },
               })}
               type="password"
@@ -79,10 +73,9 @@ const FindPassword = () => {
             <Input
               $isDirty={Boolean(confirmPasswordValue)}
               $isError={Boolean(errors.confirmPassword)}
-              {...register("confirmPassword", {
+              {...register('confirmPassword', {
                 required: true,
-                validate: (value) =>
-                  value === passwordValue || "비밀번호가 일치하지 않습니다.",
+                validate: value => value === passwordValue || '비밀번호가 일치하지 않습니다.',
               })}
               placeholder="비밀번호 확인"
               type="password"
@@ -90,12 +83,7 @@ const FindPassword = () => {
             <InputError>{errors.confirmPassword?.message}</InputError>
           </InputWrapper>
 
-          <Button
-            variation="solid"
-            btnClass="primary"
-            type="submit"
-            width={340}
-          >
+          <Button variation="solid" btnClass="primary" type="submit" width={340}>
             제출
           </Button>
         </Form>
@@ -183,11 +171,7 @@ const Input = styled.input<{
   height: 48px;
   border-radius: 10px;
   border: ${({ $isError, $isDirty }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0e2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0e2'};
   outline: none;
 
   ::placeholder {
