@@ -1,47 +1,47 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { requestCasts } from "@/api/cast";
-import Cast from "@/pages/home/components/cast";
-import useSearchStore from "@/store/search";
-import { useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
-import NoResult from "./noResult";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { requestCasts } from '@/api/cast';
+import Cast from '@/pages/home/components/cast';
+import useSearchStore from '@/store/search';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import styled from 'styled-components';
+import NoResult from './noResult';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 const Search = () => {
   const { query } = useSearchStore();
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const [currentFilter, _] = useState("공고");
+  const [currentFilter, _] = useState('공고');
 
   const queryClient = useQueryClient();
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: ["results"],
-      queryFn: ({ pageParam = 0 }) =>
-        requestCasts({ offset: `${pageParam}`, limit: "16", query }),
-      initialPageParam: 0,
-      getNextPageParam: (lastPage, allPages) => {
-        const totalLoaded = allPages.flatMap((page) => page.data).length;
-        if (totalLoaded >= lastPage.totalCount) {
-          return undefined;
-        }
-        return allPages.length;
-      },
-    });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
+    queryKey: ['results'],
+    queryFn: ({ pageParam = 0 }) => requestCasts({ offset: `${pageParam}`, limit: '16', query }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoaded = allPages.flatMap(page => page.data)?.filter(item => item).length;
+
+      if (!totalLoaded || totalLoaded >= lastPage.totalCount) {
+        return undefined;
+      }
+
+      return allPages.length;
+    },
+  });
 
   const results = useMemo(
-    () => data?.pages.flatMap((page) => page.recruits) || [],
+    () => data?.pages.flatMap(page => page.recruits)?.filter(item => item) || [],
     [data]
   );
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["results"] });
+    queryClient.invalidateQueries({ queryKey: ['results'] });
   }, [query]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         const entry = entries[0];
         if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
@@ -49,7 +49,7 @@ const Search = () => {
       },
       {
         root: null,
-        rootMargin: "200px",
+        rootMargin: '200px',
         threshold: 1.0,
       }
     );
@@ -67,9 +67,7 @@ const Search = () => {
   return (
     <SearchContainer>
       <FilterWrapper>
-        <Filter
-          $isSelected={currentFilter === "공고"}
-        >{`공고(${results.length})`}</Filter>
+        <Filter $isSelected={currentFilter === '공고'}>{`공고(${results.length})`}</Filter>
       </FilterWrapper>
       {results.length > 0 ? (
         <CastGrid>
@@ -83,6 +81,7 @@ const Search = () => {
               thumbnail,
             }) => (
               <Cast
+                key={recruitId}
                 recruitId={recruitId}
                 recruitTitle={recruitTitle}
                 troupeName={artworkName}
@@ -129,13 +128,12 @@ const Filter = styled.div<{ $isSelected: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: ${({ $isSelected }) =>
-    $isSelected ? "2px solid #000000" : "none"};
+  border-bottom: ${({ $isSelected }) => ($isSelected ? '2px solid #000000' : 'none')};
   font-size: 17px;
   line-height: 141.2%;
   font-weight: var(--font-semibold);
   letter-spacing: 0%;
-  color: ${({ $isSelected }) => ($isSelected ? "#171719" : "#c7c7c8")};
+  color: ${({ $isSelected }) => ($isSelected ? '#171719' : '#c7c7c8')};
   cursor: pointer;
 `;
 

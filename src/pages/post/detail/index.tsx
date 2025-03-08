@@ -104,7 +104,7 @@ const Detail = () => {
           <Divider />
           <TroupeWrapper>
             <TroupeLogo
-              src={`https://s3.stagecue.co.kr/stagecue${recruitDetail?.troupeLogoImage}`}
+              src={`https://s3.stagecue.co.kr/stagecue/${recruitDetail?.troupeLogoImage}`}
             />
             <TroupeName onClick={handleTroupeNameClick}>
               {recruitDetail?.troupeName}

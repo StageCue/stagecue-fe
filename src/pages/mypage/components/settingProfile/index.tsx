@@ -1,10 +1,10 @@
-import Button from "@/components/buttons/button";
-import styled from "styled-components";
-import NoScrappedSVG from "@assets/images/noscrappedd.svg?react";
-import { useCallback, useEffect, useState } from "react";
-import Profile from "./components/profile";
-import { requestDeleteProfile, requestProfileList } from "@api/users";
-import { useNavigate } from "react-router-dom";
+import Button from '@/components/buttons/button';
+import styled from 'styled-components';
+import NoScrappedSVG from '@assets/images/noscrappedd.svg?react';
+import { useCallback, useEffect, useState } from 'react';
+import Profile from './components/profile';
+import { requestDeleteProfile, requestProfileList } from '@api/users';
+import { useNavigate } from 'react-router-dom';
 
 interface Profile {
   id: number | string;
@@ -33,7 +33,7 @@ const SettingProfile = () => {
   };
 
   const handleCreateProfileClick = () => {
-    navigate("/mypage/profiles/form");
+    navigate('/mypage/profiles/form');
   };
 
   const handleRemoveProfile = useCallback(
@@ -46,7 +46,7 @@ const SettingProfile = () => {
           return;
         }
 
-        const newProfiles = profiles.filter((profile) => profile.id !== id);
+        const newProfiles = profiles.filter(profile => profile.id !== id);
         setProfiles(newProfiles);
       } catch (error) {
         console.error(error);
@@ -98,7 +98,7 @@ const SettingProfile = () => {
               thumbnail={thumbnail}
               isDefault={isDefault}
               handleRemoveProfile={handleRemoveProfile}
-              onClick={() => handleProfileClick(id)}
+              handleProfileClick={() => handleProfileClick(id)}
             />
           )
         )}
@@ -107,12 +107,8 @@ const SettingProfile = () => {
         <NoProfile>
           <NoScrappedSVG />
           <Text>아직 작성된 프로필이 없어요.</Text>
-          <SubText>
-            나의 프로필과 경력을 매력적으로 작성 후 공고에 지원해보세요!
-          </SubText>
-          <Description>
-            정성스러운 프로필은 극단주들에게 더 어필이 될거에요
-          </Description>
+          <SubText>나의 프로필과 경력을 매력적으로 작성 후 공고에 지원해보세요!</SubText>
+          <Description>정성스러운 프로필은 극단주들에게 더 어필이 될거에요</Description>
         </NoProfile>
       )}
     </SettingProfileContainer>

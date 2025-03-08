@@ -1,18 +1,15 @@
-import {
-  requestFollowTroupe,
-  requestTroupeDetail,
-  requestUnfollowTroupe,
-} from "@/api/troupe";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
-import LocationSVG from "@assets/icons/location_lg.svg?react";
-import PlusSVG from "@assets/icons/plus_white.svg?react";
-import CaretSVG from "@assets/icons/caret_right.svg?react";
-import CheckSVG from "@assets/icons/checkline_white.svg?react";
-import Button from "@/components/buttons/button";
-import { formatPhoneNumber } from "@/utils/format";
-import CastCard from "../components/castCard";
+import { requestFollowTroupe, requestTroupeDetail, requestUnfollowTroupe } from '@/api/troupe';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import LocationSVG from '@assets/icons/location_lg.svg?react';
+import PlusSVG from '@assets/icons/plus_white.svg?react';
+import CaretSVG from '@assets/icons/caret_right.svg?react';
+import CheckSVG from '@assets/icons/checkline_white.svg?react';
+import Button from '@/components/buttons/button';
+import { formatPhoneNumber } from '@/utils/format';
+import CastCard from '../components/castCard';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 interface TroupeDetail {
   troupeName: string;
@@ -50,13 +47,57 @@ const TroupeDetail = () => {
   const [detail, setDetail] = useState<TroupeDetail>();
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [locationAddress, setLocationAddress] = useState<{ lng: number; lat: number }>({
+    lng: 0,
+    lat: 0,
+  });
 
   const getTroupeDetail = async () => {
     const res = await requestTroupeDetail(troupeName!);
 
+    if (res?.error) {
+      alert('극단 정보를 불러오는데 실패했습니다.');
+      return;
+    }
+
     setDetail(res);
+
+    if (res?.location?.lat !== null && res?.location?.lng !== null) {
+      setLocationAddress({ lng: res?.location?.lng, lat: res?.location?.lat });
+    } else {
+      getCoordinates(`${res?.location?.address}` + `${res?.location?.addressDetail}`);
+    }
+
     if (res.isFollowing) {
       setIsFollowing(true);
+    }
+  };
+
+  const getCoordinates = async (address: string) => {
+    const clientId = import.meta.env.VITE_NAVER_CLIENT_ID;
+    const secretId = import.meta.env.VITE_NAVER_SECRET_ID;
+    const url = `/naver-geocode/map-geocode/v2/geocode?query=${encodeURIComponent(address)}`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'X-NCP-APIGW-API-KEY-ID': clientId,
+          'X-NCP-APIGW-API-KEY': secretId,
+        },
+      });
+
+      const data = await response?.json();
+
+      if (data?.addresses?.length > 0) {
+        const { x: lng, y: lat } = data.addresses[0];
+
+        setLocationAddress({ lng, lat });
+      } else {
+        throw new Error('주소를 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('Geocoding 에러:', error);
     }
   };
 
@@ -73,7 +114,7 @@ const TroupeDetail = () => {
         setIsFollowing(true);
       }
     } catch (error) {
-      console.error("Following action failed", error);
+      console.error('Following action failed', error);
     } finally {
       setLoading(false);
     }
@@ -90,14 +131,12 @@ const TroupeDetail = () => {
   }, []);
 
   const parsePublishDate = (date?: string) => {
-    return date?.split("-")[0];
+    return date?.split('-')[0];
   };
 
   return (
     <TroupeDetailContainer>
-      <CoverBox
-        $bgSrc={`https://s3.stagecue.co.kr/stagecue${detail?.coverImage}`}
-      >
+      <CoverBox $bgSrc={`https://s3.stagecue.co.kr/stagecue/${detail?.coverImage}`}>
         <CoverTextWrapper>
           <TroupeName>{detail?.troupeName}</TroupeName>
           <Description>{detail?.description}</Description>
@@ -122,7 +161,11 @@ const TroupeDetail = () => {
             </LocationTextWrapper>
           </AddressWrapper>
           <Map
-            src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=571&h=233&center=${detail?.location.lng},${detail?.location.lat}&level=16&scale=2&X-NCP-APIGW-API-KEY-ID=7sn0mkl4n4`}
+            src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=571&h=233&center=${
+              locationAddress?.lng
+            },${locationAddress?.lat}&level=16&scale=2&X-NCP-APIGW-API-KEY-ID=${
+              import.meta.env.VITE_NAVER_CLIENT_ID
+            }`}
           />
         </PositionInfoBox>
         <TroupeInfoWrapper>
@@ -130,14 +173,10 @@ const TroupeDetail = () => {
             <TroupeTopTopBox>
               <TroupeSummaryWrapper>
                 <TroupeLogoNameWrapper>
-                  <TroupeLogo
-                    src={`https://s3.stagecue.co.kr/stagecue${detail?.logoImage}`}
-                  />
+                  <TroupeLogo src={`https://s3.stagecue.co.kr/stagecue/${detail?.logoImage}`} />
                   <TroupeNameInfo>{detail?.troupeName}</TroupeNameInfo>
                 </TroupeLogoNameWrapper>
-                <FollowerCount>
-                  {detail?.followerCount}명이 팔로우중
-                </FollowerCount>
+                <FollowerCount>{detail?.followerCount}명이 팔로우중</FollowerCount>
               </TroupeSummaryWrapper>
               <Button
                 variation="solid"
@@ -146,7 +185,7 @@ const TroupeDetail = () => {
                 height={40}
                 lineHeight={146.7}
                 letterSpacing={0.96}
-                fontWeight={"var(--font-semibold)"}
+                fontWeight={'var(--font-semibold)'}
                 fontSize={15}
                 padding="9px 23px"
                 onClick={handleFollowClick}
@@ -186,9 +225,7 @@ const TroupeDetail = () => {
             </DataRow>
             <DataRow>
               <Property>담당자 연락처</Property>
-              <Value>
-                {detail?.picCell && formatPhoneNumber(detail?.picCell)}
-              </Value>
+              <Value>{detail?.picCell && formatPhoneNumber(detail?.picCell)}</Value>
             </DataRow>
           </TroupeBottomBox>
         </TroupeInfoWrapper>
@@ -197,28 +234,46 @@ const TroupeDetail = () => {
         <MenuBar>
           <Menu>현재 모집중인 공고</Menu>
         </MenuBar>
-        <Casts>
-          {detail?.casts.map(
-            ({
-              castId,
-              castTitle,
-              artworkName,
-              practiceLocation,
-              troupeName,
-              isScrapping,
-            }) => (
-              <CastCard
-                key={castId}
-                castId={castId}
-                castTitle={castTitle}
-                artworkName={artworkName}
-                practiceLocation={practiceLocation}
-                troupeName={troupeName}
-                isScrapping={isScrapping}
-              />
-            )
-          )}
-        </Casts>
+        {detail?.casts && detail?.casts?.length > 0 ? (
+          <Casts>
+            <Swiper
+              direction="horizontal"
+              spaceBetween={20}
+              slidesPerView={3}
+              slidesPerGroup={3}
+              centeredSlides={true}
+              loop={true}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              navigation={true}
+              pagination={{ clickable: true }}
+              grabCursor={true}
+            >
+              {detail?.casts?.map(
+                ({ castId, castTitle, artworkName, practiceLocation, troupeName, isScrapping }) => (
+                  <SwiperSlide key={castId}>
+                    <CastCard
+                      key={castId}
+                      castId={castId}
+                      castTitle={castTitle}
+                      artworkName={artworkName}
+                      practiceLocation={practiceLocation}
+                      troupeName={troupeName}
+                      isScrapping={isScrapping}
+                    />
+                  </SwiperSlide>
+                )
+              )}
+            </Swiper>
+          </Casts>
+        ) : (
+          <NoCasts>
+            <NoCastsTitle>현재 모집중인 공고가 없습니다!</NoCastsTitle>
+            <NoCastsSubTitle>모집 공고를 기다려주세요 :)</NoCastsSubTitle>
+          </NoCasts>
+        )}
       </CastWrapper>
     </TroupeDetailContainer>
   );
@@ -238,8 +293,9 @@ const TroupeDetailContainer = styled.div`
 const CoverBox = styled.div<{ $bgSrc: string }>`
   width: 100vw;
   height: 392px;
-  background-image: url(${(props) => props.$bgSrc});
+  background-image: url(${props => props.$bgSrc});
   background-size: cover;
+  background-position: center;
   padding-left: 190px;
   padding-top: 124px;
   margin-bottom: 40px;
@@ -478,5 +534,32 @@ const Menu = styled.div`
 
 const Casts = styled.div`
   display: flex;
-  gap: 20px;
+`;
+
+const NoCasts = styled.div`
+  background-color: #f7f7f8ff;
+  width: 100%;
+  height: 176px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
+
+const NoCastsTitle = styled.div`
+  color: #000000ff;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 145%;
+  letter-spacing: -0.02%;
+`;
+
+const NoCastsSubTitle = styled.div`
+  color: #989ba2ff;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.57%;
+  text-align: center;
 `;

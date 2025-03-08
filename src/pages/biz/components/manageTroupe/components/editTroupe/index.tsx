@@ -1,23 +1,25 @@
-import Button from "@/components/buttons/button";
-import { useForm, Controller } from "react-hook-form";
-import styled from "styled-components";
-import CalendarSVG from "@assets/icons/calendar.svg?react";
-import TipSVG from "@assets/icons/tip.svg?react";
-import CompanySVG from "@assets/icons/company.svg?react";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import Button from '@/components/buttons/button';
+import { useForm, Controller } from 'react-hook-form';
+import styled from 'styled-components';
+import CalendarSVG from '@assets/icons/calendar.svg?react';
+import TipSVG from '@assets/icons/tip.svg?react';
+import CompanySVG from '@assets/icons/company.svg?react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
   requestEditTroupe,
   requestTroupeEditInfo,
   requestUploadCover,
   requestUploadLogo,
   requestUploadRegistration,
-} from "@/api/biz";
-import { convertFileToURL, seperateFileNameFromPath } from "@/utils/file";
-import { useDaumPostcodePopup } from "react-daum-postcode";
-import { useNavigate } from "react-router-dom";
-import Datepicker from "@/components/datepicker";
-import DatePicker from "react-datepicker";
-import InvalidFileModal from "../invalidFileModal";
+} from '@/api/biz';
+import { convertFileToURL, seperateFileNameFromPath } from '@/utils/file';
+import { useDaumPostcodePopup } from 'react-daum-postcode';
+import { useNavigate } from 'react-router-dom';
+import Datepicker from '@/components/datepicker';
+import DatePicker from 'react-datepicker';
+import InvalidFileModal from '../invalidFileModal';
 
 interface EditTroupeProps {
   isInitial: boolean;
@@ -47,7 +49,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     watch,
     setValue,
     control,
-  } = useForm<EditTroupeInputs>({ mode: "all" });
+  } = useForm<EditTroupeInputs>({ mode: 'all' });
 
   const navigate = useNavigate();
 
@@ -58,19 +60,20 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   const inputRegistrationFileRef = useRef<HTMLInputElement | null>(null);
 
   const [logoFile, setLogoFile] = useState<File>();
+  const [logoImageName, setLogoImageName] = useState<string>();
   const [logoPreview, setLogoPreview] = useState<string>();
   const [coverFile, setCoverFile] = useState<File>();
+  const [coverImageName, setCoverImageName] = useState<string>();
   const [coverFileName, setCoverFileName] = useState<string>();
   const [registrationFile, setRegistrationFile] = useState<File>();
   const [registrationFileName, setRegistrationFileName] = useState<string>();
 
-  const [isInvalidaModalShowing, setIsInvalidModalShowing] =
-    useState<boolean>(false);
+  const [isInvalidaModalShowing, setIsInvalidModalShowing] = useState<boolean>(false);
 
   const datepickerRef = useRef<DatePicker | null>(null);
   const [date, setDate] = useState<Date>(new Date(Date.now()));
 
-  const [descriptionValue, addressValue] = watch(["description", "address"]);
+  const [descriptionValue, addressValue] = watch(['description', 'address']);
 
   const handleCalendarClick = () => {
     if (datepickerRef.current) {
@@ -112,38 +115,42 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
       registrationFile,
     });
 
-    navigate("/biz/troupe");
+    navigate('/biz/troupe');
   };
 
   const requestUploadLogoFile = async () => {
     if (logoFile) {
       const formData = new FormData();
-      formData.append("file", logoFile);
+      formData.append('file', logoFile);
       const { filePath } = await requestUploadLogo(formData);
 
-      setValue("logoImg", filePath);
+      setValue('logoImg', filePath);
       return filePath;
+    } else {
+      return logoImageName;
     }
   };
 
   const requestUploadCoverFile = async () => {
     if (coverFile) {
       const formData = new FormData();
-      formData.append("file", coverFile);
+      formData.append('file', coverFile);
       const { filePath } = await requestUploadCover(formData);
 
-      setValue("coverImg", filePath);
+      setValue('coverImg', filePath);
       return filePath;
+    } else {
+      return coverImageName;
     }
   };
 
   const requestUploadRegistrationFile = async () => {
     if (registrationFile) {
       const formData = new FormData();
-      formData.append("file", registrationFile);
+      formData.append('file', registrationFile);
       const { filePath } = await requestUploadRegistration(formData);
 
-      setValue("registrationFile", filePath);
+      setValue('registrationFile', filePath);
       return filePath;
     }
   };
@@ -190,9 +197,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     }
   };
 
-  const handleRegistrationFileChange = async (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleRegistrationFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     const path = event.target.value;
 
@@ -210,20 +215,19 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
 
   const handleAddressComplete = (data: any) => {
     let fullAddress = data.address;
-    let extraAddress = "";
+    let extraAddress = '';
 
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
         extraAddress += data.bname;
       }
-      if (data.buildingName !== "") {
-        extraAddress +=
-          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      if (data.buildingName !== '') {
+        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
       }
-      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
 
-    setValue("address", fullAddress);
+    setValue('address', fullAddress);
   };
 
   const handleAddressInputClick = () => {
@@ -232,10 +236,10 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
 
   const getCoverFileName = (path: string) => {
     if (path) {
-      const parts = path.split("/");
+      const parts = path.split('/');
       return parts[parts.length - 1];
     }
-    return "";
+    return '';
   };
 
   const getTroupeFormData = async () => {
@@ -254,22 +258,25 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const email = res.email;
     const website = res.website;
 
+    setLogoImageName(logoUrl);
     setLogoPreview(`https://s3.stagecue.co.kr/stagecue/${logoUrl}`);
+    setCoverImageName(coverImg);
     setCoverFileName(getCoverFileName(coverImg));
-    setValue("logoImg", logoUrl);
-    setValue("coverImg", coverImg);
-    setValue("name", name);
-    setValue("description", description);
-    setValue("publishDate", publishDate.split("T")[0]);
+    setValue('logoImg', logoUrl);
+    setValue('coverImg', coverImg);
+    setValue('name', name);
+    setValue('description', description);
+    setValue('publishDate', publishDate.split('T')[0]);
     setDate(new Date(publishDate));
-    setValue("address", address);
-    setValue("addressDetail", addressDetail);
-    setValue("registrationFile", registrationFile);
-    setValue("registrationNumber", registrationNumber);
-    setValue("website", website);
-    setValue("email", email);
-    setValue("picName", picName);
-    setValue("picCell", picCell);
+    setValue('address', address);
+    setValue('addressDetail', addressDetail);
+    setRegistrationFileName(registrationFile);
+    setValue('registrationFile', registrationFile);
+    setValue('registrationNumber', registrationNumber);
+    setValue('website', website);
+    setValue('email', email);
+    setValue('picName', picName);
+    setValue('picCell', picCell);
   };
 
   useEffect(() => {
@@ -280,9 +287,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
 
   return (
     <EditTroupeContainer>
-      {isInvalidaModalShowing && (
-        <InvalidFileModal onConfirm={handleInvalidConfirm} />
-      )}
+      {isInvalidaModalShowing && <InvalidFileModal onConfirm={handleInvalidConfirm} />}
       <Form onSubmit={handleSubmit(onSubmitEdit)}>
         <TitleWrapper>
           <Title>
@@ -322,7 +327,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
             )}
             <FileInput
               type="file"
-              {...register("logoImg", {
+              {...register('logoImg', {
                 required: true,
               })}
               ref={inputLogoFileRef}
@@ -336,7 +341,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
               width={88}
               height={32}
               fontSize={13}
-              fontWeight={"var(--font-medium)"}
+              fontWeight={'var(--font-medium)'}
               onClick={handleLogoInputClick}
               type="button"
             >
@@ -352,7 +357,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
             <CoverFileName>{coverFileName}</CoverFileName>
             <FileInput
               type="file"
-              {...register("coverImg")}
+              {...register('coverImg')}
               ref={inputCoverFileRef}
               accept="image/*"
               onChange={handleCoverFileChange}
@@ -364,7 +369,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
               width={88}
               height={32}
               fontSize={13}
-              fontWeight={"var(--font-medium)"}
+              fontWeight={'var(--font-medium)'}
               onClick={handleCoverInputClick}
               type="button"
             >
@@ -379,7 +384,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
               <RequiedRedDot />
             </RequiredLabel>
             <HalfInput
-              {...register("name", { required: true })}
+              {...register('name', { required: true })}
               type="text"
               $isDirty={Boolean(dirtyFields.email)}
               $isError={Boolean(errors.name)}
@@ -406,14 +411,14 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
                       handleDateChange(date!);
                       field.onChange(
                         date
-                          ?.toLocaleDateString("ko-KR", {
-                            year: "numeric",
-                            month: "2-digit",
-                            day: "2-digit",
+                          ?.toLocaleDateString('ko-KR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
                           })
-                          .replace(/\./g, "-")
-                          .replace(/\s/g, "")
-                          .replace(/-$/, "")
+                          .replace(/\./g, '-')
+                          .replace(/\s/g, '')
+                          .replace(/-$/, '')
                       );
                     }}
                     pickerText="설립일자를 입력해주세요"
@@ -436,7 +441,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
             $isError={Boolean(errors.description)}
           >
             <TextAreaInput
-              {...register("description", { required: true, maxLength: 3000 })}
+              {...register('description', { required: true, maxLength: 3000 })}
               placeholder="극단 소개글을 입력해주세요"
             />
             <Counter>{descriptionValue?.length} / 3000</Counter>
@@ -447,14 +452,11 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
             극단 위치
             <RequiedRedDot />
           </RequiredLabel>
-          <FakeInput
-            onClick={handleAddressInputClick}
-            $isDirty={Boolean(addressValue)}
-          >
-            {addressValue || "클릭해서 주소를 검색해주세요."}
+          <FakeInput onClick={handleAddressInputClick} $isDirty={Boolean(addressValue)}>
+            {addressValue || '클릭해서 주소를 검색해주세요.'}
           </FakeInput>
           <Input
-            {...register("addressDetail")}
+            {...register('addressDetail')}
             type="text"
             $isDirty={Boolean(dirtyFields.addressDetail)}
             $isError={Boolean(errors.addressDetail)}
@@ -463,7 +465,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
         <InputWrapper>
           <Label>사업자 등록 번호</Label>
           <Input
-            {...register("registrationNumber")}
+            {...register('registrationNumber')}
             type="text"
             $isDirty={Boolean(dirtyFields.registrationNumber)}
             $isError={Boolean(errors.registrationNumber)}
@@ -477,7 +479,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
             </FakeWithBtnInput>
             <FileInput
               type="file"
-              {...register("registrationFile")}
+              {...register('registrationFile')}
               ref={inputRegistrationFileRef}
               accept="image/*, .pdf"
               onChange={handleRegistrationFileChange}
@@ -507,7 +509,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
               <RequiedRedDot />
             </RequiredLabel>
             <HalfInput
-              {...register("picName", { required: true })}
+              {...register('picName', { required: true })}
               $isDirty={Boolean(dirtyFields.picName)}
               $isError={Boolean(errors.picName)}
             />
@@ -518,7 +520,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
               <RequiedRedDot />
             </RequiredLabel>
             <HalfInput
-              {...register("picCell", { required: true })}
+              {...register('picCell', { required: true })}
               $isDirty={Boolean(dirtyFields.picCell)}
               $isError={Boolean(errors.picCell)}
             />
@@ -527,24 +529,21 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
         <InputWrapper>
           <Label>극단 이메일</Label>
           <Input
-            {...register("email")}
+            {...register('email')}
             $isDirty={Boolean(dirtyFields.email)}
             $isError={Boolean(errors.email)}
           />
-          <FileGuide>
-            유저 문의, 답변 등에 사용할 극단 공식 이메일 정보를 입력해주세요
-          </FileGuide>
+          <FileGuide>유저 문의, 답변 등에 사용할 극단 공식 이메일 정보를 입력해주세요</FileGuide>
         </InputWrapper>
         <InputWrapper>
           <Label>극단 웹사이트</Label>
           <Input
-            {...register("website")}
+            {...register('website')}
             $isDirty={Boolean(dirtyFields.website)}
             $isError={Boolean(errors.website)}
           />
           <FileGuide>
-            홈페이지, SNS 페이지, Youtube등 극단정보가 담긴 홍보 웹사이트 정보를
-            입력해주세요.
+            홈페이지, SNS 페이지, Youtube등 극단정보가 담긴 홍보 웹사이트 정보를 입력해주세요.
           </FileGuide>
         </InputWrapper>
       </Form>
@@ -649,9 +648,8 @@ const FakeInput = styled.div<{ $isDirty: boolean }>`
   font-size: 16px;
   line-height: 162.5%;
   letter-spacing: 0.57%;
-  border: ${({ $isDirty }) =>
-    $isDirty ? "1px solid #000000" : "1px solid #e0e0E2"};
-  color: ${({ $isDirty }) => ($isDirty ? "#171719;" : "#dadada;")};
+  border: ${({ $isDirty }) => ($isDirty ? '1px solid #000000' : '1px solid #e0e0E2')};
+  color: ${({ $isDirty }) => ($isDirty ? '#171719;' : '#dadada;')};
 `;
 
 const Input = styled.input<{
@@ -667,11 +665,7 @@ const Input = styled.input<{
   letter-spacing: 0.57%;
   color: #171719;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
   outline: none;
 
   ::placeholder {
@@ -695,10 +689,9 @@ const FakeWithBtnInput = styled.div<{ $isFileUploaded: boolean }>`
   font-size: 16px;
   line-height: 162.5%;
   letter-spacing: 0.57%;
-  color: ${({ $isFileUploaded }) =>
-    $isFileUploaded ? "#171719;" : "#dadada;"};
+  color: ${({ $isFileUploaded }) => ($isFileUploaded ? '#171719;' : '#dadada;')};
   border: ${({ $isFileUploaded }) =>
-    $isFileUploaded ? "1px solid #000000;" : "1px solid #e0e0e2;"};
+    $isFileUploaded ? '1px solid #000000;' : '1px solid #e0e0e2;'};
 `;
 
 const HalfInput = styled.input<{ $isDirty: boolean; $isError: boolean }>`
@@ -711,11 +704,7 @@ const HalfInput = styled.input<{ $isDirty: boolean; $isError: boolean }>`
   letter-spacing: 0.57%;
   color: #171719;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
   outline: none;
 
   ::placeholder {
@@ -739,11 +728,7 @@ const WithIconInputWrapper = styled.div<{
   gap: 12px;
   cursor: pointer;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
 `;
 
 const TextAreaWrapper = styled.div<{

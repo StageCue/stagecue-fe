@@ -240,15 +240,20 @@ const List = () => {
       }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
-      const totalLoaded = allPages.flatMap(page => page.data).length;
-      if (totalLoaded >= lastPage.totalCount) {
+      const totalLoaded = allPages?.flatMap(page => page.data)?.filter(item => item)?.length;
+
+      if (!totalLoaded || totalLoaded >= lastPage?.totalCount) {
         return undefined;
       }
+
       return allPages.length;
     },
   });
 
-  const recruits = useMemo(() => data?.pages.flatMap(page => page.recruits) || [], [data]);
+  const recruits = useMemo(
+    () => data?.pages.flatMap(page => page?.recruits)?.filter(item => item) || [],
+    [data]
+  );
 
   const parsingCategory = (category: string) => {
     switch (category) {

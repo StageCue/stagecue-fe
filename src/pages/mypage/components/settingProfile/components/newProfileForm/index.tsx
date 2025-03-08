@@ -631,11 +631,11 @@ const NewProfileForm = () => {
             </ImageDropzone>
             <ImagesBox>
               {imageUrlArray?.map(({ url, id }) => (
-                <ImageWrapper>
+                <ImageWrapper key={id}>
                   <CloseIconWrapper onClick={() => handleDeleteImageClick(id)}>
                     <CloseSVG />
                   </CloseIconWrapper>
-                  <Image key={id} src={url} />
+                  <Image key={url + id} src={url} />
                 </ImageWrapper>
               ))}
             </ImagesBox>

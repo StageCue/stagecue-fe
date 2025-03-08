@@ -18,7 +18,7 @@ interface ButtonProps {
   borderRadius?: string;
   justifyContent?: string;
 
-  onClick?: () => void;
+  onClick?: (event?: React.MouseEvent) => void;
 }
 
 const Button = ({

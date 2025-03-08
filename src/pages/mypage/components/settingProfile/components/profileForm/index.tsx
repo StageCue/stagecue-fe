@@ -471,6 +471,7 @@ const ProfileForm = () => {
                         <Value>{sessionStore.email}</Value>
                       </ContactValueWrapper>
                       <Button
+                        type="button"
                         variation="outlined"
                         btnClass="assistive"
                         width={90}
@@ -479,6 +480,9 @@ const ProfileForm = () => {
                         fontSize={13}
                         lineHeight={138.5}
                         letterSpacing={1.94}
+                        onClick={() =>
+                          navigate('/mypage', { state: { menu: '기본정보 변경', type: '이메일' } })
+                        }
                       >
                         이메일 변경
                       </Button>
@@ -489,6 +493,7 @@ const ProfileForm = () => {
                         <Value>{formatPhoneNumber(sessionStore.phoneNumber!)}</Value>
                       </ContactValueWrapper>
                       <Button
+                        type="button"
                         variation="outlined"
                         btnClass="assistive"
                         width={90}
@@ -497,6 +502,11 @@ const ProfileForm = () => {
                         fontSize={13}
                         lineHeight={138.5}
                         letterSpacing={1.94}
+                        onClick={() =>
+                          navigate('/mypage', {
+                            state: { menu: '기본정보 변경', type: '휴대폰 번호' },
+                          })
+                        }
                       >
                         연락처 변경
                       </Button>
@@ -572,7 +582,7 @@ const ProfileForm = () => {
             <ExpGrid>
               {experiencesValue?.map(exp =>
                 editingExpId === exp.id ? (
-                  <ExpFormBox>
+                  <ExpFormBox key={exp.id}>
                     <FormLabel>
                       <DataRows>
                         <DataRow>
@@ -675,7 +685,7 @@ const ProfileForm = () => {
                     </ExpBtnsWrapper>
                   </ExpFormBox>
                 ) : (
-                  <ExpBox>
+                  <ExpBox key={exp.id}>
                     <ExpDataWrapper>
                       <DataRow>
                         <Property>작품제목</Property>
@@ -813,14 +823,14 @@ const ProfileForm = () => {
             </ImageDropzone>
             <ImagesBox>
               {imageUrlArray?.map(({ url, id }, index) => (
-                <ImageWrapper>
+                <ImageWrapper key={id}>
                   <CloseIconWrapper onClick={() => handleDeleteImageClick(id)}>
                     <CloseSVG />
                   </CloseIconWrapper>
                   {!imageFileArray[index].file ? (
-                    <Image key={id} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+                    <Image key={url + id} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
                   ) : (
-                    <Image key={id} src={url} />
+                    <Image key={url + id} src={url} />
                   )}
                 </ImageWrapper>
               ))}

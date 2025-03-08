@@ -1,27 +1,37 @@
-import styled from "styled-components";
-import Menu from "./components/menu/menu";
-import Mystage from "./components/mystage";
-import { useState } from "react";
-import ApplyHistory from "./components/applyHistory";
-import SettingProfile from "./components/settingProfile";
-import EditAccount from "./components/editAccount";
-import ResetPassword from "./components/resetPassword";
-import DeleteAccount from "./components/deleteAccount";
-import useSessionStore from "@/store/session";
-import ScrapRecruits from "./components/scrapRecruits";
+import styled from 'styled-components';
+import Menu from './components/menu/menu';
+import Mystage from './components/mystage';
+import { useEffect, useState } from 'react';
+import ApplyHistory from './components/applyHistory';
+import SettingProfile from './components/settingProfile';
+import EditAccount from './components/editAccount';
+import ResetPassword from './components/resetPassword';
+import DeleteAccount from './components/deleteAccount';
+import useSessionStore from '@/store/session';
+import ScrapRecruits from './components/scrapRecruits';
+import { useLocation } from 'react-router-dom';
 
 export type mypageMenuType =
-  | "my stage"
-  | "배우지원 현황"
-  | "공고 스크랩 리스트"
-  | "프로필 관리"
-  | "기본정보 변경"
-  | "비밀번호 재설정"
-  | "계정 탈퇴";
+  | 'my stage'
+  | '배우지원 현황'
+  | '공고 스크랩 리스트'
+  | '프로필 관리'
+  | '기본정보 변경'
+  | '비밀번호 재설정'
+  | '계정 탈퇴';
 
 const MyPage = () => {
-  const [selectedMenu, setSelectedMenu] = useState<mypageMenuType>("my stage");
+  const location = useLocation();
+  const [selectedMenu, setSelectedMenu] = useState<mypageMenuType>('my stage');
+  const [selectedType, setSelectedType] = useState<'이메일' | '휴대폰 번호'>('이메일');
   const { username } = useSessionStore();
+
+  useEffect(() => {
+    if (location?.state?.menu) {
+      setSelectedMenu(location?.state?.menu);
+      setSelectedType(location?.state?.type);
+    }
+  }, [location?.state]);
 
   const handleOptionClick = (option: mypageMenuType) => {
     setSelectedMenu(option);
@@ -34,13 +44,13 @@ const MyPage = () => {
         <Menu selectedMenu={selectedMenu} onClick={handleOptionClick} />
       </MenuColumn>
       <ContentColumn>
-        {selectedMenu === "my stage" && <Mystage />}
-        {selectedMenu === "배우지원 현황" && <ApplyHistory />}
-        {selectedMenu === "공고 스크랩 리스트" && <ScrapRecruits />}
-        {selectedMenu === "프로필 관리" && <SettingProfile />}
-        {selectedMenu === "기본정보 변경" && <EditAccount />}
-        {selectedMenu === "비밀번호 재설정" && <ResetPassword />}
-        {selectedMenu === "계정 탈퇴" && <DeleteAccount />}
+        {selectedMenu === 'my stage' && <Mystage />}
+        {selectedMenu === '배우지원 현황' && <ApplyHistory />}
+        {selectedMenu === '공고 스크랩 리스트' && <ScrapRecruits />}
+        {selectedMenu === '프로필 관리' && <SettingProfile />}
+        {selectedMenu === '기본정보 변경' && <EditAccount accountType={selectedType} />}
+        {selectedMenu === '비밀번호 재설정' && <ResetPassword />}
+        {selectedMenu === '계정 탈퇴' && <DeleteAccount />}
       </ContentColumn>
     </MyPageContainer>
   );

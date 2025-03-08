@@ -5,42 +5,38 @@ import {
   requestChangePhoneToken,
   requestVerifyEmailToken,
   requestVerifyPhoneToken,
-} from "@/api/users";
-import Button from "@/components/buttons/button";
-import useSessionStore from "@/store/session";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+} from '@/api/users';
+import Button from '@/components/buttons/button';
+import useSessionStore from '@/store/session';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-type accountDataType = "이메일" | "휴대폰 번호";
+type accountDataType = '이메일' | '휴대폰 번호';
 
-const EditAccount = () => {
+const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   const navigate = useNavigate();
-  const [selectedData, setSelectedData] = useState<accountDataType>("이메일");
+  const [selectedData, setSelectedData] = useState<accountDataType>(accountType ?? '이메일');
   const sessionStore = useSessionStore();
   const [isChangeMail, setIsChangeMail] = useState(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [certTime, setCertTime] = useState<number>(300);
-  const [requestEmailToken, setRequestEmailToken] = useState("");
-  const [updateEmailToken, setUpdateEmailToken] = useState("");
+  const [requestEmailToken, setRequestEmailToken] = useState('');
+  const [updateEmailToken, setUpdateEmailToken] = useState('');
   const [isVerifiedCode, setIsVerifiedCode] = useState(false);
   const [isErrorEmailVerify, setIsErrorEmailVerify] = useState(false);
 
   const [isChangeNumber, setIsChangeNumber] = useState(false);
   const [isPhoneCodeSent, setIsPhoneCodeSent] = useState(false);
-  const [requestPhoneToken, setRequestPhoneToken] = useState("");
-  const [updatePhoneToken, setUpdatePhoneToken] = useState("");
+  const [requestPhoneToken, setRequestPhoneToken] = useState('');
+  const [updatePhoneToken, setUpdatePhoneToken] = useState('');
   const [isVerifiedPhoneCode, setIsVerifiedPhoneCode] = useState(false);
   const [isErrorPhoneVerify, setIsErrorPhoneVerify] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('');
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
-  const {
-    register: emailRegister,
-    handleSubmit: emailHandleSubmit,
-    watch: emailWatch,
-  } = useForm();
+  const { register: emailRegister, handleSubmit: emailHandleSubmit, watch: emailWatch } = useForm();
 
   const {
     register: phoneRegister,
@@ -49,12 +45,9 @@ const EditAccount = () => {
     setValue,
   } = useForm();
 
-  const [emailValue, codeValue] = emailWatch(["email", "code"]);
+  const [emailValue, codeValue] = emailWatch(['email', 'code']);
 
-  const [phoneNumberValue, phoneCodeValue] = phoneWatch([
-    "phoneNumber",
-    "code",
-  ]);
+  const [phoneNumberValue, phoneCodeValue] = phoneWatch(['phoneNumber', 'code']);
 
   const handleChipClick = (data: accountDataType) => {
     setSelectedData(data);
@@ -64,18 +57,18 @@ const EditAccount = () => {
   const resetStates = () => {
     setIsChangeMail(false);
     setIsCodeSent(false);
-    setRequestEmailToken("");
-    setUpdateEmailToken("");
+    setRequestEmailToken('');
+    setUpdateEmailToken('');
     setIsVerifiedCode(false);
     setIsErrorEmailVerify(false);
 
     setIsChangeNumber(false);
     setIsPhoneCodeSent(false);
-    setRequestPhoneToken("");
-    setUpdatePhoneToken("");
+    setRequestPhoneToken('');
+    setUpdatePhoneToken('');
     setIsVerifiedPhoneCode(false);
     setIsErrorPhoneVerify(false);
-    setPhoneNumber("");
+    setPhoneNumber('');
   };
 
   const handleChangeMailClick = () => {
@@ -159,19 +152,19 @@ const EditAccount = () => {
   };
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const rawValue = event.target.value.replace(/\D/g, "");
+    const rawValue = event.target.value.replace(/\D/g, '');
     setPhoneNumber(formatPhoneNumber(event.target.value));
-    setValue("phoneNumber", rawValue);
+    setValue('phoneNumber', rawValue);
   };
 
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
     clearUserSessionStorage();
-    navigate("/");
+    navigate('/');
   };
 
   const formatPhoneNumber = (value: string) => {
-    const cleaned = ("" + value).replace(/\D/g, "");
+    const cleaned = ('' + value).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
     if (match) {
       return `${match[1]}-${match[2]}-${match[3]}`;
@@ -189,7 +182,7 @@ const EditAccount = () => {
     if (certTime === 0) return;
 
     const timer = setInterval(() => {
-      setCertTime((prevTime) => prevTime - 1);
+      setCertTime(prevTime => prevTime - 1);
     }, 1000);
 
     return () => clearInterval(timer);
@@ -199,20 +192,17 @@ const EditAccount = () => {
     <EditAccountContainer>
       <Title>기본정보 변경</Title>
       <AccountData>
-        <Chip
-          $isSelected={selectedData === "이메일"}
-          onClick={() => handleChipClick("이메일")}
-        >
+        <Chip $isSelected={selectedData === '이메일'} onClick={() => handleChipClick('이메일')}>
           이메일
         </Chip>
         <Chip
-          $isSelected={selectedData === "휴대폰 번호"}
-          onClick={() => handleChipClick("휴대폰 번호")}
+          $isSelected={selectedData === '휴대폰 번호'}
+          onClick={() => handleChipClick('휴대폰 번호')}
         >
           휴대폰번호
         </Chip>
       </AccountData>
-      {selectedData === "이메일" && (
+      {selectedData === '이메일' && (
         <EditEmailWrapper>
           <Text>이메일</Text>
           <Description>
@@ -235,13 +225,13 @@ const EditAccount = () => {
                   letterSpacing={0.57}
                   onClick={handleChangeMailClick}
                 >
-                  {isChangeMail ? "취소" : "메일 변경"}
+                  {isChangeMail ? '취소' : '메일 변경'}
                 </Button>
               </ShortInputWrapper>
               {isChangeMail && (
                 <ShortInputWrapper>
                   <ShortInput
-                    {...emailRegister("email", { required: true })}
+                    {...emailRegister('email', { required: true })}
                     placeholder="변경할 이메일을 입력하세요."
                   />
                   {isCodeSent ? (
@@ -278,12 +268,9 @@ const EditAccount = () => {
               )}
               {isCodeSent && (
                 <WithMessageWrapper>
-                  <VerifyInputWrapper
-                    $isDirty={codeValue}
-                    $isError={!isVerifiedCode}
-                  >
+                  <VerifyInputWrapper $isDirty={codeValue} $isError={!isVerifiedCode}>
                     <InputWrapper>
-                      <VerifyInput {...emailRegister("code")} />
+                      <VerifyInput {...emailRegister('code')} />
                       {isCodeSent && <Timer>{formatTime(certTime)}</Timer>}
                     </InputWrapper>
 
@@ -304,8 +291,8 @@ const EditAccount = () => {
                   <Message $isSuccess={isVerifiedCode}>
                     {isErrorEmailVerify &&
                       !isVerifiedCode &&
-                      "올바르지 않은 인증번호입니다. 인증번호를 확인해주세요."}
-                    {isVerifiedCode && "인증되었습니다."}
+                      '올바르지 않은 인증번호입니다. 인증번호를 확인해주세요.'}
+                    {isVerifiedCode && '인증되었습니다.'}
                   </Message>
                 </WithMessageWrapper>
               )}
@@ -322,7 +309,7 @@ const EditAccount = () => {
           </Form>
         </EditEmailWrapper>
       )}
-      {selectedData === "휴대폰 번호" && (
+      {selectedData === '휴대폰 번호' && (
         <EditPhonNumberWrapper>
           <Text>휴대폰 번호</Text>
           <Description>인증번호는 SMS로 전송됩니다.</Description>
@@ -337,13 +324,13 @@ const EditAccount = () => {
                   width={140}
                   onClick={handleChangePhoneClick}
                 >
-                  {isChangeNumber ? "취소" : "번호 변경"}
+                  {isChangeNumber ? '취소' : '번호 변경'}
                 </Button>
               </ShortInputWrapper>
               {isChangeNumber && (
                 <ShortInputWrapper>
                   <ShortInput
-                    {...phoneRegister("phoneNumber", {
+                    {...phoneRegister('phoneNumber', {
                       required: true,
                       pattern: /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/,
                     })}
@@ -388,12 +375,9 @@ const EditAccount = () => {
               )}
               {isPhoneCodeSent && (
                 <WithMessageWrapper>
-                  <VerifyInputWrapper
-                    $isDirty={phoneCodeValue}
-                    $isError={isErrorPhoneVerify}
-                  >
+                  <VerifyInputWrapper $isDirty={phoneCodeValue} $isError={isErrorPhoneVerify}>
                     <InputWrapper>
-                      <VerifyInput {...phoneRegister("code")} />
+                      <VerifyInput {...phoneRegister('code')} />
                       {isPhoneCodeSent && <Timer>{formatTime(certTime)}</Timer>}
                     </InputWrapper>
                     <Button
@@ -413,18 +397,13 @@ const EditAccount = () => {
                   <Message $isSuccess={isVerifiedPhoneCode}>
                     {isErrorPhoneVerify &&
                       !isVerifiedPhoneCode &&
-                      "올바르지 않은 인증번호입니다. 인증번호를 확인해주세요."}
-                    {isVerifiedPhoneCode && "인증되었습니다."}
+                      '올바르지 않은 인증번호입니다. 인증번호를 확인해주세요.'}
+                    {isVerifiedPhoneCode && '인증되었습니다.'}
                   </Message>
                 </WithMessageWrapper>
               )}
             </Inputs>
-            <Button
-              type="submit"
-              variation="solid"
-              btnClass="primary"
-              width={340}
-            >
+            <Button type="submit" variation="solid" btnClass="primary" width={340}>
               변경완료
             </Button>
           </Form>
@@ -482,8 +461,8 @@ const Chip = styled.div<{ $isSelected: boolean }>`
   align-items: center;
   border-radius: 1000px;
   cursor: pointer;
-  background-color: ${({ $isSelected }) => ($isSelected ? "black" : "white")};
-  color: ${({ $isSelected }) => ($isSelected ? "white" : "black")};
+  background-color: ${({ $isSelected }) => ($isSelected ? 'black' : 'white')};
+  color: ${({ $isSelected }) => ($isSelected ? 'white' : 'black')};
 `;
 
 const EditEmailWrapper = styled.div`
@@ -569,11 +548,7 @@ const VerifyInputWrapper = styled.div<{
   display: grid;
   grid-template-columns: calc(100% - 56px - 12px) 56px;
   border: ${({ $isDirty, $isError }) =>
-    $isError
-      ? "1px solid #FF4242"
-      : $isDirty
-      ? "1px solid #000000"
-      : "1px solid #e0e0E2"};
+    $isError ? '1px solid #FF4242' : $isDirty ? '1px solid #000000' : '1px solid #e0e0E2'};
   gap: 12px;
   border-radius: 10px;
 `;
@@ -609,5 +584,5 @@ const Message = styled.div<{ $isSuccess: boolean }>`
   font-size: 13px;
   letter-spacing: 1.94%;
   line-height: 138.5%;
-  color: ${({ $isSuccess }) => ($isSuccess ? "#00bf40;" : "#FF4242")};
+  color: ${({ $isSuccess }) => ($isSuccess ? '#00bf40;' : '#FF4242')};
 `;

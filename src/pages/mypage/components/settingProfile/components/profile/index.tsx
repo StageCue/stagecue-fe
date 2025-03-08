@@ -2,7 +2,9 @@ import styled from 'styled-components';
 import ChevronRightSVG from '@assets/icons/chevron_right.svg?react';
 import Button from '@/components/buttons/button';
 import DotMenuSvg from '@assets/icons/dotmenu.svg?react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import ModalPortal from '@/components/modal/portal';
+import Overlay from '@/components/modal/overlay';
 
 interface ProfileProps {
   id: string | number;
@@ -15,7 +17,7 @@ interface ProfileProps {
   thumbnail: string;
   isDefault: boolean;
   handleRemoveProfile: (id: string | number) => void;
-  onClick: () => void;
+  handleProfileClick: () => void;
 }
 
 const Profile = ({
@@ -29,29 +31,43 @@ const Profile = ({
   thumbnail,
   isDefault,
   handleRemoveProfile,
-  onClick,
+  handleProfileClick,
 }: ProfileProps) => {
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | number | null>(null);
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
 
-  const handleOpenMenu = () => {
-    setIsOpenMenu(prev => !prev);
+  const handleOpenMenu = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setOpenMenuId(prev => (prev === id ? null : id));
   };
+
+  useEffect(() => {
+    const handleClickOutSidClick = (event: MouseEvent) => {
+      if (menuRef?.current && !menuRef?.current?.contains(event?.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+
+    window.addEventListener('mousedown', handleClickOutSidClick);
+    return () => window.removeEventListener('mousedown', handleClickOutSidClick);
+  }, []);
 
   return (
     <ProfileContainer>
       <PositionBox>
-        <MenuContainer>
+        <MenuContainer ref={menuRef}>
           <Button
             variation="text"
             btnClass="assistive"
             width={24}
             height={24}
             padding={'0px'}
-            onClick={handleOpenMenu}
+            onClick={e => handleOpenMenu(e)}
           >
             <DotMenuSvg />
           </Button>
-          {isOpenMenu && (
+          {openMenuId && (
             <Menu>
               <Button
                 type="button"
@@ -64,6 +80,7 @@ const Profile = ({
                 fontSize={14}
                 fontWeight="600"
                 justifyContent="start"
+                onClick={handleProfileClick}
               >
                 수정
               </Button>
@@ -78,7 +95,7 @@ const Profile = ({
                 fontSize={14}
                 fontWeight="600"
                 justifyContent="start"
-                onClick={() => handleRemoveProfile(id)}
+                onClick={() => setIsDeleteModal(true)}
               >
                 삭제
               </Button>
@@ -111,10 +128,55 @@ const Profile = ({
             </ItemWrapper>
           </SummaryWrapper>
         </ProfileSummary>
-        <ShowDetailBtn onClick={onClick}>
+        <ShowDetailBtn onClick={handleProfileClick}>
           <ChevronRightSVG />
         </ShowDetailBtn>
       </ProfileWrapper>
+      {isDeleteModal && (
+        <ModalPortal>
+          <Overlay>
+            <Modal>
+              <ModalContent>
+                <ContentTitle>프로필을 삭제할까요?</ContentTitle>
+                <ContentSubTitle>삭제된 프로필은 복구가 불가능해요.</ContentSubTitle>
+              </ModalContent>
+              <Buttons>
+                <Button
+                  type="button"
+                  variation="outlined"
+                  btnClass="primary"
+                  width={146}
+                  height={48}
+                  padding="12px 28px"
+                  borderRadius={'10px'}
+                  fontSize={16}
+                  fontWeight="600"
+                  onClick={() => setIsDeleteModal(false)}
+                >
+                  취소
+                </Button>
+                <Button
+                  type="button"
+                  variation="solid"
+                  btnClass="primary"
+                  width={146}
+                  height={48}
+                  padding="12px 28px"
+                  borderRadius={'10px'}
+                  fontSize={16}
+                  fontWeight="600"
+                  onClick={() => {
+                    handleRemoveProfile(id);
+                    setIsDeleteModal(false);
+                  }}
+                >
+                  삭제
+                </Button>
+              </Buttons>
+            </Modal>
+          </Overlay>
+        </ModalPortal>
+      )}
     </ProfileContainer>
   );
 };
@@ -253,4 +315,46 @@ const DefaultProfileTag = styled.div`
 
 const ProfileWrapper = styled.div`
   display: flex;
+`;
+
+const Modal = styled.div`
+  width: 340px;
+  height: fit-content;
+  min-height: 176px;
+  border-radius: 16px;
+  padding: 24px 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background-color: #ffffffff;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.12);
+`;
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const ContentTitle = styled.div`
+  font-weight: 600;
+  font-size: 20px;
+  color: #171719ff;
+  text-align: center;
+`;
+
+const ContentSubTitle = styled.div`
+  font-weight: 400;
+  font-size: 15px;
+  color: #2e2f33e0;
+  text-align: center;
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
