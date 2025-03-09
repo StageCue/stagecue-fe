@@ -1,24 +1,21 @@
-import styled from "styled-components";
-import CheckboxSVG from "@assets/icons/checkbox_gray.svg?react";
-import CheckboxCheckedSVG from "@assets/icons/checkbox_checked.svg?react";
-import StarSVG from "@assets/icons/star.svg?react";
-import StarMarkedSVG from "@assets/icons/star_marked.svg?react";
-import CaretDownSVG from "@assets/icons/caret_down.svg?react";
-import CaretUpSVG from "@assets/icons/caret_up.svg?react";
-import { useEffect, useState } from "react";
-import NoApplicant from "./components/noApplicant";
-import RadioSVG from "@assets/icons/radio_s.svg?react";
-import RadioCheckedSVG from "@assets/icons/radio_s_checked.svg?react";
-import ProfileModal from "../profileMdoal";
-import StatusTag from "../statusTag";
+import styled from 'styled-components';
+import CheckboxSVG from '@assets/icons/checkbox_gray.svg?react';
+import CheckboxCheckedSVG from '@assets/icons/checkbox_checked.svg?react';
+import StarSVG from '@assets/icons/star.svg?react';
+import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
+import CaretDownSVG from '@assets/icons/caret_down.svg?react';
+import CaretUpSVG from '@assets/icons/caret_up.svg?react';
+import { useEffect, useState } from 'react';
+import NoApplicant from './components/noApplicant';
+import RadioSVG from '@assets/icons/radio_s.svg?react';
+import RadioCheckedSVG from '@assets/icons/radio_s_checked.svg?react';
+import ProfileModal from '../profileMdoal';
+import StatusTag from '../statusTag';
+import { Application } from '@/pages/biz/types/applicants';
 
 interface TableProps {
   applications: Application[];
-  onClickCheckbox: (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    id: number,
-    name: string
-  ) => void;
+  onClickCheckbox: (e: React.MouseEvent<HTMLElement, MouseEvent>, id: number, name: string) => void;
   selectedApplyIds: { id: number; name: string }[];
   onClickRow: (id: number, name: string) => void;
   onClickPass: () => void;
@@ -26,19 +23,6 @@ interface TableProps {
   onCloseModal: () => void;
   isProfileModalOpen: boolean;
   showingApplicant: { id: number; name: string };
-}
-
-interface Application {
-  applyId: number;
-  profileId: number;
-  recruitId: number;
-  isFavorite: boolean;
-  performerName: string;
-  age: number;
-  gender: "MALE" | "FEMALE";
-  recruitTitle: string;
-  applyDate: string;
-  applyStatus: string;
 }
 
 const Table = ({
@@ -55,100 +39,76 @@ const Table = ({
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isStarAll, setIsStarAll] = useState(false);
   const [isGenderSortShowing, setIsGenderSortShowing] = useState(false);
-  const [selectedGender, setSelectedGender] = useState("남성");
+  const [selectedGender, setSelectedGender] = useState('남성');
   const [isNameAsc, setIsNameAsc] = useState(true);
   const [isAgeAsc, setIsAgeAsc] = useState(true);
   const [isDateAsc, setIsDateAsc] = useState(true);
   const [isStatusAsc, setIsStatusAsc] = useState(true);
-  const [sortedApplications, setSortedAplications] = useState<Application[]>(
-    []
-  );
+  const [sortedApplications, setSortedAplications] = useState<Application[]>([]);
   const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
 
-  const orderAsc = [
-    "APPLIED",
-    "DOCUMENT_PASSED",
-    "FINAL_ACCEPTED",
-    "REJECTED",
-    "CANCEL",
-  ];
+  const orderAsc = ['APPLIED', 'DOCUMENT_PASSED', 'FINAL_ACCEPTED', 'REJECTED', 'CANCEL'];
   const orderDesc = [...orderAsc].reverse();
 
   const handleNameSortClick = () => {
-    setIsNameAsc((prev) => !prev);
+    setIsNameAsc(prev => !prev);
 
     if (isNameAsc) {
-      setSortedAplications((prev) =>
+      setSortedAplications(prev =>
         prev.sort((a, b) => a.performerName.localeCompare(b.performerName))
       );
     } else {
-      setSortedAplications((prev) =>
+      setSortedAplications(prev =>
         prev.sort((a, b) => b.performerName.localeCompare(a.performerName))
       );
     }
   };
 
   const handleAgeSortClick = () => {
-    setIsAgeAsc((prev) => !prev);
+    setIsAgeAsc(prev => !prev);
 
     if (isAgeAsc) {
-      setSortedAplications((prev) => prev.sort((a, b) => a.age - b.age));
+      setSortedAplications(prev => prev.sort((a, b) => a.age - b.age));
     } else {
-      setSortedAplications((prev) => prev.sort((a, b) => b.age - a.age));
+      setSortedAplications(prev => prev.sort((a, b) => b.age - a.age));
     }
   };
 
   const handleDateSortClick = () => {
-    setIsDateAsc((prev) => !prev);
+    setIsDateAsc(prev => !prev);
 
     if (isDateAsc) {
-      setSortedAplications((prev) =>
-        prev.sort(
-          (a, b) =>
-            new (Date as any)(a.applyDate) - new (Date as any)(b.applyDate)
-        )
+      setSortedAplications(prev =>
+        prev.sort((a, b) => new (Date as any)(a.applyDate) - new (Date as any)(b.applyDate))
       );
     } else {
-      setSortedAplications((prev) =>
-        prev.sort(
-          (a, b) =>
-            new (Date as any)(b.applyDate) - new (Date as any)(a.applyDate)
-        )
+      setSortedAplications(prev =>
+        prev.sort((a, b) => new (Date as any)(b.applyDate) - new (Date as any)(a.applyDate))
       );
     }
   };
 
   const handleStatusSortClick = () => {
-    setIsStatusAsc((prev) => !prev);
+    setIsStatusAsc(prev => !prev);
 
     if (isStatusAsc) {
-      setSortedAplications((prev) =>
-        prev.sort(
-          (a, b) =>
-            orderAsc.indexOf(a.applyStatus) - orderAsc.indexOf(b.applyStatus)
-        )
+      setSortedAplications(prev =>
+        prev.sort((a, b) => orderAsc.indexOf(a.applyStatus) - orderAsc.indexOf(b.applyStatus))
       );
     } else {
-      setSortedAplications((prev) =>
-        prev.sort(
-          (a, b) =>
-            orderDesc.indexOf(a.applyStatus) - orderDesc.indexOf(b.applyStatus)
-        )
+      setSortedAplications(prev =>
+        prev.sort((a, b) => orderDesc.indexOf(a.applyStatus) - orderDesc.indexOf(b.applyStatus))
       );
     }
   };
 
-  const handleCheckboxClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    setIsCheckedAll((prev) => !prev);
-    applications.map(({ applyId, performerName }) =>
-      onClickCheckbox(e, applyId, performerName)
-    );
+  const handleCheckboxClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    setIsCheckedAll(prev => !prev);
+    applications.map(({ applyId, performerName }) => onClickCheckbox(e, applyId, performerName));
   };
 
   const handleAllStarClick = () => {
-    setIsStarAll((prev) => !prev);
+    setIsStarAll(prev => !prev);
     if (!isStarAll) {
       setStarMarkedIds(applications.map(({ applyId }) => applyId));
     } else {
@@ -156,20 +116,17 @@ const Table = ({
     }
   };
 
-  const handleStarClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    applyId: number
-  ) => {
+  const handleStarClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, applyId: number) => {
     e.stopPropagation();
     if (starMarkedIds.includes(applyId)) {
-      setStarMarkedIds((prev) => prev.filter((id) => id !== applyId));
+      setStarMarkedIds(prev => prev.filter(id => id !== applyId));
     } else {
-      setStarMarkedIds((prev) => [...prev, applyId]);
+      setStarMarkedIds(prev => [...prev, applyId]);
     }
   };
 
   const handleGenderColumnClick = () => {
-    setIsGenderSortShowing((prev) => !prev);
+    setIsGenderSortShowing(prev => !prev);
   };
 
   const handleGenderSortingClick = (
@@ -180,31 +137,28 @@ const Table = ({
     setSelectedGender(gender);
     setIsGenderSortShowing(false);
 
-    if (gender === "MALE") {
-      setSortedAplications((prev) =>
+    if (gender === 'MALE') {
+      setSortedAplications(prev =>
         prev.sort((a, b) => {
           if (a.gender === b.gender) {
             return 0;
           }
-          return a.gender === "MALE" ? -1 : 1;
+          return a.gender === 'MALE' ? -1 : 1;
         })
       );
     } else {
-      setSortedAplications((prev) =>
+      setSortedAplications(prev =>
         prev.sort((a, b) => {
           if (a.gender === b.gender) {
             return 0;
           }
-          return a.gender === "FEMALE" ? -1 : 1;
+          return a.gender === 'FEMALE' ? -1 : 1;
         })
       );
     }
   };
   useEffect(() => {
-    if (
-      selectedApplyIds.length !== 0 &&
-      selectedApplyIds.length === applications.length
-    ) {
+    if (selectedApplyIds.length !== 0 && selectedApplyIds.length === applications.length) {
       setIsCheckedAll(true);
     } else {
       setIsCheckedAll(false);
@@ -212,10 +166,7 @@ const Table = ({
   }, [selectedApplyIds, applications]);
 
   useEffect(() => {
-    if (
-      starMarkedIds.length !== 0 &&
-      starMarkedIds.length === applications.length
-    ) {
+    if (starMarkedIds.length !== 0 && starMarkedIds.length === applications.length) {
       setIsStarAll(true);
     } else {
       setIsStarAll(false);
@@ -227,8 +178,8 @@ const Table = ({
       setSortedAplications(applications);
 
       const favoriteIds = applications
-        .filter((application) => application.isFavorite)
-        .map((application) => application.applyId);
+        .filter(application => application.isFavorite)
+        .map(application => application.applyId);
 
       setStarMarkedIds(favoriteIds);
     } else {
@@ -249,44 +200,26 @@ const Table = ({
         </CheckboxColumn>
         <NameColumn onClick={handleNameSortClick}>
           이름
-          <CaretWrapper>
-            {isNameAsc ? <CaretDownSVG /> : <CaretUpSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isNameAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
         </NameColumn>
         <AgeColumn onClick={handleAgeSortClick}>
           나이
-          <CaretWrapper>
-            {isAgeAsc ? <CaretDownSVG /> : <CaretUpSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isAgeAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
         </AgeColumn>
         <GenderColumn onClick={handleGenderColumnClick}>
           성별
-          <CaretWrapper>
-            {isGenderSortShowing ? <CaretUpSVG /> : <CaretDownSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isGenderSortShowing ? <CaretUpSVG /> : <CaretDownSVG />}</CaretWrapper>
           {isGenderSortShowing && (
             <GenderSort>
-              <GenderOption
-                onClick={(e) => handleGenderSortingClick(e, "남성")}
-              >
+              <GenderOption onClick={e => handleGenderSortingClick(e, '남성')}>
                 <RaidoWrapper>
-                  {selectedGender === "남성" ? (
-                    <RadioCheckedSVG />
-                  ) : (
-                    <RadioSVG />
-                  )}
+                  {selectedGender === '남성' ? <RadioCheckedSVG /> : <RadioSVG />}
                 </RaidoWrapper>
                 남성
               </GenderOption>
-              <GenderOption
-                onClick={(e) => handleGenderSortingClick(e, "여성")}
-              >
+              <GenderOption onClick={e => handleGenderSortingClick(e, '여성')}>
                 <RaidoWrapper>
-                  {selectedGender === "여성" ? (
-                    <RadioCheckedSVG />
-                  ) : (
-                    <RadioSVG />
-                  )}
+                  {selectedGender === '여성' ? <RadioCheckedSVG /> : <RadioSVG />}
                 </RaidoWrapper>
                 여성
               </GenderOption>
@@ -296,38 +229,21 @@ const Table = ({
         <PostTitleColumn>공고명</PostTitleColumn>
         <DateColumn onClick={handleDateSortClick}>
           지원 일자
-          <CaretWrapper>
-            {isDateAsc ? <CaretDownSVG /> : <CaretUpSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isDateAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
         </DateColumn>
         <StateColumn onClick={handleStatusSortClick}>
           상태
-          <CaretWrapper>
-            {isStatusAsc ? <CaretDownSVG /> : <CaretUpSVG />}
-          </CaretWrapper>
+          <CaretWrapper>{isStatusAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
         </StateColumn>
       </Header>
       <Body>
         {sortedApplications?.map(
-          ({
-            applyId,
-            age,
-            gender,
-            performerName,
-            recruitTitle,
-            applyDate,
-            applyStatus,
-          }) => (
+          ({ applyId, age, gender, performerName, recruitTitle, applyDate, applyStatus }) => (
             <>
-              <Row
-                key={applyId}
-                onClick={() => onClickRow(applyId, performerName)}
-              >
+              <Row key={applyId} onClick={() => onClickRow(applyId, performerName)}>
                 <CheckboxInRow>
-                  <CheckIconWrapper
-                    onClick={(e) => onClickCheckbox(e, applyId, performerName)}
-                  >
-                    {selectedApplyIds.some((apply) => apply.id === applyId) ? (
+                  <CheckIconWrapper onClick={e => onClickCheckbox(e, applyId, performerName)}>
+                    {selectedApplyIds.some(apply => apply.id === applyId) ? (
                       <CheckedIconWrapper $isChecked={true}>
                         <CheckboxCheckedSVG />
                       </CheckedIconWrapper>
@@ -338,19 +254,15 @@ const Table = ({
                     )}
                   </CheckIconWrapper>
                   <StarIconWrapper
-                    onClick={(e) => handleStarClick(e, applyId)}
+                    onClick={e => handleStarClick(e, applyId)}
                     $isMarked={starMarkedIds.includes(applyId)}
                   >
-                    {starMarkedIds.includes(applyId) ? (
-                      <StarMarkedSVG />
-                    ) : (
-                      <StarSVG />
-                    )}
+                    {starMarkedIds.includes(applyId) ? <StarMarkedSVG /> : <StarSVG />}
                   </StarIconWrapper>
                 </CheckboxInRow>
                 <Name>{performerName}</Name>
                 <Age>{age}</Age>
-                <Gender>{gender === "MALE" ? "남" : "여"}</Gender>
+                <Gender>{gender === 'MALE' ? '남' : '여'}</Gender>
                 <PostTitle>{recruitTitle}</PostTitle>
                 <Date>{applyDate}</Date>
                 <StatusTag status={applyStatus} />
@@ -474,7 +386,7 @@ const StateColumn = styled.div`
 
 const Body = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   height: 100%;
 `;
 
@@ -575,12 +487,12 @@ const CheckIconWrapper = styled.div`
 
 const StarIconWrapper = styled.div<{ $isMarked: boolean }>`
   rect {
-    fill: ${({ $isMarked }) => !$isMarked && "#e0e0e2"};
+    fill: ${({ $isMarked }) => !$isMarked && '#e0e0e2'};
   }
 `;
 
 const CheckedIconWrapper = styled.div<{ $isChecked: boolean }>`
   rect {
-    stroke: ${({ $isChecked }) => !$isChecked && "#e0e0e2"};
+    stroke: ${({ $isChecked }) => !$isChecked && '#e0e0e2'};
   }
 `;

@@ -30,7 +30,6 @@ const StatusTag = ({ status }: StateTagProps) => {
 export default StatusTag;
 
 const StatusTagContainer = styled.div<{ $status: string }>`
-  width: 61px;
   height: 24px;
   border-radius: 4px;
   padding: 4px 9px;
