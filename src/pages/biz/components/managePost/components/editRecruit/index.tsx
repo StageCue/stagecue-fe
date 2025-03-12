@@ -15,6 +15,7 @@ import { generateId } from '@/utils/dev';
 import { convertFileToURL } from '@/utils/file';
 import {
   requestCreateRecruit,
+  requestDeleteRecruit,
   // requestDeleteRecruit,
   requestRecruitFormData,
   requestUploadRecruitImage,
@@ -28,6 +29,7 @@ import { CATEGORY, RecruitStatus } from '@/types/biz';
 import ModalPortal from '@/components/modal/portal';
 import Overlay from '@/components/modal/overlay';
 import Datepicker from '@/components/datepicker';
+import DeleteModal from '../deleteModal';
 
 interface EditRecruitInputs {
   title: string;
@@ -86,6 +88,7 @@ const EditRecruit = () => {
   const [daysText, setDaysText] = useState('선택해주세요.');
   const [categoryText, setCategoryText] = useState('');
   const [isNewRecruitModalOpen, setIsNewRecruitModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const days = ['월', '화', '수', '목', '금', '토', '일'];
 
@@ -412,11 +415,12 @@ const EditRecruit = () => {
     }
   };
 
-  const handleDeleteRecruit = async () => {
-    // TODO: 추후 개발
-    // await requestDeleteRecruit({
-    //   applyIds: [id!],
-    // });
+  const deleteRecruit = async () => {
+    await requestDeleteRecruit({
+      applyIds: [Number(id)],
+    });
+
+    setIsDeleteModalOpen(false);
   };
 
   const getRecruitFormData = async (id: string) => {
@@ -492,6 +496,13 @@ const EditRecruit = () => {
 
   return (
     <EditRecruitContainer>
+      {isDeleteModalOpen && (
+        <DeleteModal
+          onConfirm={deleteRecruit}
+          onClose={() => setIsDeleteModalOpen(false)}
+          targetLength={1}
+        />
+      )}
       <Form onSubmit={handleSubmit(onSubmitEditRecruit)}>
         <TitleWrapper>
           <Title>
@@ -513,7 +524,7 @@ const EditRecruit = () => {
                   padding="0px 3px"
                   lineHeight={146.7}
                   letterSpacing={0.96}
-                  onClick={handleDeleteRecruit}
+                  onClick={() => setIsDeleteModalOpen(true)}
                 >
                   삭제
                 </Button>

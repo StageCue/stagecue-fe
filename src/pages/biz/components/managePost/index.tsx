@@ -17,6 +17,7 @@ import DatepickerModal from '@/components/datepickerModal';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Paginator from '@/components/paginator';
 import { Recruit } from '@/types/biz';
+import DeleteModal from './components/deleteModal';
 
 type ManageRecruitFilterType = 'TEMP' | 'RECRUIT' | 'CLOSED' | '전체';
 
@@ -31,6 +32,7 @@ const ManagePost = () => {
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
   const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
   const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -99,12 +101,12 @@ const ManagePost = () => {
     }
   };
 
-  const handleDeleteClick = async () => {
+  const deleteRecruit = async () => {
     await requestDeleteRecruit({
       applyIds: selectedRecruitIds,
     });
 
-    setCloseRecruitModalOpen(false);
+    setIsDeleteModalOpen(false);
 
     queryClient.invalidateQueries({
       queryKey: ['bizRecruits', page, selectedFilter],
@@ -127,6 +129,13 @@ const ManagePost = () => {
 
   return (
     <ManagePostContainer>
+      {isDeleteModalOpen && (
+        <DeleteModal
+          onConfirm={deleteRecruit}
+          onClose={() => setIsDeleteModalOpen(false)}
+          targetLength={1}
+        />
+      )}
       {isCloseRecruitModalOpen && (
         <CloseModal
           onConfirm={handleConfirmClick}
@@ -214,7 +223,7 @@ const ManagePost = () => {
             lineHeight={138.5}
             letterSpacing={1.94}
             padding="8px 14px"
-            onClick={handleDeleteClick}
+            onClick={() => setIsDeleteModalOpen(false)}
           >
             <IconWrapper>
               <TrashSVG />
