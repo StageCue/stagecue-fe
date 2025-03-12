@@ -1,3 +1,28 @@
+import { ApplyStatus } from '@/pages/biz/types/applicants';
+
+export interface ApplyStatusLog {
+  applyStatus: ApplyStatus;
+  historyAt: string;
+}
+
+export interface Apply {
+  applyId: number;
+  recruitTitle: string;
+  recruitCategory:
+    | 'THEATRE'
+    | 'MUSICAL'
+    | 'MOVIE'
+    | 'DANCE'
+    | 'PERFORMANCE'
+    | 'TVSHOW'
+    | 'SNS'
+    | 'SINGER'
+    | 'MODEL';
+  troupeName: string;
+  applyStatus: ApplyStatus;
+  applyStatusLogs: ApplyStatusLog[];
+}
+
 export interface Scrap {
   castId: string;
   castTitle: string;

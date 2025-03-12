@@ -15,13 +15,6 @@ export interface Application {
   applyStatus: string;
 }
 
-export type ApplyStatus =
-  | 'APPLIED'
-  | 'DOCUMENT_PASSED'
-  | 'FINAL_ACCEPTED'
-  | 'REJECTED'
-  | 'CANCEL'
-  | '전체'
-  | '미열람';
+export type ApplyStatus = 'APPLIED' | 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED' | 'REJECTED' | 'CANCEL';
 
 export type PassType = 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED';
