@@ -39,7 +39,7 @@ const Table = ({
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isStarAll, setIsStarAll] = useState(false);
   const [isGenderSortShowing, setIsGenderSortShowing] = useState(false);
-  const [selectedGender, setSelectedGender] = useState('남성');
+  const [selectedGender, setSelectedGender] = useState('');
   const [isNameAsc, setIsNameAsc] = useState(true);
   const [isAgeAsc, setIsAgeAsc] = useState(true);
   const [isDateAsc, setIsDateAsc] = useState(true);
@@ -77,15 +77,15 @@ const Table = ({
   const handleDateSortClick = () => {
     setIsDateAsc(prev => !prev);
 
-    if (isDateAsc) {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => new (Date as any)(a.applyDate) - new (Date as any)(b.applyDate))
-      );
-    } else {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => new (Date as any)(b.applyDate) - new (Date as any)(a.applyDate))
-      );
-    }
+    setSortedAplications(prev => {
+      const sorted = [...prev].sort((a, b) => {
+        return isDateAsc
+          ? a.applyDate.localeCompare(b.applyDate)
+          : b.applyDate.localeCompare(a.applyDate);
+      });
+
+      return sorted;
+    });
   };
 
   const handleStatusSortClick = () => {

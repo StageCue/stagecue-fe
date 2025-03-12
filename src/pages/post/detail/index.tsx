@@ -92,7 +92,7 @@ const Detail = () => {
           <TitleWrapper>
             <DdayWrapper>
               {/* TODO: 디데이 바인딩 */}
-              <Dday>D-12</Dday>
+              <Dday>D-</Dday>
               {isLoggined && (
                 <BookmarkWrapper onClick={handleBookmarkClick}>
                   {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}

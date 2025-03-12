@@ -194,7 +194,7 @@ const Applicant = () => {
           </Option>
         </Filters>
         <ButtonsWrapper>
-          {selectedFilter === '전체' && (
+          {(selectedFilter === '전체' || selectedFilter === 'APPLIED') && (
             <>
               <Button
                 variation="outlined"
@@ -230,45 +230,43 @@ const Applicant = () => {
               </Button>
             </>
           )}
-          {selectedFilter !== '전체' &&
-            selectedFilter !== 'FINAL_ACCEPTED' &&
-            selectedFilter !== 'REJECTED' && (
-              <>
-                <Button
-                  variation="outlined"
-                  btnClass="assistive"
-                  onClick={handlePassClick}
-                  width={71}
-                  height={32}
-                  fontSize={13}
-                  lineHeight={138.5}
-                  letterSpacing={1.94}
-                  padding="8px 14px"
-                >
-                  <IconWrapper>
-                    <PassSVG />
-                  </IconWrapper>
-                  합격
-                </Button>
+          {selectedFilter == 'DOCUMENT_PASSED' && (
+            <>
+              <Button
+                variation="outlined"
+                btnClass="assistive"
+                onClick={() => handlePassClick('FINAL_ACCEPTED')}
+                width={71}
+                height={32}
+                fontSize={13}
+                lineHeight={138.5}
+                letterSpacing={1.94}
+                padding="8px 14px"
+              >
+                <IconWrapper>
+                  <PassSVG />
+                </IconWrapper>
+                합격
+              </Button>
 
-                <Button
-                  variation="outlined"
-                  btnClass="assistive"
-                  onClick={handleFailClick}
-                  width={71}
-                  height={32}
-                  fontSize={13}
-                  lineHeight={138.5}
-                  letterSpacing={1.94}
-                  padding="8px 14px"
-                >
-                  <IconWrapper>
-                    <FailSVG />
-                  </IconWrapper>
-                  반려
-                </Button>
-              </>
-            )}
+              <Button
+                variation="outlined"
+                btnClass="assistive"
+                onClick={handleFailClick}
+                width={71}
+                height={32}
+                fontSize={13}
+                lineHeight={138.5}
+                letterSpacing={1.94}
+                padding="8px 14px"
+              >
+                <IconWrapper>
+                  <FailSVG />
+                </IconWrapper>
+                반려
+              </Button>
+            </>
+          )}
         </ButtonsWrapper>
       </FilterWrapper>
       {data?.applications && (
