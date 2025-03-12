@@ -238,7 +238,7 @@ const EditRecruit = () => {
 
       const { ...fieldData } = data;
 
-      const res = await requestCreateRecruit({
+      const { id } = await requestCreateRecruit({
         ...fieldData,
         monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
         recruitingParts,
@@ -248,8 +248,8 @@ const EditRecruit = () => {
 
       setIsNewRecruitModalOpen(false);
 
-      if (res?.id) {
-        navigate(`/biz/cast/${res?.id}/form`);
+      if (id) {
+        navigate(`/casts/${id}`);
       }
     } catch (error) {
       console.log(error);
