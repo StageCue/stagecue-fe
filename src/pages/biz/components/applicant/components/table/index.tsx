@@ -238,7 +238,16 @@ const Table = ({
       </Header>
       <Body>
         {sortedApplications?.map(
-          ({ applyId, age, gender, performerName, recruitTitle, applyDate, applyStatus }) => (
+          ({
+            applyId,
+            profileId,
+            age,
+            gender,
+            performerName,
+            recruitTitle,
+            applyDate,
+            applyStatus,
+          }) => (
             <>
               <Row key={applyId} onClick={() => onClickRow(applyId, performerName)}>
                 <CheckboxInRow>
@@ -269,7 +278,7 @@ const Table = ({
               </Row>
               {isProfileModalOpen && showingApplicant.id === applyId && (
                 <ProfileModal
-                  id={`${applyId}`}
+                  id={`${profileId}`}
                   onClickPass={onClickPass}
                   onClickFail={onClickFail}
                   onClose={onCloseModal}
