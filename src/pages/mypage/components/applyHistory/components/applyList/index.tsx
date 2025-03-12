@@ -1,55 +1,25 @@
-import styled from "styled-components";
-import { applyPhaseType, filterType } from "../..";
-import { useEffect, useState } from "react";
-import { requestAppliedCasts, requestCancelApply } from "@/api/users";
-import Button from "@/components/buttons/button";
-import DotdotdotSVG from "@/assets/images/dotdotdot.svg?react";
-import ApplyCast from "../applyCast";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import { applyPhaseType, filterType } from '../..';
+import Button from '@/components/buttons/button';
+import DotdotdotSVG from '@/assets/images/dotdotdot.svg?react';
+import ApplyCast from '../applyCast';
+import { useNavigate } from 'react-router-dom';
+import { useApplyData } from '@/pages/mypage/hooks/useApplyData';
 
 interface ApplyListProps {
   status: applyPhaseType;
-  filter: filterType;
+  filter?: filterType;
 }
 
-const ApplyList = ({ status, filter }: ApplyListProps) => {
-
+const ApplyList = ({ status }: ApplyListProps) => {
   const navigate = useNavigate();
-  
-  const [casts, setCasts] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const getAppliedCasts = async () => {
-    const res = await requestAppliedCasts({
-      limit: 10,
-      offset: 0,
-      status,
-    });
+  const { data, isLoading, error, refetch } = useApplyData(status);
 
-    const { applies } = res;
-    setCasts(applies);
-  };
+  if (isLoading) return <p></p>;
+  if (error) return <p>에러 : {error.message}</p>;
 
-  const handleCancelClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleConfirmClick = async (applyId: number) => {
-    setIsModalOpen(false);
-    const res = await requestCancelApply(applyId);
-
-    if (res) {
-      getAppliedCasts();
-    }
-  };
-
-  const handleCloseClick = () => {
-    setIsModalOpen(false);
-  };
-
-  useEffect(() => {
-    getAppliedCasts();
-  }, [status, filter]);
+  const casts = data!.applies;
 
   return (
     <ApplyListContainer>
@@ -60,33 +30,27 @@ const ApplyList = ({ status, filter }: ApplyListProps) => {
             <Text>아직 지원한 공고가 없어요.</Text>
             <SubText>다양한 공고들을 둘러볼까요?</SubText>
           </TextWrapper>
-            <Button variation="solid" btnClass="primary" width={296} onClick={() => navigate('/casts')}>
-              공고 찾아보기
-            </Button>
+          <Button
+            variation="solid"
+            btnClass="primary"
+            width={296}
+            onClick={() => navigate('/casts')}
+          >
+            공고 찾아보기
+          </Button>
         </NoApplyHistory>
       ) : (
-        casts.map(
-          ({
-            applyId,
-            troupeName,
-            applyStatus,
-            recruitTitle,
-            applyStatusLogs,
-          }) => (
-            <ApplyCast
-              key={applyId}
-              applyId={applyId}
-              applyStatus={applyStatus}
-              applyStatusLogs={applyStatusLogs}
-              recruitTitle={recruitTitle}
-              onClickCancel={handleCancelClick}
-              troupeName={troupeName}
-              onConfirm={() => handleConfirmClick(applyId)}
-              onClose={handleCloseClick}
-              isModalOpen={isModalOpen}
-            />
-          )
-        )
+        casts.map(({ applyId, troupeName, applyStatus, recruitTitle, applyStatusLogs }) => (
+          <ApplyCast
+            key={applyId}
+            applyId={applyId}
+            applyStatus={applyStatus}
+            applyStatusLogs={applyStatusLogs}
+            recruitTitle={recruitTitle}
+            troupeName={troupeName}
+            getCasts={refetch}
+          />
+        ))
       )}
     </ApplyListContainer>
   );

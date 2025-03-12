@@ -1,9 +1,11 @@
-import Button from "@/components/buttons/button";
-import styled from "styled-components";
-import { applyPhaseType } from "../..";
-import { formatDateWithDots } from "@/utils/format";
-import ModalPortal from "@/components/modal/portal";
-import CancelModal from "../cancelModal";
+import Button from '@/components/buttons/button';
+import styled from 'styled-components';
+import { applyPhaseType } from '../..';
+import { formatDateWithDots } from '@/utils/format';
+import ModalPortal from '@/components/modal/portal';
+import CancelModal from '../cancelModal';
+import { useState } from 'react';
+import { requestCancelApply } from '@/api/users';
 
 interface ApplyCastProps {
   applyId: number;
@@ -11,10 +13,7 @@ interface ApplyCastProps {
   recruitTitle: string;
   troupeName: string;
   applyStatusLogs: { applyStatus: applyPhaseType; historyAt: string }[];
-  onClickCancel: (applyId: number) => void;
-  onConfirm: (applyId: number) => void;
-  onClose: () => void;
-  isModalOpen: boolean;
+  getCasts: () => void;
 }
 
 const ApplyCast = ({
@@ -23,38 +22,51 @@ const ApplyCast = ({
   recruitTitle,
   applyStatusLogs,
   troupeName,
-  onClickCancel,
-  onConfirm,
-  onClose,
-  isModalOpen,
+  getCasts,
 }: ApplyCastProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCancelClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmClick = async (applyId: number) => {
+    setIsModalOpen(false);
+    await requestCancelApply(applyId);
+    getCasts();
+  };
+
+  const handleCloseClick = () => {
+    setIsModalOpen(false);
+  };
+
   const parsePhase = (status: applyPhaseType) => {
     switch (status) {
-      case "APPLIED":
-        return "지원 완료";
-      case "DOCUMENT_PASSED":
-        return "서류 통과";
-      case "FINAL_ACCEPTED":
-        return "최종 합격";
-      case "REJECTED":
-        return "불합격";
-      case "CANCEL":
-        return "지원취소";
+      case 'APPLIED':
+        return '지원 완료';
+      case 'DOCUMENT_PASSED':
+        return '서류 통과';
+      case 'FINAL_ACCEPTED':
+        return '최종 합격';
+      case 'REJECTED':
+        return '불합격';
+      case 'CANCEL':
+        return '지원취소';
     }
   };
 
   const parseLogname = (status: applyPhaseType) => {
     switch (status) {
-      case "APPLIED":
-        return "지원일자";
-      case "DOCUMENT_PASSED":
-        return "열람일자";
-      case "FINAL_ACCEPTED":
-        return "최종 합격";
-      case "REJECTED":
-        return "열람일자";
-      case "CANCEL":
-        return "취소일자";
+      case 'APPLIED':
+        return '지원일자';
+      case 'DOCUMENT_PASSED':
+        return '열람일자';
+      case 'FINAL_ACCEPTED':
+        return '최종 합격';
+      case 'REJECTED':
+        return '열람일자';
+      case 'CANCEL':
+        return '취소일자';
     }
   };
 
@@ -62,7 +74,7 @@ const ApplyCast = ({
     <ApplyCastContainer>
       {isModalOpen && (
         <ModalPortal>
-          <CancelModal onConfirm={() => onConfirm} onClose={onClose} />
+          <CancelModal onConfirm={() => handleConfirmClick(applyId)} onClose={handleCloseClick} />
         </ModalPortal>
       )}
       <ApplyInfoWrapper>
@@ -93,10 +105,10 @@ const ApplyCast = ({
         lineHeight={138.5}
         letterSpacing={1.94}
         padding="7px 14px"
-        onClick={() => onClickCancel(applyId)}
-        disabled={applyStatus === "CANCEL"}
+        onClick={() => handleCancelClick()}
+        disabled={applyStatus === 'CANCEL'}
       >
-        {applyStatus === "REJECTED" ? "서류회수" : "지원취소"}
+        {applyStatus === 'REJECTED' ? '서류회수' : '지원취소'}
       </Button>
     </ApplyCastContainer>
   );
@@ -156,13 +168,9 @@ const StatusTag = styled.div<{ $status: applyPhaseType }>`
   height: 24px;
   border-radius: 4px;
   color: ${({ $status }) =>
-    $status === "DOCUMENT_PASSED" || $status === "FINAL_ACCEPTED"
-      ? "#00BF40"
-      : "#989ba2"};
+    $status === 'DOCUMENT_PASSED' || $status === 'FINAL_ACCEPTED' ? '#00BF40' : '#989ba2'};
   background-color: ${({ $status }) =>
-    $status === "DOCUMENT_PASSED" || $status === "FINAL_ACCEPTED"
-      ? "#D9FFE6"
-      : "#f7f7f8"};
+    $status === 'DOCUMENT_PASSED' || $status === 'FINAL_ACCEPTED' ? '#D9FFE6' : '#f7f7f8'};
   line-height: 133.4%;
   letter-spacing: 2.52%;
 

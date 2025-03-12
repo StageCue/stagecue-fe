@@ -1,43 +1,15 @@
-import styled from "styled-components";
-import SearchSVG from "@assets/icons/search.svg?react";
-import { useEffect, useState } from "react";
-import Button from "@/components/buttons/button";
-import Table from "./components/table";
-import PassSVG from "@assets/icons/pass.svg?react";
-import FailSVG from "@assets/icons/fail.svg?react";
-import { requestApplications, requestChangingApplyState } from "@/api/biz";
-import PassModal from "./components/passModal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Paginator from "@/components/paginator";
-
-interface BizApplicationQuery {
-  totalCount: number;
-  applications: Application[];
-}
-
-interface Application {
-  applyId: number;
-  profileId: number;
-  recruitId: number;
-  isFavorite: boolean;
-  performerName: string;
-  age: number;
-  gender: "MALE" | "FEMALE";
-  recruitTitle: string;
-  applyDate: string;
-  applyStatus: string;
-}
-
-type ApplyStatus =
-  | "APPLIED"
-  | "DOCUMENT_PASSED"
-  | "FINAL_ACCEPTED"
-  | "REJECTED"
-  | "CANCEL"
-  | "전체"
-  | "미열람";
-
-type PassType = "DOCUMENT_PASSED" | "FINAL_ACCEPTED";
+import styled from 'styled-components';
+import SearchSVG from '@assets/icons/search.svg?react';
+import { useEffect, useState } from 'react';
+import Button from '@/components/buttons/button';
+import Table from './components/table';
+import PassSVG from '@assets/icons/pass.svg?react';
+import FailSVG from '@assets/icons/fail.svg?react';
+import { requestApplications, requestChangingApplyState } from '@/api/biz';
+import PassModal from './components/passModal';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Paginator from '@/components/paginator';
+import { ApplyStatus, BizApplicationQuery, PassType } from '../../types/applicants';
 
 interface ShowingApplicantState {
   id: number;
@@ -45,15 +17,12 @@ interface ShowingApplicantState {
 }
 const Applicant = () => {
   const [page, setPage] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState<ApplyStatus>("전체");
-  const [selectedApplyIds, setSelectedApplyIds] = useState<
-    { id: number; name: string }[]
-  >([]);
+  const [selectedFilter, setSelectedFilter] = useState<ApplyStatus>('전체');
+  const [selectedApplyIds, setSelectedApplyIds] = useState<{ id: number; name: string }[]>([]);
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [showingApplicant, setShowingApplicant] =
-    useState<ShowingApplicantState>();
+  const [showingApplicant, setShowingApplicant] = useState<ShowingApplicantState>();
 
   const [passType, setPassType] = useState<PassType>();
 
@@ -64,9 +33,11 @@ const Applicant = () => {
   };
 
   const handlePassClick = async (passType?: PassType) => {
+    if (selectedApplyIds.length === 0) return;
+
     setIsPassModalOpen(true);
 
-    if (selectedFilter === "전체") {
+    if (selectedFilter === '전체') {
       setPassType(passType);
     }
   };
@@ -76,26 +47,30 @@ const Applicant = () => {
   };
 
   const handlePassConfirm = async () => {
+    const idsArray = selectedApplyIds.map(item => item.id);
+
     await requestChangingApplyState({
-      applyIds: `${selectedApplyIds}`,
+      applyIds: `${idsArray}`,
       applyStatus: passType!,
     });
 
     setSelectedApplyIds([]);
-    queryClient.invalidateQueries({ queryKey: ["applications", page] });
+    queryClient.invalidateQueries({ queryKey: ['applications', page] });
 
     setIsPassModalOpen(false);
     setIsProfileModalOpen(false);
   };
 
   const handleFailConfirm = async () => {
+    const idsArray = selectedApplyIds.map(item => item.id);
+
     await requestChangingApplyState({
-      applyIds: `${selectedApplyIds}`,
-      applyStatus: "REJECTED",
+      applyIds: `${idsArray}`,
+      applyStatus: 'REJECTED',
     });
 
     setSelectedApplyIds([]);
-    queryClient.invalidateQueries({ queryKey: ["applications", page] });
+    queryClient.invalidateQueries({ queryKey: ['applications', page] });
 
     setIsFailModalOpen(false);
     setIsProfileModalOpen(false);
@@ -111,8 +86,8 @@ const Applicant = () => {
   };
 
   const { data } = useQuery<BizApplicationQuery>({
-    queryKey: ["applications", page],
-    queryFn: () => requestApplications({ limit: "10", offset: `${page * 10}` }),
+    queryKey: ['applications', page],
+    queryFn: () => requestApplications({ limit: '10', offset: `${page * 10}` }),
   });
 
   const handlePageChange = (newPage: number) => {
@@ -125,8 +100,8 @@ const Applicant = () => {
     name: string
   ) => {
     e.stopPropagation();
-    if (selectedApplyIds.some((apply) => apply.id === id)) {
-      setSelectedApplyIds((prev) => {
+    if (selectedApplyIds.some(apply => apply.id === id)) {
+      setSelectedApplyIds(prev => {
         const newArray = prev.filter(({ id: applyId }) => applyId !== id);
         return newArray;
       });
@@ -138,7 +113,7 @@ const Applicant = () => {
   const filterByApplyStatus = (status: ApplyStatus) => {
     if (data?.applications) {
       const filteredArray = data.applications.filter(
-        (application) => application["applyStatus"] === status
+        application => application['applyStatus'] === status
       );
       return filteredArray;
     } else {
@@ -152,10 +127,10 @@ const Applicant = () => {
   };
 
   useEffect(() => {
-    if (selectedFilter === "미열람") {
-      setPassType("DOCUMENT_PASSED");
-    } else if (selectedFilter === "DOCUMENT_PASSED") {
-      setPassType("FINAL_ACCEPTED");
+    if (selectedFilter === 'APPLIED') {
+      setPassType('DOCUMENT_PASSED');
+    } else if (selectedFilter === 'DOCUMENT_PASSED') {
+      setPassType('FINAL_ACCEPTED');
     }
   }, [selectedFilter]);
 
@@ -166,11 +141,7 @@ const Applicant = () => {
           onConfirm={handlePassConfirm}
           onClose={handleCancelClick}
           type="합격"
-          name={
-            isProfileModalOpen
-              ? showingApplicant!.name
-              : selectedApplyIds[0].name
-          }
+          name={isProfileModalOpen ? showingApplicant!.name : selectedApplyIds[0].name}
         />
       )}
       {isFailModalOpen && (
@@ -178,11 +149,7 @@ const Applicant = () => {
           onConfirm={handleFailConfirm}
           onClose={handleCancelClick}
           type="반려"
-          name={
-            isProfileModalOpen
-              ? showingApplicant!.name
-              : selectedApplyIds[0].name
-          }
+          name={isProfileModalOpen ? showingApplicant!.name : selectedApplyIds[0].name}
         />
       )}
       <TitleWrapper>
@@ -194,48 +161,45 @@ const Applicant = () => {
       </TitleWrapper>
       <FilterWrapper>
         <Filters>
-          <Option
-            onClick={() => handleFilterClick("전체")}
-            $isSelected={selectedFilter === "전체"}
-          >
-            전체 ({data?.applications?.length})
+          <Option onClick={() => handleFilterClick('전체')} $isSelected={selectedFilter === '전체'}>
+            전체 {data?.applications?.length}
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("미열람")}
-            $isSelected={selectedFilter === "미열람"}
+            onClick={() => handleFilterClick('APPLIED')}
+            $isSelected={selectedFilter === 'APPLIED'}
           >
-            미열람
+            미열람 {filterByApplyStatus('APPLIED')?.length}
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("DOCUMENT_PASSED")}
-            $isSelected={selectedFilter === "DOCUMENT_PASSED"}
+            onClick={() => handleFilterClick('DOCUMENT_PASSED')}
+            $isSelected={selectedFilter === 'DOCUMENT_PASSED'}
           >
-            서류합격 ({filterByApplyStatus("DOCUMENT_PASSED")?.length})
+            서류합격 {filterByApplyStatus('DOCUMENT_PASSED')?.length}
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("FINAL_ACCEPTED")}
-            $isSelected={selectedFilter === "FINAL_ACCEPTED"}
+            onClick={() => handleFilterClick('FINAL_ACCEPTED')}
+            $isSelected={selectedFilter === 'FINAL_ACCEPTED'}
           >
-            최종합격 ({filterByApplyStatus("FINAL_ACCEPTED")?.length})
+            최종합격 {filterByApplyStatus('FINAL_ACCEPTED')?.length}
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick("REJECTED")}
-            $isSelected={selectedFilter === "REJECTED"}
+            onClick={() => handleFilterClick('REJECTED')}
+            $isSelected={selectedFilter === 'REJECTED'}
           >
-            불합격({filterByApplyStatus("REJECTED")?.length})
+            불합격 {filterByApplyStatus('REJECTED')?.length}
           </Option>
         </Filters>
         <ButtonsWrapper>
-          {selectedFilter === "전체" && (
+          {selectedFilter === '전체' && (
             <>
               <Button
                 variation="outlined"
                 btnClass="assistive"
-                onClick={() => handlePassClick("DOCUMENT_PASSED")}
+                onClick={() => handlePassClick('DOCUMENT_PASSED')}
                 width={100}
                 height={32}
                 fontSize={13}
@@ -251,7 +215,7 @@ const Applicant = () => {
               <Button
                 variation="outlined"
                 btnClass="assistive"
-                onClick={() => handlePassClick("FINAL_ACCEPTED")}
+                onClick={() => handlePassClick('FINAL_ACCEPTED')}
                 width={100}
                 height={32}
                 fontSize={13}
@@ -266,9 +230,9 @@ const Applicant = () => {
               </Button>
             </>
           )}
-          {selectedFilter !== "전체" &&
-            selectedFilter !== "FINAL_ACCEPTED" &&
-            selectedFilter !== "REJECTED" && (
+          {selectedFilter !== '전체' &&
+            selectedFilter !== 'FINAL_ACCEPTED' &&
+            selectedFilter !== 'REJECTED' && (
               <>
                 <Button
                   variation="outlined"
@@ -310,9 +274,7 @@ const Applicant = () => {
       {data?.applications && (
         <Table
           applications={
-            selectedFilter === "전체"
-              ? data?.applications
-              : filterByApplyStatus(selectedFilter)
+            selectedFilter === '전체' ? data?.applications : filterByApplyStatus(selectedFilter)
           }
           onClickCheckbox={(
             e: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -320,9 +282,7 @@ const Applicant = () => {
             name: string
           ) => handleCheckboxClick(e, id, name)}
           selectedApplyIds={selectedApplyIds}
-          onClickRow={(id: number, name: string) =>
-            handleApplicantRowClick(id, name)
-          }
+          onClickRow={(id: number, name: string) => handleApplicantRowClick(id, name)}
           onClickPass={handlePassClick}
           onClickFail={handleFailClick}
           onCloseModal={handleCloseProfileClick}
@@ -412,10 +372,9 @@ const Option = styled.div<{ $isSelected: boolean }>`
   letter-spacing: 1.45%;
   line-height: 142.9%;
   color: #171719;
-  font-weight: ${({ $isSelected }) =>
-    $isSelected ? "var(--font-bold)" : "var(--font-regular)"};
+  font-weight: ${({ $isSelected }) => ($isSelected ? 'var(--font-bold)' : 'var(--font-regular)')};
   cursor: pointer;
-  background-color: ${({ $isSelected }) => ($isSelected ? "#f4f4f5" : "white")};
+  background-color: ${({ $isSelected }) => ($isSelected ? '#f4f4f5' : 'white')};
 
   &:first-child {
     border-bottom-left-radius: 8px;

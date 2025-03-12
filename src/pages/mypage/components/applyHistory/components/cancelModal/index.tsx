@@ -1,6 +1,6 @@
-import Button from "@/components/buttons/button";
-import Overlay from "@/components/modal/overlay";
-import styled from "styled-components";
+import Button from '@/components/buttons/button';
+import Overlay from '@/components/modal/overlay';
+import styled from 'styled-components';
 
 interface CancelModalProps {
   onClose: () => void;
@@ -55,7 +55,7 @@ const ModalBox = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 24px;
   padding: 24px 20px;
 `;
 
