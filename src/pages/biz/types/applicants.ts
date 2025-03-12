@@ -17,4 +17,12 @@ export interface Application {
 
 export type ApplyStatus = 'APPLIED' | 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED' | 'REJECTED' | 'CANCEL';
 
+export type ApplyFilter =
+  | 'APPLIED'
+  | 'DOCUMENT_PASSED'
+  | 'FINAL_ACCEPTED'
+  | 'REJECTED'
+  | 'CANCEL'
+  | '전체';
+
 export type PassType = 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED';

@@ -9,7 +9,7 @@ import { requestApplications, requestChangingApplyState } from '@/api/biz';
 import PassModal from './components/passModal';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Paginator from '@/components/paginator';
-import { ApplyStatus, BizApplicationQuery, PassType } from '../../types/applicants';
+import { ApplyFilter, ApplyStatus, BizApplicationQuery, PassType } from '../../types/applicants';
 
 interface ShowingApplicantState {
   id: number;
@@ -17,7 +17,7 @@ interface ShowingApplicantState {
 }
 const Applicant = () => {
   const [page, setPage] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState<ApplyStatus>('전체');
+  const [selectedFilter, setSelectedFilter] = useState<ApplyFilter>('전체');
   const [selectedApplyIds, setSelectedApplyIds] = useState<{ id: number; name: string }[]>([]);
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);
@@ -28,7 +28,7 @@ const Applicant = () => {
 
   const queryClient = useQueryClient();
 
-  const handleFilterClick = (filter: ApplyStatus) => {
+  const handleFilterClick = (filter: ApplyFilter) => {
     setSelectedFilter(filter);
   };
 
