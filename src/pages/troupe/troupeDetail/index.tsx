@@ -137,10 +137,12 @@ const TroupeDetail = () => {
   return (
     <TroupeDetailContainer>
       <CoverBox $bgSrc={`https://s3.stagecue.co.kr/stagecue/${detail?.coverImage}`}>
-        <CoverTextWrapper>
-          <TroupeName>{detail?.troupeName}</TroupeName>
-          <Description>{detail?.description}</Description>
-        </CoverTextWrapper>
+        <BackgroundLayout>
+          <CoverTextWrapper>
+            <TroupeName>{detail?.troupeName}</TroupeName>
+            <Description>{detail?.description}</Description>
+          </CoverTextWrapper>
+        </BackgroundLayout>
       </CoverBox>
       <InfoWrapper>
         <PositionInfoBox>
@@ -291,19 +293,34 @@ const TroupeDetailContainer = styled.div`
 `;
 
 const CoverBox = styled.div<{ $bgSrc: string }>`
+  position: relative;
   width: 100vw;
   height: 392px;
   background-image: url(${props => props.$bgSrc});
   background-size: cover;
   background-position: center;
-  padding-left: 190px;
-  padding-top: 124px;
-  margin-bottom: 40px;
+`;
+
+const BackgroundLayout = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 61.42%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const CoverTextWrapper = styled.div`
+  width: 1060px;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 28px;
 `;
 
@@ -319,7 +336,7 @@ const Description = styled.div`
   font-size: 15px;
   font-weight: var(--font-regular);
   color: white;
-  line-height: 146.7%;
+  line-height: 147%;
   letter-spacing: 0.96%;
 `;
 
@@ -330,6 +347,7 @@ const InfoWrapper = styled.div`
   gap: 20px;
   justify-content: center;
   margin-bottom: 40px;
+  margin-top: 40px;
 `;
 
 const PositionInfoBox = styled.div`

@@ -12,6 +12,7 @@ import { requestCasts } from '@/api/cast';
 import Cast from '@/pages/home/components/cast';
 import RangeInput from './components/rangeInput';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import daysArrayToDecimal from '@/utils/daysArrayToDecimal';
 
 type genreType = '연극' | '뮤지컬' | '댄스';
 type zoneType = '전체지역' | '서울' | '경기' | '인천' | '강원' | '경상' | '전라' | '제주' | '충청';
@@ -38,7 +39,7 @@ const List = () => {
   const [appliedZone, setAppliedZone] = useState<string[]>(['전체지역']);
   const [appliedDay, setAppliedDay] = useState<string[]>(['0', '0', '0', '0', '0', '1', '1']);
   const [appliedCost, setAppliedCost] = useState<string>('');
-  const [minCost, setMinCost] = useState<string>('10000');
+  const [minCost, setMinCost] = useState<string>('0');
   const [maxCost, setMaxCost] = useState<string>('500000');
 
   const [isGenreMenuShowing, setIsGenreMenuShowing] = useState<boolean>(false);
@@ -118,7 +119,7 @@ const List = () => {
         return newSelectedZone;
       } else if (prev.includes(option) && option !== '전체지역') {
         const newSelectedZone = prev.filter(zone => zone !== option);
-        return newSelectedZone;
+        return !newSelectedZone?.length ? ['전체지역'] : newSelectedZone;
       } else if (option === '전체지역') {
         return ['전체지역'];
       } else {
@@ -223,7 +224,7 @@ const List = () => {
       'recruits',
       {
         appliedDay,
-        selectedZone,
+        appliedZone,
         selectedGenre,
         currentOrderBy,
         appliedCost,
@@ -235,6 +236,7 @@ const List = () => {
         limit: '16',
         category: parsingCategory(selectedGenre),
         locations: selectedZone?.find(zone => zone === '전체지역') ? '' : selectedZone?.join(','),
+        daysOfWeek: String(daysArrayToDecimal(appliedDay)),
         orderBy: currentOrderBy,
         feeRange: appliedCost,
       }),
@@ -273,6 +275,8 @@ const List = () => {
     setSelectedZone(['전체지역']);
     setIsAppliedDay(false);
     setIsAppliedZone(false);
+    setMinCost('0');
+    setMaxCost('500000');
   };
 
   const handleNewestClick = () => {

@@ -389,38 +389,48 @@ const NewProfileForm = () => {
                   <DataRows>
                     <ContactDataRow>
                       <ContactValueWrapper>
-                        <Property>이메일</Property>
-                        <Value>{sessionStore.email}</Value>
-                      </ContactValueWrapper>
-                      <Button
-                        variation="outlined"
-                        btnClass="assistive"
-                        width={90}
-                        height={32}
-                        padding="7px 14px"
-                        fontSize={13}
-                        lineHeight={138.5}
-                        letterSpacing={1.94}
-                      >
-                        이메일 변경
-                      </Button>
-                    </ContactDataRow>
-                    <ContactDataRow>
-                      <ContactValueWrapper>
                         <Property>연락처</Property>
                         <Value>{formatPhoneNumber(sessionStore.phoneNumber!)}</Value>
                       </ContactValueWrapper>
                       <Button
+                        type="button"
                         variation="outlined"
                         btnClass="assistive"
                         width={90}
-                        height={32}
+                        height={42}
                         padding="7px 14px"
                         fontSize={13}
                         lineHeight={138.5}
                         letterSpacing={1.94}
+                        onClick={() =>
+                          navigate('/mypage', {
+                            state: { menu: '기본정보 변경', type: '휴대폰 번호' },
+                          })
+                        }
                       >
                         연락처 변경
+                      </Button>
+                    </ContactDataRow>
+                    <ContactDataRow>
+                      <ContactValueWrapper>
+                        <Property>이메일</Property>
+                        <Value>{sessionStore.email}</Value>
+                      </ContactValueWrapper>
+                      <Button
+                        type="button"
+                        variation="outlined"
+                        btnClass="assistive"
+                        width={90}
+                        height={42}
+                        padding="7px 14px"
+                        fontSize={13}
+                        lineHeight={138.5}
+                        letterSpacing={1.94}
+                        onClick={() =>
+                          navigate('/mypage', { state: { menu: '기본정보 변경', type: '이메일' } })
+                        }
+                      >
+                        이메일 변경
                       </Button>
                     </ContactDataRow>
                   </DataRows>
@@ -845,8 +855,8 @@ const ContactDataRow = styled.div`
 `;
 
 const ContactValueWrapper = styled.div`
-  display: flex;
-  gap: 12px;
+  /* display: flex;
+  gap: 12px; */
 `;
 
 const GuideText = styled.div`

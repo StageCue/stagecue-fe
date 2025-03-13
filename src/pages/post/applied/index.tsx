@@ -1,19 +1,21 @@
-import { requestCasts } from "@/api/cast";
-import Button from "@/components/buttons/button";
-import Cast from "@/pages/home/components/cast";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import Lottie from "react-lottie";
-import AppliedGIF from "@assets/images/appliedLottie.json";
+import { requestCasts } from '@/api/cast';
+import Button from '@/components/buttons/button';
+import Cast from '@/pages/home/components/cast';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import Lottie from 'react-lottie';
+import AppliedGIF from '@assets/images/appliedLottie.json';
+import { useNavigate } from 'react-router-dom';
 
 const Applied = () => {
+  const navigate = useNavigate();
   const [popularRecruits, setPopularRecruits] = useState([]);
 
   const getNewestCasts = async () => {
     const { casts } = await requestCasts({
-      limit: "4",
-      offset: "0",
-      orderBy: "newest",
+      limit: '4',
+      offset: '0',
+      orderBy: 'newest',
     });
 
     setPopularRecruits(casts);
@@ -21,7 +23,12 @@ const Applied = () => {
 
   useEffect(() => {
     getNewestCasts();
-  });
+  }, []);
+
+  const handleMoveMainPage = () => {
+    navigate('/');
+  };
+
   return (
     <AppliedContainer>
       <SuccessBox>
@@ -33,7 +40,7 @@ const Applied = () => {
             autoplay: true,
             animationData: AppliedGIF,
             rendererSettings: {
-              preserveAspectRatio: "xMidYMid slice",
+              preserveAspectRatio: 'xMidYMid slice',
             },
           }}
         />
@@ -41,7 +48,14 @@ const Applied = () => {
           <Text>공고지원을 완료했어요!</Text>
           <SubText>다른 공고도 둘러볼까요?</SubText>
         </CompleteTextWrapper>
-        <Button variation="solid" btnClass="primary" width={308} height={48}>
+        <Button
+          type="button"
+          variation="solid"
+          btnClass="primary"
+          width={308}
+          height={48}
+          onClick={handleMoveMainPage}
+        >
           공고 둘러보기
         </Button>
       </SuccessBox>
@@ -52,14 +66,7 @@ const Applied = () => {
         </TextWrapper>
         <Casts>
           {popularRecruits?.map(
-            ({
-              recruitId,
-              thumbnail,
-              castTitle,
-              artworkName,
-              practiceLocation,
-              isScrapping,
-            }) => (
+            ({ recruitId, thumbnail, castTitle, artworkName, practiceLocation, isScrapping }) => (
               <Cast
                 key={recruitId}
                 recruitId={recruitId}

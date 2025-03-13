@@ -66,11 +66,11 @@ const ServiceInfo = () => {
                   <span>문제점들을 보완하려</span>&nbsp;많은 고민을 했어요.
                 </ContentSubTitle>
               </ItemContent>
-              <ItemImage src="https://s3-alpha-sig.figma.com/img/94fe/6580/c74315d43f2494af859e96133685ff31?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=RIbUgB7IeqzbLoC2PEAXmkrt7Wl-RsrUpR4QLEsowIbtKxGYDNPNInqRhW~ZsZqNrQJWFgiiZzyS4-lyx0h3DUmKRfpPpMzPBzUeaEMUUSAgHOQg6crXooSDbd278q6hZcsGh-tIVqRXsaDYUeeIj1ziou3i-xdD8JVklDg2QnjKMwMxN1~t2gqD-BJ8oqHEwqC3579F4IXo4kv-UrUpq~vxZAYD~6LKqZ5g0pMhnEiInYxgum-DbrbJuR4bAI88KhP5C5RXYpoYChuAtymRIVinumGcSAZ-647rr~g4uYul2rrxwpdsVpmW-wG3ehrOWtiS0D2gEfyXUClv1KN4xg__" />
+              <ItemImage src="https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg" />
             </Item>
 
             <Item>
-              <ItemImage src="https://s3-alpha-sig.figma.com/img/7ccf/cd62/67d7a579389d9d215c61d3b5d13a098f?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=AZSY7dZEu16HRRyQcDE8Bb5jVsAhBfZzN3HfUvDZqg5XQs67X0CHaPbPsDLEwPKaiCoTaXHyYd9gkan2LAkr~qrcXemKu~oGznEuV7soEL5M~P8bDas8h2MQJfefybonQ7Imw~bFhnXC22NedmOrg2jxu0MldB6~hTpO0ZNvLEnqpsZY7oVfP3SSFxycU1mPnYyUsV4m9kAGgM9oODiKK1EHzuNY3gteUKj91SpbWhPHYknDQKQcJAVKDlC5GLJYmYBCv95EAz1TDioNn7X2FL5sdT9wGzPd0d4Atn6ukFeJDYqExmzOKjjgv3gF0fdtbB7mXwPS~f0Sjtqz5N5h4A__" />
+              <ItemImage src="https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg" />
               <ItemContent>
                 <SvgPosition $top="-25%" $left="-30%">
                   <FullBulbSVG />
@@ -107,7 +107,7 @@ const ServiceInfo = () => {
             <ChardContainer>
               <Chard $marginTop={60}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/1dd7/ba01/9edadd877ae2f5f1016a39372b3d9285?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=uMjeJ5cauElboM1PcFhusXHFFX7~c4w8SLKQxdXWgGkT16AENRWu1JheGT6xXq7hgCIoAajKAwY0O8YfRxmqLaPSoC5g3RgxUPdTDCsPLp9~FTwrqhDhWlAV7KYA9ahrKRSIniqT2U2BNmWZMsTSgpQ8vqtwWykv8wIR0rFYNucTe2U~Q~yFbhkpDQlsxREhAgzRDFd5Mdvf37K83TJUSX3w5eFvH6DltUJg-vH66FclaRzEb59yAfbE1K2p6x4ECJzmT6npsqaC-J0i2lpTDci-SZjmo4jTGqNHVru15LyFLkDEYPIdfDBrJsuilrp1Q~wSDpLKoCUgjDgKRgQ8Qg__" />
+                  <CardImage src="https://s3-alpha-sig.figma.com/img/1dd7/ba01/9edadd877ae2f5f1016a39372b3d9285?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=D4rWMr4DB25I~76E3X6qO1qOcb0IMDnhssYAvxGV0bqDPl9Eiwcnr3GUYkPPFus04HPnvo8efvuD1BV1dfHVBltyYb5kgSZYL8sYIgg2Z1gyBhsSID2SyUtcg6Yqr5wt6mqsUckn-BPqBQ3W62SbBO8RV7TkKrUkeA4jwae1IArGhrhv3vqy6CSq4srfyqoxdhm49erMPv73gVvap3GM2K0sC91IcPantJKujMuPfgdMBjV7hDx9R1mlklueguAOe~ORmiAVwM9ln10XF1eDNHRQu1NShzGENYE8xMLvXfXnrtIzvu6fM7GXJmZwGIDDvb10lrfBXY1BNWex-gvpjA__" />
                   <CardType>댄스</CardType>
                 </ChardImageContainer>
                 <CardTitle>서울문화재단과 함께할 발레리나 모집합니다.</CardTitle>
@@ -119,7 +119,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={0}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/3eae/3f3b/0defa6e544ab7d12f573d8a5fbd78224?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=WDQJgcoBj9kM5tRd5Vxf6EMK~L1Ac20W42z9VjVhg9XM1XACXm6lTGZ25OVUWoJFmIX-aLdoyARLUWhW1bxHxod9xfEmuxNS-QFVRkszC5iVhvEKJDpGg~uTEkdI0cWQpFjphj6eSGtTQnZoULKReq~XXMD6gBAugeK5RxopJVN-gkKuWirRq7al9~8wkPU9PVB6zjzbWtkXTk5GF2okfgEYSf-Bcm55sK63WH1Jq7qwANOPi0SqMN5d5ufA5Z6u5LFW2J2PT5VZXpzxgarbxMwJfjtVWQAyDGT~4~HW9T2MPAqBNNJLW98-IM-JrEozcnnbqrCY~Pf5jF2xMEnl-w__" />
+                  <CardImage src="https://s3-alpha-sig.figma.com/img/3eae/3f3b/0defa6e544ab7d12f573d8a5fbd78224?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=eGqrlivt3xME~CaVqhFYnKCRvODWAwo9VqI9B6l~FIhTQp64SXzSx1WZINw-3gV3nPp0mXj493ugwkUuRaMxiLkhsRKmjlJlKU-hgACj1WgxWwiYF1znxiOmp80NoeWH35hvum037PooqtCnWmFi0xx2RDOJSAXr3MNRoWd9hhcotYFSEIAMhYwy8pMiPoWjoyTqgmmkZXctCgUyHRQ-fT4DRO4vFBSN3KEzamTzQeNWBHdzj6XgnKkiGzXI-C5Jc3L3M8gLKgrcFBrBh0umY84JGFMLNwi9i-ffCwFdSka4Gn-kGH3-cFh2WpDegOR2IywCFEO2VfURkEg1a3OFsg__" />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>연극 옥탑방 고양이의 배우를 모집합니다.</CardTitle>
@@ -131,7 +131,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={60}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/262c/ede8/b336c35af4aabda66c205e2886a4fe59?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=DXnK2Fbt1VvzM51LJc5MGYniZHWtFiqmvLjALoFQNbt31-FsbTjxM7DdzsfoBY5Gjl4gem8JKdyCOXy~kE-3te8iireAKEWBRpMN25cNExq86kuG5D0WM0VTUDx9Tafu4AYRpIQM-JCyIewzklPNojCkBTAJfGB1VxgAIs77nd4EiWo6t5YL-IE02Pd7mMcaLcvsJOpO5Uzn0r1WYA1wsx8Wx~MecjiBCuMew2xwZRB8ACMk6JLk8eYdSMYNscLA2kGi-HUKV75CjzgP5Q2uIVaaKu7jHlIXY9lZAZ0S~CpqNE3hWqbjVx9z0-CTyX7UKSOWNW7bLoOYaaEsXHrDpA__" />
+                  <CardImage src="https://s3-alpha-sig.figma.com/img/262c/ede8/b336c35af4aabda66c205e2886a4fe59?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=iEgMnBpS0ppvtL~G1niNqv-ZNzajObCckhSTdxI8Zp1dzOv3fqEt0uN-L3TVoJ5G6Z-YdOILiRKdNDJrg08ToODHwOsTf5oxlKugfxHmET1Ly3OHQYVkehYVOsJTNyStftPeK7ObI0cWLzZOSfGwmISiaY1aBLNmuFty766Cx8AhE1~J~iDSiIPfmVFqDbzorMgryAYqPRMSMXKoK4g1G9JKDd1Sox~fPuGkLQcJecjhbG4ps428tX32loxBvNAlY6T-RZfhGAORQlzfzaUPcGgZFTPB3pI9S7nZVgDWQ7H7BDqNsfMKRNDwv35LqRoZalR1EN0F0ePOHsi9x0aC3Q__" />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>배우를 찾습니다.</CardTitle>
@@ -143,7 +143,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={118}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/5c71/4597/ec579622c6bb36d5c7270b2f69325607?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=boMDIwHkozigeKx5ffF0ZSmV8Rmga2tll-WUxdmV13B4pSiVa~FNqCDgu6nRElwH2yJgjv-Ew3KhcB1NH2vPFzryrDmXDLMC~INenjGHCm~xcsQOnV4rmxaM3NjjK0PDJMITF64ugkRBdaNpyVkkTzQdd0BsmOjCi65LOOo69yvoik4DsgN5XL-IEEntFig0zv-0bnxdkmWZnQJ59D2OyacmrD40-qF-vaszqcLBmB04ydFfHlRgkZ-tlBnRc13s29K18ek8U7ipJLYuPMQ2ncgoFZMoERD0OUE0GvlA~Lw-pMUIoTtbbS4yK~JieLDmgF-JP6mOw43FaYPm9OMy4Q__" />
+                  <CardImage src="https://s3-alpha-sig.figma.com/img/5c71/4597/ec579622c6bb36d5c7270b2f69325607?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=mLjJedUJnc4FWBlpJv0LgCAXrhSyYHfgvI3i8U~7j42GzFGxNWHiCR6f5jTDVTtP-5bV8pnp4otWuGijfamTR8Xz3nqzdWKHGAyE3fpv8HBbTz18-PeZKAqiMLvdBfLrnP~WQbXcqiUe8U6aAfGP4JsQ1qvPxo1OGwNx0CZMKiFkAOr7LinrojwE9nRYT6O25FlzQqSu00zYbOly0j-UEjPNja2YMc48rMbxaMzhk~rMYo5Ccc9~95k-2qlJsmxQOeEITO7R7-nUKJDdFsYFwk0-uPO-b8YHUvqDRAfNoo9J809kGLph63m5zcaIkXOioBnp4yk~cdCFoOb9xd~fAA__" />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>함께갈 배우를 애타게 찾습니다.</CardTitle>
@@ -155,7 +155,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={60}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/d789/03e3/7e6bd40c5bbdaed6001a43918a96d91a?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=oxNBn8gVIBCkVdVhJxGl0b0LOxHP44oU0OVV~QhtsxSZ6VDaxHA6TC9wR8iEF8r1xcnOtRBvNKwMOnYPPLu7Prws58PVONj1DoKu~n0lGONNJlr8e1~Yq8yLl4~zbwRQfxnqVZ7OoRcvn9Cuk8y-iLEet~mJPJt-R0iGnSAaz6pZrHeBH-2P4rFwO0AekOcqekhhMRdciPv4isQ2r~QASjwAcTzlv2~UCsJmMfDdTa6TA~c3APXJANWOMzJ3n~Vm3zy5095WDTYw1gnSpx8I7WSeZB35ADKpo9PE0g1tjA1JPGw7DUsnv2s3oGVmOADlU-7dRSqfYvdsy~6B92KPzw__" />
+                  <CardImage src="https://s3-alpha-sig.figma.com/img/d789/03e3/7e6bd40c5bbdaed6001a43918a96d91a?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=mmXwt6y55V2lYb3Hd7JySCb5Gt540RRhkPu-6pNBpjmia1FMOx5A81r4~WK5q4BMmS7uiw9h3PvzfMC2mCbeO3eDdB-BNpP7pEZ3KNZp1k38V0lORmjRIF3gXwRSJp7i6OAnjO161SknwAlu4IZHVKtpuI0tlZWYYkClj418J5pZ-ngdkBpUkSdlVJXJkLNR3DnnUbwkL~FIHu3AJeNXP7BDo1M-VE1SYuTZkKeRSnaImnAew4ZbRBL4GFBBTxrmCDwfVijdqpBjlFJH7MDmCQKdqkvQ6ij6XEDfw2BVtOS9ziUNUXhlWKjZqzAVYISW02tAin8O-eyHfGaaN8av7w__" />
                   <CardType>뮤지컬</CardType>
                 </ChardImageContainer>
                 <CardTitle>랑데부에 출연하실 전문 배우를 모집합니다.</CardTitle>
@@ -167,7 +167,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={40}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/c28e/18a1/85bd82b9f9cbc21841f731a460d02fe9?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Tf7Bq31-sPEE03Rx9TL48ZSd6XD6pjfHmSb7atyvZXzlw8j1Mf1rFYzEQf89PzSYbM66SNpMHHyNh5lRLOta8aKuRN1dDcrdhdWrG2t6OUO4pyYVLUgGV3kJQg6R7Xu4qkR-h4U-6Lu9zjhiXRUkJtm~-mXIyoN7UhN2BUnGv0c4jUKXezvtkkFWSzBjv~Skof2tHIr~pKKywkjp5v4oYe-qOsq-4AvionopUIVIVhY9PQ8TzFFFHrPKK3gAateQSfbcOr5PY6zQu9oP-~brOOALDvtE45Mo6XYR~EwWPD20HMaVpJXTX8~OmGjYqfy1WEJRbC-cwPSNwE2nGnbRww__" />
+                  <CardImage src="https://s3-alpha-sig.figma.com/img/c28e/18a1/85bd82b9f9cbc21841f731a460d02fe9?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=AZjhMNuzH2ihw9ozaJtRQzAUx9OC3-aGkXRiNpDEunyS18kYziu2Q~O-ug45e9FiQezj5ijIhV1EJnPs8Lx4jDydL1dTpub8KTP5UAyGsGR6Ld0Jcb8J99xmUQo2K224ExARpo6lRNzb7nnyuIJFpgO2sl8a7V3CstTDhL3IPPvKN9Uf38bJLMGS18EZw2nbVBESi2Fb020-7JBzuvDjfbf08eOkewz7~gBJi7ZpMxxi9kJQYuyaxkrDKQtp7eFReIjkIPViIMsHW3VHNW1dqiSr3RQ4e~t6nvFztCT3a5uPf363X68wi-z88Uh5-x~LsSMv3VfP1zBDPS-Ud-pZeg__" />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>열정적인 배우분을 모집합니다.</CardTitle>
@@ -185,7 +185,7 @@ const ServiceInfo = () => {
       <Section
         $height={580}
         $imageURL={
-          'https://s3-alpha-sig.figma.com/img/14b0/8390/936d40d7b92750887dccffb7f2c6ff25?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=a5TIklDusPwRhnJvIKxlvQ0Ue9VLK0XdZpNmp~cWRnkl2G~XH88x-0vvktfnryWQRcqiNL6sZcFdJRS5Z6-XBUDN2qgYt2TWn3wHLQZe7emfRd5L6IY~70mAP0fBD8~HXuRxo3KqKGhns2--G8LP4VyRCuHUHaVGitZxbtY20o75zPdmZfYJiDBdFtaXLI0MVie1GI-4TW4J60xVG4BtMxt1d0BkqN9ZVHhmT-bsARbx3Ryi48p3jMfi0FuSBfOKl-a9KghQ-N7jT7ueh7FFw-h-r4kZWSVUwxE3UO3Dnzid9pjfNmuLAu7GV-VXxCNdEIC~GF~Uuo39cOipbCkf6A__'
+          'https://s3-alpha-sig.figma.com/img/14b0/8390/936d40d7b92750887dccffb7f2c6ff25?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=HCmnweJ0AAoj53znZQnVBsMsSFkEIGjwSTd2JHeM5vduoXvjN9jK1FsjeTXsEPVU8OaFthUDK9OCDhfH4AWSdqZHmwuRwcUALbp9MpK0SEHPo~3MKvc3SAic3ajv9s9zyKTklSF0iSvzCYtLzHoPid1U1AujaKfllfoZRrUonZzaJaXTe8NNK-x02VYMBkDrWoeM4w~F-xBSyOGWXjJeKCznzLrEFWtYEOZ6dZmgoznL1HIOpLDELkjD3IkyFPbNBU8aIpoqrlvfGV3wHtKRn8GO47CDAXLJZGdkKIiFPE0jbk08URZsIFDdaaQB-kdZB3Zf62UbKOLtyDtmhtx9Mg__'
         }
       >
         <Content $gap={36} $paddingTop={120}>
@@ -199,7 +199,7 @@ const ServiceInfo = () => {
             btnClass="primary"
             width={340}
             height={48}
-            onClick={handleRoute}
+            onClick={() => handleRoute()}
           >
             회원가입 후 이용하기
           </Button>
