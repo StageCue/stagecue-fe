@@ -39,11 +39,12 @@ export const requestCasts = async (data: ReqCastsParams) => {
     daysOfWeek = '0',
     query = '',
     locations = '',
+    feeRange = '0-50000',
   } = data;
 
   const res = await request({
     method: 'get',
-    endpoint: `recruits?limit=${limit}&offset=${offset}&orderBy=${orderBy}&category=${category}&daysOfWeek=${daysOfWeek}&query=${query}&locations=${locations}`,
+    endpoint: `recruits?limit=${limit}&offset=${offset}&orderBy=${orderBy}&category=${category}&daysOfWeek=${daysOfWeek}&feeRange=${feeRange}&query=${query}&locations=${locations}`,
   });
   return res;
 };

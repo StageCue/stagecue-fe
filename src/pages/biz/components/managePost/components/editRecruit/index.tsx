@@ -30,6 +30,7 @@ import ModalPortal from '@/components/modal/portal';
 import Overlay from '@/components/modal/overlay';
 import Datepicker from '@/components/datepicker';
 import DeleteModal from '../deleteModal';
+import daysArrayToDecimal from '@/utils/daysArrayToDecimal';
 
 interface EditRecruitInputs {
   title: string;
@@ -365,11 +366,6 @@ const EditRecruit = () => {
       ?.map((day, index) => (day === '1' ? daysOfWeek[index] : null))
       .filter(Boolean)
       .join(', ');
-  };
-
-  const daysArrayToDecimal = (daysArray: string[]): number => {
-    const binaryString = daysArray.join('');
-    return parseInt(binaryString, 2);
   };
 
   const handleApplyDayClick = (days?: string[]) => {
