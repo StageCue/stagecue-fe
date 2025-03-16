@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ProfileInput } from '../../profileForm';
 
 interface SubmitModalProps {
-  onClose: () => void;
+  onClose: (data: ProfileInput) => void;
   onConfirm: (data: ProfileInput) => void;
   handleSubmit: UseFormHandleSubmit<ProfileInput, undefined>;
 }
@@ -24,7 +24,7 @@ const SubmitModal = ({ onClose, onConfirm, handleSubmit }: SubmitModalProps) => 
               type="submit"
               variation="outlined"
               btnClass="primary"
-              onClick={() => onClose()}
+              onClick={handleSubmit(onClose)}
               width={146}
               height={48}
             >

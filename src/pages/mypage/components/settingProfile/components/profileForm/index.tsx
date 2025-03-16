@@ -86,6 +86,7 @@ const ProfileForm = () => {
 
   const onDropImages = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
+
     if (file) {
       const url = convertFileToURL(file);
       const id = generateId();
@@ -164,10 +165,6 @@ const ProfileForm = () => {
     'endDate',
   ]);
 
-  const parseImagesUrl = (images: { url: string }[]) => {
-    return images.map(({ url }) => url);
-  };
-
   const addIdtoExps = (expArray: ExpInput[]) => {
     const withIdExpArray = expArray.map((exp: ExpInput) => {
       const id = generateId();
@@ -183,16 +180,16 @@ const ProfileForm = () => {
     const res = await requestProfileDetail(id);
 
     setDetail(res);
-    setValue('title', res.title);
-    setValue('birthday', res.birthday);
-    setValue('weight', res.weight);
-    setValue('height', res.height);
-    setValue('introduce', res.introduce);
-    setValue('experiences', addIdtoExps(res.experiences));
-    setValue('thumbnail', res.thumbnail);
-    setValue('images', parseImagesUrl(res.images));
+    setValue('title', res?.title);
+    setValue('birthday', res?.birthday);
+    setValue('weight', res?.weight);
+    setValue('height', res?.height);
+    setValue('introduce', res?.introduction);
+    setValue('experiences', addIdtoExps(res?.experiences));
+    setValue('thumbnail', res?.thumbnail);
+    setValue('images', res?.images);
 
-    const currentImages = parseImagesUrl(res.images);
+    const currentImages: string[] = res?.images;
 
     const currentImageArray = currentImages.map(url => {
       const id = generateId();
@@ -202,6 +199,7 @@ const ProfileForm = () => {
     const currentFileArray = currentImageArray.map(({ id }) => {
       return { id, file: null };
     });
+
     setImageUrlArray(currentImageArray);
     setImageFileArray(currentFileArray);
   };
@@ -276,7 +274,7 @@ const ProfileForm = () => {
           experiences: sanitizedExperiences,
           height,
           weight,
-          introduce,
+          introduction: introduce,
           title,
           isDefault: true,
           images: imageUrls!,
@@ -294,8 +292,36 @@ const ProfileForm = () => {
     }
   };
 
-  const handleCloseClick = async () => {
-    setIsSubmitModalOpen(false);
+  const handleCloseClick = async (data: ProfileInput) => {
+    try {
+      setIsLoading(true);
+      const { experiences, height, weight, introduce, title } = data;
+      const sanitizedExperiences = experiences.map(({ id, ...rest }) => (id ? rest : rest));
+      setIsSubmitModalOpen(false);
+      const imageUrls = await requestUploadImageFiles();
+      const thumbnailUrl = await requestUploadThumbnailFile();
+
+      await requestSaveProfile(
+        {
+          experiences: sanitizedExperiences,
+          height,
+          weight,
+          introduction: introduce,
+          title,
+          isDefault: false,
+          images: imageUrls!,
+          thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
+        },
+        id!
+      );
+
+      setIsLoading(false);
+      navigate(`/mypage/profiles/${id}`);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -475,7 +501,7 @@ const ProfileForm = () => {
                         variation="outlined"
                         btnClass="assistive"
                         width={90}
-                        height={32}
+                        height={42}
                         padding="7px 14px"
                         fontSize={13}
                         lineHeight={138.5}
@@ -497,7 +523,7 @@ const ProfileForm = () => {
                         variation="outlined"
                         btnClass="assistive"
                         width={90}
-                        height={32}
+                        height={42}
                         padding="7px 14px"
                         fontSize={13}
                         lineHeight={138.5}
@@ -1041,9 +1067,9 @@ const ContactDataRow = styled.div`
 `;
 
 const ContactValueWrapper = styled.div`
-  display: flex;
+  /* display: flex;
   justify-content: start;
-  gap: 12px;
+  gap: 12px; */
 `;
 
 const GuideText = styled.div`

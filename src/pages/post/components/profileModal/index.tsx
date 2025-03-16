@@ -72,8 +72,8 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
             <ImagesWrapper>
               <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
               <Images>
-                {detail?.images.map(({ url }) => (
-                  <Image src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+                {detail?.images.map((url, index) => (
+                  <Image key={index} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
                 ))}
               </Images>
             </ImagesWrapper>
@@ -107,15 +107,15 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
             <Information>
               <InformationTitle>경력 (총 개월)</InformationTitle>
               <DataWrapper>
-                {detail?.experiences.map(exp => (
-                  <ExpRow>
+                {detail?.experiences?.map(exp => (
+                  <ExpRow key={exp?.artworkName + exp?.artworkPart}>
                     <RoleAndPeriod>
-                      <Role>{exp.artworkPart}</Role>
+                      <Role>{exp?.artworkPart}</Role>
                       <Period>
-                        {exp.startDate} - {exp.endDate}
+                        {exp?.startDate} - {exp?.endDate}
                       </Period>
                     </RoleAndPeriod>
-                    <ArtWork>{exp.artworkName}</ArtWork>
+                    <ArtWork>{exp?.artworkName}</ArtWork>
                   </ExpRow>
                 ))}
               </DataWrapper>
@@ -123,7 +123,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
             <Information>
               <InformationTitle>자기 소개</InformationTitle>
               <DataWrapper>
-                <Introduce>{detail?.introduce}</Introduce>
+                <Introduce>{detail?.introduction}</Introduce>
               </DataWrapper>
             </Information>
           </Body>

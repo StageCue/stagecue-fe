@@ -21,6 +21,7 @@ const ResetPassword = () => {
   const {
     register,
     handleSubmit,
+    watch: changedWatch,
     getValues,
     formState: { errors, dirtyFields },
   } = useForm<ResetPasswordInputs>({ mode: 'onBlur' });
@@ -28,6 +29,7 @@ const ResetPassword = () => {
   const {
     register: passwordRegister,
     handleSubmit: passwordHandleSubmit,
+    watch,
     formState: { errors: currentPasswordErrors, isDirty: isDirtyCurrentPassword },
     setError: setCurrentPasswordError,
   } = useForm<CurrentPasswordInput>();
@@ -35,6 +37,11 @@ const ResetPassword = () => {
   const [isVerifiedCurrentPassword, setIsVerifiedCurrentPassword] = useState(false);
   const [updateToken, setUpdateToken] = useState('');
   const [isUpdatedModal, setIsUpdatedModal] = useState(false);
+
+  const [password] = watch(['password']);
+  const [newPassword, confirmPassword] = changedWatch(['newPassword', 'confirmPassword']);
+
+  console.log(password, newPassword, confirmPassword);
 
   const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
     const res = await requestChangePassword(data, updateToken);
@@ -156,7 +163,21 @@ const ResetPassword = () => {
             </WithMessageWrapper>
           </Inputs>
         )}
-        <Button variation="solid" btnClass="primary" type="submit" width={340}>
+        <Button
+          variation="solid"
+          btnClass="primary"
+          type="submit"
+          width={340}
+          disabled={
+            isVerifiedCurrentPassword
+              ? newPassword !== confirmPassword ||
+                !newPassword?.length ||
+                !confirmPassword?.length ||
+                !!errors.newPassword ||
+                !!errors.confirmPassword
+              : !password?.length
+          }
+        >
           {isVerifiedCurrentPassword ? '변경완료' : '다음단계'}
         </Button>
       </Form>

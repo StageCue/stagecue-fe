@@ -140,7 +140,7 @@ const ProfileModal = ({
             <Information>
               <InformationTitle>자기 소개</InformationTitle>
               <DataWrapper>
-                <Introduce>{detail?.introduce}</Introduce>
+                <Introduce>{detail?.introduction}</Introduce>
               </DataWrapper>
             </Information>
           </Body>
