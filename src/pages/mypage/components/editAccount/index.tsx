@@ -7,6 +7,8 @@ import {
   requestVerifyPhoneToken,
 } from '@/api/users';
 import Button from '@/components/buttons/button';
+import Overlay from '@/components/modal/overlay';
+import ModalPortal from '@/components/modal/portal';
 import useSessionStore from '@/store/session';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -26,6 +28,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   const [updateEmailToken, setUpdateEmailToken] = useState('');
   const [isVerifiedCode, setIsVerifiedCode] = useState(false);
   const [isErrorEmailVerify, setIsErrorEmailVerify] = useState(false);
+  const [isChangeConfirmed, setIsChangeConfirmed] = useState(false);
 
   const [isChangeNumber, setIsChangeNumber] = useState(false);
   const [isPhoneCodeSent, setIsPhoneCodeSent] = useState(false);
@@ -90,7 +93,12 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleSendEmailCodeClick = async () => {
-    const { requestToken } = await requestChangeEmailToken(emailValue);
+    const { requestToken, error } = await requestChangeEmailToken(emailValue);
+
+    if (error) {
+      alert(error);
+      return;
+    }
 
     if (requestToken) {
       setRequestEmailToken(requestToken);
@@ -100,7 +108,12 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleSendPhoneCodeClick = async () => {
-    const { requestToken } = await requestChangePhoneToken(phoneNumberValue);
+    const { requestToken, error } = await requestChangePhoneToken(phoneNumberValue);
+
+    if (error) {
+      alert(error);
+      return;
+    }
 
     if (requestToken) {
       setRequestPhoneToken(requestToken);
@@ -123,7 +136,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleVerifyPhoneCodeClick = async () => {
-    const res = await requestVerifyPhoneToken(requestPhoneToken, codeValue);
+    const res = await requestVerifyPhoneToken(requestPhoneToken, phoneCodeValue);
 
     if (res.updateToken) {
       setUpdatePhoneToken(res.updateToken);
@@ -139,7 +152,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
     const res = await requestChangeEmail(updateEmailToken);
 
     if (!res?.error) {
-      handleLogoutClick();
+      setIsChangeConfirmed(true);
     }
   };
 
@@ -147,7 +160,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
     const res = await requestChangePhone(updatePhoneToken);
 
     if (!res?.error) {
-      handleLogoutClick();
+      setIsChangeConfirmed(true);
     }
   };
 
@@ -160,6 +173,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
     clearUserSessionStorage();
+    setIsChangeConfirmed(false);
     navigate('/');
   };
 
@@ -409,6 +423,37 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
           </Form>
         </EditPhonNumberWrapper>
       )}
+      {isChangeConfirmed && (
+        <ModalPortal>
+          <Overlay>
+            <ChangeConfirmedModal>
+              <ModalContent>
+                <ModalTitle>
+                  {selectedData === '이메일' ? '이메일 변경 완료' : ' 휴대폰번호 변경 완료'}
+                </ModalTitle>
+                <ModalSubTitle>
+                  <div>
+                    {selectedData === '이메일'
+                      ? '이메일 변경이 완료되었습니다.'
+                      : '휴대폰번호 변경이 완료되었습니다.'}{' '}
+                  </div>
+                  <div>재로그인후 이용해주세요.</div>
+                </ModalSubTitle>
+              </ModalContent>
+              <Button
+                type="button"
+                variation="solid"
+                btnClass="primary"
+                width={300}
+                height={48}
+                onClick={handleLogoutClick}
+              >
+                로그인 화면으로 이동
+              </Button>
+            </ChangeConfirmedModal>
+          </Overlay>
+        </ModalPortal>
+      )}
     </EditAccountContainer>
   );
 };
@@ -585,4 +630,47 @@ const Message = styled.div<{ $isSuccess: boolean }>`
   letter-spacing: 1.94%;
   line-height: 138.5%;
   color: ${({ $isSuccess }) => ($isSuccess ? '#00bf40;' : '#FF4242')};
+`;
+
+const ChangeConfirmedModal = styled.div`
+  width: 340px;
+  height: fit-content;
+  min-height: 200px;
+  padding: 24px 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-radius: 16px;
+
+  background: var(--Background-Normal-Normal, #ffffffff);
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.12);
+`;
+
+const ModalTitle = styled.div`
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 140%;
+  letter-spacing: -1.2%;
+  text-align: center;
+  vertical-align: middle;
+  color: #171719ff;
+`;
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const ModalSubTitle = styled.div`
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 160%;
+  letter-spacing: 0.96%;
+  text-align: center;
+  vertical-align: middle;
+  color: #2e2f33e0;
 `;

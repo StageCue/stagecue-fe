@@ -23,7 +23,7 @@ export interface ProfileDetailData {
   height: number;
   weight: number;
   images: { url: string }[];
-  introduce: string;
+  introduction: string;
   isDefault: boolean;
   thumbnail: string;
   title: string;
@@ -102,7 +102,7 @@ const ProfileDetail = () => {
           <ImagesWrapper>
             <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
             <Images>
-              {detail?.images.map(({ url }, index) => (
+              {detail?.images?.map((url, index) => (
                 <Image key={index} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
               ))}
             </Images>
@@ -153,7 +153,7 @@ const ProfileDetail = () => {
           <Information>
             <InformationTitle>자기 소개</InformationTitle>
             <DataWrapper>
-              <Introduce>{detail?.introduce}</Introduce>
+              <Introduce>{detail?.introduction}</Introduce>
             </DataWrapper>
           </Information>
         </Body>
