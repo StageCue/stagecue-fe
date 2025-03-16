@@ -41,8 +41,6 @@ const ResetPassword = () => {
   const [password] = watch(['password']);
   const [newPassword, confirmPassword] = changedWatch(['newPassword', 'confirmPassword']);
 
-  console.log(password, newPassword, confirmPassword);
-
   const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
     const res = await requestChangePassword(data, updateToken);
 
