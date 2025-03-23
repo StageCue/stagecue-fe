@@ -1135,21 +1135,6 @@ const DropzoneText = styled.div`
 
 const ThumbnailInput = styled.input``;
 
-// const ImageDropzone = styled.div`
-//   width: 920px;
-//   height: 54px;
-//   border: 1px dashed #b81716;
-//   border-radius: 12px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   font-size: 15;
-//   font-weight: var(--font-medium);
-//   line-height: 146.7%;
-//   letter-spacing: 0.96%;
-//   color: #47484b;
-// `;
-
 const ImageInput = styled.input``;
 
 const ImageWrapper = styled.div`

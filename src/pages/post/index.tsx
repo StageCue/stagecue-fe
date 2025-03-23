@@ -11,13 +11,14 @@ import Button from '@components/buttons/button';
 import { requestCasts } from '@/api/cast';
 import Cast from '@/pages/home/components/cast';
 import RangeInput from './components/rangeInput';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import daysArrayToDecimal from '@/utils/daysArrayToDecimal';
 
 type genreType = '연극' | '뮤지컬' | '댄스';
 type zoneType = '전체지역' | '서울' | '경기' | '인천' | '강원' | '경상' | '전라' | '제주' | '충청';
 
 const List = () => {
+  const queryClient = useQueryClient();
   const popupMenuRef = useRef<HTMLDivElement | null>(null);
   const genreButtonRef = useRef<HTMLDivElement | null>(null);
   const zoneButtonRef = useRef<HTMLDivElement | null>(null);
@@ -28,18 +29,18 @@ const List = () => {
 
   const [selectedGenre, setSelectedGenre] = useState<genreType>('연극');
   const [selectedZone, setSelectedZone] = useState(['전체지역']);
-  const [selectedDayPicker, setSelectedDayPicker] = useState<string>('주말');
+  const [selectedDayPicker, setSelectedDayPicker] = useState<string>('전체요일');
 
-  const [practiceDays, setPracticeDays] = useState(['0', '0', '0', '0', '0', '1', '1']);
+  const [practiceDays, setPracticeDays] = useState(['1', '1', '1', '1', '1', '1', '1']);
 
   const [isAppliedZone, setIsAppliedZone] = useState<boolean>(false);
   const [isAppliedDay, setIsAppliedDay] = useState<boolean>(false);
-  const [isAppliedCost, setIsApplicatedCost] = useState<boolean>(false);
+  const [isAppliedCost, setIsAppliedCost] = useState<boolean>(false);
 
   const [appliedZone, setAppliedZone] = useState<string[]>(['전체지역']);
-  const [appliedDay, setAppliedDay] = useState<string[]>(['0', '0', '0', '0', '0', '1', '1']);
+  const [appliedDay, setAppliedDay] = useState<string[]>(['1', '1', '1', '1', '1', '1', '1']);
   const [appliedCost, setAppliedCost] = useState<string>('');
-  const [minCost, setMinCost] = useState<string>('0');
+  const [minCost, setMinCost] = useState<string>('10000');
   const [maxCost, setMaxCost] = useState<string>('500000');
 
   const [isGenreMenuShowing, setIsGenreMenuShowing] = useState<boolean>(false);
@@ -134,8 +135,8 @@ const List = () => {
   };
 
   const handleResetDayClick = () => {
-    setIsAppliedDay(false);
-    setPracticeDays(['0', '0', '0', '0', '0', '1', '1']);
+    setIsAppliedDay(true);
+    setPracticeDays(['1', '1', '1', '1', '1', '1', '1']);
   };
 
   const handleApplyZoneClick = () => {
@@ -211,6 +212,7 @@ const List = () => {
   const handleCostApplyClick = () => {
     setAppliedCost(`${minCost}-${maxCost}`);
     setIsCostFilterShowing(false);
+    setIsAppliedCost(true);
   };
 
   useEffect(() => {
@@ -219,15 +221,28 @@ const List = () => {
     }
   }, [practiceDays]);
 
+  const handleResetFilterClick = async () => {
+    setMinCost('10000');
+    setMaxCost('500000');
+    setPracticeDays(['1', '1', '1', '1', '1', '1', '1']);
+    setAppliedDay(['1', '1', '1', '1', '1', '1', '1']);
+    setAppliedZone(['전체지역']);
+    setAppliedCost('');
+    setSelectedZone(['전체지역']);
+    setIsAppliedDay(false);
+    setIsAppliedZone(false);
+    setIsAppliedCost(false);
+  };
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: [
       'recruits',
       {
         appliedDay,
         appliedZone,
+        appliedCost,
         selectedGenre,
         currentOrderBy,
-        appliedCost,
       },
     ],
     queryFn: ({ pageParam = 0 }) =>
@@ -266,17 +281,6 @@ const List = () => {
       case '댄스':
         return 'DANCE';
     }
-  };
-
-  const handleResetFilterClick = () => {
-    setPracticeDays(['0', '0', '0', '0', '0', '1', '1']);
-    setAppliedDay(['0', '0', '0', '0', '0', '1', '1']);
-    setAppliedZone(['전체지역']);
-    setSelectedZone(['전체지역']);
-    setIsAppliedDay(false);
-    setIsAppliedZone(false);
-    setMinCost('0');
-    setMaxCost('500000');
   };
 
   const handleNewestClick = () => {

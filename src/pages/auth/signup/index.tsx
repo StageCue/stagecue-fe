@@ -26,7 +26,10 @@ const Signup = () => {
   const [registerToken, setRegisterToken] = useState('');
 
   const datepickerRef = useRef<DatePicker | null>(null);
-  const [date, setDate] = useState<Date>(new Date(Date.now()));
+  const oneDayAgo = new Date();
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+  oneDayAgo.setHours(0, 0, 0, 0);
+  const [date, setDate] = useState<Date>(oneDayAgo);
 
   const handleDateChange = (date: Date) => {
     setDate(date);
@@ -54,7 +57,15 @@ const Signup = () => {
     phoneNumber: '',
     password: '',
     certificated: false,
-    birthday: '',
+    birthday: `${date
+      ?.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/\./g, '-')
+      .replace(/\s/g, '')
+      .replace(/-$/, '')}`,
     gender: '',
     confirmPassword: '',
     ageCheck: false,
@@ -86,6 +97,7 @@ const Signup = () => {
     ageCheckValue,
     agreeServicePolicyValue,
     agreePrivatePolicyValue,
+    birthdayValue,
   ] = watch([
     'email',
     'name',
@@ -112,7 +124,8 @@ const Signup = () => {
       confirmPasswordValue &&
       ageCheckValue &&
       agreeServicePolicyValue &&
-      agreePrivatePolicyValue
+      agreePrivatePolicyValue &&
+      birthdayValue
     );
   }, [
     emailValue,
@@ -125,6 +138,7 @@ const Signup = () => {
     ageCheckValue,
     agreeServicePolicyValue,
     agreePrivatePolicyValue,
+    birthdayValue,
   ]);
 
   const onSubmitSignup = async (data: SignupInputs) => {
@@ -135,7 +149,17 @@ const Signup = () => {
       email,
       cell: phoneNumber,
       password,
-      birthday,
+      birthday:
+        birthday ??
+        `${oneDayAgo
+          ?.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+          .replace(/\./g, '-')
+          .replace(/\s/g, '')
+          .replace(/-$/, '')}`,
       gender,
       terms: true,
       userType,
@@ -414,11 +438,13 @@ const Signup = () => {
               <Controller
                 name="birthday"
                 control={control}
+                rules={{ required: true }}
                 defaultValue={date?.toLocaleDateString()}
                 render={({ field }) => (
                   <Datepicker
                     ref={datepickerRef}
                     selectedDate={date!}
+                    maxDate={oneDayAgo}
                     onChangeDate={(date: Date | null) => {
                       handleDateChange(date!);
                       field.onChange(

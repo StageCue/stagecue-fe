@@ -665,7 +665,7 @@ const ProfileForm = () => {
                               required: true,
                             })}
                             placeholder="YYYY.MM"
-                            type="text"
+                            type="month"
                           />
                           ~
                           <ExpDateInput
@@ -673,7 +673,7 @@ const ProfileForm = () => {
                               required: true,
                             })}
                             placeholder="YYYY.MM"
-                            type="text"
+                            type="month"
                           />
                         </DataRow>
                       </DataRows>
@@ -793,13 +793,13 @@ const ProfileForm = () => {
                         <ExpDateInput
                           {...expRegister('startDate', { required: true })}
                           placeholder="YYYY.MM"
-                          type="text"
+                          type="month"
                         />
                         ~
                         <ExpDateInput
                           {...expRegister('endDate', { required: true })}
                           placeholder="YYYY.MM"
-                          type="text"
+                          type="month"
                         />
                       </DataRow>
                     </DataRows>
@@ -843,7 +843,7 @@ const ProfileForm = () => {
             <InfoTitleWrapper>
               <InfoTitle>이미지</InfoTitle>
             </InfoTitleWrapper>
-            <ImageDropzone {...getImageRootProps()}>
+            {/* <ImageDropzone {...getImageRootProps()}>
               파일을 선택하거나 여기다 끌어다 놓으세요.
               <ImageInput {...getImageInputProps()} />
             </ImageDropzone>
@@ -858,6 +858,29 @@ const ProfileForm = () => {
                   ) : (
                     <Image key={url + id} src={url} />
                   )}
+                </ImageWrapper>
+              ))}
+            </ImagesBox> */}
+
+            <ImagesBox {...getImageRootProps()}>
+              {!imageUrlArray?.length && (
+                <ImagesBoxDefault>
+                  <ImageSVG />
+                  <DropzoneText>{`파일을 선택하거나 \n 여기로 끌어다 놓으세요`}</DropzoneText>
+                </ImagesBoxDefault>
+              )}
+              <ImageInput {...getImageInputProps()} />
+              {imageUrlArray?.map(({ url, id }) => (
+                <ImageWrapper key={id}>
+                  <CloseIconWrapper
+                    onClick={e => {
+                      e?.stopPropagation();
+                      handleDeleteImageClick(id);
+                    }}
+                  >
+                    <CloseSVG />
+                  </CloseIconWrapper>
+                  <Image key={url + id} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
                 </ImageWrapper>
               ))}
             </ImagesBox>
@@ -1148,10 +1171,20 @@ const ImagesBox = styled.div`
   width: 100%;
   height: 310px;
   padding: 12px 10px;
-  background-color: #f0f6ff;
+  background-color: #b817160f;
   border-radius: 12px;
   display: flex;
   gap: 12px;
+`;
+
+const ImagesBoxDefault = styled.div`
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const BodyInfoInput = styled.input`
@@ -1287,21 +1320,6 @@ const DropzoneText = styled.div`
 `;
 
 const ThumbnailInput = styled.input``;
-
-const ImageDropzone = styled.div`
-  width: 920px;
-  height: 54px;
-  border: 1px dashed #b81716;
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 15;
-  font-weight: var(--font-medium);
-  line-height: 146.7%;
-  letter-spacing: 0.96%;
-  color: #47484b;
-`;
 
 const ImageInput = styled.input``;
 

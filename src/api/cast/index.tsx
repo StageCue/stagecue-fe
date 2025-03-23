@@ -39,7 +39,7 @@ export const requestCasts = async (data: ReqCastsParams) => {
     daysOfWeek = '0',
     query = '',
     locations = '',
-    feeRange = '0-50000',
+    feeRange = '10000-50000',
   } = data;
 
   const res = await request({

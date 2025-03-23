@@ -16,7 +16,7 @@ interface DatepickerProps {
 }
 
 const Datepicker = forwardRef<DatePicker, DatepickerProps>(
-  ({ selectedDate, onChangeDate, pickerText }, ref) => {
+  ({ selectedDate, onChangeDate, pickerText, maxDate }, ref) => {
     const handleApplyClick = () => {
       if (ref && 'current' in ref && ref.current) {
         ref.current.setOpen(false);
@@ -31,6 +31,7 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
       <DatePickerContainer>
         <DatePicker
           ref={ref}
+          maxDate={maxDate}
           dateFormat="yyyy.MM.dd"
           selected={selectedDate}
           onChange={onChangeDate}

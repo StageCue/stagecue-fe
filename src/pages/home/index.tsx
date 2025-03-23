@@ -27,7 +27,7 @@ const Home = () => {
       limit: '5',
       offset: '0',
       orderBy: 'popular',
-      locations: '전체지역',
+      locations: '',
     });
 
     setRecommendRecruits(
