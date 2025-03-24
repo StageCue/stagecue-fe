@@ -1,26 +1,25 @@
-import styled from "styled-components";
-import Button from "../../components/buttons/button";
-import { useState } from "react";
-import { UserType } from "../../types/user";
-import { useNavigate } from "react-router-dom";
-import { requestChangeUserType } from "@/api/users";
+import styled from 'styled-components';
+import Button from '../../components/buttons/button';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { requestChangeUserType } from '@/api/users';
+import useSessionStore from '@/store/session';
 
 const Welcome = () => {
   const navigate = useNavigate();
+  const sessionStore = useSessionStore();
 
-  const [selectedUserType, setSelectedUserType] = useState<UserType>();
+  const [selectedUserType, setSelectedUserType] = useState<'PERFORMER' | 'TROUPE' | null>(null);
 
-  const handleUserTypeClick = (type: UserType) => {
+  const handleUserTypeClick = (type: 'PERFORMER' | 'TROUPE' | null) => {
     setSelectedUserType(type);
   };
 
   const handleNextClick = async () => {
     if (selectedUserType) {
-      // const res =
       await requestChangeUserType({ userType: selectedUserType });
-      // if (res.status === 0) {
-      navigate("/");
-      // }
+      sessionStore.setUserType(selectedUserType);
+      navigate('/');
     }
   };
 
@@ -32,20 +31,20 @@ const Welcome = () => {
       </TitleWrapper>
       <SelectWrapper>
         <UserTypeBox
-          onClick={() => handleUserTypeClick("PERFORMER")}
-          $isSelected={selectedUserType === "PERFORMER"}
+          onClick={() => handleUserTypeClick('PERFORMER')}
+          $isSelected={selectedUserType === 'PERFORMER'}
         >
-          <Image $isSelected={selectedUserType === "PERFORMER"} />
+          <Image $isSelected={selectedUserType === 'PERFORMER'} />
           <TextWrapper>
             <Type>단원</Type>
             <Description>나의 연기를 보여주고 싶어요</Description>
           </TextWrapper>
         </UserTypeBox>
         <UserTypeBox
-          onClick={() => handleUserTypeClick("TROUPE")}
-          $isSelected={selectedUserType === "TROUPE"}
+          onClick={() => handleUserTypeClick('TROUPE')}
+          $isSelected={selectedUserType === 'TROUPE'}
         >
-          <Image $isSelected={selectedUserType === "TROUPE"} />
+          <Image $isSelected={selectedUserType === 'TROUPE'} />
           <TextWrapper>
             <Type>극단주</Type>
             <Description>극단을 운영하고 있어요</Description>
@@ -134,8 +133,7 @@ const UserTypeBox = styled.div<{ $isSelected: boolean }>`
   justify-content: center;
   align-items: center;
   gap: 32px;
-  border: ${({ $isSelected }) =>
-    $isSelected ? `1px solid #B81716` : "1px solid #c7c7c8"};
+  border: ${({ $isSelected }) => ($isSelected ? `1px solid #B81716` : '1px solid #c7c7c8')};
   cursor: pointer;
   background-color: ${({ $isSelected }) =>
     $isSelected ? `var(--color-blue9)` : `var(--color-white)`};
@@ -144,6 +142,5 @@ const UserTypeBox = styled.div<{ $isSelected: boolean }>`
 const Image = styled.div<{ $isSelected: boolean }>`
   width: 80px;
   height: 80px;
-  background-color: ${({ $isSelected }) =>
-    $isSelected ? `#b81716ff` : `#d9d9d9`};
+  background-color: ${({ $isSelected }) => ($isSelected ? `#b81716ff` : `#d9d9d9`)};
 `;

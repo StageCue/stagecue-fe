@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -21,7 +22,8 @@ interface LoginParams {
 
 interface SessionAction {
   logoutSession: () => void;
-  loginSession: ({ username, email, phoneNumber, birthday }: LoginParams) => void;
+  loginSession: ({ username, email, phoneNumber, birthday, userType }: LoginParams) => void;
+  setUserType: (userType: 'TROUPE' | 'PERFORMER' | null) => void;
 }
 
 const defaultState: SessionState = {
@@ -46,8 +48,13 @@ const useSessionStore = create(
           email: null,
           phoneNumber: null,
           birthday: null,
+          userType: null,
         }));
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
         sessionStorage.clear();
+        delete axios.defaults.headers.common['Authorization'];
+
         useSessionStore.persist.clearStorage();
       },
 
@@ -68,6 +75,13 @@ const useSessionStore = create(
             userType,
           }));
         }
+      },
+
+      setUserType: (userType: 'TROUPE' | 'PERFORMER' | null) => {
+        set(state => ({
+          ...state,
+          userType,
+        }));
       },
     }),
     { name: 'userSessionStorage', storage: createJSONStorage(() => sessionStorage) }
