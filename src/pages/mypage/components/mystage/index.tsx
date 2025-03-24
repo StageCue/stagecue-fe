@@ -91,7 +91,7 @@ const Mystage = () => {
                       troupeName={troupeName}
                       practiceLocation={practiceAddress}
                     />
-                    <DdayTag>D-{dday}</DdayTag>
+                    <DdayTag>D{dday}</DdayTag>
                     <BookmarkWrapper
                       key={`bookmark-${castId}`}
                       onClick={() => handleBookmarkClick(castId)}
