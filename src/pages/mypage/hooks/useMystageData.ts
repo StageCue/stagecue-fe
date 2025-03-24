@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { requestCastsStatus, requestScraps } from '@/api/users';
 import { requestCasts, requestDeleteScrapCast, requestScrapCast } from '@/api/cast';
-import dayjs from 'dayjs';
 import { Scrap } from '../types/data';
+import { getDday } from '@/utils/getDday';
+
 
 export const useMystageData = () => {
   const queryClient = useQueryClient();
@@ -29,14 +30,14 @@ export const useMystageData = () => {
     queryKey: ['scrappedCasts'],
     queryFn: async () => {
       const { casts } = await requestScraps({ limit: 3, offset: 0 });
-      const today = dayjs();
+
       return casts.map((scrap: Scrap) => ({
         ...scrap,
         isBookmarked: true,
-        dday: dayjs(scrap.dateExpired).diff(today, 'day'),
+        dday: getDday(scrap.dateExpired)
       }));
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
   });
 
   const bookmarkMutation = useMutation({
@@ -52,17 +53,20 @@ export const useMystageData = () => {
       return !isBookmarked;
     },
     onMutate: async (id: string) => {
-      await queryClient.cancelQueries({ queryKey: ['scrappedCasts'] });
-
+      const previousScraps = queryClient.getQueryData(['scrappedCasts']);
+      queryClient.cancelQueries({ queryKey: ['scrappedCasts'] });
       queryClient.setQueryData(['scrappedCasts'], (oldScraps: Scrap[] = []) =>
         oldScraps.map(scrap =>
           scrap.castId === id ? { ...scrap, isBookmarked: !scrap.isBookmarked } : scrap
         )
       );
-    },
 
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['scrappedCasts'] });
+      return { previousScraps };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousScraps) {
+        queryClient.setQueryData(['scrappedCasts'], context.previousScraps);
+      }
     },
   });
 
