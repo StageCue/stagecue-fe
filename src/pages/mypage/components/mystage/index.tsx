@@ -1,12 +1,12 @@
-import styled from "styled-components";
-import NoScrappedSVG from "@assets/images/noscrappedd.svg?react";
-import BookmarkSVG from "@assets/icons/bookmark.svg";
-import BookmarkFilledSVG from "@assets/icons/bookmark_filled.svg";
-import Button from "@/components/buttons/button";
-import Cast from "@/pages/home/components/cast";
-import { useMystageData } from "../../hooks/useMystageData";
-import { useNavigate } from "react-router-dom";
-import { Recruit } from "../../types/data";
+import styled from 'styled-components';
+import NoScrappedSVG from '@assets/images/noscrappedd.svg?react';
+import BookmarkSVG from '@assets/icons/bookmark.svg';
+import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg';
+import Button from '@/components/buttons/button';
+import Cast from '@/pages/home/components/cast';
+import { useMystageData } from '../../hooks/useMystageData';
+import { useNavigate } from 'react-router-dom';
+import { Recruit } from '../../types/data';
 
 export interface RecruitsStatus {
   accepted: number;
@@ -16,8 +16,7 @@ export interface RecruitsStatus {
 }
 
 const Mystage = () => {
-  const { recruitsStatus, popularRecruits, scraps, handleBookmarkClick } =
-    useMystageData();
+  const { recruitsStatus, popularRecruits, scraps, handleBookmarkClick } = useMystageData();
 
   const navigate = useNavigate();
 
@@ -64,7 +63,7 @@ const Mystage = () => {
               variation="solid"
               btnClass="primary"
               width={296}
-              onClick={() => navigate("/casts")}
+              onClick={() => navigate('/casts')}
             >
               공고 찾아보기
             </Button>
@@ -84,6 +83,8 @@ const Mystage = () => {
                 return (
                   <CastWrapper key={castId}>
                     <Cast
+                      imgWidth={215}
+                      imgHeight={322.5}
                       recruitId={castId}
                       thumbnail={imageUrl}
                       recruitTitle={castTitle}
@@ -95,10 +96,7 @@ const Mystage = () => {
                       key={`bookmark-${castId}`}
                       onClick={() => handleBookmarkClick(castId)}
                     >
-                      <img
-                        src={isBookmarked ? BookmarkFilledSVG : BookmarkSVG}
-                        alt="Bookmark"
-                      />
+                      <img src={isBookmarked ? BookmarkFilledSVG : BookmarkSVG} alt="Bookmark" />
                     </BookmarkWrapper>
                   </CastWrapper>
                 );
@@ -115,15 +113,11 @@ const Mystage = () => {
           </ItemTitleWrapper>
           <Casts>
             {popularRecruits?.map(
-              ({
-                recruitId,
-                thumbnail,
-                recruitTitle,
-                artworkName,
-                practiceLocation,
-              }: Recruit) => (
+              ({ recruitId, thumbnail, recruitTitle, artworkName, practiceLocation }: Recruit) => (
                 <Cast
                   key={recruitId}
+                  imgWidth={215}
+                  imgHeight={322.5}
                   recruitId={recruitId}
                   thumbnail={thumbnail}
                   recruitTitle={recruitTitle}
@@ -263,7 +257,6 @@ const Scraps = styled.div`
 
 const CastWrapper = styled.div`
   position: relative;
-  width: 196px;
 `;
 const DdayTag = styled.div`
   position: absolute;

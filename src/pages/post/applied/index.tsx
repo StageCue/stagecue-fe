@@ -12,13 +12,13 @@ const Applied = () => {
   const [popularRecruits, setPopularRecruits] = useState([]);
 
   const getNewestCasts = async () => {
-    const { casts } = await requestCasts({
+    const { recruits } = await requestCasts({
       limit: '4',
       offset: '0',
       orderBy: 'newest',
     });
 
-    setPopularRecruits(casts);
+    setPopularRecruits(recruits);
   };
 
   useEffect(() => {
@@ -26,7 +26,9 @@ const Applied = () => {
   }, []);
 
   const handleMoveMainPage = () => {
-    navigate('/');
+    navigate('/casts', {
+      state: { orderBy: 'popular' }, // 원하는 초기값
+    });
   };
 
   return (
@@ -66,12 +68,21 @@ const Applied = () => {
         </TextWrapper>
         <Casts>
           {popularRecruits?.map(
-            ({ recruitId, thumbnail, castTitle, artworkName, practiceLocation, isScrapping }) => (
+            ({
+              recruitId,
+              thumbnail,
+              recruitTitle,
+              artworkName,
+              practiceLocation,
+              isScrapping,
+            }) => (
               <Cast
                 key={recruitId}
+                imgWidth={215}
+                imgHeight={322.5}
                 recruitId={recruitId}
                 thumbnail={thumbnail}
-                recruitTitle={castTitle}
+                recruitTitle={recruitTitle}
                 troupeName={artworkName}
                 practiceLocation={practiceLocation}
                 isScrapping={isScrapping}
@@ -155,6 +166,11 @@ const ShowAll = styled.div`
 `;
 
 const Casts = styled.div`
-  min-height: 394px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr;
+  gap: 20px;
+
+  height: fit-content;
   margin-top: 20px;
 `;

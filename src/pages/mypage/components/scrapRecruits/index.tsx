@@ -1,12 +1,12 @@
-import { useState } from "react";
-import styled from "styled-components";
-import RadioSVG from "@assets/icons/radio.svg?react";
-import RadioCheckedSVG from "@assets/icons/radio_checked.svg?react";
-import DotdotdotSVG from "@/assets/images/dotdotdot.svg?react";
-import Button from "@/components/buttons/button";
-import Cast from "@/pages/home/components/cast";
-import { useNavigate } from "react-router-dom";
-import { useMystageData } from "../../hooks/useMystageData";
+import { useState } from 'react';
+import styled from 'styled-components';
+import RadioSVG from '@assets/icons/radio.svg?react';
+import RadioCheckedSVG from '@assets/icons/radio_checked.svg?react';
+import DotdotdotSVG from '@/assets/images/dotdotdot.svg?react';
+import Button from '@/components/buttons/button';
+import Cast from '@/pages/home/components/cast';
+import { useNavigate } from 'react-router-dom';
+import { useMystageData } from '../../hooks/useMystageData';
 
 const ScrapRecruits = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const ScrapRecruits = () => {
   const [isFilteredClosedPost, setIsFilteredClosedPost] = useState(false);
 
   const handleFilterClick = () => {
-    setIsFilteredClosedPost((curr) => !curr);
+    setIsFilteredClosedPost(curr => !curr);
   };
 
   return (
@@ -38,25 +38,25 @@ const ScrapRecruits = () => {
             variation="solid"
             btnClass="primary"
             width={296}
-            onClick={() => navigate("/casts")}
+            onClick={() => navigate('/casts')}
           >
             공고 찾아보기
           </Button>
         </NoScrap>
       ) : (
         <ScrapList>
-          {scraps?.map(
-            ({ castId, imageUrl, castTitle, troupeName, practiceAddress }) => (
-              <Cast
-                key={castId}
-                recruitId={castId}
-                thumbnail={imageUrl}
-                recruitTitle={castTitle}
-                troupeName={troupeName}
-                practiceLocation={practiceAddress}
-              />
-            )
-          )}
+          {scraps?.map(({ castId, imageUrl, castTitle, troupeName, practiceAddress }) => (
+            <Cast
+              key={castId}
+              imgWidth={215}
+              imgHeight={322.5}
+              recruitId={castId}
+              thumbnail={imageUrl}
+              recruitTitle={castTitle}
+              troupeName={troupeName}
+              practiceLocation={practiceAddress}
+            />
+          ))}
         </ScrapList>
       )}
     </ScrapContainer>

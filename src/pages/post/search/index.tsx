@@ -82,6 +82,8 @@ const Search = () => {
             }) => (
               <Cast
                 key={recruitId}
+                imgWidth={215}
+                imgHeight={322.5}
                 recruitId={recruitId}
                 recruitTitle={recruitTitle}
                 troupeName={artworkName}

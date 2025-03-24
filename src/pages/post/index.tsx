@@ -13,6 +13,7 @@ import Cast from '@/pages/home/components/cast';
 import RangeInput from './components/rangeInput';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import daysArrayToDecimal from '@/utils/daysArrayToDecimal';
+import { useLocation } from 'react-router-dom';
 
 type genreType = '연극' | '뮤지컬' | '댄스';
 type zoneType = '전체지역' | '서울' | '경기' | '인천' | '강원' | '경상' | '전라' | '제주' | '충청';
@@ -47,7 +48,9 @@ const List = () => {
   const [isZoneFilterShowing, setIsZoneFilterShowing] = useState<boolean>(false);
   const [isDayFilterShowing, setIsDayFilterShowing] = useState<boolean>(false);
   const [isCostFilterShowing, setIsCostFilterShowing] = useState<boolean>(false);
-  const [currentOrderBy, setCurrentOrderBy] = useState<'newest' | 'popular'>('newest');
+  const location = useLocation();
+  const initialOrderBy = location?.state?.orderBy === 'popular' ? 'popular' : 'newest';
+  const [currentOrderBy, setCurrentOrderBy] = useState<'newest' | 'popular'>(initialOrderBy);
 
   const genreOptions: genreType[] = ['연극', '뮤지컬', '댄스'];
   const zoneOptions: zoneType[] = [
@@ -528,6 +531,8 @@ const List = () => {
           ) => (
             <Cast
               key={index}
+              imgWidth={215}
+              imgHeight={322.5}
               recruitId={recruitId}
               recruitTitle={recruitTitle}
               troupeName={artworkName}

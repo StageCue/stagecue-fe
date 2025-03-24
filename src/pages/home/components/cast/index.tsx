@@ -1,8 +1,10 @@
-import styled from "styled-components";
-import LocationSVG from "@/assets/icons/location.svg?react";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import LocationSVG from '@/assets/icons/location.svg?react';
+import { useNavigate } from 'react-router-dom';
 
 interface RecruitProps {
+  imgWidth: number;
+  imgHeight: number;
   recruitId: string;
   recruitTitle: string;
   practiceLocation: string;
@@ -12,6 +14,8 @@ interface RecruitProps {
 }
 
 const Recruit = ({
+  imgWidth,
+  imgHeight,
   recruitId,
   recruitTitle,
   practiceLocation,
@@ -26,7 +30,11 @@ const Recruit = ({
 
   return (
     <CastContainer onClick={handleCastClick}>
-      <Poster src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`} />
+      <Poster
+        src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`}
+        $width={imgWidth}
+        $height={imgHeight}
+      />
       <TextWrapper>
         <Title>{recruitTitle}</Title>
         <Artwork>{troupeName}</Artwork>
@@ -48,13 +56,12 @@ const CastContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   cursor: pointer;
-  margin-right: 20px;
 `;
 
-const Poster = styled.img`
+const Poster = styled.img<{ $width: number; $height: number }>`
   border-radius: 8px;
-  width: 196px;
-  height: 294px;
+  width: ${({ $width }) => `${$width}px`};
+  height: ${({ $height }) => `${$height}px`};
 `;
 
 const TextWrapper = styled.div``;

@@ -77,6 +77,8 @@ const NewPost = ({ recruits }: NewPostProps) => {
                 <SwiperSlide key={index}>
                   {recruit && (
                     <Cast
+                      imgWidth={196}
+                      imgHeight={294}
                       recruitId={String(recruitId)}
                       thumbnail={thumbnail}
                       recruitTitle={recruitTitle}
