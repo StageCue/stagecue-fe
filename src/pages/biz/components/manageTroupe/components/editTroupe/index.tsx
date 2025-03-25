@@ -8,6 +8,7 @@ import TipSVG from '@assets/icons/tip.svg?react';
 import CompanySVG from '@assets/icons/company.svg?react';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
+  requestCreateTroupe,
   requestEditTroupe,
   requestTroupeEditInfo,
   requestUploadCover,
@@ -45,10 +46,11 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, dirtyFields },
+    formState: { errors, dirtyFields, isValid },
     watch,
     setValue,
     control,
+    reset,
   } = useForm<EditTroupeInputs>({ mode: 'all' });
 
   const navigate = useNavigate();
@@ -108,14 +110,24 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const coverImg = await requestUploadCoverFile();
     const registrationFile = await requestUploadRegistrationFile();
 
-    await requestEditTroupe({
-      ...data,
-      logoImg,
-      coverImg,
-      registrationFile,
-    });
+    if (isInitial) {
+      await requestCreateTroupe({
+        ...data,
+        logoImg,
+        coverImg,
+        registrationFile,
+      });
+      navigate('/biz/troupe/created');
+    } else {
+      await requestEditTroupe({
+        ...data,
+        logoImg,
+        coverImg,
+        registrationFile,
+      });
 
-    navigate('/biz/troupe');
+      navigate('/biz/troupe');
+    }
   };
 
   const requestUploadLogoFile = async () => {
@@ -159,9 +171,14 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const file = event.target.files?.[0];
 
     if (file) {
-      const url = convertFileToURL(file);
-      setLogoFile(file);
-      setLogoPreview(url);
+      const isValidFile = validateFile(file);
+      if (isValidFile) {
+        const url = convertFileToURL(file);
+        setLogoFile(file);
+        setLogoPreview(url);
+      } else {
+        setIsInvalidModalShowing(true);
+      }
     }
   };
 
@@ -251,7 +268,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     const publishDate = res.publishDate;
     const address = res.address;
     const addressDetail = res.addressDetail;
-    const registrationNumber = res.regsistrationNumber;
+    const registrationNumber = res.registrationNumber;
     const registrationFile = res.registrationFile;
     const picName = res.picName;
     const picCell = res.picCell;
@@ -262,21 +279,23 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
     setLogoPreview(`https://s3.stagecue.co.kr/stagecue/${logoUrl}`);
     setCoverImageName(coverImg);
     setCoverFileName(getCoverFileName(coverImg));
-    setValue('logoImg', logoUrl);
-    setValue('coverImg', coverImg);
-    setValue('name', name);
-    setValue('description', description);
-    setValue('publishDate', publishDate.split('T')[0]);
     setDate(new Date(publishDate));
-    setValue('address', address);
-    setValue('addressDetail', addressDetail);
     setRegistrationFileName(registrationFile);
-    setValue('registrationFile', registrationFile);
-    setValue('registrationNumber', registrationNumber);
-    setValue('website', website);
-    setValue('email', email);
-    setValue('picName', picName);
-    setValue('picCell', picCell);
+    reset({
+      logoImg: logoUrl,
+      coverImg,
+      name,
+      description,
+      publishDate: publishDate.split('T')[0],
+      address,
+      addressDetail,
+      registrationNumber,
+      registrationFile,
+      website,
+      email,
+      picName,
+      picCell,
+    });
   };
 
   useEffect(() => {
@@ -304,6 +323,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
             fontSize={15}
             padding="9px 20px"
             type="submit"
+            disabled={!isValid}
           >
             저장
           </Button>
@@ -325,14 +345,27 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
                 <CompanySVG />
               </PreviewEmptyWrapper>
             )}
-            <FileInput
-              type="file"
-              {...register('logoImg', {
-                required: true,
-              })}
-              ref={inputLogoFileRef}
-              accept="image/*"
-              onChange={handleLogoFileChange}
+            <Controller
+              name="logoImg"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <FileInput
+                  type="file"
+                  accept="image/*"
+                  ref={el => {
+                    field.ref(el);
+                    inputLogoFileRef.current = el;
+                  }}
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      field.onChange(file);
+                      handleLogoFileChange(e);
+                    }
+                  }}
+                />
+              )}
             />
             <Button
               variation="outlined"

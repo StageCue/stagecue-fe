@@ -7,6 +7,7 @@ import MailSVG from '@assets/icons/mail.svg?react';
 import Button from '@/components/buttons/button';
 import { TroupeInfo } from '../..';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 interface TroupeDetailInterface {
   troupe: TroupeInfo;
@@ -19,11 +20,19 @@ const TroupeDetail = ({ troupe }: TroupeDetailInterface) => {
     navigate('/biz/troupe/form');
   };
 
+  const handleClickWebSite = () => {
+    window.open(troupe?.website, '_blank');
+  };
+
   return (
     <TroupeDetailContainer>
       <CoverImageWrapper>
         <CoverImageWrapper>
-          <Cover src={`https://s3.stagecue.co.kr/stagecue/${troupe?.coverImg}`} />
+          {troupe?.coverImg ? (
+            <Cover src={`https://s3.stagecue.co.kr/stagecue/${troupe?.coverImg}`} />
+          ) : (
+            <NoCover>Cover image does not exist</NoCover>
+          )}
           <LogoWrapper>
             <Logo src={`https://s3.stagecue.co.kr/stagecue/${troupe?.logoImg}`} />
           </LogoWrapper>
@@ -60,14 +69,18 @@ const TroupeDetail = ({ troupe }: TroupeDetailInterface) => {
                 <CalendarSVG />
                 극단 설립일
               </Property>
-              <Value>{troupe?.publishDate}</Value>
+              <Value>
+                {troupe?.publishDate ? dayjs(troupe.publishDate).format('YYYY년 MM월 DD일') : ''}
+              </Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
                 <LinkSVG />
                 극단 웹사이트
               </Property>
-              <Value>{troupe?.website}</Value>
+              <Value onClick={handleClickWebSite} style={{ cursor: 'pointer' }}>
+                {troupe?.website}
+              </Value>
             </SummaryPropertyWrapper>
             <SummaryPropertyWrapper>
               <Property>
@@ -106,6 +119,20 @@ const TroupeDetailContainer = styled.div`
 
 const CoverImageWrapper = styled.div`
   position: relative;
+`;
+
+const NoCover = styled.div`
+  width: 1100px;
+  height: 300px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(128, 128, 128, 0.08);
+
+  font-size: 24px;
+  color: #4a4a4a; /* 진회색 - 너무 강하지 않게 */
+  font-weight: 500;
 `;
 
 const Cover = styled.img`

@@ -25,9 +25,15 @@ const Applied = () => {
     getNewestCasts();
   }, []);
 
-  const handleMoveMainPage = () => {
+  const handleMoveMainPopularPage = () => {
     navigate('/casts', {
-      state: { orderBy: 'popular' }, // 원하는 초기값
+      state: { orderBy: 'popular' },
+    });
+  };
+
+  const handleMoveMainNewestPage = () => {
+    navigate('/casts', {
+      state: { orderBy: 'newest' },
     });
   };
 
@@ -56,7 +62,7 @@ const Applied = () => {
           btnClass="primary"
           width={308}
           height={48}
-          onClick={handleMoveMainPage}
+          onClick={handleMoveMainNewestPage}
         >
           공고 둘러보기
         </Button>
@@ -64,7 +70,7 @@ const Applied = () => {
       <CastsWrapper>
         <TextWrapper>
           <TitleText>이번주 인기 공고</TitleText>
-          <ShowAll>전체보기</ShowAll>
+          <ShowAll onClick={handleMoveMainPopularPage}>전체보기</ShowAll>
         </TextWrapper>
         <Casts>
           {popularRecruits?.map(
@@ -158,6 +164,7 @@ const TitleText = styled.div`
 `;
 
 const ShowAll = styled.div`
+  cursor: pointer;
   font-weight: var(--font-medium);
   font-size: 16px;
   letter-spacing: 0.57%;

@@ -83,6 +83,7 @@ const CustomHeader = ({
         <PickerText>{pickerText}</PickerText>
         <ButtonWrapper>
           <Button
+            type="button"
             variation="text"
             btnClass="assistive"
             width={38}
@@ -97,6 +98,7 @@ const CustomHeader = ({
             초기화
           </Button>
           <Button
+            type="button"
             variation="text"
             btnClass="primary"
             width={25}

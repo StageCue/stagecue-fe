@@ -1,20 +1,20 @@
-import Button from "@/components/buttons/button";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import Button from '@/components/buttons/button';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const CreatedTroupe = () => {
   const navigate = useNavigate();
 
   const handleNewRedruitClick = () => {
-    navigate("/cast/form");
+    navigate('/biz/cast/form');
   };
 
   const handleEditTroupeClick = () => {
-    navigate("/troupe/form");
+    navigate('/biz/troupe/form');
   };
 
   const handleHomeClick = () => {
-    navigate("/");
+    navigate('/');
   };
 
   return (

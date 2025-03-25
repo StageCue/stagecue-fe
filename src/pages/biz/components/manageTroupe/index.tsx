@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import { useEffect, useState } from "react";
-import TroupeDetail from "./components/troupeDetail";
-import { requestTroupeInfo } from "@/api/biz";
-import Button from "@/components/buttons/button";
-import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
+import styled from 'styled-components';
+import { useEffect, useState } from 'react';
+import TroupeDetail from './components/troupeDetail';
+import { requestTroupeInfo } from '@/api/biz';
+import Button from '@/components/buttons/button';
+import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 
 export interface TroupeInfo {
   name: string;
@@ -27,11 +27,10 @@ const ManageTroupe = () => {
   const getTroupeInfo = async () => {
     const res = await requestTroupeInfo();
     if (res instanceof AxiosError) {
-      return
+      return;
     } else {
-      setTroupeInfo(res)
+      setTroupeInfo(res);
     }
-  
   };
 
   useEffect(() => {
@@ -39,7 +38,7 @@ const ManageTroupe = () => {
   }, []);
 
   const handleRegisterTroupeClick = () => {
-    navigate("/biz/troupe/form/new");
+    navigate('/biz/troupe/form/new');
   };
 
   return (
@@ -49,9 +48,7 @@ const ManageTroupe = () => {
       ) : (
         <NoTroupeInfo>
           <RegisterWrapper>
-            <RegisterText>
-              우리 극단을 소개하고, 단원을 모집해보세요!
-            </RegisterText>
+            <RegisterText>우리 극단을 소개하고, 단원을 모집해보세요!</RegisterText>
             <Button
               variation="outlined"
               btnClass="primary"
