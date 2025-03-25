@@ -142,6 +142,16 @@ export const requestEditTroupe = (data: ReqEditTroupeData) => {
   return res;
 };
 
+export const requestCreateTroupe = (data: ReqEditTroupeData) => {
+  const res = request({
+    method: 'post',
+    endpoint: 'biz/troupes/info',
+    data,
+  });
+
+  return res;
+};
+
 export const requestTroupeInfo = () => {
   const res = request({
     method: 'get',

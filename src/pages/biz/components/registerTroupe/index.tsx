@@ -1,8 +1,8 @@
-import Button from "@/components/buttons/button";
-import { useForm } from "react-hook-form";
-import styled from "styled-components";
-import CalendarSVG from "@assets/icons/calendar.svg?react";
-import TipSVG from "@assets/icons/tip.svg?react";
+import Button from '@/components/buttons/button';
+import { useForm } from 'react-hook-form';
+import styled from 'styled-components';
+import CalendarSVG from '@assets/icons/calendar.svg?react';
+import TipSVG from '@assets/icons/tip.svg?react';
 
 interface RegisterTroupeInputs {
   name: string;
@@ -24,9 +24,9 @@ const RegisterTroupe = () => {
     watch,
     // setValue,
     // trigger,
-  } = useForm<RegisterTroupeInputs>({ mode: "all" });
+  } = useForm<RegisterTroupeInputs>({ mode: 'all' });
 
-  const [descriptionValue] = watch(["description"]);
+  const [descriptionValue] = watch(['description']);
 
   return (
     <RegisterTroupeContainer>
@@ -38,6 +38,7 @@ const RegisterTroupe = () => {
           </SubText>
         </Title>
         <Button
+          type="submit"
           variation="solid"
           btnClass="primary"
           width={67}
@@ -94,7 +95,7 @@ const RegisterTroupe = () => {
           </RequiredLabel>
           <TextAreaWrapper>
             <TextAreaInput
-              {...register("description", { required: true, maxLength: 3000 })}
+              {...register('description', { required: true, maxLength: 3000 })}
               placeholder="극단 소개글을 입력해주세요"
             />
             <Counter>{descriptionValue?.length} / 3000</Counter>
@@ -151,16 +152,13 @@ const RegisterTroupe = () => {
         <InputWrapper>
           <Label>극단 이메일</Label>
           <Input />
-          <FileGuide>
-            유저 문의, 답변 등에 사용할 극단 공식 이메일 정보를 입력해주세요
-          </FileGuide>
+          <FileGuide>유저 문의, 답변 등에 사용할 극단 공식 이메일 정보를 입력해주세요</FileGuide>
         </InputWrapper>
         <InputWrapper>
           <Label>극단 웹사이트</Label>
           <Input />
           <FileGuide>
-            홈페이지, SNS 페이지, Youtube등 극단정보가 담긴 홍보 웹사이트 정보를
-            입력해주세요.
+            홈페이지, SNS 페이지, Youtube등 극단정보가 담긴 홍보 웹사이트 정보를 입력해주세요.
           </FileGuide>
         </InputWrapper>
       </Form>
