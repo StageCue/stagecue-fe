@@ -4,7 +4,6 @@ import { requestCasts, requestDeleteScrapCast, requestScrapCast } from '@/api/ca
 import { Scrap } from '../types/data';
 import { getDday } from '@/utils/getDday';
 
-
 export const useMystageData = () => {
   const queryClient = useQueryClient();
 
@@ -34,7 +33,7 @@ export const useMystageData = () => {
       return casts.map((scrap: Scrap) => ({
         ...scrap,
         isBookmarked: true,
-        dday: getDday(scrap.dateExpired)
+        dday: getDday(scrap.dateExpired),
       }));
     },
     staleTime: 0,
@@ -63,7 +62,7 @@ export const useMystageData = () => {
 
       return { previousScraps };
     },
-    onError: (error, variables, context) => {
+    onError: (_error, _variables, context) => {
       if (context?.previousScraps) {
         queryClient.setQueryData(['scrappedCasts'], context.previousScraps);
       }
