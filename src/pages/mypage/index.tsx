@@ -59,25 +59,26 @@ const MyPage = () => {
 export default MyPage;
 
 const MyPageContainer = styled.div`
+  width: 100%;
   height: 100%;
-  min-height: inherit;
   display: flex;
-  padding: 60px 260px 100px 260px;
-  gap: 55px;
+  justify-content: center;
+  padding: 60px 0 100px 0;
+  gap: 56px;
   position: relative;
 `;
 
 const MenuColumn = styled.div`
+  width: 180px;
   display: flex;
   flex-direction: column;
   gap: 32px;
-  position: fixed;
+  /* position: fixed; */
   background-color: white;
 `;
 
 const ContentColumn = styled.div`
   margin-top: 20px;
-  margin-left: 235px;
   width: 685px;
 `;
 

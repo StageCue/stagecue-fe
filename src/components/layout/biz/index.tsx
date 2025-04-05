@@ -1,9 +1,9 @@
-import DefaultFooter from "@/components/footer/default";
-import BizHeader from "@/components/header/biz";
-import Sidemenu from "@/pages/biz/components/sidemenu";
-import { useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import styled from "styled-components";
+import DefaultFooter from '@/components/footer/default';
+import BizHeader from '@/components/header/biz';
+import Sidemenu from '@/pages/biz/components/sidemenu';
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 
 const BizLayout = () => {
   const { pathname } = useLocation();

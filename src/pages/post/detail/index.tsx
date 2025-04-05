@@ -2,182 +2,182 @@ import styled from 'styled-components';
 import ChevronRightSVG from '@assets/icons/chevron_right.svg?react';
 import BookmarkSVG from '@assets/icons/bookmark.svg?react';
 import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg?react';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import BasicInfo from '../components/basicInfo';
 import LocationInfo from '../components/locationInfo';
 import PracticeInfo from '../components/practiceInfo';
 import Application from '../components/application';
-import {requestCastDetail, requestDeleteScrapCast, requestScrapCast} from '@/api/cast';
-import {useNavigate, useParams} from 'react-router-dom';
+import { requestCastDetail, requestDeleteScrapCast, requestScrapCast } from '@/api/cast';
+import { useNavigate, useParams } from 'react-router-dom';
 import PostImageSlide from '../components/slide';
 import useSessionStore from '@/store/session';
 
 interface RecruitDetail {
-    recruitTitle: string;
-    introduce: string;
-    troupeName: string;
-    troupeLogoImage: string;
-    recruitImages: string[];
-    monthlyFee: number;
-    isApplied: boolean;
-    practice: {
-        dateStart: string;
-        dateEnd: string;
-        address: string;
-        addressDetail: string;
-        daysOfWeek: number;
-        lat: number;
-        lng: number;
-    };
-    stage: {
-        dateStart: string;
-        dateEnd: string;
-        address: string;
-        addressDetail: string;
-        lat: number;
-        lng: number;
-    };
-    recruitingParts: string[];
-    isScrapping: boolean;
+  recruitTitle: string;
+  introduce: string;
+  troupeName: string;
+  troupeLogoImage: string;
+  recruitImages: string[];
+  monthlyFee: number;
+  isApplied: boolean;
+  practice: {
+    dateStart: string;
+    dateEnd: string;
+    address: string;
+    addressDetail: string;
+    daysOfWeek: number;
+    lat: number;
+    lng: number;
+  };
+  stage: {
+    dateStart: string;
+    dateEnd: string;
+    address: string;
+    addressDetail: string;
+    lat: number;
+    lng: number;
+  };
+  recruitingParts: string[];
+  isScrapping: boolean;
 }
 
 const Detail = () => {
-    const {id} = useParams();
-    const navigate = useNavigate();
-    const [recruitDetail, setRecruitDetail] = useState<RecruitDetail>();
-    const [selectedTab, setSelectedTab] = useState('공연 기본 정보');
-    const [isBookmarked, setIsBookmarked] = useState(false);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [recruitDetail, setRecruitDetail] = useState<RecruitDetail>();
+  const [selectedTab, setSelectedTab] = useState('공연 기본 정보');
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
-    const {isLoggined} = useSessionStore();
+  const { isLoggined } = useSessionStore();
 
-    const handleTabClick = (option: string) => {
-        setSelectedTab(option);
-    };
+  const handleTabClick = (option: string) => {
+    setSelectedTab(option);
+  };
 
-    const handleBookmarkClick = async () => {
-        if (isBookmarked) {
-            // const res = await requestDeleteScrapCast(id!);
-            await requestDeleteScrapCast(id!);
-            setIsBookmarked(false);
-        } else {
-            await requestScrapCast(id!);
-            setIsBookmarked(true);
-        }
-    };
+  const handleBookmarkClick = async () => {
+    if (isBookmarked) {
+      // const res = await requestDeleteScrapCast(id!);
+      await requestDeleteScrapCast(id!);
+      setIsBookmarked(false);
+    } else {
+      await requestScrapCast(id!);
+      setIsBookmarked(true);
+    }
+  };
 
-    const getCastDetail = async () => {
-        if (id) {
-            const cast = await requestCastDetail(id);
+  const getCastDetail = async () => {
+    if (id) {
+      const cast = await requestCastDetail(id);
 
-            setRecruitDetail(cast);
+      setRecruitDetail(cast);
 
-            if (cast.isScrapping) {
-                setIsBookmarked(true);
-            }
-        }
-    };
+      if (cast.isScrapping) {
+        setIsBookmarked(true);
+      }
+    }
+  };
 
-    const handleTroupeNameClick = () => {
-        navigate(`/troupe/${recruitDetail?.troupeName}`);
-    };
+  const handleTroupeNameClick = () => {
+    navigate(`/troupe/${recruitDetail?.troupeName}`);
+  };
 
-    useEffect(() => {
-        getCastDetail();
-    }, []);
+  useEffect(() => {
+    getCastDetail();
+  }, []);
 
-    return (
-        <DetailContainer>
-            <ContentWrapper>
-                <Header>
-                    <TitleWrapper>
-                        <DdayWrapper>
-                            {/* TODO: 디데이 바인딩 */}
-                            <Dday>D-</Dday>
-                            {isLoggined && (
-                                <BookmarkWrapper onClick={handleBookmarkClick}>
-                                    {isBookmarked ? <BookmarkFilledSVG/> : <BookmarkSVG/>}
-                                </BookmarkWrapper>
-                            )}
-                        </DdayWrapper>
-                        <Title>{recruitDetail?.recruitTitle}</Title>
-                    </TitleWrapper>
-                    <Divider/>
-                    <TroupeWrapper>
-                        <TroupeLogo
-                            src={`https://s3.stagecue.co.kr/stagecue/${recruitDetail?.troupeLogoImage}`}
-                        />
-                        <TroupeName onClick={handleTroupeNameClick}>
-                            {recruitDetail?.troupeName}
-                            <IconWrapper>
-                                <ChevronRightSVG/>
-                            </IconWrapper>
-                        </TroupeName>
-                    </TroupeWrapper>
-                    {recruitDetail && <PostImageSlide images={recruitDetail?.recruitImages}/>}
-                </Header>
-                <Content>
-                    <ContentTab>
-                        <Option
-                            onClick={() => handleTabClick('공연 기본 정보')}
-                            $isSelected={selectedTab === '공연 기본 정보'}
-                        >
-                            공연 기본 정보
-                            {selectedTab === '공연 기본 정보' && <SelectedBorder/>}
-                        </Option>
-                        <Option
-                            onClick={() => handleTabClick('공연 위치 정보')}
-                            $isSelected={selectedTab === '공연 위치 정보'}
-                        >
-                            공연 위치 정보
-                            {selectedTab === '공연 위치 정보' && <SelectedBorder/>}
-                        </Option>
-                        <Option
-                            onClick={() => handleTabClick('연습 장소 정보')}
-                            $isSelected={selectedTab === '연습 장소 정보'}
-                        >
-                            연습 장소 정보
-                            {selectedTab === '연습 장소 정보' && <SelectedBorder/>}
-                        </Option>
-                    </ContentTab>
-                    {recruitDetail && (
-                        <ContentBody>
-                            {selectedTab === '공연 기본 정보' && (
-                                <BasicInfo
-                                    introduce={recruitDetail.introduce}
-                                    start={recruitDetail.stage.dateStart}
-                                    end={recruitDetail.stage.dateEnd}
-                                    monthlyFee={recruitDetail.monthlyFee}
-                                    recruitingParts={recruitDetail.recruitingParts}
-                                />
-                            )}
-                            {selectedTab === '공연 위치 정보' && (
-                                <LocationInfo
-                                    address={recruitDetail.stage.address}
-                                    addressDetail={recruitDetail.stage.addressDetail}
-                                    lat={recruitDetail.stage.lat}
-                                    lng={recruitDetail.stage.lng}
-                                />
-                            )}
-                            {selectedTab === '연습 장소 정보' && (
-                                <PracticeInfo
-                                    start={recruitDetail.practice.dateStart}
-                                    end={recruitDetail.practice.dateEnd}
-                                    address={recruitDetail.practice.address}
-                                    addressDetail={recruitDetail.practice.addressDetail}
-                                    daysOfWeek={recruitDetail.practice.daysOfWeek}
-                                    lat={recruitDetail.practice.lat}
-                                    lng={recruitDetail.practice.lng}
-                                />
-                            )}
-                        </ContentBody>
-                    )}
-                </Content>
-            </ContentWrapper>
-            {recruitDetail && isLoggined && (
-                <Application recruitId={id!} isApplied={recruitDetail?.isApplied}/>
-            )}
-        </DetailContainer>
-    );
+  return (
+    <DetailContainer>
+      <ContentWrapper>
+        <Header>
+          <TitleWrapper>
+            <DdayWrapper>
+              {/* TODO: 디데이 바인딩 */}
+              <Dday>D-</Dday>
+              {isLoggined && (
+                <BookmarkWrapper onClick={handleBookmarkClick}>
+                  {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
+                </BookmarkWrapper>
+              )}
+            </DdayWrapper>
+            <Title>{recruitDetail?.recruitTitle}</Title>
+          </TitleWrapper>
+          <Divider />
+          <TroupeWrapper>
+            <TroupeLogo
+              src={`https://s3.stagecue.co.kr/stagecue/${recruitDetail?.troupeLogoImage}`}
+            />
+            <TroupeName onClick={handleTroupeNameClick}>
+              {recruitDetail?.troupeName}
+              <IconWrapper>
+                <ChevronRightSVG />
+              </IconWrapper>
+            </TroupeName>
+          </TroupeWrapper>
+          {recruitDetail && <PostImageSlide images={recruitDetail?.recruitImages} />}
+        </Header>
+        <Content>
+          <ContentTab>
+            <Option
+              onClick={() => handleTabClick('공연 기본 정보')}
+              $isSelected={selectedTab === '공연 기본 정보'}
+            >
+              공연 기본 정보
+              {selectedTab === '공연 기본 정보' && <SelectedBorder />}
+            </Option>
+            <Option
+              onClick={() => handleTabClick('공연 위치 정보')}
+              $isSelected={selectedTab === '공연 위치 정보'}
+            >
+              공연 위치 정보
+              {selectedTab === '공연 위치 정보' && <SelectedBorder />}
+            </Option>
+            <Option
+              onClick={() => handleTabClick('연습 장소 정보')}
+              $isSelected={selectedTab === '연습 장소 정보'}
+            >
+              연습 장소 정보
+              {selectedTab === '연습 장소 정보' && <SelectedBorder />}
+            </Option>
+          </ContentTab>
+          {recruitDetail && (
+            <ContentBody>
+              {selectedTab === '공연 기본 정보' && (
+                <BasicInfo
+                  introduce={recruitDetail.introduce}
+                  start={recruitDetail.stage.dateStart}
+                  end={recruitDetail.stage.dateEnd}
+                  monthlyFee={recruitDetail.monthlyFee}
+                  recruitingParts={recruitDetail.recruitingParts}
+                />
+              )}
+              {selectedTab === '공연 위치 정보' && (
+                <LocationInfo
+                  address={recruitDetail.stage.address}
+                  addressDetail={recruitDetail.stage.addressDetail}
+                  lat={recruitDetail.stage.lat}
+                  lng={recruitDetail.stage.lng}
+                />
+              )}
+              {selectedTab === '연습 장소 정보' && (
+                <PracticeInfo
+                  start={recruitDetail.practice.dateStart}
+                  end={recruitDetail.practice.dateEnd}
+                  address={recruitDetail.practice.address}
+                  addressDetail={recruitDetail.practice.addressDetail}
+                  daysOfWeek={recruitDetail.practice.daysOfWeek}
+                  lat={recruitDetail.practice.lat}
+                  lng={recruitDetail.practice.lng}
+                />
+              )}
+            </ContentBody>
+          )}
+        </Content>
+      </ContentWrapper>
+      {recruitDetail && isLoggined && (
+        <Application recruitId={id!} isApplied={recruitDetail?.isApplied} />
+      )}
+    </DetailContainer>
+  );
 };
 
 export default Detail;
@@ -289,7 +289,7 @@ const Option = styled.div<{ $isSelected: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${({$isSelected}) => ($isSelected ? '#171719' : '#999ba2')};
+  color: ${({ $isSelected }) => ($isSelected ? '#171719' : '#999ba2')};
   cursor: pointer;
   position: relative;
 `;

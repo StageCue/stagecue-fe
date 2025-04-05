@@ -116,26 +116,25 @@ const DefaultHeader = () => {
 export default DefaultHeader;
 
 const DefaultHeaderContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100%;
-  // TODO: min-width는 일단 HomeContainer의 크기로 해놨는데 반응형으로 하면 바꿔야합니다.
-  min-width: 1440px;
   height: 60px;
   background-color: white;
   position: fixed;
+  left: 0;
   z-index: 400;
   border-bottom: 1px solid #e1e2e4;
 `;
 
 const HeaderContainer = styled.div`
-  width: 1440px;
+  width: 100%;
   height: 100%;
+  max-width: 1060px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 190px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  margin: 0 auto;
 `;
 
 const LeftSideWrapper = styled.div`
@@ -161,6 +160,7 @@ const PostPageBtn = styled.div`
   letter-spacing: 0.57%;
   line-height: 150%;
   color: #171719;
+  white-space: nowrap;
   cursor: pointer;
 `;
 

@@ -26,7 +26,7 @@ const ApplyHistory = () => {
 
   const handleFilterClick = (filter: filterType) => {
     setSelectedFilter(filter);
-    
+
     //TODO: api 수정 후 변경 필요 (2025.03.12)
     if (filter === 'CANCEL') setSelectedPhase('CANCEL');
     setIsFilterMenuShowing(false);
