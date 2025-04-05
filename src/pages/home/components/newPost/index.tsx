@@ -101,6 +101,7 @@ export default NewPost;
 
 const NewPostContainer = styled.div`
   width: 100%;
+  max-width: 1060px;
   margin-top: 24px;
   display: flex;
   flex-direction: column;

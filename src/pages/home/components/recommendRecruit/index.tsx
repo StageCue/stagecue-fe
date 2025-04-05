@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import useSessionStore from "@/store/session";
-import styled from "styled-components";
-import FitRecruitSlide from "../fitRecruitSlide";
+import useSessionStore from '@/store/session';
+import styled from 'styled-components';
+import FitRecruitSlide from '../fitRecruitSlide';
 
 const RecommendRecruit = ({ recommendRecruits }: any) => {
   const { username } = useSessionStore();
@@ -26,6 +26,8 @@ const RecommendRecruit = ({ recommendRecruits }: any) => {
 export default RecommendRecruit;
 
 const RecommendRecruitContainer = styled.div`
+  width: 100%;
+  max-width: 1060px;
   margin-top: 40px;
   margin-bottom: 32px;
 `;
