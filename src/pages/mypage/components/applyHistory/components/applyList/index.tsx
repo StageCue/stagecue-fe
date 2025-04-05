@@ -23,7 +23,7 @@ const ApplyList = ({ status }: ApplyListProps) => {
 
   return (
     <ApplyListContainer>
-      {casts.length === 0 ? (
+      {casts?.length === 0 ? (
         <NoApplyHistory>
           <DotdotdotSVG />
           <TextWrapper>
@@ -40,17 +40,19 @@ const ApplyList = ({ status }: ApplyListProps) => {
           </Button>
         </NoApplyHistory>
       ) : (
-        casts.map(({ applyId, troupeName, applyStatus, recruitTitle, applyStatusLogs }) => (
-          <ApplyCast
-            key={applyId}
-            applyId={applyId}
-            applyStatus={applyStatus}
-            applyStatusLogs={applyStatusLogs}
-            recruitTitle={recruitTitle}
-            troupeName={troupeName}
-            getCasts={refetch}
-          />
-        ))
+        <ApplyCastContainer>
+          {casts?.map(({ applyId, troupeName, applyStatus, recruitTitle, applyStatusLogs }) => (
+            <ApplyCast
+              key={applyId}
+              applyId={applyId}
+              applyStatus={applyStatus}
+              applyStatusLogs={applyStatusLogs}
+              recruitTitle={recruitTitle}
+              troupeName={troupeName}
+              getCasts={refetch}
+            />
+          ))}
+        </ApplyCastContainer>
       )}
     </ApplyListContainer>
   );
@@ -60,6 +62,12 @@ export default ApplyList;
 
 const ApplyListContainer = styled.div`
   width: 685px;
+`;
+
+const ApplyCastContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 const NoApplyHistory = styled.div`

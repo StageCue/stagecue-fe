@@ -5,32 +5,32 @@ import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
 const DefaultFooter = () => {
   return (
     <FooterContainer>
-      <FooterRow>
-        <LeftSideWrapper>
+      <Footer>
+        <MenuWrapper>
           <Logo>
             <BlackLogoSVG />
           </Logo>
-          <TextWrapper>
-            <TextRow>
-              (주)노소리 <TextDivder>|</TextDivder> 대표 노영준
-              <TextDivder>|</TextDivder> 사업자등록번호 809-02-02660
-            </TextRow>
-            <TextRow>
-              경기도 김포시 통진읍 서암로 325-40 <TextDivder>|</TextDivder>
-              고객센터 stagecue.co.kr@gmail.com
-            </TextRow>
-          </TextWrapper>
-        </LeftSideWrapper>
-        <RightSideWrapper>
           <Menu>
             <Option to="/service-info">서비스 소개</Option>
             <Option to="/blog">블로그</Option>
             <Option to="/notice">공지사항</Option>
             <Option to="/privacy-policy">개인정보처리방침</Option>
           </Menu>
-        </RightSideWrapper>
-      </FooterRow>
-      <Copyright>© (주)노소리. All rights reserved.</Copyright>
+        </MenuWrapper>
+        <TextContainer>
+          <TextWrapper>
+            <TextRow>
+              (주)노소리 <TextDivder>|</TextDivder> 대표 노영준
+            </TextRow>
+            <TextRow>
+              경기도 김포시 통진읍 서암로 325-40 <TextDivder>|</TextDivder>사업자등록번호
+              809-02-02660
+            </TextRow>
+            <TextRow>📩 고객센터 stagecue.co.kr@gmail.com</TextRow>
+          </TextWrapper>
+          <Copyright>© (주)노소리. All rights reserved.</Copyright>
+        </TextContainer>
+      </Footer>
     </FooterContainer>
   );
 };
@@ -39,32 +39,30 @@ export default DefaultFooter;
 
 const FooterContainer = styled.div`
   width: 100%;
-  height: 140px;
-  padding: 32px 24px;
-  background-color: white;
+  height: fit-content;
+  padding-top: 32px;
+  padding-bottom: 32px;
+
+  border-top: 1px solid #e1e2e4;
+`;
+
+const Footer = styled.div`
+  width: 1060px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid #e1e2e4;
+  gap: 28px;
 `;
 
-const FooterRow = styled.div`
+const MenuWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const LeftSideWrapper = styled.div`
-  display: flex;
-  gap: 24px;
-  align-items: center;
   font-size: 12px;
   line-height: 133.4%;
   letter-spacing: 2.52%;
   color: #47484b;
 `;
-
-const RightSideWrapper = styled.div``;
 
 const Copyright = styled.div`
   font-size: 12px;
@@ -91,6 +89,12 @@ const Logo = styled.div`
   width: 66px;
 `;
 
+const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
 const TextWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -99,6 +103,9 @@ const TextWrapper = styled.div`
 
 const TextRow = styled.div`
   display: flex;
+  font-weight: var(--font-medium);
+  font-size: 12px;
+  line-height: 133%;
 `;
 
 const TextDivder = styled.div`

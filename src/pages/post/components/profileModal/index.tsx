@@ -72,7 +72,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
             <ImagesWrapper>
               <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
               <Images>
-                {detail?.images.map((url, index) => (
+                {detail?.images?.map((url, index) => (
                   <Image key={index} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
                 ))}
               </Images>

@@ -248,8 +248,8 @@ const Table = ({
             applyDate,
             applyStatus,
           }) => (
-            <>
-              <Row key={applyId} onClick={() => onClickRow(applyId, performerName)}>
+            <div key={applyId}>
+              <Row onClick={() => onClickRow(applyId, performerName)}>
                 <CheckboxInRow>
                   <CheckIconWrapper onClick={e => onClickCheckbox(e, applyId, performerName)}>
                     {selectedApplyIds.some(apply => apply.id === applyId) ? (
@@ -286,7 +286,7 @@ const Table = ({
                   applyStatus={applyStatus}
                 />
               )}
-            </>
+            </div>
           )
         )}
         {applications.length === 0 && <NoApplicant />}

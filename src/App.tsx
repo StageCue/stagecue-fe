@@ -35,7 +35,7 @@ import ServiceInfo from './pages/service-info';
 import Blog from './pages/blog';
 import PrivacyPolicy from './pages/privacy-policy';
 
-function App() {
+const App = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
 
@@ -99,7 +99,7 @@ function App() {
       </Routes>
     </AppContainer>
   );
-}
+};
 
 export default App;
 
