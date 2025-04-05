@@ -43,6 +43,7 @@ export default StageCue;
 
 const StageCueContainer = styled.div`
   width: 100%;
+  max-width: 1060px;
   margin-top: 24px;
   display: flex;
   gap: 40px;
@@ -51,6 +52,8 @@ const StageCueContainer = styled.div`
 const Notice = styled.div`
   width: 591px;
   height: 266px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const TitleWrapper = styled.div`
@@ -84,7 +87,7 @@ const Higliting = styled.div`
 `;
 
 const Posts = styled.div`
-  height: 100%;
+  flex: 1;
   overflow-y: scroll;
 `;
 

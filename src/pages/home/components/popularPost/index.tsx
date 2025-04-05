@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import RankedCasts from "../rankedCasts";
+import styled from 'styled-components';
+import RankedCasts from '../rankedCasts';
 
 export interface RecruitDetail {
   id: number;
@@ -37,6 +37,7 @@ export default PopularPost;
 
 const PopularPostContainer = styled.div`
   width: 100%;
+  max-width: 1060px;
   margin-top: 24px;
   display: flex;
   flex-direction: column;

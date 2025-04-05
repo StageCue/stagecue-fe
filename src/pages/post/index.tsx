@@ -552,13 +552,14 @@ export default List;
 
 const ListContainer = styled.div`
   position: relative;
-  width: 920px;
+  width: 100%;
+  max-width: 920px;
   height: 100%;
   min-height: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 60px 260px 100px 260px;
+  margin: 60px 0 100px 0;
 `;
 
 const GenreWrapper = styled.div`

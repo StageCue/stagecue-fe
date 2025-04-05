@@ -109,11 +109,12 @@ const Home = () => {
 export default Home;
 
 const HomeContainer = styled.div`
-  width: 1440px;
+  width: 100%;
+  max-width: 1440px;
   height: 100%;
   min-height: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 189.5px 100px 189.5px;
+  padding: 24px 0 100px 0;
 `;
