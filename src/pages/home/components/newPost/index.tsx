@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import Button from '@/components/buttons/button';
 import Cast from '../cast';
 import ChevronRightSVG from '@/assets/icons/chevron_right_red_s.svg?react';
+import EmptyWrapper from '@/components/emptyWrapper';
 
 export interface Recruit {
   recruitId: number;
@@ -46,7 +47,7 @@ const NewPost = ({ recruits }: NewPostProps) => {
         </Button>
       </TitleWrapper>
 
-      {recruits?.length >= 0 && (
+      {recruits?.length >= 0 ? (
         <Recruits>
           <Swiper
             direction="horizontal"
@@ -92,6 +93,10 @@ const NewPost = ({ recruits }: NewPostProps) => {
             })}
           </Swiper>
         </Recruits>
+      ) : (
+        <EmptyWrapper width={1060} height={394}>
+          새로 등록된 공고가 없습니다.
+        </EmptyWrapper>
       )}
     </NewPostContainer>
   );

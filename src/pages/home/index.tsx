@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
 import NewPost from './components/newPost';
 import ThemePost from './components/themePost';
 import PopularPost from './components/popularPost';
-import { useEffect, useState } from 'react';
-import { requestCasts, requestCastsDetailList } from '@/api/cast';
-import AdsSlide from './components/adsSlide';
+import RecommendRecruit from './components/recommendRecruit';
 import StageCue from './components/stageCue';
+import AdsSlide from './components/adsSlide';
+
+import { requestCasts, requestCastsDetailList } from '@/api/cast';
+import { requestRecommendRecruits } from '@/api/recommendRecruits';
 import { requestNotices } from '@/api/notice';
 import { requestBanners } from '@/api/ads';
-import { requestRecommendRecruits } from '@/api/recommendRecruits';
-import RecommendRecruit from './components/recommendRecruit';
 import useSessionStore from '@/store/session';
 
 const Home = () => {
@@ -50,9 +52,7 @@ const Home = () => {
   const getBanners = async () => {
     const { banners } = await requestBanners();
 
-    const test: any = Array.from({ length: 10 }).map(() => banners?.[0]);
-
-    setBanners(test);
+    setBanners(banners);
   };
 
   const getNewestCasts = async () => {
@@ -62,9 +62,7 @@ const Home = () => {
       orderBy: 'newest',
     });
 
-    const test: any = Array.from({ length: recruits?.length })?.map(() => recruits?.[0]);
-
-    setNewestRecruits(test);
+    setNewestRecruits(recruits);
   };
 
   const getPopularCasts = async () => {
@@ -77,11 +75,9 @@ const Home = () => {
   };
 
   const getNotices = async () => {
-    const { items } = await requestNotices({ limit: 6, offset: 0 });
+    const { content: notices } = await requestNotices({ limit: 6, offset: 0 });
 
-    const test: any = Array.from({ length: 10 }).map(() => items[0]);
-
-    setNotices(test);
+    setNotices(notices);
   };
 
   useEffect(() => {

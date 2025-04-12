@@ -1,8 +1,9 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import styled from "styled-components";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import "swiper/css";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore from 'swiper';
+import styled from 'styled-components';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import EmptyWrapper from '@/components/emptyWrapper';
 
 interface AdsSlideProps {
   banners: { imageUrl: string; link: string }[];
@@ -13,11 +14,11 @@ SwiperCore.use([Autoplay, Navigation, Pagination]);
 const AdsSlide = ({ banners }: AdsSlideProps) => {
   return (
     <AdsSlideContainer>
-      {banners?.length > 0 && (
+      {banners?.length > 0 ? (
         <Swiper
           direction="horizontal"
           spaceBetween={20}
-          slidesPerView={"auto"}
+          slidesPerView={'auto'}
           centeredSlides={true}
           loop={true}
           autoplay={{
@@ -30,12 +31,16 @@ const AdsSlide = ({ banners }: AdsSlideProps) => {
         >
           {banners?.map((banner, index) => (
             <SwiperSlide key={index}>
-              <SlideDiv
-                src={`https://s3.stagecue.co.kr/stagecue/${banner.imageUrl}`}
-              />
+              <SlideDiv src={`https://s3.stagecue.co.kr/stagecue/${banner.imageUrl}`} />
             </SwiperSlide>
           ))}
         </Swiper>
+      ) : (
+        <EmptyWrapper width={1060} height={240}>
+          기다리는 공연이 아직 없어요.
+          <br />
+          새로운 무대를 준비 중입니다.
+        </EmptyWrapper>
       )}
     </AdsSlideContainer>
   );

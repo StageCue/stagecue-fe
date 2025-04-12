@@ -39,7 +39,7 @@ interface RequestPrams {
 // });
 
 const request = async ({ method, endpoint, data, header = {} }: RequestPrams) => {
-  const url = `/v1/${endpoint}`;
+  const url = `/api/v1/${endpoint}`;
 
   const accessToken = sessionStorage.getItem('accessToken');
 

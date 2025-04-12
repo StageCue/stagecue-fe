@@ -20,8 +20,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/v1': {
-        target: 'http://152.67.205.177:8080',
+      '/api/v1': {
+        target: 'http://152.67.205.177:18080',
         changeOrigin: true,
         secure: false,
       },

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import RankedCasts from '../rankedCasts';
+import EmptyWrapper from '@/components/emptyWrapper';
 
 export interface RecruitDetail {
   id: number;
@@ -27,7 +28,13 @@ const PopularPost = ({ recruits }: PopularRecruitProps) => {
         </Title>
       </TitleWrapper>
       <Casts>
-        <RankedCasts recruits={recruits} />
+        {recruits?.length > 0 ? (
+          <RankedCasts recruits={recruits} />
+        ) : (
+          <EmptyWrapper width={1060} height={394}>
+            인기 공고가 없습니다.
+          </EmptyWrapper>
+        )}
       </Casts>
     </PopularPostContainer>
   );

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PlusSVG from '@assets/icons/plus.svg?react';
 import AboutSVG from '@assets/images/about.svg';
 import { useNavigate } from 'react-router-dom';
+import EmptyWrapper from '@/components/emptyWrapper';
 
 interface StageCueProps {
   notices: any[];
@@ -32,6 +33,11 @@ const StageCue = ({ notices }: StageCueProps) => {
               <Date>{createdAt}</Date>
             </Post>
           ))}
+          {notices.length === 0 && (
+            <EmptyWrapper width={591} height={188} marginTop={24}>
+              공지사항이 없습니다.
+            </EmptyWrapper>
+          )}
         </Posts>
       </Notice>
       <About src={AboutSVG} />
