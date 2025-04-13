@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Button from '../../components/buttons/button';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { requestChangeUserType } from '@/api/users';
 import useSessionStore from '@/store/session';
 
 const Welcome = () => {
@@ -16,11 +15,9 @@ const Welcome = () => {
   };
 
   const handleNextClick = async () => {
-    if (selectedUserType) {
-      await requestChangeUserType({ userType: selectedUserType });
-      sessionStore.setUserType(selectedUserType);
+    if (selectedUserType === 'PERFORMER') {
       navigate('/');
-    }
+    } else navigate('/biz/troupe');
   };
 
   return (

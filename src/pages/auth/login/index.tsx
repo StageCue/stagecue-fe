@@ -26,25 +26,23 @@ const Login = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(false);
 
   const onSubmitLogin = async (data: LoginInputs) => {
-    const res = await requestLogin(data);
+    const { result: res } = await requestLogin(data);
 
     if (res?.error) {
       setError('root.serverError', {
         type: '400',
         message: `이메일 또는 비밀번호가 올바르지 않습니다.\n입력한 내용을 다시 확인해주세요.`,
       });
-    } else {
-      if (res) {
-        sessionStore.loginSession({
-          email: emailValue,
-          username: res?.username,
-          phoneNumber: res?.cell,
-          userType: res?.userType,
-          birthday: res?.birthday,
-        });
-        navigate('/');
-      }
+      return;
     }
+    sessionStore.loginSession({
+      email: emailValue,
+      username: res?.userName,
+      phoneNumber: res?.phoneNumber,
+      userType: res?.userType,
+      birthday: res?.birthDate,
+    });
+    navigate('/');
   };
 
   const handleSignupClick = () => {
