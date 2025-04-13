@@ -2,11 +2,9 @@ import styled from 'styled-components';
 import Button from '../../components/buttons/button';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useSessionStore from '@/store/session';
 
 const Welcome = () => {
   const navigate = useNavigate();
-  const sessionStore = useSessionStore();
 
   const [selectedUserType, setSelectedUserType] = useState<'PERFORMER' | 'TROUPE' | null>(null);
 
@@ -17,7 +15,7 @@ const Welcome = () => {
   const handleNextClick = async () => {
     if (selectedUserType === 'PERFORMER') {
       navigate('/');
-    } else navigate('/biz/troupe');
+    } else navigate('/biz/troupe/form/new');
   };
 
   return (

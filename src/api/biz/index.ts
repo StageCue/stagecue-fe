@@ -155,7 +155,7 @@ export const requestCreateTroupe = (data: ReqEditTroupeData) => {
 export const requestTroupeInfo = () => {
   const res = request({
     method: 'get',
-    endpoint: 'biz/troupes/info',
+    endpoint: 'troupes/preview',
   });
 
   return res;
@@ -163,8 +163,8 @@ export const requestTroupeInfo = () => {
 
 export const requestTroupeEditInfo = () => {
   const res = request({
-    method: 'get',
-    endpoint: 'biz/troupes/info/edit',
+    method: 'post',
+    endpoint: 'troupes',
   });
 
   return res;

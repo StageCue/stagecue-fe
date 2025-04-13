@@ -176,6 +176,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
         const url = convertFileToURL(file);
         setLogoFile(file);
         setLogoPreview(url);
+        setValue('logoImg', 'temp-placeholder', { shouldValidate: true });
       } else {
         setIsInvalidModalShowing(true);
       }
@@ -345,27 +346,12 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
                 <CompanySVG />
               </PreviewEmptyWrapper>
             )}
-            <Controller
-              name="logoImg"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <FileInput
-                  type="file"
-                  accept="image/*"
-                  ref={el => {
-                    field.ref(el);
-                    inputLogoFileRef.current = el;
-                  }}
-                  onChange={e => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      field.onChange(file);
-                      handleLogoFileChange(e);
-                    }
-                  }}
-                />
-              )}
+            <FileInput
+              type="file"
+              {...register('logoImg', { required: true })}
+              accept="image/*"
+              ref={inputLogoFileRef}
+              onChange={handleLogoFileChange}
             />
             <Button
               variation="outlined"
