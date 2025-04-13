@@ -237,6 +237,10 @@ const List = () => {
     setIsAppliedCost(false);
   };
 
+  useEffect(() => {
+    console.log(daysArrayToDecimal(appliedDay));
+  }, [appliedDay]);
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: [
       'recruits',
@@ -250,13 +254,13 @@ const List = () => {
     ],
     queryFn: ({ pageParam = 0 }) =>
       requestCasts({
-        offset: `${pageParam}`,
-        limit: '16',
+        key: pageParam,
+        size: 16,
         category: parsingCategory(selectedGenre),
-        locations: selectedZone?.find(zone => zone === '전체지역') ? '' : selectedZone?.join(','),
-        daysOfWeek: String(daysArrayToDecimal(appliedDay)),
-        orderBy: currentOrderBy,
-        feeRange: appliedCost,
+        practiceDay: daysArrayToDecimal(appliedDay),
+        monthlyFeeStart: Number(appliedCost?.split('-')?.[0] ?? 0),
+        monthlyFeeEnd: Number(appliedCost?.split('-')?.[1] ?? 500000),
+        sort: currentOrderBy === 'newest' ? 'RECENT' : 'VIEW',
       }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
@@ -278,11 +282,13 @@ const List = () => {
   const parsingCategory = (category: string) => {
     switch (category) {
       case '연극':
-        return 'THEATRE';
+        return 'THEATER';
       case '뮤지컬':
         return 'MUSICAL';
       case '댄스':
         return 'DANCE';
+      default:
+        return 'THEATER';
     }
   };
 

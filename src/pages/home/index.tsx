@@ -9,7 +9,7 @@ import RecommendRecruit from './components/recommendRecruit';
 import StageCue from './components/stageCue';
 import AdsSlide from './components/adsSlide';
 
-import { requestCasts, requestCastsDetailList } from '@/api/cast';
+import { requestCasts, requestPopularCasts } from '@/api/cast';
 import { requestRecommendRecruits } from '@/api/recommendRecruits';
 import { requestNotices } from '@/api/notice';
 import { requestBanners } from '@/api/ads';
@@ -57,25 +57,26 @@ const Home = () => {
 
   const getNewestCasts = async () => {
     const { recruits } = await requestCasts({
-      limit: '10',
-      offset: '0',
-      orderBy: 'newest',
+      size: 5,
+      category: 'THEATER',
+      sort: 'RECENT',
     });
 
     setNewestRecruits(recruits);
   };
 
   const getPopularCasts = async () => {
-    const { recruits } = await requestCastsDetailList({
-      limit: '5',
-      offset: '0',
+    const { recruits } = await requestPopularCasts({
+      size: 5,
+      category: 'THEATER',
+      sort: 'VIEW',
     });
 
     setPopularRecruits(recruits);
   };
 
   const getNotices = async () => {
-    const { content: notices } = await requestNotices({ limit: 6, offset: 0 });
+    const { content: notices } = await requestNotices({ page: 0, size: 6 });
 
     setNotices(notices);
   };

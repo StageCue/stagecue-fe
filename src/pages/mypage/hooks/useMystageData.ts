@@ -17,9 +17,10 @@ export const useMystageData = () => {
     queryKey: ['popularRecruits'],
     queryFn: () =>
       requestCasts({
-        limit: '4',
-        offset: '0',
-        orderBy: 'newest',
+        key: 0,
+        size: 4,
+        category: 'THEATER',
+        sort: 'RECENT',
       }),
     staleTime: 1000 * 60 * 5,
     select: data => data.recruit,
