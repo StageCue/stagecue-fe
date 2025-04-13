@@ -1,14 +1,17 @@
 import request from '..';
+import { queryParams as _queryParams } from '@/utils/queryParams';
 
 interface ReqNoticesParam {
-  limit: number;
-  offset: number;
+  page: number;
+  size: number;
 }
 
-export const requestNotices = async ({ limit, offset }: ReqNoticesParam) => {
+export const requestNotices = async (data: ReqNoticesParam) => {
+  const queryParams = _queryParams<ReqNoticesParam>(data);
+
   const res = await request({
     method: 'get',
-    endpoint: `notices?limit=${limit}&offset=${offset}`,
+    endpoint: `notices?${queryParams}`,
   });
   return res;
 };

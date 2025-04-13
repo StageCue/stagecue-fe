@@ -1,15 +1,18 @@
-import styled from 'styled-components';
-import Menu from './components/menu/menu';
-import Mystage from './components/mystage';
 import { useEffect, useState } from 'react';
-import ApplyHistory from './components/applyHistory';
-import SettingProfile from './components/settingProfile';
+import { useLocation } from 'react-router-dom';
+
+import styled from 'styled-components';
+
+import Menu from './components/menu/menu';
+import MyStage from './components/mystage';
 import EditAccount from './components/editAccount';
+import ApplyHistory from './components/applyHistory';
 import ResetPassword from './components/resetPassword';
 import DeleteAccount from './components/deleteAccount';
-import useSessionStore from '@/store/session';
 import ScrapRecruits from './components/scrapRecruits';
-import { useLocation } from 'react-router-dom';
+import SettingProfile from './components/settingProfile';
+
+import useSessionStore from '@/store/session';
 
 export type mypageMenuType =
   | 'my stage'
@@ -44,7 +47,7 @@ const MyPage = () => {
         <Menu selectedMenu={selectedMenu} onClick={handleOptionClick} />
       </MenuColumn>
       <ContentColumn>
-        {selectedMenu === 'my stage' && <Mystage />}
+        {selectedMenu === 'my stage' && <MyStage />}
         {selectedMenu === '배우지원 현황' && <ApplyHistory />}
         {selectedMenu === '공고 스크랩 리스트' && <ScrapRecruits />}
         {selectedMenu === '프로필 관리' && <SettingProfile />}

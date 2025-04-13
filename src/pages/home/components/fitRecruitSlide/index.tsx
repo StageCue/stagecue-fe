@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import styled from "styled-components";
-import SmallImage from "./components/SmallImage";
+import { useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import styled from 'styled-components';
+import SmallImage from './components/SmallImage';
+import EmptyWrapper from '@/components/emptyWrapper';
 
 interface SlideData {
   id: number;
@@ -11,110 +12,103 @@ interface SlideData {
   imageURL: string;
 }
 
-const FitRecruitSlide = ({
-  recommendRecruits,
-}: {
-  recommendRecruits: SlideData[];
-}) => {
+const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: SlideData[] }) => {
   const [activeSlide, setActiveSlide] = useState<number>(0);
 
   const handleSlideClick = (index: number): void => {
     setActiveSlide(index);
   };
 
-  useEffect(() => {}, []);
-
   return (
     <FitRecruitSlideContainer>
-      <Swiper width={1060} slidesPerView={"auto"}>
-        {recommendRecruits?.map((slide, index) => (
-          <CustomSwiperSlide
-            key={slide.id}
-            $isActive={activeSlide === index}
-            onClick={() => handleSlideClick(index)}
-          >
-            <RecruitSlide
+      {recommendRecruits?.length > 0 ? (
+        <Swiper width={1060} slidesPerView={'auto'}>
+          {recommendRecruits?.map((slide, index) => (
+            <CustomSwiperSlide
+              key={slide.id}
               $isActive={activeSlide === index}
-              $isFirst={index === 0}
-              $isLast={index === recommendRecruits?.length - 1}
-              $imageURL={slide.imageURL}
+              onClick={() => handleSlideClick(index)}
             >
-              <SlideCard $isActive={activeSlide === index}>
-                {activeSlide === index && (
-                  <>
-                    <CardInformation>
-                      <CardInfo>
-                        <CartTitle>
-                          스테이지큐에서 전문배우를 모집합니다.
-                        </CartTitle>
-                        <CardSubTitle>업템포의 성장일기</CardSubTitle>
-                        <Divider />
-                        <ShowDetailsTitle>지원 가능 배역</ShowDetailsTitle>
-                        <CharacterParts>
-                          {["주연", "조연", "행인"].map((character, index) => (
-                            <Character key={index}>{character}</Character>
-                          ))}
-                        </CharacterParts>
-                        <ShowDetailsTitle>공연기간</ShowDetailsTitle>
-                        <ShowDetailsSubTitle>
-                          2024.10.23~2024.10.23
-                        </ShowDetailsSubTitle>
-                        <ShowDetailsTitle>연습위치</ShowDetailsTitle>
-                        <ShowDetailsSubTitle>
-                          <svg
-                            width="14"
-                            height="17"
-                            viewBox="0 0 14 17"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M1.16797 6.94287C1.16797 10.9861 4.70503 14.3296 6.27063 15.6115C6.49469 15.795 6.60806 15.8878 6.77522 15.9349C6.90539 15.9715 7.09697 15.9715 7.22713 15.9349C7.39461 15.8877 7.50719 15.7958 7.7321 15.6116C9.29769 14.3297 12.8346 10.9864 12.8346 6.94324C12.8346 5.41315 12.22 3.94554 11.1261 2.8636C10.0321 1.78166 8.54847 1.17383 7.00137 1.17383C5.45427 1.17383 3.97047 1.78175 2.87651 2.86369C1.78255 3.94563 1.16797 5.41278 1.16797 6.94287Z"
-                              stroke="#EAEBEC"
-                              strokeWidth="1.16667"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M5.33464 6.17383C5.33464 7.0943 6.08083 7.84049 7.0013 7.84049C7.92178 7.84049 8.66797 7.0943 8.66797 6.17383C8.66797 5.25335 7.92178 4.50716 7.0013 4.50716C6.08083 4.50716 5.33464 5.25335 5.33464 6.17383Z"
-                              stroke="#EAEBEC"
-                              strokeWidth="1.16667"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                          서울시 종로구
-                        </ShowDetailsSubTitle>
-                      </CardInfo>
-                      <CardImage>
-                        <SmallImage />
-                      </CardImage>
-                    </CardInformation>
-                    <CardDescription>
-                      <Chip>업템포 극단</Chip>
-                      <Description>
-                        극단 소개 내용이 들어갑니다. 극단 소개 내용이
-                        들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개 내용이
-                        들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개
-                        내용이들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개
-                        내용이 들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개
-                        내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개
-                        내용이들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개
-                        내용이 들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개
-                        내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개
-                        내용이들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개
-                        내용이 들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개
-                        내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개
-                        내용이들어갑니다.
-                      </Description>
-                    </CardDescription>
-                  </>
-                )}
-              </SlideCard>
-            </RecruitSlide>
-          </CustomSwiperSlide>
-        ))}
-      </Swiper>
+              <RecruitSlide
+                $isActive={activeSlide === index}
+                $isFirst={index === 0}
+                $isLast={index === recommendRecruits?.length - 1}
+                $imageURL={slide.imageURL}
+              >
+                <SlideCard $isActive={activeSlide === index}>
+                  {activeSlide === index && (
+                    <>
+                      <CardInformation>
+                        <CardInfo>
+                          <CartTitle>스테이지큐에서 전문배우를 모집합니다.</CartTitle>
+                          <CardSubTitle>업템포의 성장일기</CardSubTitle>
+                          <Divider />
+                          <ShowDetailsTitle>지원 가능 배역</ShowDetailsTitle>
+                          <CharacterParts>
+                            {['주연', '조연', '행인'].map((character, index) => (
+                              <Character key={index}>{character}</Character>
+                            ))}
+                          </CharacterParts>
+                          <ShowDetailsTitle>공연기간</ShowDetailsTitle>
+                          <ShowDetailsSubTitle>2024.10.23~2024.10.23</ShowDetailsSubTitle>
+                          <ShowDetailsTitle>연습위치</ShowDetailsTitle>
+                          <ShowDetailsSubTitle>
+                            <svg
+                              width="14"
+                              height="17"
+                              viewBox="0 0 14 17"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M1.16797 6.94287C1.16797 10.9861 4.70503 14.3296 6.27063 15.6115C6.49469 15.795 6.60806 15.8878 6.77522 15.9349C6.90539 15.9715 7.09697 15.9715 7.22713 15.9349C7.39461 15.8877 7.50719 15.7958 7.7321 15.6116C9.29769 14.3297 12.8346 10.9864 12.8346 6.94324C12.8346 5.41315 12.22 3.94554 11.1261 2.8636C10.0321 1.78166 8.54847 1.17383 7.00137 1.17383C5.45427 1.17383 3.97047 1.78175 2.87651 2.86369C1.78255 3.94563 1.16797 5.41278 1.16797 6.94287Z"
+                                stroke="#EAEBEC"
+                                strokeWidth="1.16667"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              <path
+                                d="M5.33464 6.17383C5.33464 7.0943 6.08083 7.84049 7.0013 7.84049C7.92178 7.84049 8.66797 7.0943 8.66797 6.17383C8.66797 5.25335 7.92178 4.50716 7.0013 4.50716C6.08083 4.50716 5.33464 5.25335 5.33464 6.17383Z"
+                                stroke="#EAEBEC"
+                                strokeWidth="1.16667"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            서울시 종로구
+                          </ShowDetailsSubTitle>
+                        </CardInfo>
+                        <CardImage>
+                          <SmallImage />
+                        </CardImage>
+                      </CardInformation>
+                      <CardDescription>
+                        <Chip>업템포 극단</Chip>
+                        <Description>
+                          극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개 내용이
+                          들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단
+                          소개 내용이들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개 내용이
+                          들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다. 극단
+                          소개 내용이 들어갑니다.극단 소개 내용이들어갑니다. 극단 소개 내용이
+                          들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개 내용이 들어갑니다. 극단
+                          소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개
+                          내용이들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개 내용이
+                          들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다. 극단
+                          소개 내용이 들어갑니다.극단 소개 내용이들어갑니다.
+                        </Description>
+                      </CardDescription>
+                    </>
+                  )}
+                </SlideCard>
+              </RecruitSlide>
+            </CustomSwiperSlide>
+          ))}
+        </Swiper>
+      ) : (
+        <EmptyWrapper width={1060} height={545}>
+          추천 공고가 없습니다.
+        </EmptyWrapper>
+      )}
     </FitRecruitSlideContainer>
   );
 };
@@ -210,8 +204,7 @@ const SlideCard = styled.div<{ $isActive: boolean }>`
   flex-direction: column;
   gap: 20px;
   padding: 36px 36px 36px 36px;
-  background-color: ${({ $isActive }) =>
-    $isActive ? "#000000b2" : "#00000066"};
+  background-color: ${({ $isActive }) => ($isActive ? '#000000b2' : '#00000066')};
 `;
 
 const CardInformation = styled.div`
@@ -241,7 +234,7 @@ const FitRecruitSlideContainer = styled.div`
 `;
 
 const CustomSwiperSlide = styled(SwiperSlide)<{ $isActive: boolean }>`
-  width: ${({ $isActive }) => ($isActive ? "668px" : "98px")};
+  width: ${({ $isActive }) => ($isActive ? '668px' : '98px')};
   height: 545px;
   transition: width 0.3s ease-in-out;
 `;
@@ -256,19 +249,18 @@ const RecruitSlide = styled.div<{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: ${({ $isActive }) => ($isActive ? "white" : "black")};
+  color: ${({ $isActive }) => ($isActive ? 'white' : 'black')};
   height: 545px;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
-  box-shadow: ${({ $isActive }) =>
-    $isActive ? "0px 4px 10px rgba(0, 0, 0, 0.3)" : "none"};
+  box-shadow: ${({ $isActive }) => ($isActive ? '0px 4px 10px rgba(0, 0, 0, 0.3)' : 'none')};
   overflow: hidden;
 
   border-radius: ${({ $isFirst, $isLast }) =>
-    $isFirst ? "8px 0 0 8px" : $isLast ? "0 8px 8px 0" : "0"};
+    $isFirst ? '8px 0 0 8px' : $isLast ? '0 8px 8px 0' : '0'};
 
-  background: ${({ $isActive }) => ($isActive ? "#000000b2" : "#ddd")};
-  background-image: url("https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg");
+  background: ${({ $isActive }) => ($isActive ? '#000000b2' : '#ddd')};
+  background-image: url('https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

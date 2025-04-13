@@ -1,59 +1,37 @@
 import request from '..';
+import { queryParams as _queryParams } from '@/utils/queryParams';
 
 interface ReqCastsParams {
-  limit: string;
-  offset: string;
-  category?:
-    | 'THEATRE'
-    | 'MUSICAL'
-    | 'DANCE'
-    | 'MOVIE'
-    | 'PERFORMANCE'
-    | 'TVSHOW'
-    | 'SNS'
-    | 'SINGER'
-    | 'MODEL';
-  locations?: string;
-  daysOfWeek?: string;
-  feeRange?: string;
-  orderBy?: 'newest' | 'popular';
-  query?: string | null;
+  key?: number;
+  size?: number;
+  category: 'THEATER' | 'MUSICAL' | 'DANCE';
+  practiceDay?: string[];
+  monthlyFeeStart?: number;
+  monthlyFeeEnd?: number;
+  sort: 'RECENT' | 'VIEW';
 }
-
-interface ReqCastsDetailListParams {
-  limit: string;
-  offset: string;
-}
-
 interface ReqApplyCast {
   recruitId: string;
   profileId: string;
 }
 
 export const requestCasts = async (data: ReqCastsParams) => {
-  const {
-    limit = '10',
-    offset = '0',
-    orderBy = '0',
-    category = 'THEATRE',
-    daysOfWeek = '0',
-    query = '',
-    locations = '',
-    feeRange = '',
-  } = data;
+  const queryParams = _queryParams<ReqCastsParams>(data);
 
   const res = await request({
     method: 'get',
-    endpoint: `recruits?limit=${limit}&offset=${offset}&orderBy=${orderBy}&category=${category}&daysOfWeek=${daysOfWeek}&feeRange=${feeRange}&query=${query}&locations=${locations}`,
+    endpoint: `recruits?${queryParams}`,
   });
+
   return res;
 };
 
-export const requestCastsDetailList = async (data: ReqCastsDetailListParams) => {
-  const { limit = '5', offset = '0' } = data;
+export const requestPopularCasts = async (data: ReqCastsParams) => {
+  const queryParams = _queryParams<ReqCastsParams>(data);
+
   const res = await request({
     method: 'get',
-    endpoint: `recruits/details?limit=${limit}&offset=${offset}`,
+    endpoint: `recruits?${queryParams}`,
   });
   return res;
 };

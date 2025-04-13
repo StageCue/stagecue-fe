@@ -7,12 +7,7 @@ import EditSVG from '@assets/icons/edit.svg?react';
 import RequiredSVG from '@assets/icons/required_orange.svg?react';
 import TrashSVG from '@assets/icons/trash_lg.svg?react';
 import { useNavigate } from 'react-router-dom';
-import {
-  requestCreateProfile,
-  requestSaveProfile,
-  requestUploadImage,
-  requestUploadThumbnail,
-} from '@/api/users';
+import { requestUploadImage, requestUploadThumbnail } from '@/api/users';
 import useSessionStore from '@/store/session';
 import ModalPortal from '@/components/modal/portal';
 import SubmitModal from '../modals/submitModal';
@@ -196,32 +191,53 @@ const NewProfileForm = () => {
     setIsSubmitModalOpen(true);
   };
 
+  const calculateAge = (birthday: string): number => {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    // 생일이 아직 지나지 않은 경우 1을 빼줍니다
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
+
+  const createProfile = async (data: ProfileInput, isDefault: boolean) => {
+    const { experiences, height, weight, introduce, title } = data;
+    const sanitizedExperiences = experiences?.map(({ id, ...rest }) => (id ? rest : rest));
+    const imageUrls = await requestUploadImageFiles();
+    const thumbnailUrl = await requestUploadThumbnailFile();
+
+    return {
+      birthDay: sessionStore?.birthday,
+      age: calculateAge(sessionStore?.birthday as string),
+      name: sessionStore?.username,
+      height,
+      weight,
+      phoneNumber: sessionStore?.phoneNumber,
+      email: sessionStore?.email,
+      title,
+      introduce,
+      thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
+      images: imageUrls,
+      experiences: sanitizedExperiences,
+      isDefault,
+    };
+  };
+
   const handleConfirmClick = async (data: ProfileInput) => {
     try {
       setIsLoading(true);
-      const { experiences, height, weight, introduce, title } = data;
-      const sanitizedExperiences = experiences?.map(({ id, ...rest }) => (id ? rest : rest));
-      setIsSubmitModalOpen(false);
-      const imageUrls = await requestUploadImageFiles();
-      const thumbnailUrl = await requestUploadThumbnailFile();
+      const params = await createProfile(data, true);
+      console.log(params);
+      // const { result } = await requestCreateProfile(params);
 
-      const res = await requestCreateProfile();
-
-      await requestSaveProfile(
-        {
-          experiences: sanitizedExperiences,
-          height,
-          weight,
-          introduction: introduce,
-          title,
-          isDefault: true,
-          images: imageUrls!,
-          thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
-        },
-        res.id!
-      );
       setIsLoading(false);
-      navigate(`/mypage/profiles/${res.id}`);
+      // navigate(`/mypage/profiles/${result.id}`);
     } catch (error) {
       console.error(error);
     } finally {
@@ -232,29 +248,12 @@ const NewProfileForm = () => {
   const handleCloseClick = async (data: ProfileInput) => {
     try {
       setIsLoading(true);
-      const { experiences, height, weight, introduce, title } = data;
-      const sanitizedExperiences = experiences?.map(({ id, ...rest }) => (id ? rest : rest));
-      setIsSubmitModalOpen(false);
-      const imageUrls = await requestUploadImageFiles();
-      const thumbnailUrl = await requestUploadThumbnailFile();
+      const params = await createProfile(data, false);
+      console.log(params);
+      // const { result } = await requestCreateProfile(params);
 
-      const res = await requestCreateProfile();
-
-      await requestSaveProfile(
-        {
-          experiences: sanitizedExperiences,
-          height,
-          weight,
-          introduction: introduce,
-          title,
-          isDefault: false,
-          images: imageUrls!,
-          thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
-        },
-        res.id!
-      );
       setIsLoading(false);
-      navigate(`/mypage/profiles/${res.id}`);
+      // navigate(`/mypage/profiles/${res.id}`);
     } catch (error) {
       console.error(error);
     } finally {

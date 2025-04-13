@@ -6,6 +6,7 @@ import CaretDownSVG from '@assets/icons/notice_caret_down.svg?react';
 import CaretLeftSVG from '@assets/icons/notice_caret_left.svg?react';
 import CaretRightSVG from '@assets/icons/notice_caret_right.svg?react';
 import { useQuery } from '@tanstack/react-query';
+import EmptyWrapper from '@/components/emptyWrapper';
 
 interface Notice {
   id: number;
@@ -29,7 +30,7 @@ const Notice = () => {
 
   const { data } = useQuery<NoticeQuery>({
     queryKey: ['notices', page],
-    queryFn: () => requestNotices({ limit: 10, offset: page * itemsPerPage }),
+    queryFn: () => requestNotices({ page: page * itemsPerPage, size: 10 }),
   });
 
   const totalCounts = data?.total || 0;
@@ -73,45 +74,53 @@ const Notice = () => {
   return (
     <NoticeContainer>
       <Title>공지사항</Title>
-      <List>
-        {data?.items?.map(post => (
-          <PostItem key={post?.id}>
-            <Post onClick={() => handlePostClick(post.id)}>
-              <LeftSideWrapper>
-                <Tag>공지사항</Tag>
-                <PostTitle>{post.title}</PostTitle>
-              </LeftSideWrapper>
-              <RightSideWrapper>
-                <Date>{post.createdAt}</Date>
-                {post.id === openPostId ? <CaretUpSVG /> : <CaretDownSVG />}
-              </RightSideWrapper>
-            </Post>
-            {post?.id === openPostId && <Contents>{contents}</Contents>}
-          </PostItem>
-        ))}
-      </List>
-      <Paginator>
-        <PgBtnWrapper $isActive={page > 0} onClick={() => page > 0 && handlePageClick(page - 1)}>
-          <CaretLeftSVG />
-        </PgBtnWrapper>
-        <PageNumbers>
-          {pageNumbers?.map(number => (
-            <PgNumber
-              key={number}
-              onClick={() => handlePageClick(number)}
-              $isCurrent={number === page}
-            >
-              {number + 1}
-            </PgNumber>
+      {data?.items && data?.items?.length > 0 ? (
+        <List>
+          {data?.items?.map(post => (
+            <PostItem key={post?.id}>
+              <Post onClick={() => handlePostClick(post.id)}>
+                <LeftSideWrapper>
+                  <Tag>공지사항</Tag>
+                  <PostTitle>{post.title}</PostTitle>
+                </LeftSideWrapper>
+                <RightSideWrapper>
+                  <Date>{post.createdAt}</Date>
+                  {post.id === openPostId ? <CaretUpSVG /> : <CaretDownSVG />}
+                </RightSideWrapper>
+              </Post>
+              {post?.id === openPostId && <Contents>{contents}</Contents>}
+            </PostItem>
           ))}
-        </PageNumbers>
-        <PgBtnWrapper
-          $isActive={!(page === totalPages - 1)}
-          onClick={() => !(page === totalPages - 1) && handlePageClick(page + 1)}
-        >
-          <CaretRightSVG />
-        </PgBtnWrapper>
-      </Paginator>
+        </List>
+      ) : (
+        <EmptyWrapper width={920} height={300}>
+          공지사항이 없습니다.
+        </EmptyWrapper>
+      )}
+      {pageNumbers?.length > 0 && (
+        <Paginator>
+          <PgBtnWrapper $isActive={page > 0} onClick={() => page > 0 && handlePageClick(page - 1)}>
+            <CaretLeftSVG />
+          </PgBtnWrapper>
+          <PageNumbers>
+            {pageNumbers?.map(number => (
+              <PgNumber
+                key={number}
+                onClick={() => handlePageClick(number)}
+                $isCurrent={number === page}
+              >
+                {number + 1}
+              </PgNumber>
+            ))}
+          </PageNumbers>
+          <PgBtnWrapper
+            $isActive={!(page === totalPages - 1)}
+            onClick={() => !(page === totalPages - 1) && handlePageClick(page + 1)}
+          >
+            <CaretRightSVG />
+          </PgBtnWrapper>
+        </Paginator>
+      )}
     </NoticeContainer>
   );
 };

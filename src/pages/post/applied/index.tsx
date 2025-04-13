@@ -13,9 +13,10 @@ const Applied = () => {
 
   const getNewestCasts = async () => {
     const { recruits } = await requestCasts({
-      limit: '4',
-      offset: '0',
-      orderBy: 'newest',
+      key: 0,
+      size: 4,
+      category: 'THEATER',
+      sort: 'RECENT',
     });
 
     setPopularRecruits(recruits);

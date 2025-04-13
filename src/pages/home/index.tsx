@@ -9,7 +9,7 @@ import RecommendRecruit from './components/recommendRecruit';
 import StageCue from './components/stageCue';
 import AdsSlide from './components/adsSlide';
 
-import { requestCasts, requestCastsDetailList } from '@/api/cast';
+import { requestCasts, requestPopularCasts } from '@/api/cast';
 import { requestRecommendRecruits } from '@/api/recommendRecruits';
 import { requestNotices } from '@/api/notice';
 import { requestBanners } from '@/api/ads';
@@ -25,28 +25,9 @@ const Home = () => {
   const [banners, setBanners] = useState([]);
 
   const getRecommendRecruits = async () => {
-    const { recommendRecruits } = await requestRecommendRecruits({
-      limit: '5',
-      offset: '0',
-      orderBy: 'popular',
-      locations: '',
-    });
+    const { result: recommendRecruits } = await requestRecommendRecruits();
 
-    setRecommendRecruits(
-      recommendRecruits ?? [
-        {
-          id: 1,
-          title: 'Slide 1',
-          description: '추가 내용 1',
-          imageURL:
-            'https://s3-alpha-sig.figma.com/img/6097/c856/acbbe48ca76176374f2533235c7f6848?Expires=1740355200&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=iSkE6e3SJoKe0WWUm7P20TutjYTDflnCiUsuzFOalOAJPrfV-uM7koQXaYsORkSrkuIZaNdCgxFI3waEKWBJgqzSV9M7O3aTO~atfrKlxvGI4bN2AvWB1U1tJpUcF3e9lQfaFRlYq6X5DDftvuOsHkMW6xUiyMKmflr8eeZqBO63hbRgCGI8ZMkhuYjhxKgMCBGmNIyn~MIaFgp1xNsSjjKlSZWPzAxJT8CHWeoE6XP6mWuhftpcKLcqBvYd0i6ZojOIAqA1fBYuP0InRUx5PxecgLsnn5f189enaiel6s9bbsudusEPmRC1taMtClWdtTE88nWx3SI8LSfhVQ1jdg__',
-        },
-        { id: 2, title: 'Slide 2', description: '추가 내용 2', imageURL: '' },
-        { id: 3, title: 'Slide 3', description: '추가 내용 3', imageURL: '' },
-        { id: 4, title: 'Slide 4', description: '추가 내용 4', imageURL: '' },
-        { id: 5, title: 'Slide 5', description: '추가 내용 5', imageURL: '' },
-      ]
-    );
+    setRecommendRecruits(recommendRecruits);
   };
 
   const getBanners = async () => {
@@ -57,25 +38,26 @@ const Home = () => {
 
   const getNewestCasts = async () => {
     const { recruits } = await requestCasts({
-      limit: '10',
-      offset: '0',
-      orderBy: 'newest',
+      size: 5,
+      category: 'THEATER',
+      sort: 'RECENT',
     });
 
     setNewestRecruits(recruits);
   };
 
   const getPopularCasts = async () => {
-    const { recruits } = await requestCastsDetailList({
-      limit: '5',
-      offset: '0',
+    const { recruits } = await requestPopularCasts({
+      size: 5,
+      category: 'THEATER',
+      sort: 'VIEW',
     });
 
     setPopularRecruits(recruits);
   };
 
   const getNotices = async () => {
-    const { content: notices } = await requestNotices({ limit: 6, offset: 0 });
+    const { content: notices } = await requestNotices({ page: 0, size: 6 });
 
     setNotices(notices);
   };

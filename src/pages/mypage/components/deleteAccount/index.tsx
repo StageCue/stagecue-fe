@@ -26,8 +26,7 @@ const DeleteAccount = () => {
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
   const [isVerified, setIsVerified] = useState<boolean>(false);
-  const [isCodeSent, setIsCodeSent] = useState(false);
-  const [emailRequestToken, setEmailRequestToken] = useState('');
+  const [isCodeSent, setIsCodeSent] = useState(true);
   const [deleteUpdateToken, setDeleteUpdateToken] = useState('');
   const {
     register,
@@ -39,7 +38,7 @@ const DeleteAccount = () => {
     watch,
   } = useForm<DeleteAccountInputs>();
 
-  const isAgreed = watch('isAgreed');
+  const [isAgreed, emailValue, codeValue] = watch(['isAgreed', 'email', 'code']);
 
   const handleCheckboxClick = () => {
     if (isVerified) {
@@ -49,26 +48,27 @@ const DeleteAccount = () => {
   };
 
   const handleSendEmailClick = async () => {
-    const email = getValues('email');
-    const res = await requestDeleteAccountToken(email);
-
-    if (res?.error) {
-      alert(res?.error);
+    if (sessionStore.email !== emailValue) {
       return;
     }
 
-    if (res?.requestToken) {
-      setEmailRequestToken(res.requestToken);
+    const { result, error } = await requestDeleteAccountToken();
+
+    if (error) {
+      alert(error);
+      return;
+    }
+
+    if (result) {
       setIsCodeSent(true);
     }
   };
 
   const handleVerifyEmail = async () => {
-    const code = getValues('code');
-    const res = await requestVerifyDeleteAccount(emailRequestToken, code);
+    const { result: updateToken } = await requestVerifyDeleteAccount(codeValue);
 
-    if (res.updateToken) {
-      setDeleteUpdateToken(res.updateToken);
+    if (updateToken) {
+      setDeleteUpdateToken(updateToken);
       setIsVerified(true);
       clearErrors('code');
     } else {
@@ -130,36 +130,43 @@ const DeleteAccount = () => {
       <Form>
         <Inputs>
           <Label>이메일</Label>
-          <ShortInputWrapper>
-            <ShortInput
-              $isDirty={Boolean(dirtyFields.email)}
-              {...register('email', { required: true })}
-              placeholder="사용중인 이메일을 입력하세요."
-            />
-            {isCodeSent ? (
-              <Button
-                variation="outlined"
-                btnClass="assistive"
-                width={116}
-                onClick={handleSendEmailClick}
-                disabled={!dirtyFields.email}
-                type="button"
-              >
-                재전송
-              </Button>
-            ) : (
-              <Button
-                variation="solid"
-                btnClass="primary"
-                width={116}
-                onClick={handleSendEmailClick}
-                disabled={!dirtyFields.email}
-                type="button"
-              >
-                전송
-              </Button>
-            )}
-          </ShortInputWrapper>
+          <>
+            <ShortInputWrapper>
+              <ShortInput
+                $isDirty={Boolean(dirtyFields.email)}
+                {...register('email', { required: true })}
+                placeholder="사용중인 이메일을 입력하세요."
+              />
+              {isCodeSent ? (
+                <Button
+                  variation="outlined"
+                  btnClass="assistive"
+                  width={116}
+                  onClick={handleSendEmailClick}
+                  disabled={!dirtyFields.email}
+                  type="button"
+                >
+                  재전송
+                </Button>
+              ) : (
+                <Button
+                  variation="solid"
+                  btnClass="primary"
+                  width={116}
+                  onClick={handleSendEmailClick}
+                  disabled={!dirtyFields.email || sessionStore.email !== emailValue}
+                  type="button"
+                >
+                  전송
+                </Button>
+              )}
+            </ShortInputWrapper>
+            <Message $isSuccess={false}>
+              {emailValue?.length > 0 &&
+                sessionStore.email !== emailValue &&
+                '사용중인 이메일을 입력해주세요.'}
+            </Message>
+          </>
           {isCodeSent && (
             <WithMessageWrapper>
               <VerifyInputWrapper

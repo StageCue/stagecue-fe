@@ -44,6 +44,8 @@ const DefaultHeader = () => {
     setIsMymenuShowing(false);
   };
 
+  console.log(sessionStore);
+
   return (
     <DefaultHeaderContainer>
       <HeaderContainer>

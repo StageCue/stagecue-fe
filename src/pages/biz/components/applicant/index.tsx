@@ -127,9 +127,9 @@ const Applicant = () => {
   };
 
   useEffect(() => {
-    if (selectedFilter === 'APPLIED') {
+    if (selectedFilter === 'APPLY') {
       setPassType('DOCUMENT_PASSED');
-    } else if (selectedFilter === 'DOCUMENT_PASSED') {
+    } else if (selectedFilter === 'PASS') {
       setPassType('FINAL_ACCEPTED');
     }
   }, [selectedFilter]);
@@ -166,35 +166,26 @@ const Applicant = () => {
           </Option>
           <FilterDivider />
           <Option
-            onClick={() => handleFilterClick('APPLIED')}
-            $isSelected={selectedFilter === 'APPLIED'}
+            onClick={() => handleFilterClick('APPLY')}
+            $isSelected={selectedFilter === 'APPLY'}
           >
-            미열람 {filterByApplyStatus('APPLIED')?.length}
+            미열람 {filterByApplyStatus('APPLY')?.length}
           </Option>
           <FilterDivider />
-          <Option
-            onClick={() => handleFilterClick('DOCUMENT_PASSED')}
-            $isSelected={selectedFilter === 'DOCUMENT_PASSED'}
-          >
-            서류합격 {filterByApplyStatus('DOCUMENT_PASSED')?.length}
+          <Option onClick={() => handleFilterClick('PASS')} $isSelected={selectedFilter === 'PASS'}>
+            서류합격 {filterByApplyStatus('PASS')?.length}
           </Option>
           <FilterDivider />
-          <Option
-            onClick={() => handleFilterClick('FINAL_ACCEPTED')}
-            $isSelected={selectedFilter === 'FINAL_ACCEPTED'}
-          >
-            최종합격 {filterByApplyStatus('FINAL_ACCEPTED')?.length}
+          <Option onClick={() => handleFilterClick('WIN')} $isSelected={selectedFilter === 'WIN'}>
+            최종합격 {filterByApplyStatus('WIN')?.length}
           </Option>
           <FilterDivider />
-          <Option
-            onClick={() => handleFilterClick('REJECTED')}
-            $isSelected={selectedFilter === 'REJECTED'}
-          >
-            불합격 {filterByApplyStatus('REJECTED')?.length}
+          <Option onClick={() => handleFilterClick('LOSE')} $isSelected={selectedFilter === 'LOSE'}>
+            불합격 {filterByApplyStatus('LOSE')?.length}
           </Option>
         </Filters>
         <ButtonsWrapper>
-          {(selectedFilter === '전체' || selectedFilter === 'APPLIED') && (
+          {(selectedFilter === '전체' || selectedFilter === 'APPLY') && (
             <>
               <Button
                 variation="outlined"
@@ -230,7 +221,7 @@ const Applicant = () => {
               </Button>
             </>
           )}
-          {selectedFilter == 'DOCUMENT_PASSED' && (
+          {selectedFilter == 'PASS' && (
             <>
               <Button
                 variation="outlined"

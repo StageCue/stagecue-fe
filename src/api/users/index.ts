@@ -1,18 +1,25 @@
 import request from '..';
+import { queryParams as _queryParams } from '@/utils/queryParams';
 
 interface ReqChangeUserTypeParams {
   userType: 'ADMIN' | 'PERFORMER' | 'TROUPE';
 }
 
 interface ReqScrapsParams {
-  limit: number;
-  offset: number;
+  key?: number;
+  size: number;
 }
 
 interface ReqAppliedCastsParams {
-  limit: number;
-  offset: number;
-  status: 'APPLIED' | 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED' | 'REJECTED' | 'CANCEL' | '';
+  key: number;
+  size?: number;
+  applyStatuses:
+    | 'APPLY' // 지원완료
+    | 'OPEN' // 열람
+    | 'PASS' // 서류통과
+    | 'WIN' // 합격
+    | 'LOSE' // 불합격
+    | 'CANCELED'; // 지원취소
 }
 
 interface ReqChangeProfileData {
@@ -37,10 +44,31 @@ interface ReqChangePasswordBody {
   confirmPassword: string;
 }
 
+interface ReqCreateProfileData {
+  birthDay: string;
+  age: number;
+  name: string;
+  height: number;
+  weight: number;
+  phoneNumber: string;
+  email: string;
+  title: string;
+  introduce: string;
+  thumbnail: string;
+  images: string[];
+  experiences: {
+    artworkName: string;
+    artworkPart: string;
+    troupeName: string;
+    startDate: string;
+    endDate: string;
+  }[];
+}
+
 export const requestCastsStatus = async () => {
   const res = await request({
     method: 'get',
-    endpoint: 'users/recruits/status',
+    endpoint: `applies/status`,
   });
 
   return res;
@@ -56,21 +84,23 @@ export const requestChangeUserType = async (data: ReqChangeUserTypeParams) => {
   return res;
 };
 
-export const requestScraps = async (params: ReqScrapsParams) => {
-  const { limit, offset } = params;
+export const requestScraps = async (data: ReqScrapsParams) => {
+  const queryParams = _queryParams(data);
+
   const res = await request({
     method: 'get',
-    endpoint: `users/scraps?limit=${limit}&offset=${offset}`,
+    endpoint: `recruits/scrap?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestAppliedCasts = async (params: ReqAppliedCastsParams) => {
-  const { limit, offset, status } = params;
+export const requestAppliedCasts = async (data: ReqAppliedCastsParams) => {
+  const queryParams = _queryParams(data);
+
   const res = await request({
     method: 'get',
-    endpoint: `users/recruits?limit=${limit}&offset=${offset}&status=${status}`,
+    endpoint: `applies?${queryParams}`,
   });
 
   return res;
@@ -88,7 +118,7 @@ export const requestCancelApply = async (applyId: number) => {
 export const requestProfileList = async () => {
   const res = await request({
     method: 'get',
-    endpoint: 'users/profiles',
+    endpoint: 'profiles',
   });
 
   return res;
@@ -113,30 +143,34 @@ export const requestSaveProfile = async (data: ReqChangeProfileData, profileId: 
   return res;
 };
 
-export const requestChangeEmailToken = async (email: string) => {
+export const requestChangeEmailToken = async ({ changeEmail }: { changeEmail: string }) => {
+  const queryParams = _queryParams({ changeEmail });
+
   const res = await request({
     method: 'post',
-    endpoint: `users/change-email?email=${email}`,
+    endpoint: `user/email/change/request?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestVerifyEmailToken = async (token: string, code: string) => {
+export const requestVerifyEmailToken = async (changeEmail: string, token: string) => {
+  const queryParams = _queryParams({ changeEmail, token });
+
   const res = await request({
     method: 'post',
-    endpoint: `users/change-email-verify?code=${code}`,
-    header: { 'Change-Email-Request-Token': `${token}` },
+    endpoint: `user/email/change/verify?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestChangeEmail = async (token: string) => {
+export const requestChangeEmail = async (data: { email: string; token: string }) => {
+  const queryParams = _queryParams(data);
+
   const res = await request({
     method: 'put',
-    endpoint: 'users/change-email',
-    header: { 'Change-Email-Update-Token': `${token}` },
+    endpoint: `user/email/change?${queryParams}`,
   });
 
   return res;
@@ -190,20 +224,21 @@ export const requestChangePassword = async (data: ReqChangePasswordBody, token: 
   return res;
 };
 
-export const requestDeleteAccountToken = async (email: string) => {
+export const requestDeleteAccountToken = async () => {
   const res = await request({
     method: 'post',
-    endpoint: `users/delete-account?email=${email}`,
+    endpoint: `user/withdraw/request`,
   });
 
   return res;
 };
 
-export const requestVerifyDeleteAccount = async (token: string, code: string) => {
+export const requestVerifyDeleteAccount = async (token: string) => {
+  const queryParams = _queryParams({ token });
+
   const res = await request({
     method: 'post',
-    endpoint: `users/delete-account-verify?code=${code}`,
-    header: { 'Delete-Account-Request-Token': `${token}` },
+    endpoint: `user/withdraw/verify?${queryParams}`,
   });
 
   return res;
@@ -219,10 +254,11 @@ export const requestDeleteAccount = async (isAgreed: boolean, token: string) => 
   return res;
 };
 
-export const requestCreateProfile = async () => {
+export const requestCreateProfile = async (data: ReqCreateProfileData) => {
   const res = await request({
     method: 'post',
-    endpoint: `users/profiles`,
+    endpoint: `profiles`,
+    data,
   });
 
   return res;
@@ -231,7 +267,7 @@ export const requestCreateProfile = async () => {
 export const requestDeleteProfile = async (profileId: string | number) => {
   const res = await request({
     method: 'delete',
-    endpoint: `users/profiles/${profileId}`,
+    endpoint: `profiles/${profileId}`,
   });
 
   return res;
