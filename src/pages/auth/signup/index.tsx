@@ -142,14 +142,15 @@ const Signup = () => {
   ]);
 
   const onSubmitSignup = async (data: SignupInputs) => {
-    const { email, name, phoneNumber, password, birthday, gender, userType } = data;
+    const { email, name, phoneNumber, password, birthday, gender } = data;
 
     const userData = {
-      username: name,
+      token: registerToken,
+      userName: name,
       email,
-      cell: phoneNumber,
+      phoneNumber,
       password,
-      birthday:
+      birthDate:
         birthday ??
         `${oneDayAgo
           ?.toLocaleDateString('ko-KR', {
@@ -161,21 +162,17 @@ const Signup = () => {
           .replace(/\s/g, '')
           .replace(/-$/, '')}`,
       gender,
-      terms: true,
-      userType,
     };
 
-    const res = await requestSignup(userData, registerToken);
+    const res = await requestSignup(userData);
 
     if (res) {
-      sessionStorage.setItem('accessToken', res.accessToken);
-      sessionStorage.setItem('refreshToken', res.refreshToken);
       sessionStore.loginSession({
         email: emailValue,
-        username: res?.username,
-        phoneNumber: res?.cell,
-        userType: res?.userType,
-        birthday: res?.birthday,
+        username: name,
+        phoneNumber: phoneNumber,
+        userType: "PERFORMER",
+        birthday: birthday,
       });
       navigate('/auth/welcome');
     }
@@ -260,7 +257,7 @@ const Signup = () => {
 
     if (!res?.error) {
       setValue('certificated', true);
-      setRegisterToken(res.token);
+      setRegisterToken(res.result);
       clearErrors(['certificated']);
     } else {
       console.error(res?.error);

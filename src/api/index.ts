@@ -41,17 +41,11 @@ interface RequestPrams {
 const request = async ({ method, endpoint, data, header = {} }: RequestPrams) => {
   const url = `/api/v1/${endpoint}`;
 
-  const accessToken = sessionStorage.getItem('accessToken');
-
-  if (accessToken) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-  }
-
   return await axios({
     method,
     url,
     data,
-    withCredentials: false,
+    withCredentials: true,
     headers: {
       'Content-Type': header['Content-Type'] || 'application/json',
       ...header,
