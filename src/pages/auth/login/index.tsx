@@ -34,9 +34,7 @@ const Login = () => {
         message: `이메일 또는 비밀번호가 올바르지 않습니다.\n입력한 내용을 다시 확인해주세요.`,
       });
     } else {
-      if (res?.accessToken) {
-        sessionStorage.setItem('accessToken', res.accessToken);
-        sessionStorage.setItem('refreshToken', res.refreshToken);
+      if (res) {
         sessionStore.loginSession({
           email: emailValue,
           username: res?.username,
@@ -200,25 +198,6 @@ const Input = styled.input<{ $isDirty: boolean; $isError: boolean }>`
     letter-spacing: 0.57%;
     font-size: 16px;
   }
-`;
-
-const CheckboxInputWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  margin-top: 8px;
-  cursor: pointer;
-`;
-
-const CheckboxLabel = styled.label`
-  cursor: pointer;
-  user-select: none;
-  font-weight: var(--font-regular);
-  font-size: 14px;
-  line-height: 142.9%;
-  letter-spacing: 1.45%;
-  color: #171719;
-  height: 18px;
 `;
 
 const Label = styled.div`

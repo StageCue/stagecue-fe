@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -50,31 +49,24 @@ const useSessionStore = create(
           birthday: null,
           userType: null,
         }));
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
         sessionStorage.clear();
-        delete axios.defaults.headers.common['Authorization'];
 
         useSessionStore.persist.clearStorage();
       },
 
       loginSession: ({ username, phoneNumber, email, birthday, userType }: LoginParams) => {
-        const accessToken = sessionStorage.getItem('accessToken');
-
         const expirationTime = Date.now() + 30 * 60 * 1000;
 
-        if (accessToken) {
-          set(state => ({
-            ...state,
-            isLoggined: true,
-            username,
-            phoneNumber,
-            email,
-            birthday,
-            expirationTime,
-            userType,
-          }));
-        }
+        set(state => ({
+          ...state,
+          isLoggined: true,
+          username,
+          phoneNumber,
+          email,
+          birthday,
+          expirationTime,
+          userType,
+        }));
       },
 
       setUserType: (userType: 'TROUPE' | 'PERFORMER' | null) => {
