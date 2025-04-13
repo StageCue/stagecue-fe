@@ -27,7 +27,6 @@ export interface Scrap {
   castId: string;
   castTitle: string;
   imageUrl: string;
-  troupeId: number;
   troupeName: string;
   isBookmarked: boolean;
   practiceAddress: string;

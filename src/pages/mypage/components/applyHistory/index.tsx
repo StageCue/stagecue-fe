@@ -2,23 +2,29 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import ChevronDownSVG from '@/assets/icons/chebron_down_s.svg?react';
 import ApplyList from './components/applyList';
-import { useMystageData } from '../../hooks/useMystageData';
+import { useMyStageData } from '../../hooks/useMyStageData';
 
 export type applyPhaseType =
-  | 'APPLIED'
-  | 'DOCUMENT_PASSED'
-  | 'FINAL_ACCEPTED'
-  | 'REJECTED'
-  | 'CANCEL';
+  | 'APPLY' // 지원완료
+  | 'OPEN' // 열람
+  | 'PASS' // 서류통과
+  | 'WIN' // 합격
+  | 'LOSE' // 불합격
+  | 'CANCELED'; // 지원취소
 
 export type filterType = '전체' | 'CANCEL' | 'READ' | 'UNREAD';
 
 const ApplyHistory = () => {
-  const { recruitsStatus } = useMystageData();
+  const { recruitsStatus } = useMyStageData();
 
-  const [selectedPhase, setSelectedPhase] = useState<applyPhaseType>('APPLIED');
+  const [selectedPhase, setSelectedPhase] = useState<applyPhaseType>('APPLY');
   const [selectedFilter, setSelectedFilter] = useState<filterType>('전체');
   const [isFilterMenuShowing, setIsFilterMenuShowing] = useState<boolean>(false);
+
+  // 상태별 지원 건수를 계산
+  const getStatusCount = (status: string) => {
+    return recruitsStatus?.result?.find(item => item.applyStatus === status)?.count ?? 0;
+  };
 
   const handlePhaseClick = (phase: applyPhaseType) => {
     setSelectedPhase(phase);
@@ -28,7 +34,7 @@ const ApplyHistory = () => {
     setSelectedFilter(filter);
 
     //TODO: api 수정 후 변경 필요 (2025.03.12)
-    if (filter === 'CANCEL') setSelectedPhase('CANCEL');
+    if (filter === 'CANCEL') setSelectedPhase('CANCELED');
     setIsFilterMenuShowing(false);
   };
 
@@ -38,14 +44,16 @@ const ApplyHistory = () => {
 
   const parsePhase = (status: applyPhaseType) => {
     switch (status) {
-      case 'APPLIED':
+      case 'APPLY':
         return '지원 완료';
-      case 'DOCUMENT_PASSED':
+      case 'PASS':
         return '서류 통과';
-      case 'FINAL_ACCEPTED':
+      case 'WIN':
         return '최종 합격';
-      case 'REJECTED':
+      case 'LOSE':
         return '불합격';
+      case 'CANCELED':
+        return '지원취소';
     }
   };
 
@@ -68,42 +76,39 @@ const ApplyHistory = () => {
         <ItemTitle>지원 현황</ItemTitle>
         <Dashboard>
           <ApplyPhase
-            onClick={() => handlePhaseClick('APPLIED')}
-            $isSelected={selectedPhase === 'APPLIED'}
+            onClick={() => handlePhaseClick('APPLY')}
+            $isSelected={selectedPhase === 'APPLY'}
           >
             <ItemName>지원 완료</ItemName>
-            {recruitsStatus && <Value>{recruitsStatus?.applied}</Value>}
+            <Value>{getStatusCount('APPLY')}</Value>
           </ApplyPhase>
           <Divider />
           <ApplyPhase
-            onClick={() => handlePhaseClick('DOCUMENT_PASSED')}
-            $isSelected={selectedPhase === 'DOCUMENT_PASSED'}
+            onClick={() => handlePhaseClick('PASS')}
+            $isSelected={selectedPhase === 'PASS'}
           >
             <ItemName>서류 통과</ItemName>
-            <Value>{recruitsStatus?.passed}</Value>
+            <Value>{getStatusCount('PASS')}</Value>
           </ApplyPhase>
           <Divider />
-          <ApplyPhase
-            onClick={() => handlePhaseClick('FINAL_ACCEPTED')}
-            $isSelected={selectedPhase === 'FINAL_ACCEPTED'}
-          >
+          <ApplyPhase onClick={() => handlePhaseClick('WIN')} $isSelected={selectedPhase === 'WIN'}>
             <ItemName>최종 합격</ItemName>
-            <Value>{recruitsStatus?.accepted}</Value>
+            <Value>{getStatusCount('WIN')}</Value>
           </ApplyPhase>
           <Divider />
           <ApplyPhase
-            onClick={() => handlePhaseClick('REJECTED')}
-            $isSelected={selectedPhase === 'REJECTED'}
+            onClick={() => handlePhaseClick('LOSE')}
+            $isSelected={selectedPhase === 'LOSE'}
           >
             <ItemName>불합격</ItemName>
-            <Value>{recruitsStatus?.rejected}</Value>
+            <Value>{getStatusCount('LOSE')}</Value>
           </ApplyPhase>
         </Dashboard>
       </ApplyDashboard>
       <ApplyListWrapper>
         <TitleWrapper>
           <ItemTitle>{parsePhase(selectedPhase)}</ItemTitle>
-          {(selectedPhase === 'APPLIED' || selectedPhase === 'CANCEL') && (
+          {(selectedPhase === 'APPLY' || selectedPhase === 'CANCELED') && (
             <FilterBtnWrapper>
               <FilterBtn onClick={handleFilterBtnClick}>
                 {parseFilterText(selectedFilter)} <ChevronDownSVG />

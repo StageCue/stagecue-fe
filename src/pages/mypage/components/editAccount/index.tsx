@@ -24,7 +24,6 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   const [isChangeMail, setIsChangeMail] = useState(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [certTime, setCertTime] = useState<number>(300);
-  const [requestEmailToken, setRequestEmailToken] = useState('');
   const [updateEmailToken, setUpdateEmailToken] = useState('');
   const [isVerifiedCode, setIsVerifiedCode] = useState(false);
   const [isErrorEmailVerify, setIsErrorEmailVerify] = useState(false);
@@ -60,7 +59,6 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   const resetStates = () => {
     setIsChangeMail(false);
     setIsCodeSent(false);
-    setRequestEmailToken('');
     setUpdateEmailToken('');
     setIsVerifiedCode(false);
     setIsErrorEmailVerify(false);
@@ -93,15 +91,15 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleSendEmailCodeClick = async () => {
-    const { requestToken, error } = await requestChangeEmailToken(emailValue);
+    const { result, error } = await requestChangeEmailToken({ changeEmail: emailValue });
+    // const { requestToken, error } = await requestChangeEmailToken({ changeEmail: emailValue });
 
     if (error) {
       alert(error);
       return;
     }
 
-    if (requestToken) {
-      setRequestEmailToken(requestToken);
+    if (result) {
       setIsCodeSent(true);
       setCertTime(300);
     }
@@ -123,10 +121,10 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleVerifyEmailCodeClick = async () => {
-    const res = await requestVerifyEmailToken(requestEmailToken, codeValue);
+    const { result: token } = await requestVerifyEmailToken(emailValue, codeValue);
 
-    if (res.updateToken) {
-      setUpdateEmailToken(res.updateToken);
+    if (token) {
+      setUpdateEmailToken(token);
       setIsVerifiedCode(true);
       setIsErrorEmailVerify(false);
       setCertTime(0);
@@ -149,7 +147,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleEmailSubmitClick = async () => {
-    const res = await requestChangeEmail(updateEmailToken);
+    const res = await requestChangeEmail({ email: emailValue, token: updateEmailToken });
 
     if (!res?.error) {
       setIsChangeConfirmed(true);

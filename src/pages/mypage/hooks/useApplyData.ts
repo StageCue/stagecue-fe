@@ -6,7 +6,7 @@ import { AppliedCastsResponse } from '../types/api';
 export const useApplyData = (status: ApplyStatus) => {
   return useQuery<AppliedCastsResponse>({
     queryKey: ['appliedCasts', status],
-    queryFn: () => requestAppliedCasts({ limit: 10, offset: 0, status }),
+    queryFn: () => requestAppliedCasts({ key: 0, size: 10, applyStatuses: status }),
     staleTime: 1000 * 60 * 5,
     enabled: !!status,
   });

@@ -4,10 +4,23 @@ import { requestCasts, requestDeleteScrapCast, requestScrapCast } from '@/api/ca
 import { Scrap } from '../types/data';
 import { getDday } from '@/utils/getDday';
 
-export const useMystageData = () => {
+interface RecruitStatusCount {
+  applyStatus:
+    | 'APPLY' // 지원완료
+    | 'PASS' // 서류통과
+    | 'WIN' // 합격
+    | 'LOSE'; // 불합격
+  count: number;
+}
+
+interface RecruitStatusResponse {
+  result: RecruitStatusCount[];
+}
+
+export const useMyStageData = () => {
   const queryClient = useQueryClient();
 
-  const { data: recruitsStatus } = useQuery({
+  const { data: recruitsStatus } = useQuery<RecruitStatusResponse>({
     queryKey: ['recruitsStatus'],
     queryFn: requestCastsStatus,
     staleTime: 1000 * 60 * 5,
@@ -20,7 +33,7 @@ export const useMystageData = () => {
         key: 0,
         size: 4,
         category: 'THEATER',
-        sort: 'RECENT',
+        sort: 'VIEW',
       }),
     staleTime: 1000 * 60 * 5,
     select: data => data.recruit,
@@ -29,13 +42,29 @@ export const useMystageData = () => {
   const { data: scraps = [] } = useQuery<Scrap[]>({
     queryKey: ['scrappedCasts'],
     queryFn: async () => {
-      const { casts } = await requestScraps({ limit: 3, offset: 0 });
+      const { result } = await requestScraps({ key: 0, size: 3 });
 
-      return casts.map((scrap: Scrap) => ({
-        ...scrap,
-        isBookmarked: true,
-        dday: getDday(scrap.dateExpired),
-      }));
+      return (
+        result?.content?.map(
+          (scrap: {
+            recruitId: number;
+            title: string;
+            imageUrl: string;
+            troupeName: string;
+            shortAddress: string;
+          }) => ({
+            castId: scrap.recruitId.toString(),
+            castTitle: scrap.title,
+            imageUrl: scrap.imageUrl,
+            troupeName: scrap.troupeName,
+            practiceAddress: scrap.shortAddress,
+            // TODO: 임시 코드
+            // dday: getDday(scrap.dateExpired) 이 코드로 변경해야함.
+            dday: getDday(new Date(new Date().setDate(new Date().getDate() + 5)).toISOString()),
+            isBookmarked: true,
+          })
+        ) ?? []
+      );
     },
     staleTime: 0,
   });

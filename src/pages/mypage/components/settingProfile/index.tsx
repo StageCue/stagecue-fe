@@ -23,9 +23,11 @@ const SettingProfile = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   const getProfiles = async () => {
-    const res = await requestProfileList();
+    const { result: profiles } = await requestProfileList();
 
-    setProfiles(res.profiles);
+    console.log(profiles);
+
+    setProfiles(profiles);
   };
 
   const handleProfileClick = (id: string | number) => {
@@ -46,7 +48,7 @@ const SettingProfile = () => {
           return;
         }
 
-        const newProfiles = profiles.filter(profile => profile.id !== id);
+        const newProfiles = profiles?.filter(profile => profile.id !== id);
         setProfiles(newProfiles);
       } catch (error) {
         console.error(error);
@@ -74,7 +76,7 @@ const SettingProfile = () => {
         </Button>
       </CreateBtnWrapper>
       <ProfileList>
-        {profiles.map(
+        {profiles?.map(
           ({
             id,
             title,
@@ -103,7 +105,7 @@ const SettingProfile = () => {
           )
         )}
       </ProfileList>
-      {profiles.length === 0 && (
+      {profiles?.length === 0 && (
         <NoProfile>
           <NoScrappedSVG />
           <Text>아직 작성된 프로필이 없어요.</Text>

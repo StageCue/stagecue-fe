@@ -4,50 +4,50 @@ import BookmarkSVG from '@assets/icons/bookmark.svg';
 import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg';
 import Button from '@/components/buttons/button';
 import Cast from '@/pages/home/components/cast';
-import { useMystageData } from '../../hooks/useMystageData';
+
 import { useNavigate } from 'react-router-dom';
 import { Recruit } from '../../types/data';
+import { useMyStageData } from '../../hooks/useMyStageData';
+import EmptyWrapper from '@/components/emptyWrapper';
 
-export interface RecruitsStatus {
-  accepted: number;
-  applied: number;
-  passed: number;
-  rejected: number;
-}
-
-const Mystage = () => {
-  const { recruitsStatus, popularRecruits, scraps, handleBookmarkClick } = useMystageData();
-
+const MyStage = () => {
+  const { recruitsStatus, popularRecruits, scraps, handleBookmarkClick } = useMyStageData();
   const navigate = useNavigate();
 
+  const getStatusCount = (status: string) => {
+    return recruitsStatus?.result?.find(item => item.applyStatus === status)?.count ?? 0;
+  };
+
+  console.log(scraps);
+
   return (
-    <MystageContainer>
-      <MyStage>
+    <MyStageWrapper>
+      <MyStageStatus>
         <ItemTitleWrapper>
           <ItemTitle>My Stage</ItemTitle>
         </ItemTitleWrapper>
         <Dashboard>
           <MyStageItem>
             <ItemName>지원 완료</ItemName>
-            {recruitsStatus && <Value>{recruitsStatus?.applied}</Value>}
+            <Value>{getStatusCount('APPLY')}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>서류 통과</ItemName>
-            <Value>{recruitsStatus?.passed}</Value>
+            <Value>{getStatusCount('PASS')}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>최종 합격</ItemName>
-            <Value>{recruitsStatus?.accepted}</Value>
+            <Value>{getStatusCount('FINAL_ACCEPTED')}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>불합격</ItemName>
-            <Value>{recruitsStatus?.rejected}</Value>
+            <Value>{getStatusCount('FAILED')}</Value>
           </MyStageItem>
         </Dashboard>
-      </MyStage>
+      </MyStageStatus>
       <ScrappedPost>
         <ItemTitleWrapper>
           <ItemTitle>스크랩한 공고</ItemTitle>
@@ -112,30 +112,42 @@ const Mystage = () => {
             <ShowAll>전체보기</ShowAll>
           </ItemTitleWrapper>
           <Casts>
-            {popularRecruits?.map(
-              ({ recruitId, thumbnail, recruitTitle, artworkName, practiceLocation }: Recruit) => (
-                <Cast
-                  key={recruitId}
-                  imgWidth={215}
-                  imgHeight={322.5}
-                  recruitId={recruitId}
-                  thumbnail={thumbnail}
-                  recruitTitle={recruitTitle}
-                  troupeName={artworkName}
-                  practiceLocation={practiceLocation}
-                />
+            {popularRecruits?.length > 0 ? (
+              popularRecruits?.map(
+                ({
+                  recruitId,
+                  thumbnail,
+                  recruitTitle,
+                  artworkName,
+                  practiceLocation,
+                }: Recruit) => (
+                  <Cast
+                    key={recruitId}
+                    imgWidth={215}
+                    imgHeight={322.5}
+                    recruitId={recruitId}
+                    thumbnail={thumbnail}
+                    recruitTitle={recruitTitle}
+                    troupeName={artworkName}
+                    practiceLocation={practiceLocation}
+                  />
+                )
               )
+            ) : (
+              <EmptyWrapper width={685} height={432.5}>
+                인기 공고가 없습니다.
+              </EmptyWrapper>
             )}
           </Casts>
         </PopularPost>
       )}
-    </MystageContainer>
+    </MyStageWrapper>
   );
 };
 
-export default Mystage;
+export default MyStage;
 
-const MystageContainer = styled.div`
+const MyStageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 60px;
@@ -148,7 +160,7 @@ const ItemTitle = styled.div`
   letter-spacing: -1.94%;
 `;
 
-const MyStage = styled.div``;
+const MyStageStatus = styled.div``;
 
 const Dashboard = styled.div`
   width: 685px;

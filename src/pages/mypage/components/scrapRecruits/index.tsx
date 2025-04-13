@@ -6,11 +6,11 @@ import DotdotdotSVG from '@/assets/images/dotdotdot.svg?react';
 import Button from '@/components/buttons/button';
 import Cast from '@/pages/home/components/cast';
 import { useNavigate } from 'react-router-dom';
-import { useMystageData } from '../../hooks/useMystageData';
+import { useMyStageData } from '../../hooks/useMyStageData';
 
 const ScrapRecruits = () => {
   const navigate = useNavigate();
-  const { scraps } = useMystageData();
+  const { scraps } = useMyStageData();
 
   const [isFilteredClosedPost, setIsFilteredClosedPost] = useState(false);
 
