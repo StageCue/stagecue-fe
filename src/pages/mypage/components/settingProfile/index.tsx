@@ -25,7 +25,7 @@ const SettingProfile = () => {
   const getProfiles = async () => {
     const { result: profiles } = await requestProfileList();
 
-    console.log(profiles);
+    // console.log(profiles);
 
     setProfiles(profiles);
   };

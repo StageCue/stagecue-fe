@@ -17,13 +17,15 @@ const Search = () => {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['results'],
-    queryFn: ({ pageParam = 0 }) =>
-      /**
-       * TODO: query 추가
-       * 1. category는 어떻게??
-       * 2. sort는 어떻게??
-       */
-      requestCasts({ key: pageParam, size: 16, category: 'THEATER', sort: 'RECENT' }),
+    queryFn: ({ pageParam = 0 }) => {
+      return requestCasts({
+        key: pageParam,
+        size: 16,
+        category: 'THEATER',
+        sort: 'RECENT',
+        ...(query ? { search: query } : {}),
+      });
+    },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       const totalLoaded = allPages.flatMap(page => page.data)?.filter(item => item).length;

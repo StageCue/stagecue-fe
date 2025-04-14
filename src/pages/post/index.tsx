@@ -237,9 +237,33 @@ const List = () => {
     setIsAppliedCost(false);
   };
 
-  useEffect(() => {
-    console.log(daysArrayToDecimal(appliedDay));
-  }, [appliedDay]);
+  const convertToLocationCode = (koreanLocation: string[]): string[] => {
+    const locationMap: { [key: string]: string } = {
+      서울: 'SEOUL',
+      부산: 'BUSAN',
+      대구: 'DAEGU',
+      인천: 'INCHEON',
+      광주: 'GWANGJU',
+      대전: 'DAEJEON',
+      울산: 'ULSAN',
+      세종: 'SEJONG',
+      경기: 'GYEONGGI',
+      강원: 'GANGWON',
+      충북: 'CHUNGBUK',
+      충남: 'CHUNGNAM',
+      전북: 'JEONBUK',
+      전남: 'JEONNAM',
+      경북: 'GYEONGBUK',
+      경남: 'GYEONGNAM',
+      제주: 'JEJU',
+    };
+
+    if (koreanLocation.includes('전체지역')) {
+      return Object.values(locationMap);
+    }
+
+    return koreanLocation.map(location => locationMap[location] || location);
+  };
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: [
@@ -258,6 +282,7 @@ const List = () => {
         size: 16,
         category: parsingCategory(selectedGenre),
         practiceDay: daysArrayToDecimal(appliedDay),
+        location: convertToLocationCode(appliedZone),
         monthlyFeeStart: Number(appliedCost?.split('-')?.[0] ?? 0),
         monthlyFeeEnd: Number(appliedCost?.split('-')?.[1] ?? 500000),
         sort: currentOrderBy === 'newest' ? 'RECENT' : 'VIEW',

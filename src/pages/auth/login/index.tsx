@@ -28,13 +28,14 @@ const Login = () => {
   const onSubmitLogin = async (data: LoginInputs) => {
     const { result: res } = await requestLogin(data);
 
-    if (res?.error) {
+    if (!res || res?.error) {
       setError('root.serverError', {
         type: '400',
         message: `이메일 또는 비밀번호가 올바르지 않습니다.\n입력한 내용을 다시 확인해주세요.`,
       });
       return;
     }
+
     sessionStore.loginSession({
       email: emailValue,
       username: res?.userName,

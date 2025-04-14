@@ -26,7 +26,7 @@ const DeleteAccount = () => {
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
   const [isVerified, setIsVerified] = useState<boolean>(false);
-  const [isCodeSent, setIsCodeSent] = useState(true);
+  const [isCodeSent, setIsCodeSent] = useState(false);
   const [deleteUpdateToken, setDeleteUpdateToken] = useState('');
   const {
     register,
@@ -87,7 +87,7 @@ const DeleteAccount = () => {
   };
 
   const onSubmitDeleteAccount = async () => {
-    const res = await requestDeleteAccount(isAgreed, deleteUpdateToken);
+    const res = await requestDeleteAccount(deleteUpdateToken);
 
     if (res?.error) {
       return;

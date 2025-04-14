@@ -171,7 +171,7 @@ const Signup = () => {
         email: emailValue,
         username: name,
         phoneNumber: phoneNumber,
-        userType: "PERFORMER",
+        userType: 'PERFORMER',
         birthday: birthday,
       });
       navigate('/auth/welcome');
@@ -183,12 +183,14 @@ const Signup = () => {
   };
 
   const handleSendCertClick = async () => {
-    await requestCellPhoneCertCode({
+    const { result } = await requestCellPhoneCertCode({
       phoneNumber: phoneNumberValue,
     });
 
-    setCertTime(300);
-    setIsSentCertCode(true);
+    if (result) {
+      setCertTime(300);
+      setIsSentCertCode(true);
+    }
   };
 
   const handleAllAgreeClick = () => {

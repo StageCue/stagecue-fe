@@ -7,7 +7,7 @@ import Cast from '@/pages/home/components/cast';
 
 import { useNavigate } from 'react-router-dom';
 import { Recruit } from '../../types/data';
-import { useMyStageData } from '../../hooks/useMyStageData';
+import { useMyStageData } from '../../hooks/useMystageData';
 import EmptyWrapper from '@/components/emptyWrapper';
 
 const MyStage = () => {
@@ -18,7 +18,7 @@ const MyStage = () => {
     return recruitsStatus?.result?.find(item => item.applyStatus === status)?.count ?? 0;
   };
 
-  console.log(scraps);
+  // console.log(scraps);
 
   return (
     <MyStageWrapper>

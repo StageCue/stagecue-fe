@@ -5,10 +5,12 @@ interface ReqCastsParams {
   key?: number;
   size?: number;
   category: 'THEATER' | 'MUSICAL' | 'DANCE';
+  location?: string[];
   practiceDay?: string[];
   monthlyFeeStart?: number;
   monthlyFeeEnd?: number;
   sort: 'RECENT' | 'VIEW';
+  search?: string | null;
 }
 interface ReqApplyCast {
   recruitId: string;

@@ -1,4 +1,4 @@
-import { requestChangePassword, requestConfrimCurrentPassword } from '@/api/users';
+import { requestChangePassword, requestConfirmCurrentPassword } from '@/api/users';
 import Button from '@/components/buttons/button';
 import Overlay from '@/components/modal/overlay';
 import ModalPortal from '@/components/modal/portal';
@@ -42,9 +42,19 @@ const ResetPassword = () => {
   const [newPassword, confirmPassword] = changedWatch(['newPassword', 'confirmPassword']);
 
   const onSubmitNewPassword = async (data: ResetPasswordInputs) => {
-    const res = await requestChangePassword(data, updateToken);
+    const { newPassword, confirmPassword } = data;
 
-    if (res?.error) {
+    if (newPassword !== confirmPassword) {
+      setCurrentPasswordError('password', {
+        type: 'match',
+        message: '비밀번호가 일치하지 않습니다.',
+      });
+      return;
+    }
+
+    const { result } = await requestChangePassword(newPassword, updateToken);
+
+    if (!result) {
       return;
     }
 
@@ -53,10 +63,10 @@ const ResetPassword = () => {
 
   const onSubmitCurrentPassword = async (data: CurrentPasswordInput) => {
     const { password } = data;
-    const res = await requestConfrimCurrentPassword(password);
+    const { result: token } = await requestConfirmCurrentPassword(password);
 
-    if (res.updateToken) {
-      setUpdateToken(res?.updateToken);
+    if (token) {
+      setUpdateToken(token);
       setIsVerifiedCurrentPassword(true);
     } else {
       setCurrentPasswordError('password', {

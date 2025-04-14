@@ -31,7 +31,6 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
 
   const [isChangeNumber, setIsChangeNumber] = useState(false);
   const [isPhoneCodeSent, setIsPhoneCodeSent] = useState(false);
-  const [requestPhoneToken, setRequestPhoneToken] = useState('');
   const [updatePhoneToken, setUpdatePhoneToken] = useState('');
   const [isVerifiedPhoneCode, setIsVerifiedPhoneCode] = useState(false);
   const [isErrorPhoneVerify, setIsErrorPhoneVerify] = useState(false);
@@ -65,7 +64,6 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
 
     setIsChangeNumber(false);
     setIsPhoneCodeSent(false);
-    setRequestPhoneToken('');
     setUpdatePhoneToken('');
     setIsVerifiedPhoneCode(false);
     setIsErrorPhoneVerify(false);
@@ -92,7 +90,6 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
 
   const handleSendEmailCodeClick = async () => {
     const { result, error } = await requestChangeEmailToken({ changeEmail: emailValue });
-    // const { requestToken, error } = await requestChangeEmailToken({ changeEmail: emailValue });
 
     if (error) {
       alert(error);
@@ -106,15 +103,16 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleSendPhoneCodeClick = async () => {
-    const { requestToken, error } = await requestChangePhoneToken(phoneNumberValue);
+    const { result, error } = await requestChangePhoneToken({
+      changePhoneNumber: phoneNumberValue,
+    });
 
     if (error) {
       alert(error);
       return;
     }
 
-    if (requestToken) {
-      setRequestPhoneToken(requestToken);
+    if (result) {
       setIsPhoneCodeSent(true);
       setCertTime(300);
     }
@@ -134,10 +132,10 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleVerifyPhoneCodeClick = async () => {
-    const res = await requestVerifyPhoneToken(requestPhoneToken, phoneCodeValue);
+    const { result: token } = await requestVerifyPhoneToken(phoneNumberValue, phoneCodeValue);
 
-    if (res.updateToken) {
-      setUpdatePhoneToken(res.updateToken);
+    if (token) {
+      setUpdatePhoneToken(token);
       setIsVerifiedPhoneCode(true);
       setIsErrorPhoneVerify(false);
       setCertTime(0);
@@ -155,7 +153,10 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handlePhoneSubmitClick = async () => {
-    const res = await requestChangePhone(updatePhoneToken);
+    const res = await requestChangePhone({
+      phoneNumber: phoneNumberValue,
+      token: updatePhoneToken,
+    });
 
     if (!res?.error) {
       setIsChangeConfirmed(true);

@@ -39,11 +39,6 @@ interface ReqChangeProfileData {
   }[];
 }
 
-interface ReqChangePasswordBody {
-  newPassword: string;
-  confirmPassword: string;
-}
-
 interface ReqCreateProfileData {
   birthDay: string;
   age: number;
@@ -176,50 +171,61 @@ export const requestChangeEmail = async (data: { email: string; token: string })
   return res;
 };
 
-export const requestChangePhoneToken = async (number: string) => {
+export const requestChangePhoneToken = async ({
+  changePhoneNumber,
+}: {
+  changePhoneNumber: string;
+}) => {
+  const queryParams = _queryParams({ changePhoneNumber });
+
   const res = await request({
     method: 'post',
-    endpoint: `users/change-cell?cell=${number}`,
+    endpoint: `user/phone-number/change/request?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestVerifyPhoneToken = async (token: string, code: string) => {
+export const requestVerifyPhoneToken = async (changePhoneNumber: string, token: string) => {
+  const queryParams = _queryParams({ changePhoneNumber, token });
+
   const res = await request({
     method: 'post',
-    endpoint: `users/change-cell-verify?code=${code}`,
-    header: { 'Change-Cell-Request-Token': `${token}` },
+    endpoint: `user/phone-number/change/verify?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestChangePhone = async (token: string) => {
+export const requestChangePhone = async (data: { phoneNumber: string; token: string }) => {
+  const queryParams = _queryParams(data);
+
   const res = await request({
     method: 'put',
-    endpoint: 'users/change-cell',
-    header: { 'Change-Cell-Update-Token': `${token}` },
+    endpoint: `user/phone-number/change?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestConfrimCurrentPassword = async (password: string) => {
+confirm;
+export const requestConfirmCurrentPassword = async (password: string) => {
+  const queryParams = _queryParams({ password });
+
   const res = await request({
     method: 'post',
-    endpoint: `users/change-password?password=${encodeURIComponent(password)}`,
+    endpoint: `user/password/check?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestChangePassword = async (data: ReqChangePasswordBody, token: string) => {
+export const requestChangePassword = async (password: string, token: string) => {
+  const queryParams = _queryParams({ password, token });
+
   const res = await request({
     method: 'put',
-    endpoint: 'users/change-password',
-    data,
-    header: { 'Change-Password-Update-Token': `${token}` },
+    endpoint: `user/password/change?${queryParams}`,
   });
   return res;
 };
@@ -244,11 +250,12 @@ export const requestVerifyDeleteAccount = async (token: string) => {
   return res;
 };
 
-export const requestDeleteAccount = async (isAgreed: boolean, token: string) => {
+export const requestDeleteAccount = async (token: string) => {
+  const queryParams = _queryParams({ token });
+
   const res = await request({
-    method: 'put',
-    endpoint: `users/delete-account?agreed=${isAgreed}`,
-    header: { 'Delete-Account-Update-Token': `${token}` },
+    method: 'delete',
+    endpoint: `user/withdraw?${queryParams}`,
   });
 
   return res;
