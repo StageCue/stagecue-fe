@@ -24,15 +24,16 @@ import Checkbox from '@/components/checkbox';
 import { useNavigate, useParams } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import RangeDatepicker from '@/components/rangeDatepicker';
-import { decimalToBinaryArray } from '@/utils/format';
-import { CATEGORY, RecruitStatus } from '@/types/biz';
+import { CATEGORY } from '@/types/biz';
 import ModalPortal from '@/components/modal/portal';
 import Overlay from '@/components/modal/overlay';
 import Datepicker from '@/components/datepicker';
 import DeleteModal from '../deleteModal';
-import daysArrayToDecimal from '@/utils/daysArrayToDecimal';
+import { daysArrayToDecimal, weekdayStringsToBinary } from '@/utils/daysArrayToDecimal';
+import { RecruitStatus } from '@/pages/biz/types/applicants';
+import { adaptEditRecruitInputsToDTO } from './adapter';
 
-interface EditRecruitInputs {
+export interface EditRecruitInputs {
   title: string;
   introduce: string;
   recruitEnd: string;
@@ -40,12 +41,12 @@ interface EditRecruitInputs {
   monthlyFee: number;
   artworkName: string;
   category: string;
-  recruitStatus: keyof typeof RecruitStatus;
+  recruitStatus: RecruitStatus;
   recruitImages?: string[];
   practice: {
     start: string;
     end: string;
-    dayOfWeek: number;
+    dayOfWeek: string[];
     address: string;
     addressDetail: string;
   };
@@ -144,7 +145,7 @@ const EditRecruit = () => {
     !stgAddressValue ||
     !stgAddressDetailValue;
 
-  const [recruitStatus, setRecruitStatus] = useState('');
+  const [recruitStatus, setRecruitStatus] = useState<RecruitStatus>('OPEN');
   const [isAlwaysRecruit, setIsAlwaysRecruit] = useState(false);
 
   const recruitEndDatepickerRef = useRef<DatePicker | null>(null);
@@ -240,7 +241,7 @@ const EditRecruit = () => {
       const recruitImages = (await requestUploadImageFiles())?.map((image: any) => image?.fileName);
       const recruitingParts = partsValue?.map(({ value }) => value);
 
-      const { ...fieldData } = data;
+      const fieldData = adaptEditRecruitInputsToDTO(data);
 
       const { id } = await requestCreateRecruit({
         ...fieldData,
@@ -420,9 +421,9 @@ const EditRecruit = () => {
   };
 
   const getRecruitFormData = async (id: string) => {
-    const res = await requestRecruitFormData(id);
+    const { result: res } = await requestRecruitFormData(id);
     setValue('title', res.title);
-    setValue('introduce', res.introduce);
+    setValue('introduce', res.recruitIntroduce);
     setValue(
       'recruitingParts',
       res.recruitingParts.map((part: string) => {
@@ -434,25 +435,25 @@ const EditRecruit = () => {
     if (res.monthlyFee !== 0) {
       setIsMontlyFee(true);
     }
-    setValue('recruitEnd', res.recruitEnd);
-    setValue('practice.start', res.practice.start);
-    setValue('practice.end', res.practice.end);
-    setValue('practice.dayOfWeek', res.practice.dayOfWeek);
-    setPracticeDays(decimalToBinaryArray(res.practice.dayOfWeek));
-    setValue('practice.address', res.practice.address);
-    setValue('practice.addressDetail', res.practice.addressDetail);
-    setValue('category', res.category);
-    setCategoryText(res.category);
+    setValue('recruitEnd', res.recruitEndDate);
+    setValue('practice.start', res.practiceStartDate);
+    setValue('practice.end', res.practiceEndDate);
+    setValue('practice.dayOfWeek', res.practiceDay);
+    setPracticeDays(weekdayStringsToBinary(res.practiceDay));
+    setValue('practice.address', res.practiceAddress);
+    setValue('practice.addressDetail', res.practiceAddressDetail);
+    setValue('category', res.recruitCategory);
+    setCategoryText(res.recruitCategory);
     setValue('artworkName', res.artworkName);
-    setValue('stage.start', res.stage.start);
-    setValue('stage.end', res.stage.end);
-    setValue('stage.address', res.stage.address);
-    setValue('stage.addressDetail', res.stage.addressDetail);
+    setValue('stage.start', res.theatreStartDate);
+    setValue('stage.end', res.theatreEndDate);
+    setValue('stage.address', res.theatreAddress);
+    setValue('stage.addressDetail', res.theatreAddressDetail);
 
-    handleRecruitEndChange(new Date(res.recruitEnd));
-    handlePracticeRangeChange([new Date(res.practice.start), new Date(res.practice.end)]);
-    handleApplyDayClick(decimalToBinaryArray(res.practice.dayOfWeek));
-    handleStageRangeChange([new Date(res.stage.start), new Date(res.stage.end)]);
+    handleRecruitEndChange(new Date(res.recruitEndDate));
+    handlePracticeRangeChange([new Date(res.practice.start), new Date(res.practiceEndDate)]);
+    handleApplyDayClick(weekdayStringsToBinary(res.practiceDay));
+    handleStageRangeChange([new Date(res.theatreStartDate), new Date(res.theatreEndDate)]);
 
     const currentImagesArray: { id: string; url: string }[] = res.recruitImages.map(
       (url: string) => {
@@ -534,7 +535,7 @@ const EditRecruit = () => {
                   padding="9px 20px"
                   lineHeight={146.7}
                   letterSpacing={0.96}
-                  onClick={() => setRecruitStatus('TEMP')}
+                  onClick={() => setRecruitStatus('DRAFT')}
                 >
                   공고마감
                 </Button>
@@ -548,7 +549,7 @@ const EditRecruit = () => {
                   padding="9px 20px"
                   lineHeight={146.7}
                   letterSpacing={0.96}
-                  onClick={() => setRecruitStatus('RECRUIT')}
+                  onClick={() => setRecruitStatus('OPEN')}
                   disabled={isSaveDisabled}
                 >
                   저장
@@ -579,7 +580,7 @@ const EditRecruit = () => {
                   padding="9px 20px"
                   lineHeight={146.7}
                   letterSpacing={0.96}
-                  onClick={() => setRecruitStatus('TEMP')}
+                  onClick={() => setRecruitStatus('DRAFT')}
                   // TODO: <2025-03-02> 백에서 수정이 필요한 부분이여서 disabled true로 설정
                   disabled={true}
                 >
@@ -596,7 +597,7 @@ const EditRecruit = () => {
                   lineHeight={146.7}
                   letterSpacing={0.96}
                   onClick={() => {
-                    setRecruitStatus('RECRUIT');
+                    setRecruitStatus('OPEN');
                     setIsNewRecruitModalOpen(true);
                   }}
                   disabled={isSaveDisabled}
