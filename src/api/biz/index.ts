@@ -38,29 +38,26 @@ interface ReqRecruitsParams {
   status?: 'TEMP' | 'RECRUIT' | 'CLOSED' | '';
 }
 
-interface ReqEditRecruitParams {
+export interface ReqEditRecruitParams {
   title: string;
-  introduce: string;
-  recruitEnd: string;
+  recruitIntroduce: string;
+  recruitStartDate?: string;
+  recruitEndDate: string;
   recruitingParts: string[];
   monthlyFee: number;
   artworkName: string;
-  category: string;
-  recruitStatus: string;
+  recruitCategory: string;
+  recruitStatus: 'DRAFT' | 'OPEN' | 'CLOSED';
   recruitImages?: string[];
-  practice: {
-    start: string;
-    end: string;
-    dayOfWeek: number;
-    address: string;
-    addressDetail: string;
-  };
-  stage: {
-    start: string;
-    end: string;
-    address: string;
-    addressDetail: string;
-  };
+  theatreAddress: string;
+  theatreAddressDetail: string;
+  theatreStartDate: string;
+  theatreEndDate: string;
+  practiceAddress: string;
+  practiceAddressDetail: string;
+  practiceStartDate: string;
+  practiceEndDate: string;
+  practiceDay: string[];
 }
 
 interface ReqDeleteRecruitsBody {
@@ -179,16 +176,6 @@ export const requestRecruits = ({ limit, offset, status }: ReqRecruitsParams) =>
   return res;
 };
 
-export const requestEditRecruit = (data: ReqEditRecruitParams, recruitId: string) => {
-  const res = request({
-    method: 'put',
-    endpoint: `biz/recruits?recruitId=${recruitId}`,
-    data,
-  });
-
-  return res;
-};
-
 export const requestUploadRecruitImage = (data: FormData) => {
   const res = request({
     method: 'put',
@@ -203,7 +190,7 @@ export const requestUploadRecruitImage = (data: FormData) => {
 };
 
 export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
-  const res = request({ method: 'post', endpoint: 'biz/recruits', data });
+  const res = request({ method: 'post', endpoint: 'recruits', data });
 
   return res;
 };
@@ -224,7 +211,7 @@ export const requestCloseRecruit = (data: ReqChangeRecruitStatusBody) => {
 export const requestDeleteRecruit = (data: ReqDeleteRecruitsBody) => {
   const res = request({
     method: 'delete',
-    endpoint: `biz/recruits`,
+    endpoint: `recruits`,
     data,
   });
 
@@ -234,7 +221,17 @@ export const requestDeleteRecruit = (data: ReqDeleteRecruitsBody) => {
 export const requestRecruitFormData = async (recruitId: string) => {
   const res = await request({
     method: 'get',
-    endpoint: `biz/recruits/${recruitId}/edit`,
+    endpoint: `recruits/${recruitId}`,
+  });
+
+  return res;
+};
+
+export const requestEditRecruit = (data: ReqEditRecruitParams, recruitId: string) => {
+  const res = request({
+    method: 'put',
+    endpoint: `biz/recruits?recruitId=${recruitId}`,
+    data,
   });
 
   return res;
@@ -243,7 +240,7 @@ export const requestRecruitFormData = async (recruitId: string) => {
 export const requestChangeEndDate = async (data: ReqChangeEndDateBody) => {
   const res = await request({
     method: 'put',
-    endpoint: 'biz/recruits/endDate',
+    endpoint: 'recruits/endDate',
     data,
   });
 
