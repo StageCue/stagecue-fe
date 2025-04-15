@@ -8,6 +8,7 @@ interface RequestPrams {
   endpoint: string;
   data?: object;
   header?: { [key: string]: string };
+  params?: object;
 }
 
 // const apiClient = axios.create({
@@ -38,10 +39,11 @@ interface RequestPrams {
 //   return config;
 // });
 
-const request = async ({ method, endpoint, data, header = {} }: RequestPrams) => {
+const request = async ({ method, endpoint, data, header = {}, params }: RequestPrams) => {
   const url = `/api/v1/${endpoint}`;
 
   return await axios({
+    params,
     method,
     url,
     data,
