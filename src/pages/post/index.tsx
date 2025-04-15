@@ -12,7 +12,7 @@ import { requestCasts } from '@/api/cast';
 import Cast from '@/pages/home/components/cast';
 import RangeInput from './components/rangeInput';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import daysArrayToDecimal from '@/utils/daysArrayToDecimal';
+import { daysArrayToDecimal } from '@/utils/daysArrayToDecimal';
 import { useLocation } from 'react-router-dom';
 
 type genreType = '연극' | '뮤지컬' | '댄스';

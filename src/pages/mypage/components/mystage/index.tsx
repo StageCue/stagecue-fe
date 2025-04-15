@@ -7,7 +7,7 @@ import Cast from '@/pages/home/components/cast';
 
 import { useNavigate } from 'react-router-dom';
 import { Recruit } from '../../types/data';
-import { useMyStageData } from '../../hooks/useMystageData';
+import { useMyStageData } from '../../hooks/useMyStageData';
 import EmptyWrapper from '@/components/emptyWrapper';
 
 const MyStage = () => {
