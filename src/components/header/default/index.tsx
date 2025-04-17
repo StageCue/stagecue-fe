@@ -12,7 +12,6 @@ const DefaultHeader = () => {
   const sessionStore = useSessionStore();
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
   const [isMyMenuShowing, setIsMyMenuShowing] = useState<boolean>(false);
-  const isTroupeUser = sessionStore.userType === 'TROUPE';
 
   const handlePostPageClick = () => {
     navigate('/casts');
@@ -57,28 +56,42 @@ const DefaultHeader = () => {
         <RightSideWrapper>
           <Searchbar />
           {sessionStore.isLoggined ? (
-            <ButtonWrapper>
+            <AuthButtonWrapper>
+              <ButtonWrapper>
+                <Button
+                  variation="outlined"
+                  btnClass="primary"
+                  height={32}
+                  padding="7px 14px"
+                  fontSize={13}
+                  onClick={handleMymenuClick}
+                  borderRadius="6px"
+                >
+                  {sessionStore.username}님
+                  <IconWrapper>
+                    <ChevronDownSVG />
+                  </IconWrapper>
+                </Button>
+                {isMyMenuShowing && (
+                  <MyMenu>
+                    <Option onClick={handleMyStageClick}>My Stage</Option>
+                    <Option onClick={handleLogoutClick}>로그아웃</Option>
+                  </MyMenu>
+                )}
+              </ButtonWrapper>
               <Button
                 variation="outlined"
-                btnClass="primary"
-                width={114}
+                btnClass="assistive"
+                width={102}
                 height={32}
                 padding="7px 14px"
                 fontSize={13}
-                onClick={handleMymenuClick}
+                onClick={handleBizClick}
+                borderRadius="6px"
               >
-                {sessionStore.username}님
-                <IconWrapper>
-                  <ChevronDownSVG />
-                </IconWrapper>
+                극단주 서비스
               </Button>
-              {isMyMenuShowing && (
-                <MyMenu>
-                  <Option onClick={handleMyStageClick}>My Stage</Option>
-                  <Option onClick={handleLogoutClick}>로그아웃</Option>
-                </MyMenu>
-              )}
-            </ButtonWrapper>
+            </AuthButtonWrapper>
           ) : (
             <Button
               variation="solid"
@@ -90,19 +103,6 @@ const DefaultHeader = () => {
               onClick={handleLoginClick}
             >
               로그인/회원가입
-            </Button>
-          )}
-          {isTroupeUser && (
-            <Button
-              variation="outlined"
-              btnClass="assistive"
-              width={102}
-              height={32}
-              padding="7px 14px"
-              fontSize={13}
-              onClick={handleBizClick}
-            >
-              극단주 서비스
             </Button>
           )}
         </RightSideWrapper>
@@ -186,6 +186,11 @@ const MyMenu = styled.div`
   gap: 16px;
 `;
 
+const AuthButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+`;
 const ButtonWrapper = styled.div`
   position: relative;
 `;
