@@ -11,7 +11,7 @@ export interface TroupeInfo {
   description: string;
   logoImg: string;
   coverImg: string;
-  followerCount: 0;
+  followerCount: number;
   publishDate: string;
   website: string;
   address: string;

@@ -29,12 +29,12 @@ const TroupeDetail = ({ troupe }: TroupeDetailInterface) => {
       <CoverImageWrapper>
         <CoverImageWrapper>
           {troupe?.coverImg ? (
-            <Cover src={`https://s3.stagecue.co.kr/stagecue/${troupe?.coverImg}`} />
+            <Cover src={troupe?.coverImg} />
           ) : (
             <NoCover>Cover image does not exist</NoCover>
           )}
           <LogoWrapper>
-            <Logo src={`https://s3.stagecue.co.kr/stagecue/${troupe?.logoImg}`} />
+            <Logo src={troupe?.logoImg} />
           </LogoWrapper>
         </CoverImageWrapper>
       </CoverImageWrapper>

@@ -1,35 +1,21 @@
+import { EditTroupeInputs } from '@/pages/biz/components/manageTroupe/components/editTroupe/hooks/useEditTroupe';
 import request from '..';
+import { toApiPostTroupe, toViewTroupe, toViewTroupePreview } from '../adapters/troupe';
 
 interface ReqApplicationsParams {
-  limit: string;
-  offset: string;
-  gender?: string;
-  status?: string;
-  isFavorite?: boolean;
-  sortBy?: string;
-  orderBy?: string;
-  query?: string;
+  number?: number;
+  size?: number;
+  key?: number;
+  gender?: 'MALE' | 'FEMALE';
+  applyStatus?: 'APPLY' | 'OPEN' | 'CANCELED' | 'PASS' | 'WIN' | 'LOSE';
+  sort?: 'AGE' | 'NAME';
+  sortDirection?: 'ASC' | 'DESC';
+  term?: string;
 }
 
 interface ReqChangingApplyState {
   applyIds: string;
   applyStatus: 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED' | 'REJECTED';
-}
-
-interface ReqEditTroupeData {
-  logoImg: string;
-  coverImg: string;
-  name: string;
-  publishDate: string;
-  description: string;
-  address: string;
-  addressDetail: string;
-  registrationNumber: string;
-  registrationFile: string;
-  picName: string;
-  picCell: string;
-  email: string;
-  website: string;
 }
 
 interface ReqRecruitsParams {
@@ -74,10 +60,11 @@ interface ReqChangeEndDateBody {
   endDate: string;
 }
 
-export const requestApplications = ({ limit, offset }: ReqApplicationsParams) => {
+export const requestApplications = (params: ReqApplicationsParams) => {
   const res = request({
     method: 'get',
-    endpoint: `biz/recruits/applications?limit=${limit}&offset=${offset}`,
+    endpoint: `troupes/applies`,
+    params: params,
   });
   return res;
 };
@@ -93,7 +80,7 @@ export const requestChangingApplyState = ({ applyIds, applyStatus }: ReqChanging
 export const requestUploadLogo = (data: FormData) => {
   const res = request({
     method: 'put',
-    endpoint: 'biz/troupes/info/upload-logo',
+    endpoint: 'troupes/logo',
     data,
     header: {
       'Content-Type': 'multipart/form-data',
@@ -106,7 +93,7 @@ export const requestUploadLogo = (data: FormData) => {
 export const requestUploadCover = (data: FormData) => {
   const res = request({
     method: 'put',
-    endpoint: 'biz/troupes/info/upload-cover',
+    endpoint: 'troupes/cover',
     data,
     header: {
       'Content-Type': 'multipart/form-data',
@@ -129,42 +116,32 @@ export const requestUploadRegistration = (data: FormData) => {
   return res;
 };
 
-export const requestEditTroupe = (data: ReqEditTroupeData) => {
-  const res = request({
-    method: 'put',
-    endpoint: 'biz/troupes/info',
-    data,
-  });
-
-  return res;
-};
-
-export const requestCreateTroupe = (data: ReqEditTroupeData) => {
+export const requestPostTroupe = (data: EditTroupeInputs) => {
   const res = request({
     method: 'post',
-    endpoint: 'biz/troupes/info',
-    data,
+    endpoint: 'troupes',
+    data: toApiPostTroupe(data),
   });
 
   return res;
 };
 
-export const requestTroupeInfo = () => {
-  const res = request({
+export const requestTroupeInfo = async () => {
+  const res = await request({
     method: 'get',
     endpoint: 'troupes/preview',
   });
 
-  return res;
+  return toViewTroupePreview(res);
 };
 
-export const requestTroupeEditInfo = () => {
-  const res = request({
-    method: 'post',
-    endpoint: 'troupes',
+export const requestTroupeEditInfo = async () => {
+  const res = await request({
+    method: 'get',
+    endpoint: 'troupes/edit',
   });
 
-  return res;
+  return toViewTroupe(res);
 };
 
 export const requestRecruits = ({ limit, offset, status }: ReqRecruitsParams) => {

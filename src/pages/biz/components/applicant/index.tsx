@@ -87,7 +87,7 @@ const Applicant = () => {
 
   const { data } = useQuery<BizApplicationQuery>({
     queryKey: ['applications', page],
-    queryFn: () => requestApplications({ limit: '10', offset: `${page * 10}` }),
+    queryFn: () => requestApplications(),
   });
 
   const handlePageChange = (newPage: number) => {

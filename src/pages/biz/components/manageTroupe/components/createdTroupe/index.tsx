@@ -2,7 +2,7 @@ import Button from '@/components/buttons/button';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const CreatedTroupe = () => {
+export default function CreatedTroupe() {
   const navigate = useNavigate();
 
   const handleNewRedruitClick = () => {
@@ -57,9 +57,7 @@ const CreatedTroupe = () => {
       </Buttons>
     </CreatedTroupeContainer>
   );
-};
-
-export default CreatedTroupe;
+}
 
 const CreatedTroupeContainer = styled.div`
   width: 692px;
