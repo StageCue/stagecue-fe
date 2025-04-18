@@ -57,7 +57,7 @@ const Home = () => {
   };
 
   const getNotices = async () => {
-    const { content: notices } = await requestNotices({ page: 0, size: 6 });
+    const { body: notices } = await requestNotices({ page: 0, size: 6 });
 
     setNotices(notices);
   };
