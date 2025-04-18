@@ -1,309 +1,51 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from '@/components/buttons/button';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
 import CalendarSVG from '@assets/icons/calendar.svg?react';
 import TipSVG from '@assets/icons/tip.svg?react';
 import CompanySVG from '@assets/icons/company.svg?react';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import {
-  requestCreateTroupe,
-  requestEditTroupe,
-  requestTroupeEditInfo,
-  requestUploadCover,
-  requestUploadLogo,
-  requestUploadRegistration,
-} from '@/api/biz';
-import { convertFileToURL, seperateFileNameFromPath } from '@/utils/file';
-import { useDaumPostcodePopup } from 'react-daum-postcode';
-import { useNavigate } from 'react-router-dom';
+
 import Datepicker from '@/components/datepicker';
-import DatePicker from 'react-datepicker';
 import InvalidFileModal from '../invalidFileModal';
+import { useEditTroupe } from './hooks/useEditTroupe';
 
 interface EditTroupeProps {
   isInitial: boolean;
 }
 
-interface EditTroupeInputs {
-  name: string;
-  publishDate: string;
-  description: string;
-  address: string;
-  addressDetail: string;
-  registrationNumber: string;
-  registrationFile: string;
-  picName: string;
-  picCell: string;
-  email: string;
-  website: string;
-  logoImg: string;
-  coverImg: string;
-}
-
-const EditTroupe = ({ isInitial }: EditTroupeProps) => {
+export default function EditTroupe({ isInitial }: EditTroupeProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, dirtyFields, isValid },
-    watch,
-    setValue,
+    errors,
+    dirtyFields,
+    isValid,
     control,
-    reset,
-  } = useForm<EditTroupeInputs>({ mode: 'all' });
-
-  const navigate = useNavigate();
-
-  const open = useDaumPostcodePopup();
-
-  const inputLogoFileRef = useRef<HTMLInputElement | null>(null);
-  const inputCoverFileRef = useRef<HTMLInputElement | null>(null);
-  const inputRegistrationFileRef = useRef<HTMLInputElement | null>(null);
-
-  const [logoFile, setLogoFile] = useState<File>();
-  const [logoImageName, setLogoImageName] = useState<string>();
-  const [logoPreview, setLogoPreview] = useState<string>();
-  const [coverFile, setCoverFile] = useState<File>();
-  const [coverImageName, setCoverImageName] = useState<string>();
-  const [coverFileName, setCoverFileName] = useState<string>();
-  const [registrationFile, setRegistrationFile] = useState<File>();
-  const [registrationFileName, setRegistrationFileName] = useState<string>();
-
-  const [isInvalidaModalShowing, setIsInvalidModalShowing] = useState<boolean>(false);
-
-  const datepickerRef = useRef<DatePicker | null>(null);
-  const [date, setDate] = useState<Date>(new Date(Date.now()));
-
-  const [descriptionValue, addressValue] = watch(['description', 'address']);
-
-  const handleCalendarClick = () => {
-    if (datepickerRef.current) {
-      datepickerRef.current.setOpen(true);
-    }
-  };
-
-  const handleDateChange = (date: Date) => {
-    setDate(date);
-  };
-
-  const handleLogoInputClick = () => {
-    if (inputLogoFileRef.current) {
-      inputLogoFileRef.current.click();
-    }
-  };
-
-  const handleCoverInputClick = () => {
-    if (inputCoverFileRef.current) {
-      inputCoverFileRef.current.click();
-    }
-  };
-
-  const handleRegistrationInputClick = () => {
-    if (inputRegistrationFileRef.current) {
-      inputRegistrationFileRef.current.click();
-    }
-  };
-
-  const onSubmitEdit = async (data: EditTroupeInputs) => {
-    const logoImg = await requestUploadLogoFile();
-    const coverImg = await requestUploadCoverFile();
-    const registrationFile = await requestUploadRegistrationFile();
-
-    if (isInitial) {
-      await requestCreateTroupe({
-        ...data,
-        logoImg,
-        coverImg,
-        registrationFile,
-      });
-      navigate('/biz/troupe/created');
-    } else {
-      await requestEditTroupe({
-        ...data,
-        logoImg,
-        coverImg,
-        registrationFile,
-      });
-
-      navigate('/biz/troupe');
-    }
-  };
-
-  const requestUploadLogoFile = async () => {
-    if (logoFile) {
-      const formData = new FormData();
-      formData.append('file', logoFile);
-      const { filePath } = await requestUploadLogo(formData);
-
-      setValue('logoImg', filePath);
-      return filePath;
-    } else {
-      return logoImageName;
-    }
-  };
-
-  const requestUploadCoverFile = async () => {
-    if (coverFile) {
-      const formData = new FormData();
-      formData.append('file', coverFile);
-      const { filePath } = await requestUploadCover(formData);
-
-      setValue('coverImg', filePath);
-      return filePath;
-    } else {
-      return coverImageName;
-    }
-  };
-
-  const requestUploadRegistrationFile = async () => {
-    if (registrationFile) {
-      const formData = new FormData();
-      formData.append('file', registrationFile);
-      const { filePath } = await requestUploadRegistration(formData);
-
-      setValue('registrationFile', filePath);
-      return filePath;
-    }
-  };
-
-  const handleLogoFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      const isValidFile = validateFile(file);
-      if (isValidFile) {
-        const url = convertFileToURL(file);
-        setLogoFile(file);
-        setLogoPreview(url);
-        setValue('logoImg', 'temp-placeholder', { shouldValidate: true });
-      } else {
-        setIsInvalidModalShowing(true);
-      }
-    }
-  };
-
-  const validateFile = (file: File): boolean => {
-    if (file.size > 1 * 1024 * 1024) {
-      return false;
-    }
-
-    const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
-    if (!allowedExtensions.test(file.name)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleInvalidConfirm = () => {
-    setIsInvalidModalShowing(false);
-  };
-
-  const handleCoverFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    const path = event.target.value;
-
-    if (file) {
-      const isValidFile = validateFile(file);
-      if (isValidFile) {
-        setCoverFile(file);
-        setCoverFileName(seperateFileNameFromPath(path));
-      } else {
-        setIsInvalidModalShowing(true);
-      }
-    }
-  };
-
-  const handleRegistrationFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    const path = event.target.value;
-
-    if (file) {
-      const isValidFile = validateFile(file);
-      if (isValidFile) {
-        const fileName = seperateFileNameFromPath(path);
-        setRegistrationFile(file);
-        setRegistrationFileName(fileName);
-      } else {
-        setIsInvalidModalShowing(true);
-      }
-    }
-  };
-
-  const handleAddressComplete = (data: any) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
-
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== '') {
-        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
-      }
-      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
-    }
-
-    setValue('address', fullAddress);
-  };
-
-  const handleAddressInputClick = () => {
-    open({ onComplete: handleAddressComplete });
-  };
-
-  const getCoverFileName = (path: string) => {
-    if (path) {
-      const parts = path.split('/');
-      return parts[parts.length - 1];
-    }
-    return '';
-  };
-
-  const getTroupeFormData = async () => {
-    const res = await requestTroupeEditInfo();
-    const logoUrl = res.logoImg;
-    const coverImg = res.coverImg;
-    const name = res.name;
-    const description = res.description;
-    const publishDate = res.publishDate;
-    const address = res.address;
-    const addressDetail = res.addressDetail;
-    const registrationNumber = res.registrationNumber;
-    const registrationFile = res.registrationFile;
-    const picName = res.picName;
-    const picCell = res.picCell;
-    const email = res.email;
-    const website = res.website;
-
-    setLogoImageName(logoUrl);
-    setLogoPreview(`https://s3.stagecue.co.kr/stagecue/${logoUrl}`);
-    setCoverImageName(coverImg);
-    setCoverFileName(getCoverFileName(coverImg));
-    setDate(new Date(publishDate));
-    setRegistrationFileName(registrationFile);
-    reset({
-      logoImg: logoUrl,
-      coverImg,
-      name,
-      description,
-      publishDate: publishDate.split('T')[0],
-      address,
-      addressDetail,
-      registrationNumber,
-      registrationFile,
-      website,
-      email,
-      picName,
-      picCell,
-    });
-  };
-
-  useEffect(() => {
-    if (!isInitial) {
-      getTroupeFormData();
-    }
-  }, [isInitial]);
+    inputLogoFileRef,
+    inputCoverFileRef,
+    inputRegistrationFileRef,
+    datepickerRef,
+    logoPreview,
+    coverFileName,
+    registrationFileName,
+    isInvalidaModalShowing,
+    date,
+    descriptionValue,
+    addressValue,
+    handleCalendarClick,
+    handleDateChange,
+    handleLogoInputClick,
+    handleCoverInputClick,
+    handleRegistrationInputClick,
+    handleInvalidConfirm,
+    handleLogoFileChange,
+    handleCoverFileChange,
+    handleRegistrationFileChange,
+    handleAddressInputClick,
+    onSubmitEdit,
+  } = useEditTroupe(isInitial);
 
   return (
     <EditTroupeContainer>
@@ -493,7 +235,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
         <InputWrapper>
           <Label>사업자 등록증</Label>
           <WithBtnInputWrapper>
-            <FakeWithBtnInput $isFileUploaded={Boolean(registrationFile)}>
+            <FakeWithBtnInput $isFileUploaded={Boolean(registrationFileName)}>
               {registrationFileName}
             </FakeWithBtnInput>
             <FileInput
@@ -568,9 +310,7 @@ const EditTroupe = ({ isInitial }: EditTroupeProps) => {
       </Form>
     </EditTroupeContainer>
   );
-};
-
-export default EditTroupe;
+}
 
 const EditTroupeContainer = styled.div`
   width: 692px;
