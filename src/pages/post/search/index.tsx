@@ -18,13 +18,26 @@ const Search = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['results'],
     queryFn: ({ pageParam = 0 }) => {
-      return requestCasts({
-        key: pageParam,
-        size: 16,
-        category: 'THEATER',
-        sort: 'RECENT',
-        ...(query ? { search: query } : {}),
-      });
+      if (query && query?.length > 0) {
+        return requestCasts({
+          key: pageParam,
+          size: 16,
+          category: 'THEATER',
+          sort: 'RECENT',
+          ...(query ? { search: query } : {}),
+        });
+      } else {
+        // return requestCasts({
+        //   key: 0,
+        //   size: 16,
+        //   category: parsingCategory(selectedGenre),
+        //   practiceDay: daysArrayToDecimal(appliedDay),
+        //   location: convertToLocationCode(appliedZone),
+        //   monthlyFeeStart: Number(appliedCost?.split('-')?.[0] ?? 0),
+        //   monthlyFeeEnd: Number(appliedCost?.split('-')?.[1] ?? 500000),
+        //   sort: currentOrderBy === 'newest' ? 'RECENT' : 'VIEW',
+        // });
+      }
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
@@ -42,6 +55,8 @@ const Search = () => {
     () => data?.pages.flatMap(page => page.recruits)?.filter(item => item) || [],
     [data]
   );
+
+  console.log(query);
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ['results'] });

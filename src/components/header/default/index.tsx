@@ -5,13 +5,29 @@ import Button from '@/components/buttons/button';
 import useSessionStore from '@/store/session';
 import ChevronDownSVG from '@assets/icons/chebron_down_s.svg?react';
 import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
-import { useState } from 'react';
+import { useEffect, useRef } from 'react';
+import useHandleClickOutside from '@/hooks/useHandleClickOutside';
 
 const DefaultHeader = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
-  const [isMyMenuShowing, setIsMyMenuShowing] = useState<boolean>(false);
+  const buttonWrapperRef = useRef<HTMLDivElement>(null);
+  const { isOpen: isMyMenuShowing, setIsOpen: setIsMyMenuShowing } =
+    useHandleClickOutside(buttonWrapperRef);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (buttonWrapperRef.current && !buttonWrapperRef.current.contains(event.target as Node)) {
+        setIsMyMenuShowing(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handlePostPageClick = () => {
     navigate('/casts');
@@ -57,7 +73,7 @@ const DefaultHeader = () => {
           <Searchbar />
           {sessionStore.isLoggined ? (
             <AuthButtonWrapper>
-              <ButtonWrapper>
+              <ButtonWrapper ref={buttonWrapperRef}>
                 <Button
                   variation="outlined"
                   btnClass="primary"

@@ -70,7 +70,7 @@ const App = () => {
             <Route path="mypage/profiles/form" element={<NewProfileForm />} />
           </Route>
           <Route path="casts" element={<List />} />
-          <Route path="casts/search" element={<Search />} />
+          {/* <Route path="casts/search" element={<Search />} /> */}
           <Route path="casts/:id" element={<Detail />} />
           <Route path="casts/applied" element={<Applied />} />
           <Route path="troupe/:troupeName" element={<TroupeDetail />} />

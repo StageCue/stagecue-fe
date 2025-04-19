@@ -1,16 +1,26 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+import { devtools, combine } from 'zustand/middleware';
 
 interface SearchState {
-  query: string | null;
-  setSearchQuery: ({ query }: { query: string | null }) => void;
+  query: string;
 }
 
-const useSearchStore = create<SearchState>((set) => ({
-  query: "",
+interface SearchActions {
+  setSearchQuery: (query: string) => void;
+}
 
-  setSearchQuery: ({ query }) => {
-    set({ query });
-  },
-}));
+const initialState: SearchState = {
+  query: '',
+};
+
+type searchStoreType = SearchState & SearchActions;
+
+const useSearchStore = create<searchStoreType>()(
+  devtools(
+    combine<SearchState, SearchActions>(initialState, set => ({
+      setSearchQuery: (query: string) => set({ query }),
+    }))
+  )
+);
 
 export default useSearchStore;

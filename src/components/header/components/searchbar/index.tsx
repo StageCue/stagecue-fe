@@ -1,28 +1,25 @@
-import styled from "styled-components";
-import SearchSVG from "@/assets/icons/search.svg?react";
-import { useForm } from "react-hook-form";
-import useSearchStore from "@/store/search";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import SearchSVG from '@/assets/icons/search.svg?react';
+import { useForm } from 'react-hook-form';
+import useSearchStore from '@/store/search';
 
 interface SearchBarInput {
-  query: string | null;
+  query: string;
 }
 
 const Searchbar = () => {
-  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<SearchBarInput>();
   const { setSearchQuery } = useSearchStore();
 
   const onSubmitQuery = (data: SearchBarInput) => {
-    setSearchQuery(data);
-    navigate("/casts/search");
+    setSearchQuery(data?.query);
   };
 
   return (
     <SearchbarContainer>
       <Form onSubmit={handleSubmit(onSubmitQuery)}>
         <InputWrapper>
-          <Input {...register("query")} placeholder="검색어를 입력해보세요!" />
+          <Input {...register('query')} placeholder="검색어를 입력해보세요!" />
           <IconWrapper type="submit">
             <SearchSVG />
           </IconWrapper>

@@ -11,15 +11,17 @@ import Button from '@components/buttons/button';
 import { requestCasts } from '@/api/cast';
 import Cast from '@/pages/home/components/cast';
 import RangeInput from './components/rangeInput';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { daysArrayToDecimal } from '@/utils/daysArrayToDecimal';
 import { useLocation } from 'react-router-dom';
+import useCategoryStore, { CategoryState } from '@/store/category';
+import useSearchStore from '@/store/search';
+import NoResult from './search/noResult';
+import EmptyWrapper from '@/components/emptyWrapper';
 
-type genreType = '연극' | '뮤지컬' | '댄스';
 type zoneType = '전체지역' | '서울' | '경기' | '인천' | '강원' | '경상' | '전라' | '제주' | '충청';
 
 const List = () => {
-  const queryClient = useQueryClient();
   const popupMenuRef = useRef<HTMLDivElement | null>(null);
   const genreButtonRef = useRef<HTMLDivElement | null>(null);
   const zoneButtonRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +30,8 @@ const List = () => {
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const [selectedGenre, setSelectedGenre] = useState<genreType>('연극');
+  const { query } = useSearchStore();
+  const { category: selectedGenre, setCategory: setSelectedGenre } = useCategoryStore();
   const [selectedZone, setSelectedZone] = useState(['전체지역']);
   const [selectedDayPicker, setSelectedDayPicker] = useState<string>('전체요일');
 
@@ -52,7 +55,7 @@ const List = () => {
   const initialOrderBy = location?.state?.orderBy === 'popular' ? 'popular' : 'newest';
   const [currentOrderBy, setCurrentOrderBy] = useState<'newest' | 'popular'>(initialOrderBy);
 
-  const genreOptions: genreType[] = ['연극', '뮤지컬', '댄스'];
+  const genreOptions: CategoryState['category'][] = ['연극', '뮤지컬', '댄스'];
   const zoneOptions: zoneType[] = [
     '전체지역',
     '서울',
@@ -67,7 +70,7 @@ const List = () => {
   const dayPickerOptions = ['전체요일', '주말', '평일'];
   const daysOptions = useMemo(() => ['월', '화', '수', '목', '금', '토', '일'], []);
 
-  const handleGenreOptionChange = (genre: genreType) => {
+  const handleGenreOptionChange = (genre: CategoryState['category']) => {
     setSelectedGenre(genre);
     setIsGenreMenuShowing(false);
   };
@@ -274,6 +277,7 @@ const List = () => {
         appliedCost,
         selectedGenre,
         currentOrderBy,
+        query,
       },
     ],
     queryFn: ({ pageParam = 0 }) =>
@@ -286,6 +290,7 @@ const List = () => {
         monthlyFeeStart: Number(appliedCost?.split('-')?.[0] ?? 0),
         monthlyFeeEnd: Number(appliedCost?.split('-')?.[1] ?? 500000),
         sort: currentOrderBy === 'newest' ? 'RECENT' : 'VIEW',
+        ...(query ? { search: query } : {}),
       }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
@@ -377,6 +382,10 @@ const List = () => {
       }
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    return () => setSelectedGenre('연극');
+  }, []);
 
   return (
     <ListContainer>
@@ -554,26 +563,36 @@ const List = () => {
           </IconWrapper>
         </OrderByWrapper>
       </FilterOrderByWrapper>
-      <CastGrid>
-        {recruits?.map(
-          (
-            { recruitId, recruitTitle, artworkName, practiceLocation, isScrapping, thumbnail },
-            index
-          ) => (
-            <Cast
-              key={index}
-              imgWidth={215}
-              imgHeight={322.5}
-              recruitId={recruitId}
-              recruitTitle={recruitTitle}
-              troupeName={artworkName}
-              practiceLocation={practiceLocation}
-              isScrapping={isScrapping}
-              thumbnail={thumbnail}
-            />
-          )
-        )}
-      </CastGrid>
+      {recruits.length > 0 ? (
+        <CastGrid>
+          {recruits?.map(
+            (
+              { recruitId, recruitTitle, artworkName, practiceLocation, isScrapping, thumbnail },
+              index
+            ) => (
+              <Cast
+                key={index}
+                imgWidth={215}
+                imgHeight={322.5}
+                recruitId={recruitId}
+                recruitTitle={recruitTitle}
+                troupeName={artworkName}
+                practiceLocation={practiceLocation}
+                isScrapping={isScrapping}
+                thumbnail={thumbnail}
+              />
+            )
+          )}
+        </CastGrid>
+      ) : query && query?.length > 0 ? (
+        <NoResult />
+      ) : (
+        <EmptyWrapper width={920} height={500}>
+          기다리는 공연이 아직 없어요.
+          <br />
+          새로운 무대를 준비 중입니다.
+        </EmptyWrapper>
+      )}
       <div ref={loadMoreRef} />
     </ListContainer>
   );
