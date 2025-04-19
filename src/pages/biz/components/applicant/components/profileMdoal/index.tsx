@@ -87,10 +87,10 @@ const ProfileModal = ({
               </ButtonsWrapper>
             </NameAgeBox>
             <ImagesWrapper>
-              <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
+              <Thumbnail src={detail?.thumbnail} />
               <Images>
-                {detail?.images.map(({ url }) => (
-                  <Image src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+                {detail?.images.map(url => (
+                  <Image src={url} />
                 ))}
               </Images>
             </ImagesWrapper>
@@ -140,7 +140,7 @@ const ProfileModal = ({
             <Information>
               <InformationTitle>자기 소개</InformationTitle>
               <DataWrapper>
-                <Introduce>{detail?.introduction}</Introduce>
+                <Introduce>{detail?.introduce}</Introduce>
               </DataWrapper>
             </Information>
           </Body>

@@ -23,17 +23,22 @@ interface ReqAppliedCastsParams {
 }
 
 interface ReqChangeProfileData {
-  title: string;
+  id?: string;
+  birthDay: string;
+  age: number;
+  name: string;
   height: number;
   weight: number;
-  introduction: string;
+  phoneNumber: string;
+  email: string;
+  title: string;
+  introduce: string;
   thumbnail: string;
   images: string[];
-  isDefault: boolean;
   experiences: {
     artworkName: string;
     artworkPart: string;
-    troupe: string;
+    troupeName: string;
     startDate: string;
     endDate: string;
   }[];
@@ -122,16 +127,16 @@ export const requestProfileList = async () => {
 export const requestProfileDetail = async (profileId: string) => {
   const res = await request({
     method: 'get',
-    endpoint: `users/profiles/${profileId}`,
+    endpoint: `profiles/${profileId}`,
   });
 
   return res;
 };
 
-export const requestSaveProfile = async (data: ReqChangeProfileData, profileId: string) => {
+export const requestSaveProfile = async (data: ReqChangeProfileData) => {
   const res = await request({
     method: 'put',
-    endpoint: `users/profiles/${profileId}`,
+    endpoint: `profiles`,
     data,
   });
 
@@ -271,6 +276,15 @@ export const requestCreateProfile = async (data: ReqCreateProfileData) => {
   return res;
 };
 
+export const requestProfileDefault = async (profileId: string) => {
+  const res = await request({
+    method: 'put',
+    endpoint: `profiles/${profileId}/default`,
+  });
+
+  return res;
+};
+
 export const requestDeleteProfile = async (profileId: string | number) => {
   const res = await request({
     method: 'delete',
@@ -282,8 +296,8 @@ export const requestDeleteProfile = async (profileId: string | number) => {
 
 export const requestUploadImage = async (data: FormData) => {
   const res = await request({
-    method: 'post',
-    endpoint: 'users/profiles/upload-image',
+    method: 'put',
+    endpoint: 'profiles/image',
     data,
     header: {
       'Content-Type': 'multipart/form-data',
@@ -295,8 +309,8 @@ export const requestUploadImage = async (data: FormData) => {
 
 export const requestUploadThumbnail = async (data: FormData) => {
   const res = await request({
-    method: 'post',
-    endpoint: 'users/profiles/upload-thumbnail',
+    method: 'put',
+    endpoint: 'profiles/thumbnail',
     data,
     header: {
       'Content-Type': 'multipart/form-data',

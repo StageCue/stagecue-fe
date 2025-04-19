@@ -16,14 +16,14 @@ export interface ProfileDetailData {
   experiences: {
     artworkName: string;
     artworkPart: string;
-    troupe: string;
+    troupeName: string;
     startDate: string;
     endDate: string;
   }[];
   height: number;
   weight: number;
-  images: { url: string }[];
-  introduction: string;
+  images: string[];
+  introduce: string;
   isDefault: boolean;
   thumbnail: string;
   title: string;
@@ -36,8 +36,11 @@ const ProfileDetail = () => {
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
-    const res = await requestProfileDetail(id);
-    setDetail(res);
+    const { result } = await requestProfileDetail(id);
+
+    if (result) {
+      setDetail(result);
+    }
   };
 
   const handleClickEdit = () => {
@@ -63,6 +66,8 @@ const ProfileDetail = () => {
       navigate('/mypage');
     }
   };
+
+  console.log(detail);
 
   return (
     <ProfileDetailContainer>
@@ -100,10 +105,10 @@ const ProfileDetail = () => {
             </Button>
           </NameWrapper>
           <ImagesWrapper>
-            <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
+            <Thumbnail src={detail?.thumbnail} />
             <Images>
               {detail?.images?.map((url, index) => (
-                <Image key={index} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+                <Image key={index} src={url} />
               ))}
             </Images>
           </ImagesWrapper>
@@ -153,7 +158,7 @@ const ProfileDetail = () => {
           <Information>
             <InformationTitle>자기 소개</InformationTitle>
             <DataWrapper>
-              <Introduce>{detail?.introduction}</Introduce>
+              <Introduce>{detail?.introduce}</Introduce>
             </DataWrapper>
           </Information>
         </Body>

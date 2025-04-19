@@ -25,13 +25,11 @@ const SettingProfile = () => {
   const getProfiles = async () => {
     const { result: profiles } = await requestProfileList();
 
-    // console.log(profiles);
-
     setProfiles(profiles);
   };
 
   const handleProfileClick = (id: string | number) => {
-    navigate(`profiles/${id}`);
+    navigate(`/mypage/profiles/${id}/form`);
   };
 
   const handleCreateProfileClick = () => {
@@ -76,34 +74,24 @@ const SettingProfile = () => {
         </Button>
       </CreateBtnWrapper>
       <ProfileList>
-        {profiles?.map(
-          ({
-            id,
-            title,
-            duration,
-            birthday,
-            dateCreated,
-            height,
-            weight,
-            thumbnail,
-            isDefault,
-          }) => (
+        {profiles?.map(profile => {
+          return (
             <Profile
-              key={id}
-              id={id}
-              title={title}
-              duration={duration}
-              birthday={birthday}
-              dateCreated={dateCreated}
-              height={height}
-              weight={weight}
-              thumbnail={thumbnail}
-              isDefault={isDefault}
+              key={profile.id}
+              id={profile.id}
+              title={profile.title}
+              duration={profile.duration}
+              birthday={profile.birthday}
+              dateCreated={profile.dateCreated}
+              height={profile.height}
+              weight={profile.weight}
+              thumbnail={profile.thumbnail}
+              isDefault={profile.isDefault}
               handleRemoveProfile={handleRemoveProfile}
-              handleProfileClick={() => handleProfileClick(id)}
+              handleProfileClick={() => handleProfileClick(profile.id)}
             />
-          )
-        )}
+          );
+        })}
       </ProfileList>
       {profiles?.length === 0 && (
         <NoProfile>

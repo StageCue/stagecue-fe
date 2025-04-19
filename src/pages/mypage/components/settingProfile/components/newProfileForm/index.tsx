@@ -7,7 +7,12 @@ import EditSVG from '@assets/icons/edit.svg?react';
 import RequiredSVG from '@assets/icons/required_orange.svg?react';
 import TrashSVG from '@assets/icons/trash_lg.svg?react';
 import { useNavigate } from 'react-router-dom';
-import { requestUploadImage, requestUploadThumbnail } from '@/api/users';
+import {
+  requestCreateProfile,
+  requestProfileDefault,
+  requestUploadImage,
+  requestUploadThumbnail,
+} from '@/api/users';
 import useSessionStore from '@/store/session';
 import ModalPortal from '@/components/modal/portal';
 import SubmitModal from '../modals/submitModal';
@@ -18,6 +23,7 @@ import ImageSVG from '@assets/icons/image.svg?react';
 import { generateId } from '@/utils/dev';
 import LoadingModal from '@/components/modal/\bLoading/Loading';
 import calculateKoreanAge from '@/utils/calculateKoreanAge';
+import { calculateAge } from '@/utils/calculateAge';
 
 export interface ProfileInput {
   birthday: string;
@@ -35,7 +41,7 @@ interface ExpInput {
   id: string;
   artworkName: string;
   artworkPart: string;
-  troupe: string;
+  troupeName: string;
   startDate: string;
   endDate: string;
 }
@@ -95,9 +101,19 @@ const NewProfileForm = () => {
         const urls = await Promise.all(
           imageFileArray.map(async item => {
             const formData = new FormData();
+
+            if (!item.file) {
+              throw new Error('파일이 없습니다.');
+            }
             formData.append('file', item.file);
-            const { imageUrl } = await requestUploadImage(formData);
-            return imageUrl;
+
+            const { result } = await requestUploadImage(formData);
+
+            if (!result) {
+              throw new Error('이미지 URL을 받지 못했습니다.');
+            }
+
+            return result;
           })
         );
         setValue('images', urls);
@@ -113,12 +129,17 @@ const NewProfileForm = () => {
       try {
         const formData = new FormData();
         formData.append('file', thumbnailFile);
-        const { imageUrl } = await requestUploadThumbnail(formData);
-        setValue('thumbnail', imageUrl);
 
-        return imageUrl;
+        const { result } = await requestUploadThumbnail(formData);
+
+        if (!result) {
+          throw new Error('썸네일 URL을 받지 못했습니다.');
+        }
+
+        setValue('thumbnail', result);
+        return result;
       } catch (error) {
-        console.error('Error uploading images:', error);
+        console.error('Error uploading thumbnail:', error);
       }
     }
   };
@@ -126,16 +147,11 @@ const NewProfileForm = () => {
   const [titleValue, weightValue, heightValue, introduceValue, experiencesValue, thumbnailValue] =
     watch(['title', 'weight', 'height', 'introduce', 'experiences', 'thumbnail', 'images']);
 
-  const [artworkNameValue, artworkPartValue, troupeValue, startDateValue, endDateValue] = expWatch([
-    'artworkName',
-    'artworkPart',
-    'troupe',
-    'startDate',
-    'endDate',
-  ]);
+  const [artworkNameValue, artworkPartValue, troupeNameValue, startDateValue, endDateValue] =
+    expWatch(['artworkName', 'artworkPart', 'troupeName', 'startDate', 'endDate']);
 
   const isSaveDisabled =
-    !artworkNameValue || !artworkPartValue || !troupeValue || !startDateValue || !endDateValue;
+    !artworkNameValue || !artworkPartValue || !troupeNameValue || !startDateValue || !endDateValue;
 
   const handleInfoEditClick = (section: string) => {
     if (section === 'personalInfo') {
@@ -150,7 +166,7 @@ const NewProfileForm = () => {
       id: generateId(),
       artworkName: artworkNameValue,
       artworkPart: artworkPartValue,
-      troupe: troupeValue,
+      troupeName: troupeNameValue,
       startDate: startDateValue,
       endDate: endDateValue,
     };
@@ -191,39 +207,28 @@ const NewProfileForm = () => {
     setIsSubmitModalOpen(true);
   };
 
-  const calculateAge = (birthday: string): number => {
-    const birthDate = new Date(birthday);
-    const today = new Date();
-
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    // 생일이 아직 지나지 않은 경우 1을 빼줍니다
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age;
-  };
-
   const createProfile = async (data: ProfileInput, isDefault: boolean) => {
     const { experiences, height, weight, introduce, title } = data;
-    const sanitizedExperiences = experiences?.map(({ id, ...rest }) => (id ? rest : rest));
+    const sanitizedExperiences = experiences?.map(({ ...rest }) => ({
+      ...rest,
+      startDate: `${rest.startDate}-01`,
+      endDate: `${rest.endDate}-01`,
+    }));
     const imageUrls = await requestUploadImageFiles();
     const thumbnailUrl = await requestUploadThumbnailFile();
 
     return {
-      birthDay: sessionStore?.birthday,
+      birthDay: sessionStore?.birthday as string,
       age: calculateAge(sessionStore?.birthday as string),
-      name: sessionStore?.username,
-      height,
-      weight,
-      phoneNumber: sessionStore?.phoneNumber,
-      email: sessionStore?.email,
+      name: sessionStore?.username as string,
+      height: Number(height),
+      weight: Number(weight),
+      phoneNumber: sessionStore?.phoneNumber as string,
+      email: sessionStore?.email as string,
       title,
       introduce,
       thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
-      images: imageUrls,
+      images: imageUrls as string[],
       experiences: sanitizedExperiences,
       isDefault,
     };
@@ -233,11 +238,14 @@ const NewProfileForm = () => {
     try {
       setIsLoading(true);
       const params = await createProfile(data, true);
-      console.log(params);
-      // const { result } = await requestCreateProfile(params);
+      const { result } = await requestCreateProfile(params);
+      await requestProfileDefault(result);
 
       setIsLoading(false);
-      // navigate(`/mypage/profiles/${result.id}`);
+
+      if (result) {
+        navigate(`/mypage/profiles/${result}`);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -249,11 +257,12 @@ const NewProfileForm = () => {
     try {
       setIsLoading(true);
       const params = await createProfile(data, false);
-      console.log(params);
-      // const { result } = await requestCreateProfile(params);
+      const { result } = await requestCreateProfile(params);
 
       setIsLoading(false);
-      // navigate(`/mypage/profiles/${res.id}`);
+      if (result) {
+        navigate(`/mypage/profiles/${result}`);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -288,7 +297,7 @@ const NewProfileForm = () => {
       expSetValue('artworkPart', exp!.artworkPart);
       expSetValue('startDate', exp!.startDate);
       expSetValue('endDate', exp!.endDate);
-      expSetValue('troupe', exp!.troupe);
+      expSetValue('troupeName', exp!.troupeName);
       expSetValue('id', exp!.id);
     }
   }, [editingExpId, expSetValue, experiencesValue]);
@@ -539,7 +548,7 @@ const NewProfileForm = () => {
                     </DataRow>
                     <DataRow>
                       <Property>극단</Property>
-                      <Value>{exp.troupe}</Value>
+                      <Value>{exp.troupeName}</Value>
                     </DataRow>
                     <DataRow>
                       <Property>기간</Property>
@@ -594,7 +603,7 @@ const NewProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpTextInput
-                          {...expRegister('troupe', { required: true })}
+                          {...expRegister('troupeName', { required: true })}
                           placeholder="활동한 극단 이름을 입력해주세요."
                         />
                       </DataRow>

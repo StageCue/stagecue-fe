@@ -8,6 +8,7 @@ import RequiredSVG from '@assets/icons/required_orange.svg?react';
 import TrashSVG from '@assets/icons/trash_lg.svg?react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  requestProfileDefault,
   requestProfileDetail,
   requestSaveProfile,
   requestUploadImage,
@@ -23,8 +24,10 @@ import CloseSVG from '@assets/icons/close_black.svg?react';
 import ImageSVG from '@assets/icons/image.svg?react';
 import { generateId } from '@/utils/dev';
 import LoadingModal from '@/components/modal/\bLoading/Loading';
+import { calculateAge } from '@/utils/calculateAge';
 
 export interface ProfileInput {
+  id?: string;
   birthday: string;
   experiences: ExpInput[];
   height: number;
@@ -40,7 +43,7 @@ interface ExpInput {
   id: string;
   artworkName: string;
   artworkPart: string;
-  troupe: string;
+  troupeName: string;
   startDate: string;
   endDate: string;
 }
@@ -157,13 +160,8 @@ const ProfileForm = () => {
     'images',
   ]);
 
-  const [artworkNameValue, artworkPartValue, troupeValue, startDateValue, endDateValue] = expWatch([
-    'artworkName',
-    'artworkPart',
-    'troupe',
-    'startDate',
-    'endDate',
-  ]);
+  const [artworkNameValue, artworkPartValue, troupeNameValue, startDateValue, endDateValue] =
+    expWatch(['artworkName', 'artworkPart', 'troupeName', 'startDate', 'endDate']);
 
   const addIdtoExps = (expArray: ExpInput[]) => {
     const withIdExpArray = expArray.map((exp: ExpInput) => {
@@ -177,19 +175,21 @@ const ProfileForm = () => {
   };
 
   const getProfileDetail = async (id: string) => {
-    const res = await requestProfileDetail(id);
+    const { result } = await requestProfileDetail(id);
 
-    setDetail(res);
-    setValue('title', res?.title);
-    setValue('birthday', res?.birthday);
-    setValue('weight', res?.weight);
-    setValue('height', res?.height);
-    setValue('introduce', res?.introduction);
-    setValue('experiences', addIdtoExps(res?.experiences));
-    setValue('thumbnail', res?.thumbnail);
-    setValue('images', res?.images);
+    if (result) {
+      setDetail(result);
+      setValue('title', result?.title);
+      setValue('birthday', result?.birthday);
+      setValue('weight', result?.weight);
+      setValue('height', result?.height);
+      setValue('introduce', result?.introduce);
+      setValue('experiences', addIdtoExps(result?.experiences));
+      setValue('thumbnail', result?.thumbnail);
+      setValue('images', result?.images);
+    }
 
-    const currentImages: string[] = res?.images;
+    const currentImages: string[] = result?.images;
 
     const currentImageArray = currentImages.map(url => {
       const id = generateId();
@@ -219,7 +219,7 @@ const ProfileForm = () => {
         id: generateId(),
         artworkName: artworkNameValue,
         artworkPart: artworkPartValue,
-        troupe: troupeValue,
+        troupeName: troupeNameValue,
         startDate: startDateValue,
         endDate: endDateValue,
       },
@@ -260,31 +260,46 @@ const ProfileForm = () => {
     setIsSubmitModalOpen(true);
   };
 
+  const createProfile = async (data: ProfileInput, isDefault: boolean) => {
+    const { experiences, height, weight, introduce, title } = data;
+    const sanitizedExperiences = experiences?.map(({ ...rest }) => ({
+      ...rest,
+      startDate: `${rest.startDate}-01`,
+      endDate: `${rest.endDate}-01`,
+    }));
+    const imageUrls = await requestUploadImageFiles();
+    const thumbnailUrl = await requestUploadThumbnailFile();
+
+    return {
+      id: id!,
+      birthDay: sessionStore?.birthday as string,
+      age: calculateAge(sessionStore?.birthday as string),
+      name: sessionStore?.username as string,
+      height: Number(height),
+      weight: Number(weight),
+      phoneNumber: sessionStore?.phoneNumber as string,
+      email: sessionStore?.email as string,
+      title,
+      introduce,
+      thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
+      images: imageUrls as string[],
+      experiences: sanitizedExperiences,
+      isDefault,
+    };
+  };
+
   const handleConfirmClick = async (data: ProfileInput) => {
     try {
       setIsLoading(true);
-      const { experiences, height, weight, introduce, title } = data;
-      const sanitizedExperiences = experiences.map(({ id, ...rest }) => (id ? rest : rest));
+      const params = await createProfile(data, true);
+      const { result } = await requestSaveProfile(params);
+      await requestProfileDefault(id!);
+
       setIsSubmitModalOpen(false);
-      const imageUrls = await requestUploadImageFiles();
-      const thumbnailUrl = await requestUploadThumbnailFile();
-
-      await requestSaveProfile(
-        {
-          experiences: sanitizedExperiences,
-          height,
-          weight,
-          introduction: introduce,
-          title,
-          isDefault: true,
-          images: imageUrls!,
-          thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
-        },
-        id!
-      );
-
       setIsLoading(false);
-      navigate(`/mypage/profiles/${id}`);
+      if (result) {
+        navigate(`/mypage/profiles/${id}`);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -295,28 +310,14 @@ const ProfileForm = () => {
   const handleCloseClick = async (data: ProfileInput) => {
     try {
       setIsLoading(true);
-      const { experiences, height, weight, introduce, title } = data;
-      const sanitizedExperiences = experiences.map(({ id, ...rest }) => (id ? rest : rest));
+      const params = await createProfile(data, false);
+      const { result } = await requestSaveProfile(params);
+
       setIsSubmitModalOpen(false);
-      const imageUrls = await requestUploadImageFiles();
-      const thumbnailUrl = await requestUploadThumbnailFile();
-
-      await requestSaveProfile(
-        {
-          experiences: sanitizedExperiences,
-          height,
-          weight,
-          introduction: introduce,
-          title,
-          isDefault: false,
-          images: imageUrls!,
-          thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
-        },
-        id!
-      );
-
       setIsLoading(false);
-      navigate(`/mypage/profiles/${id}`);
+      if (result) {
+        navigate(`/mypage/profiles/${id}`);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -358,7 +359,7 @@ const ProfileForm = () => {
       expSetValue('artworkPart', exp!.artworkPart);
       expSetValue('startDate', exp!.startDate);
       expSetValue('endDate', exp!.endDate);
-      expSetValue('troupe', exp!.troupe);
+      expSetValue('troupeName', exp!.troupeName);
       expSetValue('id', exp!.id);
     }
   }, [editingExpId, expSetValue, experiencesValue]);
@@ -414,9 +415,7 @@ const ProfileForm = () => {
                     <CloseIconWrapper onClick={handleDeleteThumbanailClick}>
                       <CloseSVG />
                     </CloseIconWrapper>
-                    <ThumbnailImage
-                      src={`https://s3.stagecue.co.kr/stagecue/${thumbnailValue}`}
-                    ></ThumbnailImage>
+                    <ThumbnailImage src={thumbnailValue}></ThumbnailImage>
                   </ThumbnailWrapper>
                 ) : (
                   <ThumbnailDropzone {...getThumbnailRootProps()}>
@@ -647,7 +646,7 @@ const ProfileForm = () => {
                             </RequiredWrapper>
                           </FormLabel>
                           <ExpTextInput
-                            {...expRegister('troupe', {
+                            {...expRegister('troupeName', {
                               required: true,
                             })}
                             placeholder="활동한 극단 이름을 입력해주세요."
@@ -723,7 +722,7 @@ const ProfileForm = () => {
                       </DataRow>
                       <DataRow>
                         <Property>극단</Property>
-                        <Value>{exp.troupe}</Value>
+                        <Value>{exp.troupeName}</Value>
                       </DataRow>
                       <DataRow>
                         <Property>기간</Property>
@@ -779,7 +778,7 @@ const ProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpTextInput
-                          {...expRegister('troupe', { required: true })}
+                          {...expRegister('troupeName', { required: true })}
                           placeholder="활동한 극단 이름을 입력해주세요."
                         />
                       </DataRow>
@@ -843,25 +842,6 @@ const ProfileForm = () => {
             <InfoTitleWrapper>
               <InfoTitle>이미지</InfoTitle>
             </InfoTitleWrapper>
-            {/* <ImageDropzone {...getImageRootProps()}>
-              파일을 선택하거나 여기다 끌어다 놓으세요.
-              <ImageInput {...getImageInputProps()} />
-            </ImageDropzone>
-            <ImagesBox>
-              {imageUrlArray?.map(({ url, id }, index) => (
-                <ImageWrapper key={id}>
-                  <CloseIconWrapper onClick={() => handleDeleteImageClick(id)}>
-                    <CloseSVG />
-                  </CloseIconWrapper>
-                  {!imageFileArray[index].file ? (
-                    <Image key={url + id} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
-                  ) : (
-                    <Image key={url + id} src={url} />
-                  )}
-                </ImageWrapper>
-              ))}
-            </ImagesBox> */}
-
             <ImagesBox {...getImageRootProps()}>
               {!imageUrlArray?.length && (
                 <ImagesBoxDefault>
@@ -880,7 +860,7 @@ const ProfileForm = () => {
                   >
                     <CloseSVG />
                   </CloseIconWrapper>
-                  <Image key={url + id} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+                  <Image key={url + id} src={url} />
                 </ImageWrapper>
               ))}
             </ImagesBox>

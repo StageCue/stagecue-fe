@@ -123,7 +123,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
             <Information>
               <InformationTitle>자기 소개</InformationTitle>
               <DataWrapper>
-                <Introduce>{detail?.introduction}</Introduce>
+                <Introduce>{detail?.introduce}</Introduce>
               </DataWrapper>
             </Information>
           </Body>

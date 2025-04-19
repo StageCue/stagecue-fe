@@ -164,9 +164,9 @@ const Signup = () => {
       gender,
     };
 
-    const res = await requestSignup(userData);
+    const { result } = await requestSignup(userData);
 
-    if (res) {
+    if (result) {
       sessionStore.loginSession({
         email: emailValue,
         username: name,
@@ -413,7 +413,7 @@ const Signup = () => {
                 <Button
                   variation="solid"
                   btnClass="primary"
-                  // disabled={certCode.length === 0 || certificatedValue}
+                  disabled={certCode.length === 0 || certificatedValue}
                   width={112}
                   height={48}
                   fontSize={16}

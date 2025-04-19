@@ -105,7 +105,7 @@ const Profile = ({
       </PositionBox>
       {isDefault && <DefaultProfileTag>기본프로필</DefaultProfileTag>}
       <ProfileWrapper>
-        <ProfileImage src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`} />
+        <ProfileImage src={thumbnail} />
         <ProfileSummary>
           <TitleWrapper>
             <Title>{title}</Title>
