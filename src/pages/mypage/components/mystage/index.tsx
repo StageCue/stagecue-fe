@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { Recruit } from '../../types/data';
 
 import EmptyWrapper from '@/components/emptyWrapper';
-import { useMyStageData } from '../../hooks/useMyStageData';
+import { useMyStageData } from '../../hooks/useMyStageData.ts';
 
 const MyStage = () => {
   const { recruitsStatus, popularRecruits, scraps, handleBookmarkClick } = useMyStageData();

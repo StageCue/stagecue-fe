@@ -6,7 +6,7 @@ import DotdotdotSVG from '@/assets/images/dotdotdot.svg?react';
 import Button from '@/components/buttons/button';
 import Cast from '@/pages/home/components/cast';
 import { useNavigate } from 'react-router-dom';
-import { useMyStageData } from '../../hooks/useMyStageData';
+import { useMyStageData } from '../../hooks/useMyStageData.ts';
 
 const ScrapRecruits = () => {
   const navigate = useNavigate();

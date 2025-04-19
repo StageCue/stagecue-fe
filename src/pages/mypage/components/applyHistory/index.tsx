@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import ChevronDownSVG from '@/assets/icons/chebron_down_s.svg?react';
 import ApplyList from './components/applyList';
-import { useMyStageData } from '../../hooks/useMyStageData';
+import { useMyStageData } from '../../hooks/useMyStageData.ts';
 
 export type applyPhaseType =
   | 'APPLY' // 지원완료
