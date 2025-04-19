@@ -33,7 +33,7 @@ const StageCue = ({ notices }: StageCueProps) => {
               <Date>{createdAt}</Date>
             </Post>
           ))}
-          {notices.length === 0 && (
+          {notices?.length === 0 && (
             <EmptyWrapper width={591} height={188} marginTop={24}>
               공지사항이 없습니다.
             </EmptyWrapper>

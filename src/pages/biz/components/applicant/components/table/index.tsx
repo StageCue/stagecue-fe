@@ -47,7 +47,7 @@ const Table = ({
   const [sortedApplications, setSortedAplications] = useState<Application[]>([]);
   const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
 
-  const orderAsc = ['APPLIED', 'DOCUMENT_PASSED', 'FINAL_ACCEPTED', 'REJECTED', 'CANCEL'];
+  const orderAsc = ['APPLY', 'PASS', 'WIN', 'LOSE', 'CANCELED'];
   const orderDesc = [...orderAsc].reverse();
 
   const handleNameSortClick = () => {

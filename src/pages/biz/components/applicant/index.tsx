@@ -87,7 +87,8 @@ const Applicant = () => {
 
   const { data } = useQuery<BizApplicationQuery>({
     queryKey: ['applications', page],
-    queryFn: () => requestApplications(),
+    // TODO: 일단 build 성공하게 하려고 값 임의로 넣었습니다 수정하여야합니다.
+    queryFn: () => requestApplications({ key: page, size: 10 }),
   });
 
   const handlePageChange = (newPage: number) => {

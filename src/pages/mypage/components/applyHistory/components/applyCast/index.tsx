@@ -42,30 +42,30 @@ const ApplyCast = ({
 
   const parsePhase = (status: applyPhaseType) => {
     switch (status) {
-      case 'APPLIED':
+      case 'APPLY':
         return '지원 완료';
-      case 'DOCUMENT_PASSED':
+      case 'PASS':
         return '서류 통과';
-      case 'FINAL_ACCEPTED':
+      case 'WIN':
         return '최종 합격';
-      case 'REJECTED':
+      case 'LOSE':
         return '불합격';
-      case 'CANCEL':
+      case 'CANCELED':
         return '지원취소';
     }
   };
 
   const parseLogname = (status: applyPhaseType) => {
     switch (status) {
-      case 'APPLIED':
+      case 'APPLY':
         return '지원일자';
-      case 'DOCUMENT_PASSED':
+      case 'OPEN':
         return '열람일자';
-      case 'FINAL_ACCEPTED':
+      case 'WIN':
         return '최종 합격';
-      case 'REJECTED':
+      case 'LOSE':
         return '열람일자';
-      case 'CANCEL':
+      case 'CANCELED':
         return '취소일자';
     }
   };
@@ -106,9 +106,9 @@ const ApplyCast = ({
         letterSpacing={1.94}
         padding="7px 14px"
         onClick={() => handleCancelClick()}
-        disabled={applyStatus === 'CANCEL'}
+        disabled={applyStatus === 'CANCELED'}
       >
-        {applyStatus === 'REJECTED' ? '서류회수' : '지원취소'}
+        {applyStatus === 'LOSE' ? '서류회수' : '지원취소'}
       </Button>
     </ApplyCastContainer>
   );
@@ -167,10 +167,9 @@ const StatusTag = styled.div<{ $status: applyPhaseType }>`
   width: 62px;
   height: 24px;
   border-radius: 4px;
-  color: ${({ $status }) =>
-    $status === 'DOCUMENT_PASSED' || $status === 'FINAL_ACCEPTED' ? '#00BF40' : '#989ba2'};
+  color: ${({ $status }) => ($status === 'PASS' || $status === 'WIN' ? '#00BF40' : '#989ba2')};
   background-color: ${({ $status }) =>
-    $status === 'DOCUMENT_PASSED' || $status === 'FINAL_ACCEPTED' ? '#D9FFE6' : '#f7f7f8'};
+    $status === 'PASS' || $status === 'WIN' ? '#D9FFE6' : '#f7f7f8'};
   line-height: 133.4%;
   letter-spacing: 2.52%;
 
