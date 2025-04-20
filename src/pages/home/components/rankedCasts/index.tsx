@@ -1,20 +1,23 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import { RecruitDetail } from '../popularPost';
+import { PopularRecruitDetail as SelectedRecruitDetail } from '../popularPost';
 import LocationSVG from '@assets/icons/location.svg?react';
 import Button from '@/components/buttons/button';
 import ArrowRightSVG from '@assets/icons/arrow_right_red.svg?react';
 import { useNavigate } from 'react-router-dom';
+import { requestCastDetail } from '@/api/cast';
+import { RecruitDetail } from '@/types/recruitDetail';
 
 interface RankedRecruitsProps {
-  recruits: RecruitDetail[];
+  recruits: SelectedRecruitDetail[];
 }
 
 const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
   const navigate = useNavigate();
-  const [selectedRecruit, setSelectedRecruit] = useState<RecruitDetail>();
+  const [selectedRecruit, setSelectedRecruit] = useState<SelectedRecruitDetail>();
+  const [recruitDetail, setRecruitDetail] = useState<RecruitDetail>();
 
-  const handleThumbnailClick = (recruit: RecruitDetail) => {
+  const handleThumbnailClick = (recruit: SelectedRecruitDetail) => {
     setSelectedRecruit(recruit);
   };
 
@@ -23,28 +26,39 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
   };
 
   useEffect(() => {
-    setSelectedRecruit(recruits[0]);
+    setSelectedRecruit(recruits?.[0]);
   }, [recruits]);
+
+  const getCastDetail = async () => {
+    if (selectedRecruit) {
+      const { result } = await requestCastDetail(selectedRecruit?.recruitId?.toString());
+
+      setRecruitDetail(result);
+    }
+  };
+
+  useEffect(() => {
+    getCastDetail();
+  }, [selectedRecruit]);
+
   return (
     <RankedCastsContainer>
       <ThumbnailWrapper>
-        <SelectedThumbnail
-          src={`https://s3.stagecue.co.kr/stagecue/${selectedRecruit?.thumbnailUrl}`}
-        />
+        <SelectedThumbnail src={selectedRecruit?.imageUrl} />
       </ThumbnailWrapper>
       <RightSideWrapper>
         <SummaryWrapper>
           <TitleWrapper>
             <TroupeName>{selectedRecruit?.troupeName}</TroupeName>
             <CastTitle>{selectedRecruit?.title}</CastTitle>
-            <ArtworkName>{selectedRecruit?.artworkName}</ArtworkName>
+            <ArtworkName>{recruitDetail?.artworkName}</ArtworkName>
           </TitleWrapper>
           <Summary>
             <SummaryRow $grid={true}>
               <PropertyWrapper>
                 <Property>지원 가능 배역</Property>
                 <Value>
-                  {selectedRecruit?.recruitingParts.map((part, index) => (
+                  {recruitDetail?.recruitingParts?.map((part, index) => (
                     <Chip key={index}>{part}</Chip>
                   ))}
                 </Value>
@@ -53,7 +67,7 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
                 <Property>연습 위치</Property>
                 <Value>
                   <LocationSVG />
-                  <LocationText>{selectedRecruit?.practiceAddress}</LocationText>
+                  <LocationText>{recruitDetail?.practiceAddress}</LocationText>
                 </Value>
               </PropertyWrapper>
               <Button
@@ -63,7 +77,7 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
                 width={94}
                 height={32}
                 fontSize={13}
-                onClick={() => handleClickDetail(selectedRecruit?.id)}
+                onClick={() => handleClickDetail(selectedRecruit?.recruitId)}
               >
                 상세보기
                 <ArrowRightSVG />
@@ -72,18 +86,18 @@ const RankedCasts = ({ recruits }: RankedRecruitsProps) => {
             <SummaryRow>
               <PropertyWrapper>
                 <Property>극단소개</Property>
-                <Value>{selectedRecruit?.troupeIntroduce}</Value>
+                <Value>{recruitDetail?.recruitIntroduce}</Value>
               </PropertyWrapper>
             </SummaryRow>
           </Summary>
         </SummaryWrapper>
         <Thumbnails>
-          {recruits.map(recruit => (
-            <ThumbnailContainer key={recruit.id}>
+          {recruits?.map(recruit => (
+            <ThumbnailContainer key={recruit?.recruitId}>
               <Thumbnail
-                src={`https://s3.stagecue.co.kr/stagecue/${recruit.thumbnailUrl}`}
+                src={recruit?.imageUrl}
                 onClick={() => handleThumbnailClick(recruit)}
-                $isSelected={recruit.id === selectedRecruit?.id}
+                $isSelected={recruit?.recruitId === selectedRecruit?.recruitId}
               />
             </ThumbnailContainer>
           ))}

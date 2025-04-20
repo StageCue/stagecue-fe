@@ -5,8 +5,8 @@ interface ReqCastsParams {
   key?: number;
   size?: number;
   category: 'THEATER' | 'MUSICAL' | 'DANCE';
-  location?: string[];
-  practiceDay?: string[];
+  location?: string[] | null;
+  practiceDay?: string[] | null;
   monthlyFeeStart?: number;
   monthlyFeeEnd?: number;
   sort: 'RECENT' | 'VIEW';

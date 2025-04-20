@@ -8,16 +8,7 @@ export interface ApplyStatusLog {
 export interface Apply {
   applyId: number;
   recruitTitle: string;
-  recruitCategory:
-    | 'THEATRE'
-    | 'MUSICAL'
-    | 'MOVIE'
-    | 'DANCE'
-    | 'PERFORMANCE'
-    | 'TVSHOW'
-    | 'SNS'
-    | 'SINGER'
-    | 'MODEL';
+  recruitCategory: 'THEATER' | 'MUSICAL' | 'DANCE';
   troupeName: string;
   applyStatus: ApplyStatus;
   applyStatusLogs: ApplyStatusLog[];

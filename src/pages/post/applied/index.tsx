@@ -12,14 +12,14 @@ const Applied = () => {
   const [popularRecruits, setPopularRecruits] = useState([]);
 
   const getNewestCasts = async () => {
-    const { recruits } = await requestCasts({
+    const { result } = await requestCasts({
       key: 0,
       size: 4,
       category: 'THEATER',
       sort: 'RECENT',
     });
 
-    setPopularRecruits(recruits);
+    setPopularRecruits(result?.body);
   };
 
   useEffect(() => {
@@ -74,28 +74,19 @@ const Applied = () => {
           <ShowAll onClick={handleMoveMainPopularPage}>전체보기</ShowAll>
         </TextWrapper>
         <Casts>
-          {popularRecruits?.map(
-            ({
-              recruitId,
-              thumbnail,
-              recruitTitle,
-              artworkName,
-              practiceLocation,
-              isScrapping,
-            }) => (
-              <Cast
-                key={recruitId}
-                imgWidth={215}
-                imgHeight={322.5}
-                recruitId={recruitId}
-                thumbnail={thumbnail}
-                recruitTitle={recruitTitle}
-                troupeName={artworkName}
-                practiceLocation={practiceLocation}
-                isScrapping={isScrapping}
-              />
-            )
-          )}
+          {popularRecruits?.map(({ recruitId, imageUrl, shortAddress, title, troupeName }) => (
+            <Cast
+              key={recruitId}
+              imgWidth={215}
+              imgHeight={322.5}
+              recruitId={recruitId}
+              thumbnail={imageUrl}
+              recruitTitle={title}
+              troupeName={troupeName}
+              practiceLocation={shortAddress}
+              isScrapping={false}
+            />
+          ))}
         </Casts>
       </CastsWrapper>
     </AppliedContainer>

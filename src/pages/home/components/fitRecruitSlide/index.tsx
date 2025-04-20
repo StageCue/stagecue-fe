@@ -1,31 +1,43 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import styled from 'styled-components';
 import SmallImage from './components/SmallImage';
 import EmptyWrapper from '@/components/emptyWrapper';
+import { RecruitDetail } from '@/types/recruitDetail';
+import { requestCastDetail } from '@/api/cast';
 
-interface SlideData {
-  id: number;
-  title: string;
-  description: string;
-  imageURL: string;
-}
-
-const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: SlideData[] }) => {
+const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: RecruitDetail[] }) => {
   const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [recruits, setRecruits] = useState<RecruitDetail[]>([]);
 
   const handleSlideClick = (index: number): void => {
     setActiveSlide(index);
   };
 
+  const getCastDetail = async () => {
+    if (recommendRecruits?.length > 0) {
+      const recruits = await Promise.all(
+        recommendRecruits.map(async recruit => {
+          const { result } = await requestCastDetail(recruit?.id?.toString());
+          return result;
+        })
+      );
+      setRecruits(recruits);
+    }
+  };
+
+  useEffect(() => {
+    getCastDetail();
+  }, [recommendRecruits]);
+
   return (
     <FitRecruitSlideContainer>
-      {recommendRecruits?.length > 0 ? (
+      {recruits?.length > 0 ? (
         <Swiper width={1060} slidesPerView={'auto'}>
-          {recommendRecruits?.map((slide, index) => (
+          {recruits?.map((recruit, index) => (
             <CustomSwiperSlide
-              key={slide.id}
+              key={recruit?.id}
               $isActive={activeSlide === index}
               onClick={() => handleSlideClick(index)}
             >
@@ -33,24 +45,26 @@ const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: SlideData[]
                 $isActive={activeSlide === index}
                 $isFirst={index === 0}
                 $isLast={index === recommendRecruits?.length - 1}
-                $imageURL={slide.imageURL}
+                $imageURL={recruit?.recruitImages?.[0]}
               >
                 <SlideCard $isActive={activeSlide === index}>
                   {activeSlide === index && (
                     <>
                       <CardInformation>
                         <CardInfo>
-                          <CartTitle>스테이지큐에서 전문배우를 모집합니다.</CartTitle>
-                          <CardSubTitle>업템포의 성장일기</CardSubTitle>
+                          <CartTitle>{recruit?.title}</CartTitle>
+                          <CardSubTitle>{recruit?.artworkName}</CardSubTitle>
                           <Divider />
                           <ShowDetailsTitle>지원 가능 배역</ShowDetailsTitle>
                           <CharacterParts>
-                            {['주연', '조연', '행인'].map((character, index) => (
+                            {recruit?.recruitingParts?.map((character, index) => (
                               <Character key={index}>{character}</Character>
                             ))}
                           </CharacterParts>
                           <ShowDetailsTitle>공연기간</ShowDetailsTitle>
-                          <ShowDetailsSubTitle>2024.10.23~2024.10.23</ShowDetailsSubTitle>
+                          <ShowDetailsSubTitle>
+                            {recruit?.theatreStartDate}~{recruit?.theatreEndDate}
+                          </ShowDetailsSubTitle>
                           <ShowDetailsTitle>연습위치</ShowDetailsTitle>
                           <ShowDetailsSubTitle>
                             <svg
@@ -75,7 +89,7 @@ const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: SlideData[]
                                 strokeLinejoin="round"
                               />
                             </svg>
-                            서울시 종로구
+                            {recruit?.practiceAddress}
                           </ShowDetailsSubTitle>
                         </CardInfo>
                         <CardImage>
@@ -83,19 +97,8 @@ const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: SlideData[]
                         </CardImage>
                       </CardInformation>
                       <CardDescription>
-                        <Chip>업템포 극단</Chip>
-                        <Description>
-                          극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개 내용이
-                          들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단
-                          소개 내용이들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개 내용이
-                          들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다. 극단
-                          소개 내용이 들어갑니다.극단 소개 내용이들어갑니다. 극단 소개 내용이
-                          들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개 내용이 들어갑니다. 극단
-                          소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다.극단 소개
-                          내용이들어갑니다. 극단 소개 내용이 들어갑니다. 극단 소개 내용이
-                          들어갑니다.극단 소개 내용이 들어갑니다. 극단 소개 내용이 들어갑니다. 극단
-                          소개 내용이 들어갑니다.극단 소개 내용이들어갑니다.
-                        </Description>
+                        <Chip>{recruit?.troupeName}</Chip>
+                        <Description>{recruit?.recruitIntroduce}</Description>
                       </CardDescription>
                     </>
                   )}
@@ -141,7 +144,8 @@ const CharacterParts = styled.div`
 `;
 
 const Character = styled.div`
-  width: 49px;
+  min-width: 49px;
+  width: fit-content;
   height: 28px;
   border-radius: 40px;
   padding: 4px 12px 4px 12px;
@@ -260,7 +264,7 @@ const RecruitSlide = styled.div<{
     $isFirst ? '8px 0 0 8px' : $isLast ? '0 8px 8px 0' : '0'};
 
   background: ${({ $isActive }) => ($isActive ? '#000000b2' : '#ddd')};
-  background-image: url('https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg');
+  background-image: url(${({ $imageURL }) => $imageURL});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

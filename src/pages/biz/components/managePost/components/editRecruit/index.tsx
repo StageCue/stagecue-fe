@@ -18,7 +18,7 @@ import {
   requestDeleteRecruit,
   // requestDeleteRecruit,
   requestRecruitFormData,
-  requestUploadRecruitImage,
+  requestUploadImage,
 } from '@/api/biz';
 import Checkbox from '@/components/checkbox';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -238,12 +238,11 @@ const EditRecruit = () => {
 
     setIsLoading(true);
     try {
-      const recruitImages = (await requestUploadImageFiles())?.map((image: any) => image?.fileName);
+      const recruitImages = await requestUploadImageFiles();
       const recruitingParts = partsValue?.map(({ value }) => value);
-
       const fieldData = adaptEditRecruitInputsToDTO(data);
 
-      const { id } = await requestCreateRecruit({
+      const { result } = await requestCreateRecruit({
         ...fieldData,
         monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
         recruitingParts,
@@ -253,8 +252,8 @@ const EditRecruit = () => {
 
       setIsNewRecruitModalOpen(false);
 
-      if (id) {
-        navigate(`/casts/${id}`);
+      if (result) {
+        navigate(`/casts/${result}`);
       }
     } catch (error) {
       console.log(error);
@@ -268,9 +267,19 @@ const EditRecruit = () => {
       const urls = await Promise.all(
         imageFileArray.map(async item => {
           const formData = new FormData();
+
+          if (!item.file) {
+            throw new Error('파일이 없습니다.');
+          }
+
           formData.append('file', item.file!);
-          const url = (await requestUploadRecruitImage(formData)) as string;
-          return url;
+          const { result } = await requestUploadImage(formData);
+
+          if (!result) {
+            throw new Error('이미지 URL을 받지 못했습니다.');
+          }
+
+          return result;
         })
       );
       setValue('recruitImages', urls);
@@ -317,7 +326,7 @@ const EditRecruit = () => {
   };
 
   const handleAddressComplete = (data: any, input: string) => {
-    let fullAddress = data.address;
+    let fullAddress = data?.autoJibunAddress;
     let extraAddress = '';
 
     if (data.addressType === 'R') {
@@ -378,7 +387,7 @@ const EditRecruit = () => {
       setDaysText('선택해주세요.');
     }
 
-    setValue('practice.dayOfWeek', daysArrayToDecimal(practiceDays));
+    setValue('practice.dayOfWeek', daysArrayToDecimal(practiceDays) as string[]);
     setIsDaySelectOpen(false);
   };
 

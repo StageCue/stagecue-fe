@@ -106,7 +106,7 @@ export const requestUploadCover = (data: FormData) => {
 export const requestUploadRegistration = (data: FormData) => {
   const res = request({
     method: 'put',
-    endpoint: 'biz/troupes/info/upload-registration',
+    endpoint: 'troupes/registration',
     data,
     header: {
       'Content-Type': 'multipart/form-data',
@@ -153,10 +153,10 @@ export const requestRecruits = ({ limit, offset, status }: ReqRecruitsParams) =>
   return res;
 };
 
-export const requestUploadRecruitImage = (data: FormData) => {
-  const res = request({
+export const requestUploadImage = async (data: FormData) => {
+  const res = await request({
     method: 'put',
-    endpoint: 'biz/recruits/images',
+    endpoint: 'profiles/image',
     data,
     header: {
       'Content-Type': 'multipart/form-data',

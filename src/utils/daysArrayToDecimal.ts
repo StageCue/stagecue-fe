@@ -1,4 +1,8 @@
-export const daysArrayToDecimal = (daysArray: string[]): string[] => {
+export const daysArrayToDecimal = (daysArray: string[]): string[] | null => {
+  if (daysArray?.every(day => day === '1')) {
+    return null;
+  }
+
   const numberDays = daysArray.map(day => Number(day));
   const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 

@@ -16,19 +16,16 @@ export const toApiPostTroupe = (viewData: EditTroupeInputs): ReqEditTroupe => {
     websiteUrl: viewData.website,
     bgImage: viewData.coverImg,
     managerName: viewData.picName,
-    managerPhone: viewData.picCell,
-    managerEmail: viewData.email,
+    managerCell: viewData.picCell,
+    email: viewData.email,
     description: viewData.description,
     address: viewData.address,
     addressDetail: viewData.addressDetail,
-    businessNumber: viewData.registrationNumber,
-    businessFile: viewData.registrationFile,
+    verifyNumber: viewData.registrationNumber,
+    verifyFile: viewData.registrationFile,
     logoImage: viewData.logoImg,
     publishDate: formatDate(viewData.publishDate),
-    managerCell: viewData.picCell,
     followerCount: 0,
-    verifyNumber: '',
-    verifyFile: '',
   };
 };
 

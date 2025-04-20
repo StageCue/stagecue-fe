@@ -31,29 +31,29 @@ const Home = () => {
   };
 
   const getBanners = async () => {
-    const { banners } = await requestBanners();
+    const banners = await requestBanners();
 
     setBanners(banners);
   };
 
   const getNewestCasts = async () => {
-    const { recruits } = await requestCasts({
+    const { result } = await requestCasts({
       size: 5,
       category: 'THEATER',
       sort: 'RECENT',
     });
 
-    setNewestRecruits(recruits);
+    setNewestRecruits(result?.body);
   };
 
   const getPopularCasts = async () => {
-    const { recruits } = await requestPopularCasts({
+    const { result } = await requestPopularCasts({
       size: 5,
       category: 'THEATER',
       sort: 'VIEW',
     });
 
-    setPopularRecruits(recruits);
+    setPopularRecruits(result?.body);
   };
 
   const getNotices = async () => {

@@ -33,6 +33,7 @@ interface AddressData {
   addressType: string;
   bname: string;
   buildingName: string;
+  autoJibunAddress: string;
 }
 
 const getCoverFileName = (path: string) => {
@@ -103,14 +104,21 @@ export const useEditTroupe = (isInitial: boolean) => {
     }
   };
 
-  const validateFile = (file: File): boolean => {
+  const validateFile = (file: File, type: 'logo' | 'cover' | 'registration'): boolean => {
     if (file.size > 1 * 1024 * 1024) {
       return false;
     }
 
-    const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
-    if (!allowedExtensions.test(file.name)) {
-      return false;
+    if (type === 'registration') {
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.pdf)$/i;
+      if (!allowedExtensions.test(file.name)) {
+        return false;
+      }
+    } else {
+      const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+      if (!allowedExtensions.test(file.name)) {
+        return false;
+      }
     }
 
     return true;
@@ -124,7 +132,7 @@ export const useEditTroupe = (isInitial: boolean) => {
     const file = event.target.files?.[0];
 
     if (file) {
-      const isValidFile = validateFile(file);
+      const isValidFile = validateFile(file, 'logo');
       if (isValidFile) {
         const url = convertFileToURL(file);
         setLogoFile(file);
@@ -141,7 +149,7 @@ export const useEditTroupe = (isInitial: boolean) => {
     const path = event.target.value;
 
     if (file) {
-      const isValidFile = validateFile(file);
+      const isValidFile = validateFile(file, 'cover');
       if (isValidFile) {
         setCoverFile(file);
         setCoverFileName(seperateFileNameFromPath(path));
@@ -156,7 +164,8 @@ export const useEditTroupe = (isInitial: boolean) => {
     const path = event.target.value;
 
     if (file) {
-      const isValidFile = validateFile(file);
+      const isValidFile = validateFile(file, 'registration');
+
       if (isValidFile) {
         const fileName = seperateFileNameFromPath(path);
         setRegistrationFile(file);
@@ -168,7 +177,7 @@ export const useEditTroupe = (isInitial: boolean) => {
   };
 
   const handleAddressComplete = (data: AddressData) => {
-    let fullAddress = data.address;
+    let fullAddress = data?.autoJibunAddress;
     let extraAddress = '';
 
     if (data.addressType === 'R') {
@@ -218,10 +227,12 @@ export const useEditTroupe = (isInitial: boolean) => {
     if (registrationFile) {
       const formData = new FormData();
       formData.append('file', registrationFile);
-      const { filePath } = await requestUploadRegistration(formData);
+      const { result } = await requestUploadRegistration(formData);
 
-      setValue('registrationFile', filePath);
-      return filePath;
+      setValue('registrationFile', result);
+      return result;
+    } else {
+      return registrationFileName;
     }
   };
 
@@ -230,18 +241,17 @@ export const useEditTroupe = (isInitial: boolean) => {
     const coverImg = await uploadCoverFile();
     const registrationFile = await requestUploadRegistrationFile();
 
-    if (logoImg) {
-      const { result } = await requestPostTroupe({
-        ...data,
-        logoImg,
-        coverImg,
-        registrationFile,
-      });
-      if (result) {
-        navigate('/biz/troupe/created');
-      } else {
-        alert('다시 시도해주세요.');
-      }
+    const { result } = await requestPostTroupe({
+      ...data,
+      logoImg,
+      coverImg,
+      registrationFile,
+    });
+
+    if (result) {
+      navigate('/biz/troupe/created');
+    } else {
+      alert('다시 시도해주세요.');
     }
   };
 
@@ -250,7 +260,7 @@ export const useEditTroupe = (isInitial: boolean) => {
     const viewData = res;
 
     setLogoImageName(viewData.logoImg);
-    setLogoPreview(`https://s3.stagecue.co.kr/stagecue/${viewData.logoImg}`);
+    setLogoPreview(viewData.logoImg);
     setCoverImageName(viewData.coverImg);
     setCoverFileName(getCoverFileName(viewData.coverImg));
     setDate(new Date(viewData.publishDate));

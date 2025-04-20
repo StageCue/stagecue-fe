@@ -67,8 +67,6 @@ const ProfileDetail = () => {
     }
   };
 
-  console.log(detail);
-
   return (
     <ProfileDetailContainer>
       <ProfileHeaderWrapper>

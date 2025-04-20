@@ -1,12 +1,12 @@
-import styled from "styled-components";
-import LocationSVG from "@assets/icons/location_lg.svg?react";
+import styled from 'styled-components';
+import LocationSVG from '@assets/icons/location_lg.svg?react';
 
 interface PracticeInfoProps {
   start: string;
   end: string;
   address: string;
   addressDetail: string;
-  daysOfWeek: number;
+  practiceDay: string[];
   lat: number;
   lng: number;
 }
@@ -16,24 +16,22 @@ const PracticeInfo = ({
   end,
   address,
   addressDetail,
-  daysOfWeek,
+  practiceDay,
   lat,
   lng,
 }: PracticeInfoProps) => {
-  const parseDaysFromBinary = (decimalNumber: number) => {
-    const binaryString = decimalNumber.toString(2).padStart(7, "0");
+  const parseDays = (days: string[]) => {
+    const dayMap: { [key: string]: string } = {
+      MONDAY: '월',
+      TUESDAY: '화',
+      WEDNESDAY: '수',
+      THURSDAY: '목',
+      FRIDAY: '금',
+      SATURDAY: '토',
+      SUNDAY: '일',
+    };
 
-    const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
-
-    const activeDays = [];
-
-    for (let i = 0; i < binaryString.length; i++) {
-      if (binaryString[i] === "1") {
-        activeDays.push(daysOfWeek[i]);
-      }
-    }
-
-    return activeDays.join(", ");
+    return days.map(day => dayMap[day]).join(', ');
   };
 
   return (
@@ -52,7 +50,7 @@ const PracticeInfo = ({
           <Dot />
           연습 요일
         </Property>
-        <TextValue>매주 {parseDaysFromBinary(daysOfWeek)}</TextValue>
+        <TextValue>매주 {parseDays(practiceDay)}</TextValue>
       </InfoWrapper>
       <InfoWrapper>
         <Property>

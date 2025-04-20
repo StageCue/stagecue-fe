@@ -240,7 +240,7 @@ const List = () => {
     setIsAppliedCost(false);
   };
 
-  const convertToLocationCode = (koreanLocation: string[]): string[] => {
+  const convertToLocationCode = (koreanLocation: string[]): string[] | null => {
     const locationMap: { [key: string]: string } = {
       서울: 'SEOUL',
       부산: 'BUSAN',
@@ -262,7 +262,7 @@ const List = () => {
     };
 
     if (koreanLocation.includes('전체지역')) {
-      return Object.values(locationMap);
+      return null;
     }
 
     return koreanLocation.map(location => locationMap[location] || location);
@@ -285,8 +285,10 @@ const List = () => {
         key: pageParam,
         size: 16,
         category: parsingCategory(selectedGenre),
-        practiceDay: daysArrayToDecimal(appliedDay),
-        location: convertToLocationCode(appliedZone),
+        ...(daysArrayToDecimal(appliedDay) ? { practiceDay: daysArrayToDecimal(appliedDay) } : {}),
+        ...(convertToLocationCode(appliedZone)
+          ? { location: convertToLocationCode(appliedZone) }
+          : {}),
         monthlyFeeStart: Number(appliedCost?.split('-')?.[0] ?? 0),
         monthlyFeeEnd: Number(appliedCost?.split('-')?.[1] ?? 500000),
         sort: currentOrderBy === 'newest' ? 'RECENT' : 'VIEW',
@@ -305,7 +307,11 @@ const List = () => {
   });
 
   const recruits = useMemo(
-    () => data?.pages.flatMap(page => page?.recruits)?.filter(item => item) || [],
+    () =>
+      data?.pages
+        .flatMap(page => page?.result)
+        .flatMap(data => data?.body)
+        ?.filter(item => item) || [],
     [data]
   );
 
@@ -565,24 +571,19 @@ const List = () => {
       </FilterOrderByWrapper>
       {recruits.length > 0 ? (
         <CastGrid>
-          {recruits?.map(
-            (
-              { recruitId, recruitTitle, artworkName, practiceLocation, isScrapping, thumbnail },
-              index
-            ) => (
-              <Cast
-                key={index}
-                imgWidth={215}
-                imgHeight={322.5}
-                recruitId={recruitId}
-                recruitTitle={recruitTitle}
-                troupeName={artworkName}
-                practiceLocation={practiceLocation}
-                isScrapping={isScrapping}
-                thumbnail={thumbnail}
-              />
-            )
-          )}
+          {recruits?.map(({ recruitId, shortAddress, title, imageUrl, troupeName }, index) => (
+            <Cast
+              key={index}
+              imgWidth={215}
+              imgHeight={322.5}
+              recruitId={recruitId}
+              recruitTitle={title}
+              troupeName={troupeName}
+              practiceLocation={shortAddress}
+              isScrapping={false}
+              thumbnail={imageUrl}
+            />
+          ))}
         </CastGrid>
       ) : query && query?.length > 0 ? (
         <NoResult />

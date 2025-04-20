@@ -1,19 +1,16 @@
 export interface ReqEditTroupe {
   troupeName: string;
-  websiteUrl: string;
-  bgImage: string;
-  managerName: string;
-  managerPhone: string;
-  managerEmail: string;
   description: string;
   address: string;
   addressDetail: string;
-  businessNumber: string;
-  businessFile: string;
+  websiteUrl: string;
   logoImage: string;
-  publishDate: string;
+  bgImage: string;
+  managerName: string;
   managerCell: string;
+  email: string;
   followerCount: number;
+  publishDate: string;
   verifyNumber: string;
   verifyFile: string;
 }

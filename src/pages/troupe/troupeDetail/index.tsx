@@ -1,6 +1,6 @@
 import { requestFollowTroupe, requestTroupeDetail, requestUnfollowTroupe } from '@/api/troupe';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import LocationSVG from '@assets/icons/location_lg.svg?react';
 import PlusSVG from '@assets/icons/plus_white.svg?react';
@@ -12,23 +12,21 @@ import CastCard from '../components/castCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 interface TroupeDetail {
+  id: string;
   troupeName: string;
   description: string;
-  coverImage: string;
-  location: {
-    address: string;
-    addressDetail: string;
-    lat: number;
-    lng: number;
-  };
+  address: string;
+  addressDetail: string;
+  addressLat: number;
+  addressLng: number;
+  websiteUrl: string;
   logoImage: string;
+  bgImage: string;
+  isVerify: boolean;
+  managerName: string;
+  managerCell: string;
   followerCount: number;
-  isFollowing: boolean;
-  publishedAt: string;
-  publishedCount: number;
-  website: string;
-  picName: string;
-  picCell: string;
+  publishDate: string;
   casts: [
     {
       castId: number;
@@ -42,7 +40,6 @@ interface TroupeDetail {
 }
 
 const TroupeDetail = () => {
-  const navigate = useNavigate();
   const { troupeName } = useParams();
   const [detail, setDetail] = useState<TroupeDetail>();
   const [isFollowing, setIsFollowing] = useState(false);
@@ -53,22 +50,21 @@ const TroupeDetail = () => {
   });
 
   const getTroupeDetail = async () => {
-    const res = await requestTroupeDetail(troupeName!);
+    const { result } = await requestTroupeDetail(troupeName!);
 
-    if (res?.error) {
+    if (!result) {
       alert('극단 정보를 불러오는데 실패했습니다.');
       return;
     }
 
-    setDetail(res);
-
-    if (res?.location?.lat !== null && res?.location?.lng !== null) {
-      setLocationAddress({ lng: res?.location?.lng, lat: res?.location?.lat });
+    setDetail(result);
+    if (result?.addressLat !== null && result?.addressLng !== null) {
+      setLocationAddress({ lng: result?.addressLng, lat: result?.addressLat });
     } else {
-      getCoordinates(`${res?.location?.address}` + `${res?.location?.addressDetail}`);
+      getCoordinates(`${result?.address}`);
     }
 
-    if (res.isFollowing) {
+    if (result?.isFollow) {
       setIsFollowing(true);
     }
   };
@@ -105,13 +101,21 @@ const TroupeDetail = () => {
     if (loading) return;
     setLoading(true);
 
+    if (!detail) return;
+
     try {
       if (isFollowing) {
-        await requestUnfollowTroupe(troupeName!);
-        setIsFollowing(false);
+        const { result } = await requestUnfollowTroupe(detail?.id);
+        if (result) {
+          setIsFollowing(false);
+          detail.followerCount--;
+        }
       } else {
-        await requestFollowTroupe(troupeName!);
-        setIsFollowing(true);
+        const { result } = await requestFollowTroupe(detail?.id);
+        if (result) {
+          setIsFollowing(true);
+          detail.followerCount++;
+        }
       }
     } catch (error) {
       console.error('Following action failed', error);
@@ -121,8 +125,8 @@ const TroupeDetail = () => {
   };
 
   const handleWebsiteClick = () => {
-    if (detail?.website) {
-      navigate(detail?.website);
+    if (detail?.websiteUrl) {
+      window.open(detail?.websiteUrl, '_blank');
     }
   };
 
@@ -136,7 +140,7 @@ const TroupeDetail = () => {
 
   return (
     <TroupeDetailContainer>
-      <CoverBox $bgSrc={`https://s3.stagecue.co.kr/stagecue/${detail?.coverImage}`}>
+      <CoverBox $bgSrc={detail?.bgImage as string}>
         <BackgroundLayout>
           <CoverTextWrapper>
             <TroupeName>{detail?.troupeName}</TroupeName>
@@ -157,7 +161,7 @@ const TroupeDetail = () => {
               </TextRow>
               <TextRow>
                 <Address>
-                  {detail?.location.address} {detail?.location.addressDetail}
+                  {detail?.address} {detail?.addressDetail}
                 </Address>
               </TextRow>
             </LocationTextWrapper>
@@ -175,7 +179,7 @@ const TroupeDetail = () => {
             <TroupeTopTopBox>
               <TroupeSummaryWrapper>
                 <TroupeLogoNameWrapper>
-                  <TroupeLogo src={`https://s3.stagecue.co.kr/stagecue/${detail?.logoImage}`} />
+                  <TroupeLogo src={detail?.logoImage} />
                   <TroupeNameInfo>{detail?.troupeName}</TroupeNameInfo>
                 </TroupeLogoNameWrapper>
                 <FollowerCount>{detail?.followerCount}명이 팔로우중</FollowerCount>
@@ -208,8 +212,8 @@ const TroupeDetail = () => {
             <TroupeTopBottomBox>
               <Property>설립연도</Property>
               <Value>
-                {parsePublishDate(detail?.publishedAt)}년<Slash>/</Slash>
-                {detail?.publishedCount}년차
+                {parsePublishDate(detail?.publishDate)}년<Slash>/</Slash>
+                {detail?.publishDate && parsePublishDate(detail?.publishDate)}년차
               </Value>
             </TroupeTopBottomBox>
           </TroupeTopBox>
@@ -223,11 +227,11 @@ const TroupeDetail = () => {
             </DataRow>
             <DataRow>
               <Property>담당자</Property>
-              <Value>{detail?.picName}</Value>
+              <Value>{detail?.managerName}</Value>
             </DataRow>
             <DataRow>
               <Property>담당자 연락처</Property>
-              <Value>{detail?.picCell && formatPhoneNumber(detail?.picCell)}</Value>
+              <Value>{detail?.managerCell && formatPhoneNumber(detail?.managerCell)}</Value>
             </DataRow>
           </TroupeBottomBox>
         </TroupeInfoWrapper>

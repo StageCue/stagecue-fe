@@ -1,8 +1,8 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import styled from "styled-components";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import "swiper/css";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore from 'swiper';
+import styled from 'styled-components';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
 
 interface PostImageSlideProps {
   images: string[];
@@ -25,7 +25,7 @@ const PostImageSlide = ({ images }: PostImageSlideProps) => {
         {images.map((image, index) => {
           return (
             <SwiperSlide key={index}>
-              <SlideDiv src={`https://s3.stagecue.co.kr/stagecue/${image}`} />
+              <SlideDiv src={image} />
             </SwiperSlide>
           );
         })}

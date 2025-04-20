@@ -29,11 +29,13 @@ const AdsSlide = ({ banners }: AdsSlideProps) => {
           pagination={{ clickable: true }}
           grabCursor={true}
         >
-          {banners?.map((banner, index) => (
-            <SwiperSlide key={index}>
-              <SlideDiv src={`https://s3.stagecue.co.kr/stagecue/${banner.imageUrl}`} />
-            </SwiperSlide>
-          ))}
+          {banners?.map((banner, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <SlideDiv src={`https://s3.stagecue.co.kr/stagecue${banner?.imageUrl}`} />
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       ) : (
         <EmptyWrapper width={1060} height={240}>

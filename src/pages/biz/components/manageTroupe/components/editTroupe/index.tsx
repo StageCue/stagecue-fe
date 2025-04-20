@@ -242,7 +242,7 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
               type="file"
               {...register('registrationFile')}
               ref={inputRegistrationFileRef}
-              accept="image/*, .pdf"
+              accept=".jpg,.png,.pdf"
               onChange={handleRegistrationFileChange}
             />
             <Button

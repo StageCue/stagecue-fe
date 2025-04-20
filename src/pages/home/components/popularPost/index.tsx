@@ -2,19 +2,16 @@ import styled from 'styled-components';
 import RankedCasts from '../rankedCasts';
 import EmptyWrapper from '@/components/emptyWrapper';
 
-export interface RecruitDetail {
-  id: number;
+export interface PopularRecruitDetail {
+  imageUrl: string;
+  recruitId: number;
+  shortAddress: string;
   title: string;
-  artworkName: string;
-  recruitingParts: string[];
-  practiceAddress: string;
   troupeName: string;
-  troupeIntroduce: string;
-  thumbnailUrl: string;
 }
 
 interface PopularRecruitProps {
-  recruits: RecruitDetail[];
+  recruits: PopularRecruitDetail[];
 }
 
 const PopularPost = ({ recruits }: PopularRecruitProps) => {

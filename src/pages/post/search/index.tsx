@@ -56,8 +56,6 @@ const Search = () => {
     [data]
   );
 
-  console.log(query);
-
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ['results'] });
   }, [query]);

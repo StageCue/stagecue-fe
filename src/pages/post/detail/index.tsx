@@ -11,40 +11,15 @@ import { requestCastDetail, requestDeleteScrapCast, requestScrapCast } from '@/a
 import { useNavigate, useParams } from 'react-router-dom';
 import PostImageSlide from '../components/slide';
 import useSessionStore from '@/store/session';
-
-interface RecruitDetail {
-  recruitTitle: string;
-  introduce: string;
-  troupeName: string;
-  troupeLogoImage: string;
-  recruitImages: string[];
-  monthlyFee: number;
-  isApplied: boolean;
-  practice: {
-    dateStart: string;
-    dateEnd: string;
-    address: string;
-    addressDetail: string;
-    daysOfWeek: number;
-    lat: number;
-    lng: number;
-  };
-  stage: {
-    dateStart: string;
-    dateEnd: string;
-    address: string;
-    addressDetail: string;
-    lat: number;
-    lng: number;
-  };
-  recruitingParts: string[];
-  isScrapping: boolean;
-}
+import dayjs from 'dayjs';
+import { requestTroupeDetail } from '@/api/troupe';
+import { RecruitDetail } from '@/types/recruitDetail';
 
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [recruitDetail, setRecruitDetail] = useState<RecruitDetail>();
+  const [troupeImage, setTroupeImage] = useState<string>();
   const [selectedTab, setSelectedTab] = useState('공연 기본 정보');
   const [isBookmarked, setIsBookmarked] = useState(false);
 
@@ -65,13 +40,20 @@ const Detail = () => {
     }
   };
 
+  const getTroupeDetail = async () => {
+    if (recruitDetail?.troupeName) {
+      const { result } = await requestTroupeDetail(recruitDetail?.troupeName);
+      setTroupeImage(result?.logoImage);
+    }
+  };
+
   const getCastDetail = async () => {
     if (id) {
-      const cast = await requestCastDetail(id);
+      const { result } = await requestCastDetail(id);
 
-      setRecruitDetail(cast);
+      setRecruitDetail(result);
 
-      if (cast.isScrapping) {
+      if (result?.isScrapping) {
         setIsBookmarked(true);
       }
     }
@@ -85,6 +67,10 @@ const Detail = () => {
     getCastDetail();
   }, []);
 
+  useEffect(() => {
+    getTroupeDetail();
+  }, [recruitDetail]);
+
   return (
     <DetailContainer>
       <ContentWrapper>
@@ -92,20 +78,23 @@ const Detail = () => {
           <TitleWrapper>
             <DdayWrapper>
               {/* TODO: 디데이 바인딩 */}
-              <Dday>D-</Dday>
+              <Dday>
+                D-
+                {dayjs(recruitDetail?.recruitEndDate)
+                  .startOf('day')
+                  .diff(dayjs().startOf('day'), 'day')}
+              </Dday>
               {isLoggined && (
                 <BookmarkWrapper onClick={handleBookmarkClick}>
                   {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
                 </BookmarkWrapper>
               )}
             </DdayWrapper>
-            <Title>{recruitDetail?.recruitTitle}</Title>
+            <Title>{recruitDetail?.title}</Title>
           </TitleWrapper>
           <Divider />
           <TroupeWrapper>
-            <TroupeLogo
-              src={`https://s3.stagecue.co.kr/stagecue/${recruitDetail?.troupeLogoImage}`}
-            />
+            <TroupeLogo src={troupeImage} />
             <TroupeName onClick={handleTroupeNameClick}>
               {recruitDetail?.troupeName}
               <IconWrapper>
@@ -143,30 +132,30 @@ const Detail = () => {
             <ContentBody>
               {selectedTab === '공연 기본 정보' && (
                 <BasicInfo
-                  introduce={recruitDetail.introduce}
-                  start={recruitDetail.stage.dateStart}
-                  end={recruitDetail.stage.dateEnd}
-                  monthlyFee={recruitDetail.monthlyFee}
-                  recruitingParts={recruitDetail.recruitingParts}
+                  introduce={recruitDetail?.recruitIntroduce}
+                  start={recruitDetail?.theatreStartDate}
+                  end={recruitDetail?.theatreEndDate}
+                  monthlyFee={recruitDetail?.monthlyFee}
+                  recruitingParts={recruitDetail?.recruitingParts}
                 />
               )}
               {selectedTab === '공연 위치 정보' && (
                 <LocationInfo
-                  address={recruitDetail.stage.address}
-                  addressDetail={recruitDetail.stage.addressDetail}
-                  lat={recruitDetail.stage.lat}
-                  lng={recruitDetail.stage.lng}
+                  address={recruitDetail?.theatreAddress}
+                  addressDetail={recruitDetail?.theatreAddressDetail}
+                  lat={recruitDetail?.theatreLocationLat}
+                  lng={recruitDetail?.theatreLocationLng}
                 />
               )}
               {selectedTab === '연습 장소 정보' && (
                 <PracticeInfo
-                  start={recruitDetail.practice.dateStart}
-                  end={recruitDetail.practice.dateEnd}
-                  address={recruitDetail.practice.address}
-                  addressDetail={recruitDetail.practice.addressDetail}
-                  daysOfWeek={recruitDetail.practice.daysOfWeek}
-                  lat={recruitDetail.practice.lat}
-                  lng={recruitDetail.practice.lng}
+                  start={recruitDetail?.practiceStartDate}
+                  end={recruitDetail?.practiceEndDate}
+                  address={recruitDetail?.practiceAddress}
+                  addressDetail={recruitDetail?.practiceAddressDetail}
+                  practiceDay={recruitDetail?.practiceDay}
+                  lat={recruitDetail?.practiceLocationLat}
+                  lng={recruitDetail?.practiceLocationLng}
                 />
               )}
             </ContentBody>

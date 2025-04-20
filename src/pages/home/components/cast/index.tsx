@@ -30,11 +30,7 @@ const Recruit = ({
 
   return (
     <CastContainer onClick={handleCastClick}>
-      <Poster
-        src={`https://s3.stagecue.co.kr/stagecue/${thumbnail}`}
-        $width={imgWidth}
-        $height={imgHeight}
-      />
+      <Poster src={thumbnail} $width={imgWidth} $height={imgHeight} />
       <TextWrapper>
         <Title>{recruitTitle}</Title>
         <Artwork>{troupeName}</Artwork>

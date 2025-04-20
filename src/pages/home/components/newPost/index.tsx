@@ -5,18 +5,10 @@ import Button from '@/components/buttons/button';
 import Cast from '../cast';
 import ChevronRightSVG from '@/assets/icons/chevron_right_red_s.svg?react';
 import EmptyWrapper from '@/components/emptyWrapper';
-
-export interface Recruit {
-  recruitId: number;
-  thumbnail: string;
-  recruitTitle: string;
-  artworkName: string;
-  practiceLocation: string;
-  isScrapping: boolean;
-}
+import { PopularRecruitDetail } from '../popularPost';
 
 interface NewPostProps {
-  recruits: Recruit[];
+  recruits: PopularRecruitDetail[];
 }
 
 const NewPost = ({ recruits }: NewPostProps) => {
@@ -65,14 +57,7 @@ const NewPost = ({ recruits }: NewPostProps) => {
             pagination={{ clickable: true }}
           >
             {recruits?.map((recruit, index) => {
-              const {
-                recruitId,
-                thumbnail,
-                recruitTitle,
-                artworkName,
-                practiceLocation,
-                isScrapping,
-              } = recruit;
+              const { recruitId, shortAddress, title, imageUrl, troupeName } = recruit;
 
               return (
                 <SwiperSlide key={index}>
@@ -81,11 +66,11 @@ const NewPost = ({ recruits }: NewPostProps) => {
                       imgWidth={196}
                       imgHeight={294}
                       recruitId={String(recruitId)}
-                      thumbnail={thumbnail}
-                      recruitTitle={recruitTitle}
-                      troupeName={artworkName}
-                      practiceLocation={practiceLocation}
-                      isScrapping={isScrapping}
+                      thumbnail={imageUrl}
+                      recruitTitle={title}
+                      troupeName={troupeName}
+                      practiceLocation={shortAddress}
+                      isScrapping={false}
                     />
                   )}
                 </SwiperSlide>
