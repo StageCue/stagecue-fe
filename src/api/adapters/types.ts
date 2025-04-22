@@ -27,6 +27,7 @@ export interface TroupeResponse {
     bgImage: string;
     managerName: string;
     managerCell: string;
+    email: string;
     publishDate: string;
     verifyNumber: string;
     verifyFile: string;
@@ -49,6 +50,7 @@ export interface TroupePreviewResponse {
     verified: boolean;
     managerName: string;
     managerCell: string;
+    email: string;
     followerCount: number;
     publishDate: string;
     verifyNumber: string;

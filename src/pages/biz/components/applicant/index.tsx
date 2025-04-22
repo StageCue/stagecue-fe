@@ -1,139 +1,36 @@
 import styled from 'styled-components';
 import SearchSVG from '@assets/icons/search.svg?react';
-import { useEffect, useState } from 'react';
 import Button from '@/components/buttons/button';
 import Table from './components/table';
 import PassSVG from '@assets/icons/pass.svg?react';
 import FailSVG from '@assets/icons/fail.svg?react';
-import { requestApplications, requestChangingApplyState } from '@/api/biz';
 import PassModal from './components/passModal';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Paginator from '@/components/paginator';
-import { ApplyFilter, ApplyStatus, BizApplicationQuery, PassType } from '../../types/applicants';
+import { useApplicant } from './hooks/useApplicant';
 
-interface ShowingApplicantState {
-  id: number;
-  name: string;
-}
 const Applicant = () => {
-  const [page, setPage] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState<ApplyFilter>('전체');
-  const [selectedApplyIds, setSelectedApplyIds] = useState<{ id: number; name: string }[]>([]);
-  const [isPassModalOpen, setIsPassModalOpen] = useState(false);
-  const [isFailModalOpen, setIsFailModalOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [showingApplicant, setShowingApplicant] = useState<ShowingApplicantState>();
-
-  const [passType, setPassType] = useState<PassType>();
-
-  const queryClient = useQueryClient();
-
-  const handleFilterClick = (filter: ApplyFilter) => {
-    setSelectedFilter(filter);
-  };
-
-  const handlePassClick = async (passType?: PassType) => {
-    if (selectedApplyIds.length === 0) return;
-
-    setIsPassModalOpen(true);
-
-    if (selectedFilter === '전체') {
-      setPassType(passType);
-    }
-  };
-
-  const handleFailClick = async () => {
-    setIsFailModalOpen(true);
-  };
-
-  const handlePassConfirm = async () => {
-    const idsArray = selectedApplyIds.map(item => item.id);
-
-    await requestChangingApplyState({
-      applyIds: `${idsArray}`,
-      applyStatus: passType!,
-    });
-
-    setSelectedApplyIds([]);
-    queryClient.invalidateQueries({ queryKey: ['applications', page] });
-
-    setIsPassModalOpen(false);
-    setIsProfileModalOpen(false);
-  };
-
-  const handleFailConfirm = async () => {
-    const idsArray = selectedApplyIds.map(item => item.id);
-
-    await requestChangingApplyState({
-      applyIds: `${idsArray}`,
-      applyStatus: 'REJECTED',
-    });
-
-    setSelectedApplyIds([]);
-    queryClient.invalidateQueries({ queryKey: ['applications', page] });
-
-    setIsFailModalOpen(false);
-    setIsProfileModalOpen(false);
-  };
-
-  const handleCancelClick = () => {
-    setIsFailModalOpen(false);
-    setIsPassModalOpen(false);
-  };
-
-  const handleCloseProfileClick = () => {
-    setIsProfileModalOpen(false);
-  };
-
-  const { data } = useQuery<BizApplicationQuery>({
-    queryKey: ['applications', page],
-    // TODO: 일단 build 성공하게 하려고 값 임의로 넣었습니다 수정하여야합니다.
-    queryFn: () => requestApplications({ key: page, size: 10 }),
-  });
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleCheckboxClick = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    id: number,
-    name: string
-  ) => {
-    e.stopPropagation();
-    if (selectedApplyIds.some(apply => apply.id === id)) {
-      setSelectedApplyIds(prev => {
-        const newArray = prev.filter(({ id: applyId }) => applyId !== id);
-        return newArray;
-      });
-    } else {
-      setSelectedApplyIds([...selectedApplyIds, { id, name }]);
-    }
-  };
-
-  const filterByApplyStatus = (status: ApplyStatus) => {
-    if (data?.applications) {
-      const filteredArray = data.applications.filter(
-        application => application['applyStatus'] === status
-      );
-      return filteredArray;
-    } else {
-      return [];
-    }
-  };
-
-  const handleApplicantRowClick = (id: number, name: string) => {
-    setIsProfileModalOpen(true);
-    setShowingApplicant({ id, name });
-  };
-
-  useEffect(() => {
-    if (selectedFilter === 'APPLY') {
-      setPassType('DOCUMENT_PASSED');
-    } else if (selectedFilter === 'PASS') {
-      setPassType('FINAL_ACCEPTED');
-    }
-  }, [selectedFilter]);
+  const {
+    page,
+    selectedFilter,
+    selectedApplyIds,
+    isPassModalOpen,
+    isFailModalOpen,
+    isProfileModalOpen,
+    showingApplicant,
+    passType,
+    data,
+    handleFilterClick,
+    handlePassClick,
+    handleFailClick,
+    handlePassConfirm,
+    handleFailConfirm,
+    handleCancelClick,
+    handleCloseProfileClick,
+    handlePageChange,
+    handleCheckboxClick,
+    filterByApplyStatus,
+    handleApplicantRowClick,
+  } = useApplicant();
 
   return (
     <ApplicantContainer>
@@ -266,13 +163,9 @@ const Applicant = () => {
           applications={
             selectedFilter === '전체' ? data?.applications : filterByApplyStatus(selectedFilter)
           }
-          onClickCheckbox={(
-            e: React.MouseEvent<HTMLElement, MouseEvent>,
-            id: number,
-            name: string
-          ) => handleCheckboxClick(e, id, name)}
+          onClickCheckbox={handleCheckboxClick}
           selectedApplyIds={selectedApplyIds}
-          onClickRow={(id: number, name: string) => handleApplicantRowClick(id, name)}
+          onClickRow={handleApplicantRowClick}
           onClickPass={handlePassClick}
           onClickFail={handleFailClick}
           onCloseModal={handleCloseProfileClick}

@@ -1,27 +1,26 @@
 import { EditTroupeInputs } from '@/pages/biz/components/manageTroupe/components/editTroupe/hooks/useEditTroupe';
 import request from '..';
 import { toApiPostTroupe, toViewTroupe, toViewTroupePreview } from '../adapters/troupe';
-
-interface ReqApplicationsParams {
-  number?: number;
-  size?: number;
-  key?: number;
-  gender?: 'MALE' | 'FEMALE';
-  applyStatus?: 'APPLY' | 'OPEN' | 'CANCELED' | 'PASS' | 'WIN' | 'LOSE';
-  sort?: 'AGE' | 'NAME';
-  sortDirection?: 'ASC' | 'DESC';
-  term?: string;
-}
+import { ApplyStatus } from '@/pages/biz/types/applicants';
 
 interface ReqChangingApplyState {
   applyIds: string;
   applyStatus: 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED' | 'REJECTED';
 }
 
+interface ReqAppliesParams {
+  number: number;
+  size?: number;
+  key?: number;
+  gender?: 'MALE' | 'FEMALE';
+  sort?: 'AGE' | 'NAME';
+  sortDirection?: 'ASC' | 'DESC';
+  term?: string;
+  appplyStatus?: ApplyStatus;
+}
+
 interface ReqRecruitsParams {
-  limit: number;
-  offset: number;
-  status?: 'TEMP' | 'RECRUIT' | 'CLOSED' | '';
+  status: string;
 }
 
 export interface ReqEditRecruitParams {
@@ -60,7 +59,7 @@ interface ReqChangeEndDateBody {
   endDate: string;
 }
 
-export const requestApplications = (params: ReqApplicationsParams) => {
+export const requestApplications = (params: ReqAppliesParams) => {
   const res = request({
     method: 'get',
     endpoint: `troupes/applies`,
@@ -72,7 +71,7 @@ export const requestApplications = (params: ReqApplicationsParams) => {
 export const requestChangingApplyState = ({ applyIds, applyStatus }: ReqChangingApplyState) => {
   const res = request({
     method: 'put',
-    endpoint: `biz/recruits/applications?applyIds=${applyIds}&applyStatus=${applyStatus}`,
+    endpoint: `applies/${applyIds}?applyStatus=${applyStatus}`,
   });
   return res;
 };
@@ -144,13 +143,22 @@ export const requestTroupeEditInfo = async () => {
   return toViewTroupe(res);
 };
 
-export const requestRecruits = ({ limit, offset, status }: ReqRecruitsParams) => {
+export const requestApplies = (params: ReqAppliesParams) => {
   const res = request({
     method: 'get',
-    endpoint: `biz/recruits?limit=${limit}&offset=${offset}&status=${status}`,
+    endpoint: `troupes/applies`,
+    params,
   });
 
   return res;
+};
+
+export const requestFavorite = (applyId: number, isFavorite: boolean) => {
+  return request({
+    method: 'put',
+    endpoint: 'troupes/applies/favorite',
+    params: { applyId, isFavorite },
+  });
 };
 
 export const requestUploadImage = async (data: FormData) => {
@@ -163,6 +171,15 @@ export const requestUploadImage = async (data: FormData) => {
     },
   });
 
+  return res;
+};
+
+export const requestRecruits = (params: ReqRecruitsParams) => {
+  const res = request({
+    method: 'get',
+    endpoint: 'recruits',
+    params,
+  });
   return res;
 };
 

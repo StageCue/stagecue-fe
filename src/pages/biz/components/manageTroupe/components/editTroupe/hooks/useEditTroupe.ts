@@ -256,8 +256,7 @@ export const useEditTroupe = (isInitial: boolean) => {
   };
 
   const getTroupeFormData = async () => {
-    const res = await requestTroupeEditInfo();
-    const viewData = res;
+    const viewData = await requestTroupeEditInfo();
 
     setLogoImageName(viewData.logoImg);
     setLogoPreview(viewData.logoImg);

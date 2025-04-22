@@ -12,6 +12,8 @@ import RadioCheckedSVG from '@assets/icons/radio_s_checked.svg?react';
 import ProfileModal from '../profileMdoal';
 import StatusTag from '../statusTag';
 import { Application } from '@/pages/biz/types/applicants';
+import { useMutation } from '@tanstack/react-query';
+import { requestFavorite } from '@/api/biz';
 
 interface TableProps {
   applications: Application[];
@@ -46,6 +48,14 @@ const Table = ({
   const [isStatusAsc, setIsStatusAsc] = useState(true);
   const [sortedApplications, setSortedAplications] = useState<Application[]>([]);
   const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
+
+  const { mutate: toggleFavoriteMutate } = useMutation({
+    mutationFn: ({ applyId, isFavorite }: { applyId: number; isFavorite: boolean }) =>
+      requestFavorite(applyId, isFavorite),
+    onError: error => {
+      console.error('즐겨찾기 토글 실패:', error);
+    },
+  });
 
   const orderAsc = ['APPLY', 'PASS', 'WIN', 'LOSE', 'CANCELED'];
   const orderDesc = [...orderAsc].reverse();
@@ -118,7 +128,10 @@ const Table = ({
 
   const handleStarClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, applyId: number) => {
     e.stopPropagation();
-    if (starMarkedIds.includes(applyId)) {
+    const isCurrentlyMarked = starMarkedIds.includes(applyId);
+    toggleFavoriteMutate({ applyId, isFavorite: !isCurrentlyMarked });
+
+    if (isCurrentlyMarked) {
       setStarMarkedIds(prev => prev.filter(id => id !== applyId));
     } else {
       setStarMarkedIds(prev => [...prev, applyId]);

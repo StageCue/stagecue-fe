@@ -37,7 +37,7 @@ export const toViewTroupe = (apiData: TroupeResponse): EditTroupeInputs => {
     coverImg: result.bgImage,
     picName: result.managerName,
     picCell: result.managerCell,
-    email: '',
+    email: result.email,
     description: result.description,
     address: result.address,
     addressDetail: result.addressDetail,
@@ -59,7 +59,7 @@ export const toViewTroupePreview = (apiData: TroupePreviewResponse): TroupeInfo 
     publishDate: result.publishDate,
     website: result.websiteUrl,
     address: result.address,
-    email: '',
+    email: result.email,
     picName: result.managerName,
     picCell: result.managerCell,
   };
