@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import LocationSVG from "@assets/icons/location_gray.svg?react";
-import BookmarkSVG from "@assets/icons/bookmark.svg?react";
-import BookmarkFilledSVG from "@assets/icons/bookmark_filled.svg?react";
-import { requestDeleteScrapCast, requestScrapCast } from "@/api/cast";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import LocationSVG from '@assets/icons/location_gray.svg?react';
+import BookmarkSVG from '@assets/icons/bookmark.svg?react';
+import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg?react';
+import { requestDeleteScrapCast, requestScrapCast } from '@/api/cast';
+import { useNavigate } from 'react-router-dom';
 
 interface CastCardProps {
   castId: number;
@@ -12,7 +12,7 @@ interface CastCardProps {
   artworkName: string;
   practiceLocation: string;
   troupeName: string;
-  isScrapping: boolean;
+  isScrap: boolean;
 }
 
 const CastCard = ({
@@ -21,15 +21,13 @@ const CastCard = ({
   artworkName,
   practiceLocation,
   troupeName,
-  isScrapping,
+  isScrap,
 }: CastCardProps) => {
   const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleBookmarkClick = async (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
+  const handleBookmarkClick = async (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.stopPropagation();
     if (loading) return;
     setLoading(true);
@@ -45,7 +43,7 @@ const CastCard = ({
         setIsBookmarked(true);
       }
     } catch (error) {
-      console.error("Bookmark action failed", error);
+      console.error('Bookmark action failed', error);
     } finally {
       setLoading(false);
     }
@@ -56,10 +54,10 @@ const CastCard = ({
   };
 
   useEffect(() => {
-    if (isScrapping) {
+    if (isScrap) {
       setIsBookmarked(true);
     }
-  }, [isScrapping]);
+  }, [isScrap]);
 
   return (
     <CastCardContainer onClick={handleCastClick}>

@@ -34,7 +34,7 @@ interface TroupeDetail {
       artworkName: string;
       practiceLocation: string;
       troupeName: string;
-      isScrapping: true;
+      isScrap: true;
     }
   ];
 }
@@ -258,7 +258,7 @@ const TroupeDetail = () => {
               grabCursor={true}
             >
               {detail?.casts?.map(
-                ({ castId, castTitle, artworkName, practiceLocation, troupeName, isScrapping }) => (
+                ({ castId, castTitle, artworkName, practiceLocation, troupeName, isScrap }) => (
                   <SwiperSlide key={castId}>
                     <CastCard
                       key={castId}
@@ -267,7 +267,7 @@ const TroupeDetail = () => {
                       artworkName={artworkName}
                       practiceLocation={practiceLocation}
                       troupeName={troupeName}
-                      isScrapping={isScrapping}
+                      isScrap={isScrap}
                     />
                   </SwiperSlide>
                 )
@@ -294,6 +294,7 @@ const TroupeDetailContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding-bottom: 100px;
+  overflow-x: hidden;
 `;
 
 const CoverBox = styled.div<{ $bgSrc: string }>`
@@ -303,6 +304,10 @@ const CoverBox = styled.div<{ $bgSrc: string }>`
   background-image: url(${props => props.$bgSrc});
   background-size: cover;
   background-position: center;
+
+  @media (max-width: 1060px) {
+    width: 100%;
+  }
 `;
 
 const BackgroundLayout = styled.div`

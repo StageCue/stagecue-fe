@@ -70,7 +70,6 @@ const NewPost = ({ recruits }: NewPostProps) => {
                       recruitTitle={title}
                       troupeName={troupeName}
                       practiceLocation={shortAddress}
-                      isScrapping={false}
                     />
                   )}
                 </SwiperSlide>

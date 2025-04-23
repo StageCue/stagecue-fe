@@ -84,7 +84,6 @@ const Applied = () => {
               recruitTitle={title}
               troupeName={troupeName}
               practiceLocation={shortAddress}
-              isScrapping={false}
             />
           ))}
         </Casts>

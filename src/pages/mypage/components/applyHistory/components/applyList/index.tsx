@@ -5,21 +5,34 @@ import DotdotdotSVG from '@/assets/images/dotdotdot.svg?react';
 import ApplyCast from '../applyCast';
 import { useNavigate } from 'react-router-dom';
 import { useApplyData } from '@/pages/mypage/hooks/useApplyData';
+import { useEffect, useState } from 'react';
+import { Apply } from '@/pages/mypage/types/data';
 
 interface ApplyListProps {
   status: applyPhaseType;
   filter?: filterType;
 }
 
-const ApplyList = ({ status }: ApplyListProps) => {
+const ApplyList = ({ status, filter }: ApplyListProps) => {
   const navigate = useNavigate();
+  const { data, isLoading, error, refetch } = useApplyData(status, filter);
+  const [casts, setCasts] = useState<Apply[]>([]);
 
-  const { data, isLoading, error, refetch } = useApplyData(status);
+  useEffect(() => {
+    if (!data || data?.result?.body?.length === 0) return;
+
+    setCasts(
+      data!.result?.body.filter(cast => {
+        if (filter === '전체') return true;
+        if (filter === 'CANCEL') return cast.applyStatus === 'CANCELED';
+        if (filter === 'READ') return cast.applyStatus === 'OPEN';
+        if (filter === 'UNREAD') return cast.applyStatus === 'APPLY';
+      })
+    );
+  }, [data]);
 
   if (isLoading) return <p></p>;
   if (error) return <p>에러 : {error.message}</p>;
-
-  const casts = data!.applies;
 
   return (
     <ApplyListContainer>
@@ -41,12 +54,12 @@ const ApplyList = ({ status }: ApplyListProps) => {
         </NoApplyHistory>
       ) : (
         <ApplyCastContainer>
-          {casts?.map(({ applyId, troupeName, applyStatus, recruitTitle, applyStatusLogs }) => (
+          {casts?.map(({ applyId, troupeName, applyStatus, recruitTitle, histories }) => (
             <ApplyCast
               key={applyId}
               applyId={applyId}
               applyStatus={applyStatus}
-              applyStatusLogs={applyStatusLogs}
+              applyStatusLogs={histories}
               recruitTitle={recruitTitle}
               troupeName={troupeName}
               getCasts={refetch}

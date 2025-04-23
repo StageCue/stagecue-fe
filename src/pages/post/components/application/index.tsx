@@ -31,7 +31,7 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
   const [checkedProfileId, setCheckedProfileId] = useState<number>();
   const [profiles, setProfiles] = useState([]);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-
+  const [profileDetail, setProfileDetail] = useState<Profile>();
   const handleCheckboxClick = (id: number) => {
     if (checkedProfileId === id) {
       setCheckedProfileId(0);
@@ -57,11 +57,15 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
     recruitId: string;
     profileId: string;
   }) => {
-    await requestApplyCast({ recruitId, profileId });
-    navigate('/casts/applied');
+    const { result } = await requestApplyCast({ recruitId, profileId });
+
+    if (result) {
+      navigate('/casts/applied');
+    }
   };
 
-  const handleDetailClick = () => {
+  const handleDetailClick = (id: number) => {
+    setProfileDetail(profiles?.find((profile: Profile) => profile?.id === id));
     setIsProfileModalOpen(true);
   };
 
@@ -98,15 +102,19 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
                       <UpdateDate>{dateCreated}</UpdateDate>
                     </TextColumn>
                     <ButtonColumn>
-                      <DetailButton onClick={handleDetailClick}>상세</DetailButton>
-                      {isProfileModalOpen && (
-                        <ModalPortal>
-                          <ProfileModal id={id} isDefault={isDefault} onClose={handleCloseClick} />
-                        </ModalPortal>
-                      )}
+                      <DetailButton onClick={() => handleDetailClick(id)}>상세</DetailButton>
                     </ButtonColumn>
                   </Profile>
                 ))}
+                {isProfileModalOpen && (
+                  <ModalPortal>
+                    <ProfileModal
+                      id={String(profileDetail?.id)}
+                      isDefault={profileDetail?.isDefault as boolean}
+                      onClose={handleCloseClick}
+                    />
+                  </ModalPortal>
+                )}
               </Profiles>
             </ProfilesWrapper>
           ) : (

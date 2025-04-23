@@ -47,26 +47,32 @@ export const requestCastDetail = async (id: string) => {
 };
 
 export const requestApplyCast = async ({ recruitId, profileId }: ReqApplyCast) => {
+  const queryParams = _queryParams({ profileId });
+
   const res = await request({
     method: 'post',
-    endpoint: `recruits/${recruitId}/apply?profileId=${profileId}`,
+    endpoint: `applies/recruits/${recruitId}?${queryParams}`,
   });
   return res;
 };
 
 export const requestScrapCast = async (recruitId: string) => {
+  const queryParams = _queryParams({ recruitId });
+
   const res = await request({
     method: 'post',
-    endpoint: `recruits/${recruitId}/scrap`,
+    endpoint: `recruits/scrap?${queryParams}`,
   });
 
   return res;
 };
 
-export const requestDeleteScrapCast = async (recruitId: string) => {
+export const requestDeleteScrapCast = async (troupeId: string) => {
+  const queryParams = _queryParams({ troupeId });
+
   const res = await request({
     method: 'delete',
-    endpoint: `recruits/${recruitId}/scrap`,
+    endpoint: `recruits/scrap?${queryParams}`,
   });
 
   return res;

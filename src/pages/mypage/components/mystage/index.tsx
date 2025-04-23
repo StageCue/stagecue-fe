@@ -19,8 +19,6 @@ const MyStage = () => {
     return recruitsStatus?.result?.find(item => item.applyStatus === status)?.count ?? 0;
   };
 
-  // console.log(scraps);
-
   return (
     <MyStageWrapper>
       <MyStageStatus>
@@ -71,38 +69,31 @@ const MyStage = () => {
           </NoSavedPost>
         ) : (
           <Scraps>
-            {scraps?.map(
-              ({
-                castId,
-                imageUrl,
-                castTitle,
-                troupeName,
-                practiceAddress,
-                isBookmarked,
-                dday,
-              }) => {
-                return (
-                  <CastWrapper key={castId}>
-                    <Cast
-                      imgWidth={215}
-                      imgHeight={322.5}
-                      recruitId={castId}
-                      thumbnail={imageUrl}
-                      recruitTitle={castTitle}
-                      troupeName={troupeName}
-                      practiceLocation={practiceAddress}
+            {scraps?.map(scrap => {
+              return (
+                <CastWrapper key={scrap?.castId}>
+                  <Cast
+                    imgWidth={215}
+                    imgHeight={322.5}
+                    recruitId={scrap?.castId}
+                    thumbnail={scrap?.imageUrl}
+                    recruitTitle={scrap?.castTitle}
+                    troupeName={scrap?.troupeName}
+                    practiceLocation={scrap?.practiceAddress}
+                  />
+                  <DdayTag>D{scrap?.dday}</DdayTag>
+                  <BookmarkWrapper
+                    key={`bookmark-${scrap?.castId}`}
+                    onClick={() => handleBookmarkClick(scrap?.castId)}
+                  >
+                    <img
+                      src={scrap?.isBookmarked ? BookmarkFilledSVG : BookmarkSVG}
+                      alt="Bookmark"
                     />
-                    <DdayTag>D{dday}</DdayTag>
-                    <BookmarkWrapper
-                      key={`bookmark-${castId}`}
-                      onClick={() => handleBookmarkClick(castId)}
-                    >
-                      <img src={isBookmarked ? BookmarkFilledSVG : BookmarkSVG} alt="Bookmark" />
-                    </BookmarkWrapper>
-                  </CastWrapper>
-                );
-              }
-            )}
+                  </BookmarkWrapper>
+                </CastWrapper>
+              );
+            })}
           </Scraps>
         )}
       </ScrappedPost>

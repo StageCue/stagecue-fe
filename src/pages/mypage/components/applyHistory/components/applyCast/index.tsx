@@ -12,7 +12,7 @@ interface ApplyCastProps {
   applyStatus: applyPhaseType;
   recruitTitle: string;
   troupeName: string;
-  applyStatusLogs: { applyStatus: applyPhaseType; historyAt: string }[];
+  applyStatusLogs: { applyStatus: applyPhaseType; changeDate: string }[];
   getCasts: () => void;
 }
 
@@ -84,11 +84,11 @@ const ApplyCast = ({
         </TagsWrapper>
         <Title>{recruitTitle}</Title>
         <LogWrapper>
-          {applyStatusLogs.map(({ applyStatus, historyAt }, index) => (
+          {applyStatusLogs.map(({ applyStatus, changeDate }, index) => (
             <>
               <Log>
                 <LogName>{parseLogname(applyStatus)}</LogName>
-                <LogDate>{formatDateWithDots(historyAt)}</LogDate>
+                <LogDate>{formatDateWithDots(changeDate)}</LogDate>
               </Log>
               {index !== applyStatusLogs.length - 1 && <Divider />}
             </>

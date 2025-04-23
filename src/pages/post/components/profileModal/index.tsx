@@ -24,8 +24,8 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
-    const res = await requestProfileDetail(id);
-    setDetail(res);
+    const { result } = await requestProfileDetail(id);
+    setDetail(result);
   };
 
   const handleEditClick = () => {
@@ -65,15 +65,15 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
           </EditWrapper>
           <Body>
             <NameWrapper>
-              <Name>{sessionStore.username}</Name>
+              <Name>{sessionStore?.username}</Name>
               <SlashSVG />
-              <Age>{detail && calculateKoreanAge(detail.birthday)}</Age>
+              <Age>{detail && calculateKoreanAge(sessionStore?.birthday as string)}</Age>
             </NameWrapper>
             <ImagesWrapper>
-              <Thumbnail src={`https://s3.stagecue.co.kr/stagecue/${detail?.thumbnail}`} />
+              <Thumbnail src={detail?.thumbnail} />
               <Images>
                 {detail?.images?.map((url, index) => (
-                  <Image key={index} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+                  <Image key={index} src={url} />
                 ))}
               </Images>
             </ImagesWrapper>

@@ -45,22 +45,21 @@ export const useMyStageData = () => {
       const { result } = await requestScraps({ key: 0, size: 3 });
 
       return (
-        result?.content?.map(
+        result?.body?.map(
           (scrap: {
             recruitId: number;
             title: string;
             imageUrl: string;
             troupeName: string;
             shortAddress: string;
+            dateExpired: string;
           }) => ({
             castId: scrap.recruitId.toString(),
             castTitle: scrap.title,
             imageUrl: scrap.imageUrl,
             troupeName: scrap.troupeName,
             practiceAddress: scrap.shortAddress,
-            // TODO: 임시 코드
-            // dday: getDday(scrap.dateExpired) 이 코드로 변경해야함.
-            dday: getDday(new Date(new Date().setDate(new Date().getDate() + 5)).toISOString()),
+            dday: getDday(scrap.dateExpired),
             isBookmarked: true,
           })
         ) ?? []

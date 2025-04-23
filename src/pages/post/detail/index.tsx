@@ -11,9 +11,9 @@ import { requestCastDetail, requestDeleteScrapCast, requestScrapCast } from '@/a
 import { useNavigate, useParams } from 'react-router-dom';
 import PostImageSlide from '../components/slide';
 import useSessionStore from '@/store/session';
-import dayjs from 'dayjs';
 import { requestTroupeDetail } from '@/api/troupe';
 import { RecruitDetail } from '@/types/recruitDetail';
+import { getDday } from '@/utils/getDday';
 
 const Detail = () => {
   const { id } = useParams();
@@ -31,12 +31,17 @@ const Detail = () => {
 
   const handleBookmarkClick = async () => {
     if (isBookmarked) {
-      // const res = await requestDeleteScrapCast(id!);
-      await requestDeleteScrapCast(id!);
-      setIsBookmarked(false);
+      const { result } = await requestDeleteScrapCast(id!);
+
+      if (result) {
+        setIsBookmarked(false);
+      }
     } else {
-      await requestScrapCast(id!);
-      setIsBookmarked(true);
+      const { result } = await requestScrapCast(id!);
+
+      if (result) {
+        setIsBookmarked(true);
+      }
     }
   };
 
@@ -50,10 +55,9 @@ const Detail = () => {
   const getCastDetail = async () => {
     if (id) {
       const { result } = await requestCastDetail(id);
-
       setRecruitDetail(result);
 
-      if (result?.isScrapping) {
+      if (result?.isScrap) {
         setIsBookmarked(true);
       }
     }
@@ -77,13 +81,7 @@ const Detail = () => {
         <Header>
           <TitleWrapper>
             <DdayWrapper>
-              {/* TODO: 디데이 바인딩 */}
-              <Dday>
-                D-
-                {dayjs(recruitDetail?.recruitEndDate)
-                  .startOf('day')
-                  .diff(dayjs().startOf('day'), 'day')}
-              </Dday>
+              <Dday>D{getDday(recruitDetail?.recruitEndDate as string)}</Dday>
               {isLoggined && (
                 <BookmarkWrapper onClick={handleBookmarkClick}>
                   {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
@@ -163,7 +161,7 @@ const Detail = () => {
         </Content>
       </ContentWrapper>
       {recruitDetail && isLoggined && (
-        <Application recruitId={id!} isApplied={recruitDetail?.isApplied} />
+        <Application recruitId={id!} isApplied={recruitDetail?.isApply} />
       )}
     </DetailContainer>
   );

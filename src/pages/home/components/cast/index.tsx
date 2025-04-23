@@ -10,7 +10,6 @@ interface RecruitProps {
   practiceLocation: string;
   thumbnail: string;
   troupeName: string;
-  isScrapping?: boolean;
 }
 
 const Recruit = ({

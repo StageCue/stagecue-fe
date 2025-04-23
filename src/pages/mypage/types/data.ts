@@ -1,17 +1,17 @@
 import { ApplyStatus } from '@/pages/biz/types/applicants';
 
-export interface ApplyStatusLog {
+export interface ApplyHistories {
   applyStatus: ApplyStatus;
-  historyAt: string;
+  changeDate: string;
 }
 
 export interface Apply {
   applyId: number;
   recruitTitle: string;
-  recruitCategory: 'THEATER' | 'MUSICAL' | 'DANCE';
+  recruitCategory?: 'THEATER' | 'MUSICAL' | 'DANCE';
   troupeName: string;
   applyStatus: ApplyStatus;
-  applyStatusLogs: ApplyStatusLog[];
+  histories: ApplyHistories[];
 }
 
 export interface Scrap {

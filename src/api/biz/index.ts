@@ -63,7 +63,7 @@ export const requestApplications = (params: ReqAppliesParams) => {
   const res = request({
     method: 'get',
     endpoint: `troupes/applies`,
-    params: params,
+    params,
   });
   return res;
 };
@@ -143,6 +143,7 @@ export const requestTroupeEditInfo = async () => {
   return toViewTroupe(res);
 };
 
+// TODO: requestApplications함수 와 중복되었습니다 확인해주세요
 export const requestApplies = (params: ReqAppliesParams) => {
   const res = request({
     method: 'get',

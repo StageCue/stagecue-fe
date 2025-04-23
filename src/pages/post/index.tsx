@@ -580,7 +580,6 @@ const List = () => {
               recruitTitle={title}
               troupeName={troupeName}
               practiceLocation={shortAddress}
-              isScrapping={false}
               thumbnail={imageUrl}
             />
           ))}

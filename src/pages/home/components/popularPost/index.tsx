@@ -8,6 +8,7 @@ export interface PopularRecruitDetail {
   shortAddress: string;
   title: string;
   troupeName: string;
+  isScrap: boolean;
 }
 
 interface PopularRecruitProps {

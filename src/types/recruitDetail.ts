@@ -23,6 +23,6 @@ export interface RecruitDetail {
   recruitingParts: string[];
   recruitImages: string[];
   recruitStatus: string;
-  isScrapping: boolean;
-  isApplied: boolean;
+  isScrap: boolean;
+  isApply: boolean;
 }

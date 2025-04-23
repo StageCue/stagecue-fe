@@ -92,28 +92,18 @@ const Search = () => {
       </FilterWrapper>
       {results.length > 0 ? (
         <CastGrid>
-          {results?.map(
-            ({
-              recruitId,
-              recruitTitle,
-              artworkName,
-              practiceLocation,
-              isScrapping,
-              thumbnail,
-            }) => (
-              <Cast
-                key={recruitId}
-                imgWidth={215}
-                imgHeight={322.5}
-                recruitId={recruitId}
-                recruitTitle={recruitTitle}
-                troupeName={artworkName}
-                practiceLocation={practiceLocation}
-                isScrapping={isScrapping}
-                thumbnail={thumbnail}
-              />
-            )
-          )}
+          {results?.map(({ recruitId, recruitTitle, artworkName, practiceLocation, thumbnail }) => (
+            <Cast
+              key={recruitId}
+              imgWidth={215}
+              imgHeight={322.5}
+              recruitId={recruitId}
+              recruitTitle={recruitTitle}
+              troupeName={artworkName}
+              practiceLocation={practiceLocation}
+              thumbnail={thumbnail}
+            />
+          ))}
         </CastGrid>
       ) : (
         <NoResult />
