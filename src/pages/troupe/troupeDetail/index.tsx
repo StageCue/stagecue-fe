@@ -138,6 +138,12 @@ const TroupeDetail = () => {
     return date?.split('-')[0];
   };
 
+  const getYearsOfExperience = (date?: string) => {
+    const currentYear = new Date().getFullYear();
+    const publishYear = Number(parsePublishDate(date));
+    return currentYear - publishYear + 1;
+  };
+
   return (
     <TroupeDetailContainer>
       <CoverBox $bgSrc={detail?.bgImage as string}>
@@ -213,7 +219,7 @@ const TroupeDetail = () => {
               <Property>설립연도</Property>
               <Value>
                 {parsePublishDate(detail?.publishDate)}년<Slash>/</Slash>
-                {detail?.publishDate && parsePublishDate(detail?.publishDate)}년차
+                {getYearsOfExperience(detail?.publishDate)}년차
               </Value>
             </TroupeTopBottomBox>
           </TroupeTopBox>
