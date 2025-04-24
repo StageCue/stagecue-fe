@@ -2,10 +2,12 @@ import { EditTroupeInputs } from '@/pages/biz/components/manageTroupe/components
 import request from '..';
 import { toApiPostTroupe, toViewTroupe, toViewTroupePreview } from '../adapters/troupe';
 import { ApplyStatus } from '@/pages/biz/types/applicants';
+import { toViewApplicationList } from '../adapters/applies';
+import { dummy } from './dummy';
 
 interface ReqChangingApplyState {
   applyIds: string;
-  applyStatus: 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED' | 'REJECTED';
+  applyStatus: 'PASS' | 'WIN' | 'CANCELED';
 }
 
 interface ReqAppliesParams {
@@ -17,6 +19,7 @@ interface ReqAppliesParams {
   sortDirection?: 'ASC' | 'DESC';
   term?: string;
   appplyStatus?: ApplyStatus;
+  isFavorite?: boolean;
 }
 
 interface ReqRecruitsParams {
@@ -59,13 +62,14 @@ interface ReqChangeEndDateBody {
   endDate: string;
 }
 
-export const requestApplications = (params: ReqAppliesParams) => {
-  const res = request({
+// TODO: dummy 삭제
+export const requestApplications = async (params: ReqAppliesParams) => {
+  const res = await request({
     method: 'get',
     endpoint: `troupes/applies`,
     params,
   });
-  return res;
+  return toViewApplicationList(dummy);
 };
 
 export const requestChangingApplyState = ({ applyIds, applyStatus }: ReqChangingApplyState) => {
@@ -141,17 +145,6 @@ export const requestTroupeEditInfo = async () => {
   });
 
   return toViewTroupe(res);
-};
-
-// TODO: requestApplications함수 와 중복되었습니다 확인해주세요
-export const requestApplies = (params: ReqAppliesParams) => {
-  const res = request({
-    method: 'get',
-    endpoint: `troupes/applies`,
-    params,
-  });
-
-  return res;
 };
 
 export const requestFavorite = (applyId: number, isFavorite: boolean) => {

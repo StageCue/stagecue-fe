@@ -11,7 +11,6 @@ import Home from './pages/home';
 import MyPage from './pages/mypage';
 import DefaultLayout from './components/layout/default';
 import AuthLayout from './components/layout/auth';
-import BizLayout from './components/layout/biz';
 import Detail from './pages/post/detail';
 import Applied from './pages/post/applied';
 import ProfileDetail from './pages/mypage/components/settingProfile/components/profileDetail';
@@ -21,7 +20,6 @@ import TroupeDetail from './pages/troupe/troupeDetail';
 import List from './pages/post';
 import Search from './pages/post/search';
 import EditRecruit from './pages/biz/components/managePost/components/editRecruit';
-import Applicant from './pages/biz/components/applicant';
 import ManageTroupe from './pages/biz/components/manageTroupe';
 import ManagePost from './pages/biz/components/managePost';
 import EditTroupe from './pages/biz/components/manageTroupe/components/editTroupe';
@@ -34,6 +32,8 @@ import Notice from './pages/notice';
 import ServiceInfo from './pages/service-info';
 import Blog from './pages/blog';
 import PrivacyPolicy from './pages/privacy-policy';
+import ApplicantPage from './pages/biz/components/applicant';
+import BizLayout from './components/layout/biz';
 
 const App = () => {
   const navigate = useNavigate();
@@ -86,8 +86,8 @@ const App = () => {
           <Route path="find-password" element={<FindPassword />} />
         </Route>
         <Route path="/biz" element={<BizLayout />}>
-          <Route index element={<Applicant />} />
-          <Route path="apply" element={<Applicant />} />
+          <Route index element={<ApplicantPage />} />
+          <Route path="apply" element={<ApplicantPage />} />
           <Route path="troupe" element={<ManageTroupe />} />
           <Route path="troupe/form" element={<EditTroupe isInitial={false} />} />
           <Route path="troupe/form/new" element={<EditTroupe isInitial={true} />} />

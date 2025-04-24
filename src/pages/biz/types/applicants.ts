@@ -25,6 +25,6 @@ export type ApplyStatus =
 
 export type ApplyFilter = 'APPLY' | 'OPEN' | 'PASS' | 'WIN' | 'LOSE' | 'CANCELED' | '전체';
 
-export type PassType = 'DOCUMENT_PASSED' | 'FINAL_ACCEPTED';
+export type PassType = 'PASS' | 'WIN';
 
 export type RecruitStatus = 'DRAFT' | 'OPEN' | 'CLOSED';

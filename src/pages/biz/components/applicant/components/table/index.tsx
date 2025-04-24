@@ -14,6 +14,8 @@ import StatusTag from '../statusTag';
 import { Application } from '@/pages/biz/types/applicants';
 import { useMutation } from '@tanstack/react-query';
 import { requestFavorite } from '@/api/biz';
+import { useApplicantContext } from '../Context';
+import { useApplicantListQuery } from '../../hooks/useQuery';
 
 interface TableProps {
   applications: Application[];
@@ -28,7 +30,6 @@ interface TableProps {
 }
 
 const Table = ({
-  applications,
   onClickCheckbox,
   selectedApplyIds,
   onClickRow,
@@ -39,7 +40,6 @@ const Table = ({
   showingApplicant,
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
-  const [isStarAll, setIsStarAll] = useState(false);
   const [isGenderSortShowing, setIsGenderSortShowing] = useState(false);
   const [selectedGender, setSelectedGender] = useState('');
   const [isNameAsc, setIsNameAsc] = useState(true);
@@ -48,6 +48,9 @@ const Table = ({
   const [isStatusAsc, setIsStatusAsc] = useState(true);
   const [sortedApplications, setSortedAplications] = useState<Application[]>([]);
   const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
+
+  const { favoriteFilter, setFavoriteFilter, setSelectedApplyIds } = useApplicantContext();
+  const { applications } = useApplicantListQuery().data!;
 
   const { mutate: toggleFavoriteMutate } = useMutation({
     mutationFn: ({ applyId, isFavorite }: { applyId: number; isFavorite: boolean }) =>
@@ -113,17 +116,26 @@ const Table = ({
   };
 
   const handleCheckboxClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    setIsCheckedAll(prev => !prev);
-    applications.map(({ applyId, performerName }) => onClickCheckbox(e, applyId, performerName));
+    e.stopPropagation();
+
+    const isChecking = !isCheckedAll;
+    setIsCheckedAll(isChecking);
+
+    if (isChecking) {
+      // 전체 선택
+      const all = applications.map(({ applyId, performerName }) => ({
+        id: applyId,
+        name: performerName,
+      }));
+      setSelectedApplyIds(all);
+    } else {
+      // 전체 해제
+      setSelectedApplyIds([]);
+    }
   };
 
   const handleAllStarClick = () => {
-    setIsStarAll(prev => !prev);
-    if (!isStarAll) {
-      setStarMarkedIds(applications.map(({ applyId }) => applyId));
-    } else {
-      setStarMarkedIds([]);
-    }
+    setFavoriteFilter(!favoriteFilter);
   };
 
   const handleStarClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, applyId: number) => {
@@ -179,14 +191,6 @@ const Table = ({
   }, [selectedApplyIds, applications]);
 
   useEffect(() => {
-    if (starMarkedIds.length !== 0 && starMarkedIds.length === applications.length) {
-      setIsStarAll(true);
-    } else {
-      setIsStarAll(false);
-    }
-  }, [starMarkedIds, applications]);
-
-  useEffect(() => {
     if (applications.length > 0) {
       setSortedAplications(applications);
 
@@ -208,7 +212,7 @@ const Table = ({
             {isCheckedAll ? <CheckboxCheckedSVG /> : <CheckboxSVG />}
           </CheckboxWrapper>
           <StarWrapper onClick={handleAllStarClick}>
-            {isStarAll ? <StarMarkedSVG /> : <StarSVG />}
+            {favoriteFilter ? <StarMarkedSVG /> : <StarSVG />}
           </StarWrapper>
         </CheckboxColumn>
         <NameColumn onClick={handleNameSortClick}>

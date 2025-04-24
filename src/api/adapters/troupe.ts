@@ -29,8 +29,7 @@ export const toApiPostTroupe = (viewData: EditTroupeInputs): ReqEditTroupe => {
   };
 };
 
-export const toViewTroupe = (apiData: TroupeResponse): EditTroupeInputs => {
-  const { result } = apiData;
+export const toViewTroupe = ({ result }: TroupeResponse): EditTroupeInputs => {
   return {
     name: result.troupeName,
     website: result.websiteUrl,
@@ -48,8 +47,7 @@ export const toViewTroupe = (apiData: TroupeResponse): EditTroupeInputs => {
   };
 };
 
-export const toViewTroupePreview = (apiData: TroupePreviewResponse): TroupeInfo => {
-  const { result } = apiData;
+export const toViewTroupePreview = ({ result }: TroupePreviewResponse): TroupeInfo => {
   return {
     name: result.troupeName,
     description: result.description,

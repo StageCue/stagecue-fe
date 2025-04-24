@@ -1,35 +1,34 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { requestApplications, requestChangingApplyState } from '@/api/biz';
-import { ApplyFilter, ApplyStatus, BizApplicationQuery, PassType } from '../../../types/applicants';
-
-interface ShowingApplicantState {
-  id: number;
-  name: string;
-}
+import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { requestChangingApplyState } from '@/api/biz';
+import { ApplyFilter, ApplyStatus, PassType } from '../../../types/applicants';
+import { useApplicantContext } from '../components/Context';
+import { useApplicantListQuery } from './useQuery';
 
 export const useApplicant = () => {
-  const [page, setPage] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState<ApplyFilter>('전체');
-  const [selectedApplyIds, setSelectedApplyIds] = useState<{ id: number; name: string }[]>([]);
-  const [isPassModalOpen, setIsPassModalOpen] = useState(false);
-  const [isFailModalOpen, setIsFailModalOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [showingApplicant, setShowingApplicant] = useState<ShowingApplicantState>();
-  const [passType, setPassType] = useState<PassType>();
-
   const queryClient = useQueryClient();
+  const { data } = useApplicantListQuery();
 
-  const { data } = useQuery<BizApplicationQuery>({
-    queryKey: ['applications', page],
-    queryFn: () => requestApplications({ number: page }),
-  });
+  const {
+    page,
+    selectedFilter,
+    selectedApplyIds,
+    passType,
+    setPage,
+    setPassType,
+    setSelectedFilter,
+    setSelectedApplyIds,
+    setIsPassModalOpen,
+    setIsFailModalOpen,
+    setIsProfileModalOpen,
+    setShowingApplicant,
+  } = useApplicantContext();
 
   useEffect(() => {
     if (selectedFilter === 'APPLY') {
-      setPassType('DOCUMENT_PASSED');
+      setPassType('PASS');
     } else if (selectedFilter === 'PASS') {
-      setPassType('FINAL_ACCEPTED');
+      setPassType('WIN');
     }
   }, [selectedFilter]);
 
@@ -69,7 +68,7 @@ export const useApplicant = () => {
 
     await requestChangingApplyState({
       applyIds: `${idsArray}`,
-      applyStatus: 'REJECTED',
+      applyStatus: 'CANCELED',
     });
 
     setSelectedApplyIds([]);
@@ -128,10 +127,6 @@ export const useApplicant = () => {
     page,
     selectedFilter,
     selectedApplyIds,
-    isPassModalOpen,
-    isFailModalOpen,
-    isProfileModalOpen,
-    showingApplicant,
     passType,
     data,
     handleFilterClick,
