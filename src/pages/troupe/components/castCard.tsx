@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import LocationSVG from '@assets/icons/location_gray.svg?react';
-import BookmarkSVG from '@assets/icons/bookmark.svg?react';
-import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg?react';
+import bookmarkIcon from '@assets/icons/bookmark.svg';
+import bookmarkFilledIcon from '@assets/icons/bookmark_filled.svg';
 import { requestDeleteScrapCast, requestScrapCast } from '@/api/cast';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ const CastCard = ({
   isScrap,
 }: CastCardProps) => {
   const navigate = useNavigate();
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(isScrap);
   const [loading, setLoading] = useState(false);
 
   const handleBookmarkClick = async (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -53,12 +53,6 @@ const CastCard = ({
     navigate(`/casts/${castId!}`);
   };
 
-  useEffect(() => {
-    if (isScrap) {
-      setIsBookmarked(true);
-    }
-  }, [isScrap]);
-
   return (
     <CastCardContainer onClick={handleCastClick}>
       <SummaryWrapper>
@@ -71,7 +65,10 @@ const CastCard = ({
         <TroupeNameTag>{troupeName}</TroupeNameTag>
       </SummaryWrapper>
       <BookmarkButton onClick={handleBookmarkClick}>
-        {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
+        <BookmarkImage
+          src={isBookmarked ? bookmarkFilledIcon : bookmarkIcon}
+          alt={isBookmarked ? '북마크' : ''}
+        />
       </BookmarkButton>
     </CastCardContainer>
   );
@@ -135,6 +132,11 @@ const BookmarkButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const BookmarkImage = styled.img`
+  width: 30px;
+  height: 40px;
 `;
 
 const TroupeNameTag = styled.div`

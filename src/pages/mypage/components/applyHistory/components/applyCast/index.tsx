@@ -41,6 +41,7 @@ const ApplyCast = ({
   };
 
   const parsePhase = (status: applyPhaseType) => {
+    console.log(status);
     switch (status) {
       case 'APPLY':
         return '지원 완료';
@@ -85,13 +86,13 @@ const ApplyCast = ({
         <Title>{recruitTitle}</Title>
         <LogWrapper>
           {applyStatusLogs.map(({ applyStatus, changeDate }, index) => (
-            <>
+            <LogContainer key={index}>
               <Log>
                 <LogName>{parseLogname(applyStatus)}</LogName>
                 <LogDate>{formatDateWithDots(changeDate)}</LogDate>
               </Log>
               {index !== applyStatusLogs.length - 1 && <Divider />}
-            </>
+            </LogContainer>
           ))}
         </LogWrapper>
       </ApplyInfoWrapper>
@@ -179,6 +180,11 @@ const StatusTag = styled.div<{ $status: applyPhaseType }>`
 `;
 
 const LogWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+const LogContainer = styled.div`
   display: flex;
   gap: 10px;
 `;

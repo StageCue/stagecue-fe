@@ -10,7 +10,7 @@ export interface Apply {
   recruitTitle: string;
   recruitCategory?: 'THEATER' | 'MUSICAL' | 'DANCE';
   troupeName: string;
-  applyStatus: ApplyStatus;
+  status: ApplyStatus;
   histories: ApplyHistories[];
 }
 

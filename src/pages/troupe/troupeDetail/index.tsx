@@ -27,12 +27,12 @@ interface TroupeDetail {
   managerCell: string;
   followerCount: number;
   publishDate: string;
-  casts: [
+  recruits: [
     {
-      castId: number;
-      castTitle: string;
+      id: number;
+      title: string;
       artworkName: string;
-      practiceLocation: string;
+      shortAddress: string;
       troupeName: string;
       isScrap: true;
     }
@@ -240,39 +240,59 @@ const TroupeDetail = () => {
         <MenuBar>
           <Menu>현재 모집중인 공고</Menu>
         </MenuBar>
-        {detail?.casts && detail?.casts?.length > 0 ? (
+        {detail?.recruits && detail?.recruits?.length > 0 ? (
           <Casts>
-            <Swiper
-              direction="horizontal"
-              spaceBetween={20}
-              slidesPerView={3}
-              slidesPerGroup={3}
-              centeredSlides={true}
-              loop={true}
-              autoplay={{
-                delay: 3000,
-                disableOnInteraction: false,
-              }}
-              navigation={true}
-              pagination={{ clickable: true }}
-              grabCursor={true}
-            >
-              {detail?.casts?.map(
-                ({ castId, castTitle, artworkName, practiceLocation, troupeName, isScrap }) => (
-                  <SwiperSlide key={castId}>
+            {detail?.recruits?.length > 3 ? (
+              <Swiper
+                direction="horizontal"
+                spaceBetween={20}
+                slidesPerView={3}
+                slidesPerGroup={3}
+                centeredSlides={true}
+                loop={true}
+                autoplay={{
+                  delay: 3000,
+                  disableOnInteraction: false,
+                }}
+                navigation={true}
+                pagination={{ clickable: true }}
+                grabCursor={true}
+              >
+                {detail?.recruits?.map(recruit => {
+                  const { id, troupeName, title, shortAddress, isScrap } = recruit;
+                  return (
+                    <SwiperSlide key={id}>
+                      <CastCard
+                        key={id}
+                        castId={id}
+                        castTitle={title}
+                        artworkName={''}
+                        practiceLocation={shortAddress}
+                        troupeName={troupeName}
+                        isScrap={isScrap}
+                      />
+                    </SwiperSlide>
+                  );
+                })}
+              </Swiper>
+            ) : (
+              <NoneSwiperWrapper>
+                {detail?.recruits?.map(recruit => {
+                  const { id, troupeName, title, shortAddress, isScrap } = recruit;
+                  return (
                     <CastCard
-                      key={castId}
-                      castId={castId}
-                      castTitle={castTitle}
-                      artworkName={artworkName}
-                      practiceLocation={practiceLocation}
+                      key={id}
+                      castId={id}
+                      castTitle={title}
+                      artworkName={''}
+                      practiceLocation={shortAddress}
                       troupeName={troupeName}
                       isScrap={isScrap}
                     />
-                  </SwiperSlide>
-                )
-              )}
-            </Swiper>
+                  );
+                })}
+              </NoneSwiperWrapper>
+            )}
           </Casts>
         ) : (
           <NoCasts>
@@ -561,6 +581,13 @@ const Menu = styled.div`
 
 const Casts = styled.div`
   display: flex;
+  width: 100%;
+`;
+
+const NoneSwiperWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const NoCasts = styled.div`

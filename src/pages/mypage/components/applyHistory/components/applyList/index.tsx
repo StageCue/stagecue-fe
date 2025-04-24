@@ -19,14 +19,14 @@ const ApplyList = ({ status, filter }: ApplyListProps) => {
   const [casts, setCasts] = useState<Apply[]>([]);
 
   useEffect(() => {
-    if (!data || data?.result?.body?.length === 0) return;
+    if (!data) return;
 
     setCasts(
       data!.result?.body.filter(cast => {
         if (filter === '전체') return true;
-        if (filter === 'CANCEL') return cast.applyStatus === 'CANCELED';
-        if (filter === 'READ') return cast.applyStatus === 'OPEN';
-        if (filter === 'UNREAD') return cast.applyStatus === 'APPLY';
+        if (filter === 'CANCEL') return cast.status === 'CANCELED';
+        if (filter === 'READ') return cast.status === 'OPEN';
+        if (filter === 'UNREAD') return cast.status === 'APPLY';
       })
     );
   }, [data]);
@@ -54,17 +54,19 @@ const ApplyList = ({ status, filter }: ApplyListProps) => {
         </NoApplyHistory>
       ) : (
         <ApplyCastContainer>
-          {casts?.map(({ applyId, troupeName, applyStatus, recruitTitle, histories }) => (
-            <ApplyCast
-              key={applyId}
-              applyId={applyId}
-              applyStatus={applyStatus}
-              applyStatusLogs={histories}
-              recruitTitle={recruitTitle}
-              troupeName={troupeName}
-              getCasts={refetch}
-            />
-          ))}
+          {casts?.map(({ applyId, troupeName, status, recruitTitle, histories }) => {
+            return (
+              <ApplyCast
+                key={applyId}
+                applyId={applyId}
+                applyStatus={status}
+                applyStatusLogs={histories}
+                recruitTitle={recruitTitle}
+                troupeName={troupeName}
+                getCasts={refetch}
+              />
+            );
+          })}
         </ApplyCastContainer>
       )}
     </ApplyListContainer>
