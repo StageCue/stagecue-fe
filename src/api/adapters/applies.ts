@@ -1,4 +1,4 @@
-import { Application, BizApplicationQuery } from '@/pages/biz/types/applicants';
+import { Application, ApplyStatus, BizApplicationQuery } from '@/pages/biz/types/applicants';
 
 export interface RawApplication {
   result: {
@@ -16,6 +16,7 @@ export interface RawApplication {
       recruitTitle: string;
       applyDate: string;
       isFavorite: boolean;
+      applyStatus: ApplyStatus;
     }[];
     isLastPage: boolean;
   };
@@ -32,7 +33,7 @@ export const toViewApplicationList = (apiData: RawApplication): BizApplicationQu
     applyDate: item.applyDate,
     isFavorite: item.isFavorite,
     recruitId: 0,
-    applyStatus: '',
+    applyStatus: item.applyStatus,
   }));
 
   return {

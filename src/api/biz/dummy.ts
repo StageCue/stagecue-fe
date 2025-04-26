@@ -17,6 +17,7 @@ export const dummy: RawApplication = {
         recruitTitle: '뮤지컬 배우 모집',
         applyDate: '2025-04-24',
         isFavorite: true,
+        applyStatus: 'APPLY',
       },
       {
         id: 102,
@@ -27,6 +28,7 @@ export const dummy: RawApplication = {
         recruitTitle: '무용수 오디션',
         applyDate: '2025-04-23',
         isFavorite: false,
+        applyStatus: 'LOSE',
       },
       {
         id: 103,
@@ -37,6 +39,7 @@ export const dummy: RawApplication = {
         recruitTitle: '연극 조연 출연자 모집',
         applyDate: '2025-04-22',
         isFavorite: true,
+        applyStatus: 'OPEN',
       },
     ],
     isLastPage: false,

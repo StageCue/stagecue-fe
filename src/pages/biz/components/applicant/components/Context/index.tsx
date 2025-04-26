@@ -1,5 +1,14 @@
+import { Gender, Sort } from '@/api/biz';
 import { ApplyFilter, PassType } from '@/pages/biz/types/applicants';
-import { createContext, useContext, useState, useMemo, ReactNode, Dispatch, SetStateAction } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 
 interface ShowingApplicantState {
   id: number;
@@ -25,12 +34,25 @@ interface ApplicantContextValue {
   setShowingApplicant: (s?: ShowingApplicantState) => void;
   favoriteFilter: boolean | undefined;
   setFavoriteFilter: (v: boolean | undefined) => void;
+
+  gender?: Gender;
+  setGender: (v: Gender | undefined) => void;
+  sort?: Sort;
+  setSort: (v: Sort | undefined) => void;
+  sortDirection?: 'ASC' | 'DESC' | undefined;
+  setSortDirection: (v: 'ASC' | 'DESC' | undefined) => void;
+  term?: string;
+  setTerm: (v: string | undefined) => void;
 }
 
 const ApplicantContext = createContext<ApplicantContextValue | null>(null);
 
 export const ApplicantProvider = ({ children }: { children: ReactNode }) => {
   const [page, setPage] = useState(0);
+  const [gender, setGender] = useState<Gender>();
+  const [sort, setSort] = useState<Sort>();
+  const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC' | undefined>();
+  const [term, setTerm] = useState<string>();
   const [selectedFilter, setSelectedFilter] = useState<ApplyFilter>('전체');
   const [favoriteFilter, setFavoriteFilter] = useState<boolean | undefined>();
   const [selectedApplyIds, setSelectedApplyIds] = useState<{ id: number; name: string }[]>([]);
@@ -44,6 +66,14 @@ export const ApplicantProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       page,
       setPage,
+      gender,
+      setGender,
+      sort,
+      setSort,
+      sortDirection,
+      setSortDirection,
+      term,
+      setTerm,
       selectedFilter,
       setSelectedFilter,
       selectedApplyIds,
@@ -63,6 +93,10 @@ export const ApplicantProvider = ({ children }: { children: ReactNode }) => {
     }),
     [
       page,
+      gender,
+      sort,
+      sortDirection,
+      term,
       selectedFilter,
       selectedApplyIds,
       passType,
@@ -71,7 +105,6 @@ export const ApplicantProvider = ({ children }: { children: ReactNode }) => {
       isProfileModalOpen,
       showingApplicant,
       favoriteFilter,
-      setFavoriteFilter,
     ]
   );
 

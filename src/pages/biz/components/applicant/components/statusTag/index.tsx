@@ -8,7 +8,9 @@ const StatusTag = ({ status }: StateTagProps) => {
   const parseApplyStatus = (status: string) => {
     switch (status) {
       case 'APPLY':
-        return '지원완료';
+        return '미열람';
+      case 'OPEN':
+        return '열람';
       case 'PASS':
         return '서류합격';
       case 'WIN':
@@ -36,6 +38,8 @@ const StatusTagContainer = styled.div<{ $status: string }>`
   letter-spacing: 2.52%;
   background-color: ${({ $status }) => {
     if ($status === 'APPLY') {
+      return '#37383C47';
+    } else if ($status === 'OPEN') {
       return '#f8f8f8';
     } else if ($status === 'PASS') {
       return '#FFFCF7';

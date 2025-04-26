@@ -13,7 +13,7 @@ import ProfileModal from '../profileMdoal';
 import StatusTag from '../statusTag';
 import { Application } from '@/pages/biz/types/applicants';
 import { useMutation } from '@tanstack/react-query';
-import { requestFavorite } from '@/api/biz';
+import { type Gender, requestFavorite } from '@/api/biz';
 import { useApplicantContext } from '../Context';
 import { useApplicantListQuery } from '../../hooks/useQuery';
 
@@ -41,15 +41,23 @@ const Table = ({
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isGenderSortShowing, setIsGenderSortShowing] = useState(false);
-  const [selectedGender, setSelectedGender] = useState('');
-  const [isNameAsc, setIsNameAsc] = useState(true);
-  const [isAgeAsc, setIsAgeAsc] = useState(true);
+
   const [isDateAsc, setIsDateAsc] = useState(true);
   const [isStatusAsc, setIsStatusAsc] = useState(true);
-  const [sortedApplications, setSortedAplications] = useState<Application[]>([]);
   const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
 
-  const { favoriteFilter, setFavoriteFilter, setSelectedApplyIds } = useApplicantContext();
+  const {
+    favoriteFilter,
+    gender,
+    sort,
+    sortDirection,
+    setGender,
+    setSort,
+    setSortDirection,
+    setFavoriteFilter,
+    setSelectedApplyIds,
+  } = useApplicantContext();
+
   const { applications } = useApplicantListQuery().data!;
 
   const { mutate: toggleFavoriteMutate } = useMutation({
@@ -63,56 +71,21 @@ const Table = ({
   const orderAsc = ['APPLY', 'PASS', 'WIN', 'LOSE', 'CANCELED'];
   const orderDesc = [...orderAsc].reverse();
 
-  const handleNameSortClick = () => {
-    setIsNameAsc(prev => !prev);
-
-    if (isNameAsc) {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => a.performerName.localeCompare(b.performerName))
-      );
+  const handleSortClick = (field: 'NAME' | 'AGE') => {
+    if (sort !== field) {
+      setSort(field);
+      setSortDirection('ASC');
     } else {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => b.performerName.localeCompare(a.performerName))
-      );
-    }
-  };
-
-  const handleAgeSortClick = () => {
-    setIsAgeAsc(prev => !prev);
-
-    if (isAgeAsc) {
-      setSortedAplications(prev => prev.sort((a, b) => a.age - b.age));
-    } else {
-      setSortedAplications(prev => prev.sort((a, b) => b.age - a.age));
+      setSortDirection(sortDirection === 'ASC' ? 'DESC' : 'ASC');
     }
   };
 
   const handleDateSortClick = () => {
     setIsDateAsc(prev => !prev);
-
-    setSortedAplications(prev => {
-      const sorted = [...prev].sort((a, b) => {
-        return isDateAsc
-          ? a.applyDate.localeCompare(b.applyDate)
-          : b.applyDate.localeCompare(a.applyDate);
-      });
-
-      return sorted;
-    });
   };
 
   const handleStatusSortClick = () => {
     setIsStatusAsc(prev => !prev);
-
-    if (isStatusAsc) {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => orderAsc.indexOf(a.applyStatus) - orderAsc.indexOf(b.applyStatus))
-      );
-    } else {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => orderDesc.indexOf(a.applyStatus) - orderDesc.indexOf(b.applyStatus))
-      );
-    }
   };
 
   const handleCheckboxClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -156,32 +129,13 @@ const Table = ({
 
   const handleGenderSortingClick = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
-    gender: string
+    gender: Gender
   ) => {
     event.stopPropagation();
-    setSelectedGender(gender);
+    setGender(gender);
     setIsGenderSortShowing(false);
-
-    if (gender === 'MALE') {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => {
-          if (a.gender === b.gender) {
-            return 0;
-          }
-          return a.gender === 'MALE' ? -1 : 1;
-        })
-      );
-    } else {
-      setSortedAplications(prev =>
-        prev.sort((a, b) => {
-          if (a.gender === b.gender) {
-            return 0;
-          }
-          return a.gender === 'FEMALE' ? -1 : 1;
-        })
-      );
-    }
   };
+
   useEffect(() => {
     if (selectedApplyIds.length !== 0 && selectedApplyIds.length === applications.length) {
       setIsCheckedAll(true);
@@ -192,15 +146,11 @@ const Table = ({
 
   useEffect(() => {
     if (applications.length > 0) {
-      setSortedAplications(applications);
-
       const favoriteIds = applications
         .filter(application => application.isFavorite)
         .map(application => application.applyId);
 
       setStarMarkedIds(favoriteIds);
-    } else {
-      setSortedAplications([]);
     }
   }, [applications]);
 
@@ -215,28 +165,32 @@ const Table = ({
             {favoriteFilter ? <StarMarkedSVG /> : <StarSVG />}
           </StarWrapper>
         </CheckboxColumn>
-        <NameColumn onClick={handleNameSortClick}>
+        <NameColumn onClick={() => handleSortClick('NAME')}>
           이름
-          <CaretWrapper>{isNameAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
+          <CaretWrapper>
+            {sort === 'NAME' && sortDirection === 'ASC' ? <CaretUpSVG /> : <CaretDownSVG />}
+          </CaretWrapper>
         </NameColumn>
-        <AgeColumn onClick={handleAgeSortClick}>
+        <AgeColumn onClick={() => handleSortClick('AGE')}>
           나이
-          <CaretWrapper>{isAgeAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
+          <CaretWrapper>
+            {sort === 'AGE' && sortDirection === 'ASC' ? <CaretUpSVG /> : <CaretDownSVG />}
+          </CaretWrapper>
         </AgeColumn>
         <GenderColumn onClick={handleGenderColumnClick}>
           성별
           <CaretWrapper>{isGenderSortShowing ? <CaretUpSVG /> : <CaretDownSVG />}</CaretWrapper>
           {isGenderSortShowing && (
             <GenderSort>
-              <GenderOption onClick={e => handleGenderSortingClick(e, '남성')}>
+              <GenderOption onClick={e => handleGenderSortingClick(e, 'MALE')}>
                 <RaidoWrapper>
-                  {selectedGender === '남성' ? <RadioCheckedSVG /> : <RadioSVG />}
+                  {gender === 'MALE' ? <RadioCheckedSVG /> : <RadioSVG />}
                 </RaidoWrapper>
                 남성
               </GenderOption>
-              <GenderOption onClick={e => handleGenderSortingClick(e, '여성')}>
+              <GenderOption onClick={e => handleGenderSortingClick(e, 'FEMALE')}>
                 <RaidoWrapper>
-                  {selectedGender === '여성' ? <RadioCheckedSVG /> : <RadioSVG />}
+                  {gender === 'FEMALE' ? <RadioCheckedSVG /> : <RadioSVG />}
                 </RaidoWrapper>
                 여성
               </GenderOption>
@@ -254,7 +208,7 @@ const Table = ({
         </StateColumn>
       </Header>
       <Body>
-        {sortedApplications?.map(
+        {applications?.map(
           ({
             applyId,
             profileId,

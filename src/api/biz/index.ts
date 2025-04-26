@@ -10,12 +10,15 @@ interface ReqChangingApplyState {
   applyStatus: 'PASS' | 'WIN' | 'CANCELED';
 }
 
+export type Gender = 'MALE' | 'FEMALE';
+export type Sort = 'AGE' | 'NAME';
+
 interface ReqAppliesParams {
   number: number;
   size?: number;
   key?: number;
-  gender?: 'MALE' | 'FEMALE';
-  sort?: 'AGE' | 'NAME';
+  gender?: Gender;
+  sort?: Sort;
   sortDirection?: 'ASC' | 'DESC';
   term?: string;
   appplyStatus?: ApplyStatus;

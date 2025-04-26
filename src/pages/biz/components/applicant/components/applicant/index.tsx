@@ -29,6 +29,8 @@ const Applicants = () => {
     page,
     selectedFilter,
     selectedApplyIds,
+    term,
+    setTerm,
     isPassModalOpen,
     isFailModalOpen,
     showingApplicant,
@@ -42,6 +44,7 @@ const Applicants = () => {
           onConfirm={handlePassConfirm}
           onClose={handleCancelClick}
           type="합격"
+          cnt={isProfileModalOpen ? 1 : selectedApplyIds.length}
           name={isProfileModalOpen ? showingApplicant!.name : selectedApplyIds[0].name}
         />
       )}
@@ -50,6 +53,7 @@ const Applicants = () => {
           onConfirm={handleFailConfirm}
           onClose={handleCancelClick}
           type="반려"
+          cnt={isProfileModalOpen ? 1 : selectedApplyIds.length}
           name={isProfileModalOpen ? showingApplicant!.name : selectedApplyIds[0].name}
         />
       )}
@@ -57,7 +61,11 @@ const Applicants = () => {
         <Title>지원자 관리</Title>
         <Searchbar>
           <SearchSVG />
-          <SearchInput placeholder="지원자명, 공고명으로 검색" />
+          <SearchInput
+            value={term}
+            onChange={e => setTerm(e.target.value)}
+            placeholder="지원자명, 공고명으로 검색"
+          />
         </Searchbar>
       </TitleWrapper>
       <FilterWrapper>

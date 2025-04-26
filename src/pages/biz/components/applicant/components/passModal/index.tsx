@@ -1,25 +1,26 @@
-import Button from "@/components/buttons/button";
-import Overlay from "@/components/modal/overlay";
-import styled from "styled-components";
+import Button from '@/components/buttons/button';
+import Overlay from '@/components/modal/overlay';
+import styled from 'styled-components';
 
 interface PassModalProps {
-  type: "합격" | "반려";
+  type: '합격' | '반려';
   onClose: () => void;
   onConfirm: () => void;
   name: string;
+  cnt: number;
 }
 
-const PassModal = ({ onClose, onConfirm, name, type }: PassModalProps) => {
+const PassModal = ({ onClose, onConfirm, name, type, cnt }: PassModalProps) => {
+  const nameText = cnt === 1 ? `${name}님을` : `${name}님 외 ${cnt - 1}명을<br />`;
   return (
     <PassModalContainer>
       <Overlay zIndex={2000}>
         <ModalBox>
           <TextWrapper>
-            <MainText>{type === "합격" ? "합격처리" : "반려처리"}</MainText>
+            <MainText>{type === '합격' ? '합격처리' : '반려처리'}</MainText>
             <SubText>
-              {type === "합격"
-                ? `선택하신 ${name}님을 합격처리할까요?`
-                : `선택하신 ${name}님을 반려처리할까요?`}
+              선택하신 <Strong dangerouslySetInnerHTML={{ __html: nameText }}></Strong> {type}
+              처리할까요?
             </SubText>
           </TextWrapper>
           <ButtonWrapper>
@@ -54,14 +55,13 @@ const PassModalContainer = styled.div``;
 
 const ModalBox = styled.div`
   width: 340px;
-  height: 176px;
   background-color: white;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 24px;
   padding: 24px 20px;
 `;
 
@@ -82,13 +82,16 @@ const MainText = styled.div`
 
 const SubText = styled.div`
   width: 300px;
-  height: 36px;
   font-size: 15px;
   line-height: 160%;
   letter-spacing: 0.96%;
   font-weight: var(--font-regular);
   text-align: center;
   color: #47484b;
+`;
+
+const Strong = styled.span`
+  font-weight: 600;
 `;
 
 const ButtonWrapper = styled.div`
