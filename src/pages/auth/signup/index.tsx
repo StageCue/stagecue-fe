@@ -277,15 +277,11 @@ const Signup = () => {
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
-  const validateConfrimPassword = (confirmPassword: string) => {
+  const validateConfirmPassword = (confirmPassword: string) => {
     if (confirmPassword === passwordValue) {
       return true;
     } else {
-      setError('confirmPassword', {
-        type: 'confirmPassword',
-        message: '비밀번호가 일치하지 않습니다.',
-      });
-      return false;
+      return '비밀번호가 일치하지 않습니다.';
     }
   };
 
@@ -513,7 +509,7 @@ const Signup = () => {
             <Input
               {...register('confirmPassword', {
                 required: true,
-                validate: value => validateConfrimPassword(value),
+                validate: value => validateConfirmPassword(value),
               })}
               placeholder="비밀번호를 다시 한번 입력해주세요"
               $isError={Boolean(errors.confirmPassword)}
@@ -521,6 +517,7 @@ const Signup = () => {
               onBlur={() => trigger('confirmPassword')}
               type="password"
             />
+            <InputError>{errors.confirmPassword?.message}</InputError>
           </InputWrapper>
           <AgreeWrapper>
             <CheckboxInputWrapper onClick={handleAllAgreeClick}>

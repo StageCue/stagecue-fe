@@ -2,7 +2,7 @@ import request from '..';
 import { queryParams as _queryParams } from '@/utils/queryParams';
 
 interface ReqNoticesParam {
-  page: number;
+  number: number;
   size: number;
 }
 

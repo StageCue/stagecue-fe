@@ -1,5 +1,5 @@
 import { requestNoticeDetail, requestNotices } from '@/api/notice';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CaretUpSVG from '@assets/icons/notice_caret_up.svg?react';
 import CaretDownSVG from '@assets/icons/notice_caret_down.svg?react';
@@ -16,29 +16,36 @@ interface Notice {
 }
 
 interface NoticeQuery {
-  total: number;
-  items: Notice[];
+  body: Notice[];
+  pagingParam: {
+    number: number;
+    size: number;
+    key: number;
+  };
 }
 
 const Notice = () => {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [openPostId, setOpenPostId] = useState<number | null>(null);
   const [contents, setContents] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState(0);
 
-  const pageGroupSize = 5;
-  const itemsPerPage = 10;
+  const size = 5;
 
   const { data } = useQuery<NoticeQuery>({
     queryKey: ['notices', page],
-    queryFn: () => requestNotices({ page: page * itemsPerPage, size: 10 }),
+    queryFn: () => requestNotices({ number: page, size }),
   });
 
-  const totalCounts = data?.total || 0;
-  const totalPages = Math.ceil(totalCounts / itemsPerPage);
+  useEffect(() => {
+    if (!totalPages) {
+      setTotalPages(data?.pagingParam?.key ? Math.ceil(data?.pagingParam?.key / size) : 0);
+    }
+  }, [data]);
 
   const calculatePageNumbers = () => {
-    const startPage = Math.floor(page / pageGroupSize) * 5;
-    const endPage = Math.min(startPage + pageGroupSize - 1, totalPages - 1);
+    const startPage = Math.floor(page / size) * 5 + 1;
+    const endPage = Math.min(startPage + size - 1, totalPages - 1) + 1;
 
     const pages = [];
     for (let i = startPage; i <= endPage; i++) {
@@ -74,9 +81,9 @@ const Notice = () => {
   return (
     <NoticeContainer>
       <Title>공지사항</Title>
-      {data?.items && data?.items?.length > 0 ? (
+      {data?.body && data?.body?.length > 0 ? (
         <List>
-          {data?.items?.map(post => (
+          {data?.body?.map(post => (
             <PostItem key={post?.id}>
               <Post onClick={() => handlePostClick(post.id)}>
                 <LeftSideWrapper>
@@ -109,7 +116,7 @@ const Notice = () => {
                 onClick={() => handlePageClick(number)}
                 $isCurrent={number === page}
               >
-                {number + 1}
+                {number}
               </PgNumber>
             ))}
           </PageNumbers>

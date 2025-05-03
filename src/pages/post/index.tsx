@@ -44,7 +44,7 @@ const List = () => {
   const [appliedZone, setAppliedZone] = useState<string[]>(['전체지역']);
   const [appliedDay, setAppliedDay] = useState<string[]>(['1', '1', '1', '1', '1', '1', '1']);
   const [appliedCost, setAppliedCost] = useState<string>('');
-  const [minCost, setMinCost] = useState<string>('10000');
+  const [minCost, setMinCost] = useState<string>('0');
   const [maxCost, setMaxCost] = useState<string>('500000');
 
   const [isGenreMenuShowing, setIsGenreMenuShowing] = useState<boolean>(false);
@@ -211,7 +211,7 @@ const List = () => {
   };
 
   const handleResetCostClick = () => {
-    setMinCost('10000');
+    setMinCost('0');
     setMaxCost('500000');
   };
 
@@ -228,7 +228,7 @@ const List = () => {
   }, [practiceDays]);
 
   const handleResetFilterClick = async () => {
-    setMinCost('10000');
+    setMinCost('0');
     setMaxCost('500000');
     setPracticeDays(['1', '1', '1', '1', '1', '1', '1']);
     setAppliedDay(['1', '1', '1', '1', '1', '1', '1']);
@@ -289,8 +289,8 @@ const List = () => {
         ...(convertToLocationCode(appliedZone)
           ? { location: convertToLocationCode(appliedZone) }
           : {}),
-        monthlyFeeStart: Number(appliedCost?.split('-')?.[0] ?? 0),
-        monthlyFeeEnd: Number(appliedCost?.split('-')?.[1] ?? 500000),
+        monthlyFeeStart: appliedCost?.split('-')?.[0] ? Number(appliedCost?.split('-')?.[0]) : 0,
+        monthlyFeeEnd: appliedCost?.split('-')?.[1] ? Number(appliedCost?.split('-')?.[1]) : 500000,
         sort: currentOrderBy === 'newest' ? 'RECENT' : 'VIEW',
         ...(query ? { search: query } : {}),
       }),
@@ -429,7 +429,7 @@ const List = () => {
             $isOpen={isDayFilterShowing}
             ref={dayButtonRef}
           >
-            {isAppliedDay ? selectedDayPicker : '요일'}
+            {isAppliedDay ? selectedDayPicker : '전체요일'}
             <ChevronDownSSVG />
           </DayFilterBtn>
           <CostFilterBtn

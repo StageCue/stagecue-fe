@@ -56,7 +56,7 @@ export const requestApplyCast = async ({ recruitId, profileId }: ReqApplyCast) =
   return res;
 };
 
-export const requestScrapCast = async (recruitId: string) => {
+export const requestScrapCast = async (recruitId: string | number) => {
   const queryParams = _queryParams({ recruitId });
 
   const res = await request({
@@ -67,7 +67,7 @@ export const requestScrapCast = async (recruitId: string) => {
   return res;
 };
 
-export const requestDeleteScrapCast = async (troupeId: string) => {
+export const requestDeleteScrapCast = async (troupeId: string | number) => {
   const queryParams = _queryParams({ troupeId });
 
   const res = await request({

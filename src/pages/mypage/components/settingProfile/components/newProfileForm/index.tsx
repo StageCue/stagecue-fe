@@ -120,6 +120,7 @@ const NewProfileForm = () => {
         return urls;
       } catch (error) {
         console.error('Error uploading images:', error);
+        return [];
       }
     }
   };
@@ -140,6 +141,7 @@ const NewProfileForm = () => {
         return result;
       } catch (error) {
         console.error('Error uploading thumbnail:', error);
+        return '';
       }
     }
   };
@@ -214,7 +216,7 @@ const NewProfileForm = () => {
       startDate: `${rest.startDate}-01`,
       endDate: `${rest.endDate}-01`,
     }));
-    const imageUrls = await requestUploadImageFiles();
+    const imageUrls = (await requestUploadImageFiles()) ?? [];
     const thumbnailUrl = await requestUploadThumbnailFile();
 
     return {
@@ -227,7 +229,7 @@ const NewProfileForm = () => {
       email: sessionStore?.email as string,
       title,
       introduce,
-      thumbnail: thumbnailUrl ? thumbnailUrl : thumbnailValue,
+      thumbnail: (thumbnailUrl ? thumbnailUrl : thumbnailValue) ?? '',
       images: imageUrls as string[],
       experiences: sanitizedExperiences,
       isDefault,

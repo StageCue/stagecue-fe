@@ -19,6 +19,12 @@ const MyStage = () => {
     return recruitsStatus?.result?.find(item => item.applyStatus === status)?.count ?? 0;
   };
 
+  const handleShowAllClick = () => {
+    navigate('/casts', {
+      state: { orderBy: 'popular' },
+    });
+  };
+
   return (
     <MyStageWrapper>
       <MyStageStatus>
@@ -101,27 +107,21 @@ const MyStage = () => {
         <PopularPost>
           <ItemTitleWrapper>
             <ItemTitle>이번주 인기공고</ItemTitle>
-            <ShowAll>전체보기</ShowAll>
+            <ShowAll onClick={handleShowAllClick}>전체보기</ShowAll>
           </ItemTitleWrapper>
           <Casts>
             {popularRecruits?.length > 0 ? (
               popularRecruits?.map(
-                ({
-                  recruitId,
-                  thumbnail,
-                  recruitTitle,
-                  artworkName,
-                  practiceLocation,
-                }: Recruit) => (
+                ({ recruitId, shortAddress, title, imageUrl, troupeName }: Recruit) => (
                   <Cast
                     key={recruitId}
                     imgWidth={215}
                     imgHeight={322.5}
                     recruitId={recruitId}
-                    thumbnail={thumbnail}
-                    recruitTitle={recruitTitle}
-                    troupeName={artworkName}
-                    practiceLocation={practiceLocation}
+                    thumbnail={imageUrl}
+                    recruitTitle={title}
+                    troupeName={troupeName}
+                    practiceLocation={shortAddress}
                   />
                 )
               )

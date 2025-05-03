@@ -41,7 +41,6 @@ const ApplyCast = ({
   };
 
   const parsePhase = (status: applyPhaseType) => {
-    console.log(status);
     switch (status) {
       case 'APPLY':
         return '지원 완료';

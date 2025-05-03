@@ -109,7 +109,7 @@ export const requestAppliedCasts = async (data: ReqAppliedCastsParams) => {
 export const requestCancelApply = async (applyId: number) => {
   const res = await request({
     method: 'put',
-    endpoint: `users/recruits?applyId=${applyId}`,
+    endpoint: `applies/${applyId}/status/canceled`,
   });
 
   return res;

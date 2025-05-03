@@ -245,6 +245,7 @@ const DetailButton = styled.div`
   letter-spacing: 2.52%;
   line-height: 133.4%;
   color: #171719;
+  white-space: nowrap;
   cursor: pointer;
 `;
 

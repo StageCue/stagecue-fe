@@ -15,7 +15,7 @@ export interface Apply {
 }
 
 export interface Scrap {
-  castId: string;
+  castId: string | number;
   castTitle: string;
   imageUrl: string;
   troupeName: string;
@@ -26,10 +26,10 @@ export interface Scrap {
 }
 
 export interface Recruit {
-  recruitId: string;
-  thumbnail: string;
-  recruitTitle: string;
-  artworkName: string;
+  imageUrl: string;
+  isScrap: boolean;
+  recruitId: number;
+  shortAddress: string;
+  title: string;
   troupeName: string;
-  practiceLocation: string;
 }

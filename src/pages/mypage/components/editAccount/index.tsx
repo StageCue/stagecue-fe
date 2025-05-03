@@ -92,7 +92,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
     const { result, error } = await requestChangeEmailToken({ changeEmail: emailValue });
 
     if (error) {
-      alert(error);
+      alert(error.element?.message?.resolved);
       return;
     }
 

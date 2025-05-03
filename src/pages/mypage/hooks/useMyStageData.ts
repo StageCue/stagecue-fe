@@ -28,15 +28,17 @@ export const useMyStageData = () => {
 
   const { data: popularRecruits } = useQuery({
     queryKey: ['popularRecruits'],
-    queryFn: () =>
-      requestCasts({
+    queryFn: async () => {
+      const { result } = await requestCasts({
         key: 0,
         size: 4,
         category: 'THEATER',
         sort: 'VIEW',
-      }),
+      });
+
+      return result.body;
+    },
     staleTime: 1000 * 60 * 5,
-    select: data => data.recruit,
   });
 
   const { data: scraps = [] } = useQuery<Scrap[]>({
@@ -69,7 +71,7 @@ export const useMyStageData = () => {
   });
 
   const bookmarkMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: string | number) => {
       const isBookmarked = scraps.find((cast: Scrap) => cast.castId === id)?.isBookmarked;
 
       if (isBookmarked) {
@@ -80,7 +82,7 @@ export const useMyStageData = () => {
 
       return !isBookmarked;
     },
-    onMutate: async (id: string) => {
+    onMutate: async (id: string | number) => {
       const previousScraps = queryClient.getQueryData(['scrappedCasts']);
       queryClient.cancelQueries({ queryKey: ['scrappedCasts'] });
       queryClient.setQueryData(['scrappedCasts'], (oldScraps: Scrap[] = []) =>
@@ -98,7 +100,7 @@ export const useMyStageData = () => {
     },
   });
 
-  const handleBookmarkClick = (id: string) => bookmarkMutation.mutate(id);
+  const handleBookmarkClick = (id: number | string) => bookmarkMutation.mutate(id);
 
   return {
     recruitsStatus,

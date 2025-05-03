@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import styled from "styled-components";
-import Button from "../../components/buttons/button";
-import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import Button from '../../components/buttons/button';
+import { useNavigate } from 'react-router-dom';
 
 const Starting = () => {
   const navigate = useNavigate();
 
   const handleWithEmailClick = () => {
-    navigate("/auth/login");
+    navigate('/auth/login');
   };
 
   const handleForgotAccont = () => {
-    navigate("/auth/forgotaccount");
+    navigate('/auth/forgotaccount');
   };
 
   return (
@@ -26,11 +26,11 @@ const Starting = () => {
           <Text>스테이지큐에서 당신의 숨겨둔 재능을 펼쳐보세요</Text>
         </Description>
       </CenterTextWrapper>
-      <SocialLoginWrapper>
+      {/* <SocialLoginWrapper>
         <WithKaKaoBtn>카카오로 시작하기</WithKaKaoBtn>
         <WithNaverBtn>네이버 계정으로 시작하기</WithNaverBtn>
         <WithGoogleBtn>구글 계정으로 시작하기</WithGoogleBtn>
-      </SocialLoginWrapper>
+      </SocialLoginWrapper> */}
       <WithEmailWrapper>
         <Button
           variation="text"

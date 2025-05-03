@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 interface RecruitProps {
   imgWidth: number;
   imgHeight: number;
-  recruitId: string;
+  recruitId: string | number;
   recruitTitle: string;
   practiceLocation: string;
   thumbnail: string;

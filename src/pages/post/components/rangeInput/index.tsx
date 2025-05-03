@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import styled from "styled-components";
+import { useEffect, useRef } from 'react';
+import styled from 'styled-components';
 
 interface RangeInputProps {
   minCost: string;
@@ -8,12 +8,7 @@ interface RangeInputProps {
   onChangeMaxCost: (cost: string) => void;
 }
 
-const RangeInput = ({
-  minCost,
-  maxCost,
-  onChangeMinCost,
-  onChangeMaxCost,
-}: RangeInputProps) => {
+const RangeInput = ({ minCost, maxCost, onChangeMinCost, onChangeMaxCost }: RangeInputProps) => {
   const minInputRef = useRef<HTMLInputElement | null>(null);
   const maxInputRef = useRef<HTMLInputElement | null>(null);
   const minThumbRef = useRef<HTMLDivElement | null>(null);
@@ -21,18 +16,18 @@ const RangeInput = ({
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
   const formatWon = (cost: string) => {
-    return new Intl.NumberFormat("ko-KR").format(Number(cost));
+    return new Intl.NumberFormat('ko-KR').format(Number(cost));
   };
 
   const handleMinCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const validatedValue = event.target.value.replace(/[^0-9]/g, "");
+    const validatedValue = event.target.value.replace(/[^0-9]/g, '');
     const minValue = Math.min(Number(validatedValue), Number(maxCost) - 40000);
 
     onChangeMinCost(minValue.toString());
   };
 
   const handleMaxCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const validatedValue = event.target.value.replace(/[^0-9]/g, "");
+    const validatedValue = event.target.value.replace(/[^0-9]/g, '');
     const maxValue = Math.max(Number(validatedValue), Number(minCost) + 40000);
 
     onChangeMaxCost(maxValue.toString());
@@ -40,17 +35,17 @@ const RangeInput = ({
 
   useEffect(() => {
     if (rangeRef.current) {
-      const minPercent = (Number(minCost.replace(/,/g, "")) / 500000) * 100;
-      const maxPercent = (Number(maxCost.replace(/,/g, "")) / 500000) * 100;
+      const minPercent = (Number(minCost.replace(/,/g, '')) / 500000) * 100;
+      const maxPercent = (Number(maxCost.replace(/,/g, '')) / 500000) * 100;
       rangeRef.current.style.left = `${minPercent}%`;
       rangeRef.current.style.right = `${100 - maxPercent}%`;
     }
     if (minThumbRef.current) {
-      const minPercent = (Number(minCost.replace(/,/g, "")) / 500000) * 100;
+      const minPercent = (Number(minCost.replace(/,/g, '')) / 500000) * 100;
       minThumbRef.current.style.left = `${minPercent}%`;
     }
     if (maxThumbRef.current) {
-      const maxPercent = (Number(maxCost.replace(/,/g, "")) / 500000) * 100;
+      const maxPercent = (Number(maxCost.replace(/,/g, '')) / 500000) * 100;
       maxThumbRef.current.style.right = `${100 - maxPercent}%`;
     }
   }, [minCost, maxCost]);
@@ -59,20 +54,12 @@ const RangeInput = ({
     <RangeInputContainer>
       <CostFilter>
         <InputWrapper>
-          <CostInput
-            type="text"
-            onChange={handleMinCostChange}
-            value={formatWon(minCost)}
-          />
+          <CostInput type="text" onChange={handleMinCostChange} value={formatWon(minCost)} />
           <Won>원</Won>
         </InputWrapper>
         <Dash />
         <InputWrapper>
-          <CostInput
-            type="text"
-            onChange={handleMaxCostChange}
-            value={formatWon(maxCost)}
-          />
+          <CostInput type="text" onChange={handleMaxCostChange} value={formatWon(maxCost)} />
           <Won>원</Won>
         </InputWrapper>
       </CostFilter>
@@ -81,16 +68,16 @@ const RangeInput = ({
           <MinRangeInput
             type="range"
             ref={minInputRef}
-            min={10000}
-            value={parseInt(minCost.replace(/,/g, ""), 10)}
+            min={0}
+            value={parseInt(minCost.replace(/,/g, ''), 10)}
             max={500000}
             onChange={handleMinCostChange}
           />
           <MaxRangeInput
             type="range"
             ref={maxInputRef}
-            min={10000}
-            value={parseInt(maxCost.replace(/,/g, ""), 10)}
+            min={0}
+            value={parseInt(maxCost.replace(/,/g, ''), 10)}
             max={500000}
             onChange={handleMaxCostChange}
           />
@@ -235,9 +222,9 @@ const MinThumb = styled.div`
   height: 24px;
   background-color: #b81716;
   border-radius: 50%;
-
-  left: 25%;
-  transform: translate(-15px, -10px);
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
   pointer-events: all;
   cursor: pointer;
 `;
@@ -249,9 +236,9 @@ const MaxThumb = styled.div`
   height: 24px;
   background-color: #b81716;
   border-radius: 50%;
-
-  right: 25%;
-  transform: translate(15px, -10px);
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
   pointer-events: all;
   cursor: pointer;
 `;

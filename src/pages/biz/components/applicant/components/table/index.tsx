@@ -68,9 +68,6 @@ const Table = ({
     },
   });
 
-  const orderAsc = ['APPLY', 'PASS', 'WIN', 'LOSE', 'CANCELED'];
-  const orderDesc = [...orderAsc].reverse();
-
   const handleSortClick = (field: 'NAME' | 'AGE') => {
     if (sort !== field) {
       setSort(field);
