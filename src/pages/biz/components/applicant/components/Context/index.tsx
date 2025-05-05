@@ -1,5 +1,5 @@
-import { Gender, Sort } from '@/api/biz';
 import { ApplyFilter, PassType } from '@/pages/biz/types/applicants';
+import { Gender, Sort } from '@/types/biz';
 import {
   createContext,
   useContext,

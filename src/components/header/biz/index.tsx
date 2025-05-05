@@ -5,11 +5,14 @@ import styled from 'styled-components';
 import useSessionStore from '@/store/session';
 import CaretDownSVG from '@assets/icons/caret_down.svg?react';
 import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
+import { useGetTroupeInfo } from '@/pages/biz/components/manageTroupe/hooks/useGetTroupe';
 
 const BizHeader = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
+
+  const { name = '극단을 설정해주세요.' } = useGetTroupeInfo() ?? {};
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
   const handleLogoClick = () => {
@@ -37,7 +40,7 @@ const BizHeader = () => {
       <RightSideWrapper>
         <ButtonWrapper onClick={handleMymenuClick}>
           <AuthMenuBtn>
-            대충 긴극단 이름 예시
+            {name}
             <CaretDownSVG />
           </AuthMenuBtn>
         </ButtonWrapper>

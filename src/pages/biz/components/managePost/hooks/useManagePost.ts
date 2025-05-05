@@ -1,30 +1,20 @@
 import { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  RecruitStatus,
-  requestChangeEndDate,
-  requestCloseRecruit,
-  requestDeleteRecruit,
-  requestRecruits,
-} from '@/api/biz';
-import { Recruit } from '@/types/biz';
+import { requestChangeEndDate, requestCloseRecruit, requestDeleteRecruit } from '@/api/biz';
+import { RecruitStatus } from '@/types/biz';
+import { useBizPost } from './usePost';
+import { usePostListContext } from '../components/context';
 
-type ManageRecruitFilterType = RecruitStatus | '전체';
-
-interface BizRecruitQuery {
-  totalCount: number;
-  recruits: Recruit[];
-}
+export type ManageRecruitFilterType = RecruitStatus | '전체';
 
 export const useManagePost = () => {
-  const [page, setPage] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState<ManageRecruitFilterType>('전체');
+  const { setPage, setSelectedFilter } = usePostListContext();
+
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
   const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
   const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const queryClient = useQueryClient();
+  const { data, refetch } = useBizPost();
 
   const handleFilterClick = (filter: ManageRecruitFilterType) => {
     setSelectedFilter(filter);
@@ -54,9 +44,7 @@ export const useManagePost = () => {
       endDate,
     });
 
-    queryClient.invalidateQueries({
-      queryKey: ['bizRecruits', page, selectedFilter],
-    });
+    refetch;
   };
 
   const handleConfirmClick = async () => {
@@ -67,9 +55,7 @@ export const useManagePost = () => {
 
     setCloseRecruitModalOpen(false);
 
-    queryClient.invalidateQueries({
-      queryKey: ['bizRecruits', page, selectedFilter],
-    });
+    refetch;
   };
 
   const handleCheckboxClick = (id: number) => {
@@ -83,9 +69,9 @@ export const useManagePost = () => {
     }
   };
 
-  const handleAllCheckBoxClick = (value: boolean, data?: BizRecruitQuery) => {
+  const handleAllCheckBoxClick = (value: boolean) => {
     if (value) {
-      setSelectedRecruitIds(data?.recruits.map(item => item?.id) as number[]);
+      setSelectedRecruitIds(data?.body?.map(item => item?.id) as number[]);
     } else {
       setSelectedRecruitIds([]);
     }
@@ -98,27 +84,14 @@ export const useManagePost = () => {
 
     setIsDeleteModalOpen(false);
 
-    queryClient.invalidateQueries({
-      queryKey: ['bizRecruits', page, selectedFilter],
-    });
+    refetch;
   };
-
-  const { data } = useQuery<BizRecruitQuery>({
-    queryKey: ['bizRecruits', page, selectedFilter],
-    queryFn: () =>
-      requestRecruits({
-        number: page,
-        recruitStatus: selectedFilter === '전체' ? null : selectedFilter,
-      }),
-  });
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
 
   return {
-    page,
-    selectedFilter,
     selectedRecruitIds,
     isCloseRecruitModalOpen,
     isChangeDeadlieModalOpen,

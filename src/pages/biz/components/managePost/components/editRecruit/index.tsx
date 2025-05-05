@@ -1249,7 +1249,6 @@ const ChipInputWrapper = styled.div<{
   $isError: boolean;
 }>`
   width: 692px;
-  height: 48px;
   padding: 12px 16px;
   border-radius: 10px;
   font-size: 16px;
@@ -1263,7 +1262,6 @@ const ChipInputWrapper = styled.div<{
   outline: none;
   display: flex;
   gap: 12px;
-  overflow: scroll;
 
   ::placeholder {
     color: #dadada;
@@ -1275,7 +1273,6 @@ const ChipInputWrapper = styled.div<{
 
 const Chip = styled.div`
   width: fit-content;
-  height: 32px;
   display: flex;
   gap: 3px;
   padding: 6px 12px;

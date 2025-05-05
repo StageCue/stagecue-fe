@@ -4,14 +4,14 @@ import CheckboxCheckedSVG from '@assets/icons/checkbox_checked.svg?react';
 import styled from 'styled-components';
 import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
 import Chip from '@/components/chip/chip';
-import { RecruitStatus } from '@/types/biz';
+import { RecruitStatusLabel } from '@/types/biz';
 import { useNavigate } from 'react-router-dom';
 
 interface RecruitRowProps {
   title: string;
   applyCount: number;
   recruitEnd: string;
-  status: keyof typeof RecruitStatus;
+  status: keyof typeof RecruitStatusLabel;
   id: number;
   isFavorite: boolean;
   isSelected: boolean;
@@ -30,9 +30,9 @@ const RecruitRow = ({
   onClickCheckbox,
   onClickStar,
 }: RecruitRowProps) => {
-  const STATUS_THEME_MAP: Record<keyof typeof RecruitStatus, 'red' | 'yellow' | 'green'> = {
-    TEMP: 'yellow',
-    RECRUIT: 'green',
+  const STATUS_THEME_MAP: Record<keyof typeof RecruitStatusLabel, 'red' | 'yellow' | 'green'> = {
+    DRAFT: 'yellow',
+    OPEN: 'green',
     CLOSED: 'red',
   };
 
@@ -69,7 +69,7 @@ const RecruitRow = ({
       <Applicant>{applyCount}건</Applicant>
       <Date>{recruitEnd}</Date>
       <State>
-        <Chip theme={STATUS_THEME_MAP[status]}>{RecruitStatus[status]}</Chip>
+        <Chip theme={STATUS_THEME_MAP[status]}>{RecruitStatusLabel[status]}</Chip>
       </State>
     </RecruitRowContainer>
   );

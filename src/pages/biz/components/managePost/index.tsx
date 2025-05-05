@@ -10,11 +10,10 @@ import DatepickerModal from '@/components/datepickerModal';
 import Paginator from '@/components/paginator';
 import { useManagePost } from './hooks/useManagePost';
 import DeleteModal from './components/deleteModal';
+import { usePostListContext } from './components/context';
 
 const ManagePost = () => {
   const {
-    page,
-    selectedFilter,
     selectedRecruitIds,
     isCloseRecruitModalOpen,
     isChangeDeadlieModalOpen,
@@ -34,6 +33,10 @@ const ManagePost = () => {
     handlePageChange,
   } = useManagePost();
 
+  const recruits = data?.body ?? [];
+
+  const { page, selectedFilter } = usePostListContext();
+
   return (
     <ManagePostContainer>
       {isDeleteModalOpen && (
@@ -52,7 +55,7 @@ const ManagePost = () => {
       )}
       {isChangeDeadlieModalOpen && selectedRecruitIds.length !== 0 && (
         <DatepickerModal
-          defaultValue={data?.recruits?.find(item => item.id === selectedRecruitIds[0])?.recruitEnd}
+          defaultValue={data?.body.find(item => item.id === selectedRecruitIds[0])?.recruitEndDate}
           onClose={handleCloseChangeDeadlineClick}
           onConfirm={handleDeadlineConfirm}
         />
@@ -139,18 +142,18 @@ const ManagePost = () => {
           </Button>
         </ButtonsWrapper>
       </FilterWrapper>
-      {data?.recruits && (
+      {recruits && (
         <Table
-          recruits={data.recruits}
+          recruits={recruits}
           onClickCheckbox={handleCheckboxClick}
           onClickAllCheckbox={handleAllCheckBoxClick}
           selectedRecruitIds={selectedRecruitIds}
         />
       )}
-      {data && (
+      {data?.body && (
         <Paginator
           page={page}
-          totalCounts={data?.totalCount}
+          totalCounts={data.pagingParam.number}
           itemsPerPage={10}
           pageGroupSize={5}
           onChangePage={handlePageChange}

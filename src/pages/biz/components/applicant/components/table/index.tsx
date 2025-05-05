@@ -13,9 +13,10 @@ import ProfileModal from '../profileMdoal';
 import StatusTag from '../statusTag';
 import { Application } from '@/pages/biz/types/applicants';
 import { useMutation } from '@tanstack/react-query';
-import { type Gender, requestFavorite, Sort } from '@/api/biz';
+import type { Gender, Sort } from '@/types/biz';
 import { useApplicantContext } from '../Context';
 import { useApplicantListQuery } from '../../hooks/useQuery';
+import { requestFavorite } from '@/api/biz';
 
 interface TableProps {
   applications: Application[];

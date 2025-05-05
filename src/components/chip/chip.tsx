@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 interface ChipProps {
   theme: keyof typeof THEME_STYLES;
@@ -7,24 +7,24 @@ interface ChipProps {
 
 const THEME_STYLES = {
   red: {
-    background: "#fbf2f2",
-    color: "#b82925",
+    background: '#fbf2f2',
+    color: '#b82925',
   },
   yellow: {
-    background: "#FFFCF7",
-    color: "#FF9200",
+    background: '#FFFCF7',
+    color: '#FF9200',
   },
   green: {
-    background: "#F2FFF6",
-    color: "#00BF40",
+    background: '#F2FFF6',
+    color: '#00BF40',
   },
 } as const;
 
 const Chip = ({ theme, children }: ChipProps) => {
-  return <StyledChip themeColor={theme}>{children}</StyledChip>;
+  return <StyledChip $themeColor={theme}>{children}</StyledChip>;
 };
 
-const StyledChip = styled.div<{ themeColor: keyof typeof THEME_STYLES }>`
+const StyledChip = styled.div<{ $themeColor: keyof typeof THEME_STYLES }>`
   padding: 4px 9px;
   border-radius: 4px;
   display: flex;
@@ -35,8 +35,8 @@ const StyledChip = styled.div<{ themeColor: keyof typeof THEME_STYLES }>`
   line-height: 133.4%;
   letter-spacing: 2.52%;
 
-  background-color: ${({ themeColor }) => THEME_STYLES[themeColor].background};
-  color: ${({ themeColor }) => THEME_STYLES[themeColor].color};
+  background-color: ${({ $themeColor }) => THEME_STYLES[$themeColor].background};
+  color: ${({ $themeColor }) => THEME_STYLES[$themeColor].color};
 `;
 
 export default Chip;

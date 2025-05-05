@@ -3,11 +3,13 @@ import styled from 'styled-components';
 import PlusSVG from '@assets/icons/plus_red.svg?react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useGetTroupeInfo } from '../manageTroupe/hooks/useGetTroupe';
 
 type bizMenuOption = '지원자 관리' | '내 극단 관리' | '공고 관리' | 'My Stage';
 
 const Sidemenu = () => {
   const navigate = useNavigate();
+  const { name = '극단을 설정해주세요.' } = useGetTroupeInfo() ?? {};
   const [currentMenu, setCurrentMenu] = useState('지원자 관리');
 
   const location = useLocation();
@@ -58,7 +60,7 @@ const Sidemenu = () => {
             계정관리
           </Button>
         </TopArea>
-        <TroupeName>대충 그냥 긴 극단이름예시</TroupeName>
+        <TroupeName>{name}</TroupeName>
       </TroupeWrapper>
       <UploadPostWrapper>
         <Button

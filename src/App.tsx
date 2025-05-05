@@ -21,7 +21,6 @@ import List from './pages/post';
 import Search from './pages/post/search';
 import EditRecruit from './pages/biz/components/managePost/components/editRecruit';
 import ManageTroupe from './pages/biz/components/manageTroupe';
-import ManagePost from './pages/biz/components/managePost';
 import EditTroupe from './pages/biz/components/manageTroupe/components/editTroupe';
 import FindPassword from './pages/auth/resetPassword';
 import useSessionStore from './store/session';
@@ -34,6 +33,7 @@ import Blog from './pages/blog';
 import PrivacyPolicy from './pages/privacy-policy';
 import ApplicantPage from './pages/biz/components/applicant';
 import BizLayout from './components/layout/biz';
+import { ManagePostWrapper } from './pages/biz/components/managePost/components/context/Wrapper';
 
 const App = () => {
   const navigate = useNavigate();
@@ -92,7 +92,7 @@ const App = () => {
           <Route path="troupe/form" element={<EditTroupe isInitial={false} />} />
           <Route path="troupe/form/new" element={<EditTroupe isInitial={true} />} />
           <Route path="troupe/created" element={<CreatedTroupe />} />
-          <Route path="cast" element={<ManagePost />} />
+          <Route path="cast" element={<ManagePostWrapper />} />
           <Route path="cast/form" element={<EditRecruit />} />
           <Route path="cast/:id/form" element={<EditRecruit />} />
         </Route>

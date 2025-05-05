@@ -3,16 +3,13 @@ import request from '..';
 import { toApiPostTroupe, toViewTroupe, toViewTroupePreview } from '../adapters/troupe';
 import { ApplyStatus } from '@/pages/biz/types/applicants';
 import { toViewApplicationList } from '../adapters/applies';
-import { dummy } from './dummy';
+import { BizRecruitQuery } from '@/pages/biz/components/managePost/hooks/usePost';
+import { Gender, RecruitStatus, Sort } from '@/types/biz';
 
 interface ReqChangingApplyState {
   applyIds: string;
   applyStatus: 'PASS' | 'WIN' | 'CANCELED';
 }
-
-export type Gender = 'MALE' | 'FEMALE';
-export type Sort = 'AGE' | 'NAME' | 'APPLY_DATE';
-export type RecruitStatus = 'DRAFT' | 'OPEN' | 'CLOSED';
 
 interface ReqAppliesParams {
   number: number;
@@ -72,14 +69,13 @@ interface ReqChangeEndDateBody {
   endDate: string;
 }
 
-// TODO: dummy 삭제
 export const requestApplications = async (params: ReqAppliesParams) => {
   const res = await request({
     method: 'get',
     endpoint: `troupes/applies`,
     params,
   });
-  return toViewApplicationList(dummy);
+  return toViewApplicationList(res);
 };
 
 export const requestChangingApplyState = ({ applyIds, applyStatus }: ReqChangingApplyState) => {
@@ -178,15 +174,17 @@ export const requestUploadImage = async (data: FormData) => {
   return res;
 };
 
-export const requestRecruits = (params: ReqRecruitsParams) => {
-  const res = request({
+export const requestRecruits = async (
+  params: ReqRecruitsParams
+): Promise<BizRecruitQuery['result']> => {
+  const res = await request({
     method: 'get',
-    endpoint: `recruits/troupes`,
+    endpoint: 'recruits/troupes',
     params,
   });
-  return res;
-};
 
+  return res.result;
+};
 export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   const res = request({ method: 'post', endpoint: 'recruits', data });
 
