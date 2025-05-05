@@ -11,7 +11,8 @@ interface ReqChangingApplyState {
 }
 
 export type Gender = 'MALE' | 'FEMALE';
-export type Sort = 'AGE' | 'NAME';
+export type Sort = 'AGE' | 'NAME' | 'APPLY_DATE';
+export type RecruitStatus = 'DRAFT' | 'OPEN' | 'CLOSED';
 
 interface ReqAppliesParams {
   number: number;
@@ -26,7 +27,14 @@ interface ReqAppliesParams {
 }
 
 interface ReqRecruitsParams {
-  status: string;
+export interface ReqRecruitsParams {
+  number: number;
+  size?: number;
+  key?: number;
+  sort?: 'RECENT' | 'VIEW' | 'APPLY_COUNT' | 'END_DATE';
+  isFavorite?: boolean;
+  recruitStatus: RecruitStatus | null;
+  search?: string;
 }
 
 export interface ReqEditRecruitParams {
@@ -38,7 +46,7 @@ export interface ReqEditRecruitParams {
   monthlyFee: number;
   artworkName: string;
   recruitCategory: string;
-  recruitStatus: 'DRAFT' | 'OPEN' | 'CLOSED';
+  recruitStatus: RecruitStatus;
   recruitImages?: string[];
   theatreAddress: string;
   theatreAddressDetail: string;
@@ -174,7 +182,7 @@ export const requestUploadImage = async (data: FormData) => {
 export const requestRecruits = (params: ReqRecruitsParams) => {
   const res = request({
     method: 'get',
-    endpoint: 'recruits',
+    endpoint: `recruits/troupes`,
     params,
   });
   return res;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  RecruitStatus,
   requestChangeEndDate,
   requestCloseRecruit,
   requestDeleteRecruit,
@@ -8,7 +9,7 @@ import {
 } from '@/api/biz';
 import { Recruit } from '@/types/biz';
 
-type ManageRecruitFilterType = 'TEMP' | 'RECRUIT' | 'CLOSED' | '전체';
+type ManageRecruitFilterType = RecruitStatus | '전체';
 
 interface BizRecruitQuery {
   totalCount: number;
@@ -106,7 +107,8 @@ export const useManagePost = () => {
     queryKey: ['bizRecruits', page, selectedFilter],
     queryFn: () =>
       requestRecruits({
-        status: selectedFilter === '전체' ? '' : selectedFilter,
+        number: page,
+        recruitStatus: selectedFilter === '전체' ? null : selectedFilter,
       }),
   });
 

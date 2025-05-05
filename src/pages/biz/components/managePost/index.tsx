@@ -70,14 +70,14 @@ const ManagePost = () => {
             전체
           </Option>
           <FilterDivider />
-          <Option onClick={() => handleFilterClick('TEMP')} $isSelected={selectedFilter === 'TEMP'}>
+          <Option
+            onClick={() => handleFilterClick('DRAFT')}
+            $isSelected={selectedFilter === 'DRAFT'}
+          >
             임시저장
           </Option>
           <FilterDivider />
-          <Option
-            onClick={() => handleFilterClick('RECRUIT')}
-            $isSelected={selectedFilter === 'RECRUIT'}
-          >
+          <Option onClick={() => handleFilterClick('OPEN')} $isSelected={selectedFilter === 'OPEN'}>
             모집중
           </Option>
           <FilterDivider />

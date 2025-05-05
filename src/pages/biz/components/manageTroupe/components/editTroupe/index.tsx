@@ -34,6 +34,7 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
     date,
     descriptionValue,
     addressValue,
+    isLoading,
     handleCalendarClick,
     handleDateChange,
     handleLogoInputClick,
@@ -46,6 +47,8 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
     handleAddressInputClick,
     onSubmitEdit,
   } = useEditTroupe(isInitial);
+
+  if (isLoading) return <>loading</>;
 
   return (
     <EditTroupeContainer>

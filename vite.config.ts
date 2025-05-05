@@ -21,7 +21,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api/v1': {
-        target: 'http://152.67.205.177:18080',
+        target: 'https://stag-api.stagecue.co.kr',
         changeOrigin: true,
         secure: false,
       },

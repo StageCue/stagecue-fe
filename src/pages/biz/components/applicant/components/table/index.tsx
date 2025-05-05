@@ -13,7 +13,7 @@ import ProfileModal from '../profileMdoal';
 import StatusTag from '../statusTag';
 import { Application } from '@/pages/biz/types/applicants';
 import { useMutation } from '@tanstack/react-query';
-import { type Gender, requestFavorite } from '@/api/biz';
+import { type Gender, requestFavorite, Sort } from '@/api/biz';
 import { useApplicantContext } from '../Context';
 import { useApplicantListQuery } from '../../hooks/useQuery';
 
@@ -41,8 +41,6 @@ const Table = ({
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isGenderSortShowing, setIsGenderSortShowing] = useState(false);
-
-  const [isDateAsc, setIsDateAsc] = useState(true);
   const [isStatusAsc, setIsStatusAsc] = useState(true);
   const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
 
@@ -68,17 +66,13 @@ const Table = ({
     },
   });
 
-  const handleSortClick = (field: 'NAME' | 'AGE') => {
+  const handleSortClick = (field: Sort) => {
     if (sort !== field) {
       setSort(field);
       setSortDirection('ASC');
     } else {
       setSortDirection(sortDirection === 'ASC' ? 'DESC' : 'ASC');
     }
-  };
-
-  const handleDateSortClick = () => {
-    setIsDateAsc(prev => !prev);
   };
 
   const handleStatusSortClick = () => {
@@ -195,9 +189,11 @@ const Table = ({
           )}
         </GenderColumn>
         <PostTitleColumn>공고명</PostTitleColumn>
-        <DateColumn onClick={handleDateSortClick}>
+        <DateColumn onClick={() => handleSortClick('APPLY_DATE')}>
           지원 일자
-          <CaretWrapper>{isDateAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
+          <CaretWrapper>
+            {sort === 'APPLY_DATE' && sortDirection === 'ASC' ? <CaretUpSVG /> : <CaretDownSVG />}
+          </CaretWrapper>
         </DateColumn>
         <StateColumn onClick={handleStatusSortClick}>
           상태

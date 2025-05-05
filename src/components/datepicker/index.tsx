@@ -24,7 +24,12 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
     };
 
     const handleResetClick = () => {
-      onChangeDate(new Date(Date.now()));
+      const today = new Date(Date.now());
+      onChangeDate(today);
+
+      if (ref && 'current' in ref && ref.current) {
+        ref.current.setSelected(today);
+      }
     };
 
     return (

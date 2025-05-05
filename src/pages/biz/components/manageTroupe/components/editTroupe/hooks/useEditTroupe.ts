@@ -63,6 +63,8 @@ export const useEditTroupe = (isInitial: boolean) => {
   const inputRegistrationFileRef = useRef<HTMLInputElement | null>(null);
   const datepickerRef = useRef<DatePicker | null>(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [logoFile, setLogoFile] = useState<File>();
   const [logoImageName, setLogoImageName] = useState<string>();
   const [logoPreview, setLogoPreview] = useState<string>();
@@ -237,21 +239,31 @@ export const useEditTroupe = (isInitial: boolean) => {
   };
 
   const onSubmitEdit = async (data: EditTroupeInputs) => {
-    const logoImg = await uploadLogoFile();
-    const coverImg = await uploadCoverFile();
-    const registrationFile = await requestUploadRegistrationFile();
+    try {
+      setIsLoading(true);
 
-    const { result } = await requestPostTroupe({
-      ...data,
-      logoImg,
-      coverImg,
-      registrationFile,
-    });
+      const logoPromise = uploadLogoFile();
+      const coverPromise = uploadCoverFile();
+      const regPromise = requestUploadRegistrationFile();
 
-    if (result) {
+      const [logoImg, coverImg, registrationFile] = await Promise.all([
+        logoPromise,
+        coverPromise,
+        regPromise,
+      ]);
+
+      await requestPostTroupe({
+        ...data,
+        logoImg,
+        coverImg,
+        registrationFile,
+      });
       navigate('/biz/troupe/created');
-    } else {
+    } catch (error) {
+      console.error('에러 발생:', error);
       alert('다시 시도해주세요.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -274,6 +286,7 @@ export const useEditTroupe = (isInitial: boolean) => {
   }, [isInitial]);
 
   return {
+    isLoading,
     register,
     handleSubmit,
     errors,
