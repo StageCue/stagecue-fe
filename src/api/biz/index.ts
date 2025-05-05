@@ -26,7 +26,6 @@ interface ReqAppliesParams {
   isFavorite?: boolean;
 }
 
-interface ReqRecruitsParams {
 export interface ReqRecruitsParams {
   number: number;
   size?: number;
