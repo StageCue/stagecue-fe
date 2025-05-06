@@ -8,6 +8,7 @@ import PassModal from '../passModal';
 import Paginator from '@/components/paginator';
 import { useApplicant } from '../../hooks/useApplicant';
 import { useApplicantContext } from '../Context';
+import { useGetApplyStatus } from '../../hooks/useGetApplyStatus';
 
 const Applicants = () => {
   const {
@@ -36,6 +37,8 @@ const Applicants = () => {
     showingApplicant,
     isProfileModalOpen,
   } = useApplicantContext();
+
+  const { data: applyStatus } = useGetApplyStatus();
 
   return (
     <ApplicantContainer>
@@ -71,26 +74,26 @@ const Applicants = () => {
       <FilterWrapper>
         <Filters>
           <Option onClick={() => handleFilterClick('전체')} $isSelected={selectedFilter === '전체'}>
-            전체 {data?.applications?.length}
+            전체 {applyStatus?.TOTAL}
           </Option>
           <FilterDivider />
           <Option
             onClick={() => handleFilterClick('APPLY')}
             $isSelected={selectedFilter === 'APPLY'}
           >
-            미열람 {filterByApplyStatus('APPLY')?.length}
+            미열람 {applyStatus?.APPLY}
           </Option>
           <FilterDivider />
           <Option onClick={() => handleFilterClick('PASS')} $isSelected={selectedFilter === 'PASS'}>
-            서류합격 {filterByApplyStatus('PASS')?.length}
+            서류합격 {applyStatus?.PASS}
           </Option>
           <FilterDivider />
           <Option onClick={() => handleFilterClick('WIN')} $isSelected={selectedFilter === 'WIN'}>
-            최종합격 {filterByApplyStatus('WIN')?.length}
+            최종합격 {applyStatus?.WIN}
           </Option>
           <FilterDivider />
           <Option onClick={() => handleFilterClick('LOSE')} $isSelected={selectedFilter === 'LOSE'}>
-            불합격 {filterByApplyStatus('LOSE')?.length}
+            불합격 {applyStatus?.LOSE}
           </Option>
         </Filters>
         <ButtonsWrapper>

@@ -78,6 +78,13 @@ export const requestApplications = async (params: ReqAppliesParams) => {
   return toViewApplicationList(res);
 };
 
+export const requestApplyStatus = () => {
+  return request({
+    method: 'get',
+    endpoint: 'troupes/applies/status',
+  });
+};
+
 export const requestChangingApplyState = ({ applyIds, applyStatus }: ReqChangingApplyState) => {
   const res = request({
     method: 'put',
