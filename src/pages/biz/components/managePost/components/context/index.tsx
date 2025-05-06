@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 import { ManageRecruitFilterType } from '../../hooks/useManagePost';
 
 export type PostSortType = 'RECENT' | 'VIEW' | 'APPLY_COUNT' | 'END_DATE' | null;
@@ -9,7 +9,7 @@ interface PostListContextValue {
   selectedFilter: ManageRecruitFilterType;
   setSelectedFilter: (filter: ManageRecruitFilterType) => void;
   favoriteFilter: boolean | undefined;
-  setFavoriteFilter: (value: boolean | undefined) => void;
+  setFavoriteFilter: Dispatch<SetStateAction<boolean | undefined>>;
   sort: PostSortType | undefined;
   setSort: (sort: PostSortType | undefined) => void;
   sortDirection?: 'ASC' | 'DESC' | undefined;
