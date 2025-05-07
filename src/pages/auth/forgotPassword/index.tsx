@@ -22,11 +22,16 @@ const ForgotPassword = () => {
   const [emailValue] = watch(['email']);
 
   const onSubmitEmail = async (data: ForgotPasswordInput) => {
-    const res = await requestResetPasswordEmail(data.email);
-    setIsSentEmail(true);
+    const { result, error } = await requestResetPasswordEmail(data.email);
 
-    if (res?.error) {
+    if (result) {
+      setIsSentEmail(true);
+      return;
+    }
+
+    if (error) {
       setFoundAccount(false);
+      return;
     }
   };
 

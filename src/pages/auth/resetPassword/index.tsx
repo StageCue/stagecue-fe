@@ -22,14 +22,24 @@ const FindPassword = () => {
 
   const onSubmitNewPassword = async (data: PasswordInputs) => {
     const params = new URLSearchParams(location.search);
-    const token = params.get('token');
+    const email = params.get('email') as string;
+    const token = params.get('token') as string;
+
     if (token) {
-      const res = await requestResetPasswordFromMail({
+      const { result, error } = await requestResetPasswordFromMail({
+        email,
         newPassword: data?.password,
         token,
       });
-      if (res) {
+
+      if (result) {
         setIsResetPassword(true);
+        return;
+      }
+
+      if (error) {
+        alert(error?.element?.message?.resolved);
+        return;
       }
     }
   };
@@ -47,8 +57,8 @@ const FindPassword = () => {
           <InputWrapper>
             <Label>비밀번호</Label>
             <Input
-              $isDirty={Boolean(confirmPasswordValue)}
-              $isError={Boolean(errors.confirmPassword)}
+              type="password"
+              placeholder="비밀번호를 입력해주세요"
               {...register('password', {
                 required: true,
                 validate: value => {
@@ -62,8 +72,8 @@ const FindPassword = () => {
                   return isValid || '영문 대소문자, 숫자, 특수문자를 포함해 8~32자로 입력해주세요.';
                 },
               })}
-              type="password"
-              placeholder="비밀번호를 입력해주세요"
+              $isDirty={Boolean(passwordValue)}
+              $isError={Boolean(errors.password)}
             />
             <InputError>{errors.password?.message}</InputError>
           </InputWrapper>
@@ -71,19 +81,30 @@ const FindPassword = () => {
           <InputWrapper>
             <Label>비밀번호 확인</Label>
             <Input
-              $isDirty={Boolean(confirmPasswordValue)}
-              $isError={Boolean(errors.confirmPassword)}
+              type="password"
+              placeholder="비밀번호 확인"
               {...register('confirmPassword', {
                 required: true,
                 validate: value => value === passwordValue || '비밀번호가 일치하지 않습니다.',
               })}
-              placeholder="비밀번호 확인"
-              type="password"
+              $isDirty={Boolean(confirmPasswordValue)}
+              $isError={Boolean(errors.confirmPassword)}
             />
             <InputError>{errors.confirmPassword?.message}</InputError>
           </InputWrapper>
 
-          <Button variation="solid" btnClass="primary" type="submit" width={340}>
+          <Button
+            type="submit"
+            variation="solid"
+            btnClass="primary"
+            width={340}
+            disabled={
+              !passwordValue ||
+              !confirmPasswordValue ||
+              !!errors.password ||
+              !!errors.confirmPassword
+            }
+          >
             제출
           </Button>
         </Form>

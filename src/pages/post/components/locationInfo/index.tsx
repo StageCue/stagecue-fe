@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import LocationSVG from "@assets/icons/location_lg.svg?react";
+import styled from 'styled-components';
+import LocationSVG from '@assets/icons/location_lg.svg?react';
 
 interface LocationInfoProps {
   address: string;
@@ -8,12 +8,7 @@ interface LocationInfoProps {
   lng: number;
 }
 
-const LocationInfo = ({
-  address,
-  addressDetail,
-  lat,
-  lng,
-}: LocationInfoProps) => {
+const LocationInfo = ({ address, addressDetail, lat, lng }: LocationInfoProps) => {
   // const [map, setMap] = useState();
 
   // const getMap = async () => {

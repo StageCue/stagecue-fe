@@ -1,5 +1,5 @@
 import request from '@/api/index';
-
+import { queryParams as _queryParams } from '@/utils/queryParams';
 interface ReqSignupParams {
   token: string;
   userName: string;
@@ -27,10 +27,16 @@ interface ReqVerifySignupParams {
 }
 
 interface ReqFindAccountParams {
-  findAccountToken: string;
+  phoneNumber: string;
+  token: string;
+}
+
+interface ReqResetPasswordEmailParams {
+  email: string;
 }
 
 interface ReqChangePassword {
+  email: string;
   newPassword: string;
   token: string;
 }
@@ -87,38 +93,42 @@ export const requestVerifySignup = async (data: ReqVerifySignupParams) => {
 };
 
 export const requestFindAccountCode = async (data: ReqCellPhoneCertCode) => {
+  const queryParams = _queryParams<ReqCellPhoneCertCode>(data);
+
   const res = await request({
     method: 'post',
-    endpoint: 'auth/claim-find-account',
-    data,
+    endpoint: `auth/find-account/request?${queryParams}`,
   });
   return res;
 };
 
 export const requestVerifyFindAccountCode = async (data: ReqVerifySignupParams) => {
-  const { phoneNumber, token } = data;
+  const queryParams = _queryParams<ReqVerifySignupParams>(data);
+
   const res = await request({
-    method: 'get',
-    endpoint: `auth/verify-find-account?phoneNumber=${phoneNumber}&token=${token}`,
+    method: 'post',
+    endpoint: `auth/find-account/verify?${queryParams}`,
   });
   return res;
 };
 
 export const requestFindAccount = async (data: ReqFindAccountParams) => {
-  const { findAccountToken } = data;
+  const queryParams = _queryParams<ReqFindAccountParams>(data);
+
   const res = await request({
     method: 'get',
-    endpoint: 'auth/find-account',
-    header: { 'Auth-Find-Account-Token': `${findAccountToken}` },
+    endpoint: `auth/find-account?${queryParams}`,
   });
 
   return res;
 };
 
 export const requestResetPasswordEmail = async (email: string) => {
+  const queryParams = _queryParams<ReqResetPasswordEmailParams>({ email });
+
   const res = await request({
-    method: 'get',
-    endpoint: `auth/claim-password-reset?email=${email}`,
+    method: 'post',
+    endpoint: `auth/change-password/request?${queryParams}`,
   });
 
   return res;

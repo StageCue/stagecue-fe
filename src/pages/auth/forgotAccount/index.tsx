@@ -34,32 +34,31 @@ const ForgotAccount = () => {
   const [phoneNumberValue, certificatedValue] = watch(['phoneNumber', 'certificated']);
 
   const handleSendCodeClick = async () => {
-    await requestFindAccountCode({
-      phoneNumber: phoneNumberValue,
+    const { result, error } = await requestFindAccountCode({
+      phoneNumber: phoneNumberValue.replace(/-/g, ''),
     });
-    setCertTime(300);
-    setIsSentCode(true);
+
+    if (result) {
+      setCertTime(300);
+      setIsSentCode(true);
+      return;
+    }
+
+    if (error) {
+      alert(error?.element?.message?.resolved);
+      return;
+    }
   };
 
   const handleVerifyClick = async () => {
-    const res = await requestVerifyFindAccountCode({
+    const { result: token } = await requestVerifyFindAccountCode({
       phoneNumber: phoneNumberValue,
       token: certCode,
     });
 
-    if (res?.error?.includes('없습니다')) {
-      clearErrors('certificated');
-      setIsResultStep(true);
-      setFoundAccount(null);
-      setCertTime(0);
-      setIsSentCode(false);
-      setValue('certCode', '');
-      return;
-    }
-
-    if (res?.findAccountToken) {
+    if (token) {
       setValue('certificated', true);
-      setFindAccountToken(res.findAccountToken);
+      setFindAccountToken(token);
       clearErrors('certificated');
     } else {
       setValue('certificated', false);
@@ -96,10 +95,15 @@ const ForgotAccount = () => {
   };
 
   const onSubmitFindAccount = async () => {
-    const res = await requestFindAccount({ findAccountToken });
+    const { result } = await requestFindAccount({
+      phoneNumber: phoneNumberValue.replace(/-/g, ''),
+      token: findAccountToken,
+    });
 
-    if (res) {
-      setFoundAccount(res.email);
+    if (result) {
+      setFoundAccount(result);
+    } else {
+      setFoundAccount(null);
     }
     setIsResultStep(true);
   };
@@ -127,6 +131,15 @@ const ForgotAccount = () => {
   };
 
   const handleRetryClick = () => {
+    setCertCode('');
+    setFindAccountToken('');
+    setFoundAccount(null);
+    setPhoneNumber('');
+    setValue('phoneNumber', '');
+    setValue('certCode', '');
+    setValue('certificated', false);
+    setIsSentCode(false);
+    setCertTime(300);
     setIsResultStep(false);
   };
 
@@ -170,37 +183,41 @@ const ForgotAccount = () => {
               </Button>
             </ShortInputWrapper>
             <WithCertInputWrapper>
-              <VerifyWrapper>
-                <CertInputWrapper
-                  $isError={!!errors.certificated}
-                  $isDirty={isSentCode}
-                  $isDisabled={!isSentCode}
-                >
-                  <CertInput
-                    {...register('certCode', { required: true })}
-                    placeholder={isSentCode ? '' : '인증번호를 입력해주세요'}
-                    $isSentCode={isSentCode}
-                    disabled={!isSentCode}
-                    name="certCode"
-                    type="text"
-                    onChange={event => handleCertInputChange(event)}
-                  />
-                  {isSentCode && !certificatedValue ? <Timer>{formatTime(certTime)}</Timer> : null}
-                </CertInputWrapper>
-                <Button
-                  type="button"
-                  variation="solid"
-                  btnClass="primary"
-                  // disabled={certCode.length === 0 || certificatedValue}
-                  width={112}
-                  height={48}
-                  fontSize={16}
-                  padding="12px 28px"
-                  onClick={handleVerifyClick}
-                >
-                  인증확인
-                </Button>
-              </VerifyWrapper>
+              {isSentCode && (
+                <VerifyWrapper>
+                  <CertInputWrapper
+                    $isError={!!errors.certificated}
+                    $isDirty={isSentCode}
+                    $isDisabled={!isSentCode}
+                  >
+                    <CertInput
+                      {...register('certCode', { required: true })}
+                      placeholder={isSentCode ? '' : '인증번호를 입력해주세요'}
+                      $isSentCode={isSentCode}
+                      disabled={!isSentCode}
+                      name="certCode"
+                      type="text"
+                      onChange={event => handleCertInputChange(event)}
+                    />
+                    {isSentCode && !certificatedValue ? (
+                      <Timer>{formatTime(certTime)}</Timer>
+                    ) : null}
+                  </CertInputWrapper>
+                  <Button
+                    type="button"
+                    variation="solid"
+                    btnClass="primary"
+                    disabled={certCode.length === 0 || certificatedValue}
+                    width={112}
+                    height={48}
+                    fontSize={16}
+                    padding="12px 28px"
+                    onClick={handleVerifyClick}
+                  >
+                    인증확인
+                  </Button>
+                </VerifyWrapper>
+              )}
               <InputError>{errors.certificated?.message}</InputError>
               {certificatedValue && <SuccessCert>인증되었습니다.</SuccessCert>}
             </WithCertInputWrapper>

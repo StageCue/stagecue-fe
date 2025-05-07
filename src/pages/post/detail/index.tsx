@@ -14,6 +14,8 @@ import useSessionStore from '@/store/session';
 import { requestTroupeDetail } from '@/api/troupe';
 import { RecruitDetail } from '@/types/recruitDetail';
 import { getDday } from '@/utils/getDday';
+import { getCoordinates } from '@/utils/getCoordinates';
+import { cleanAddress } from '@/utils/cleanAddress';
 
 const Detail = () => {
   const { id } = useParams();
@@ -46,6 +48,25 @@ const Detail = () => {
   };
 
   const getTroupeDetail = async () => {
+    if (
+      recruitDetail?.practiceAddress &&
+      !recruitDetail?.practiceLocationLat &&
+      !recruitDetail?.practiceLocationLng
+    ) {
+      const address = cleanAddress(recruitDetail?.practiceAddress);
+      const { lng, lat } = await getCoordinates(address);
+      setRecruitDetail({ ...recruitDetail, practiceLocationLat: lat, practiceLocationLng: lng });
+    }
+
+    if (
+      recruitDetail?.theatreAddress &&
+      (!recruitDetail?.theatreLocationLat || !recruitDetail?.theatreLocationLng)
+    ) {
+      const address = cleanAddress(recruitDetail?.theatreAddress);
+      const { lng, lat } = await getCoordinates(address);
+      setRecruitDetail({ ...recruitDetail, theatreLocationLat: lat, theatreLocationLng: lng });
+    }
+
     if (recruitDetail?.troupeName) {
       const { result } = await requestTroupeDetail(recruitDetail?.troupeName);
       setTroupeImage(result?.logoImage);

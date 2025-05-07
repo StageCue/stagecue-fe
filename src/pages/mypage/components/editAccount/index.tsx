@@ -104,7 +104,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
 
   const handleSendPhoneCodeClick = async () => {
     const { result, error } = await requestChangePhoneToken({
-      changePhoneNumber: phoneNumberValue,
+      changePhoneNumber: phoneNumberValue.replace(/-/g, ''),
     });
 
     if (error) {
@@ -132,7 +132,10 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleVerifyPhoneCodeClick = async () => {
-    const { result: token } = await requestVerifyPhoneToken(phoneNumberValue, phoneCodeValue);
+    const { result: token } = await requestVerifyPhoneToken(
+      phoneNumberValue.replace(/-/g, ''),
+      phoneCodeValue
+    );
 
     if (token) {
       setUpdatePhoneToken(token);
@@ -154,7 +157,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
 
   const handlePhoneSubmitClick = async () => {
     const res = await requestChangePhone({
-      phoneNumber: phoneNumberValue,
+      phoneNumber: phoneNumberValue.replace(/-/g, ''),
       token: updatePhoneToken,
     });
 

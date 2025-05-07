@@ -98,7 +98,7 @@ const Application = ({ recruitId, isApplied }: ApplicationProps) => {
                     </CheckboxColumn>
                     <TextColumn>
                       {isDefault && <DefaultProfileTag>기본프로필</DefaultProfileTag>}
-                      <ProfileTitle>{title}</ProfileTitle>
+                      <ProfileTitle title={title}>{title}</ProfileTitle>
                       <UpdateDate>{dateCreated}</UpdateDate>
                     </TextColumn>
                     <ButtonColumn>
@@ -223,6 +223,9 @@ const ProfileTitle = styled.div`
   font-size: 15px;
   letter-spacing: 0.96%;
   line-height: 146.7%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const UpdateDate = styled.div`

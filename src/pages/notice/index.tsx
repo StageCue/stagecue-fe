@@ -25,7 +25,7 @@ interface NoticeQuery {
 }
 
 const Notice = () => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [openPostId, setOpenPostId] = useState<number | null>(null);
   const [contents, setContents] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(0);
@@ -34,7 +34,11 @@ const Notice = () => {
 
   const { data } = useQuery<NoticeQuery>({
     queryKey: ['notices', page],
-    queryFn: () => requestNotices({ number: page, size }),
+    queryFn: async () => {
+      const { result } = await requestNotices({ number: page + 1, size });
+
+      return result;
+    },
   });
 
   useEffect(() => {
@@ -44,8 +48,8 @@ const Notice = () => {
   }, [data]);
 
   const calculatePageNumbers = () => {
-    const startPage = Math.floor(page / size) * 5 + 1;
-    const endPage = Math.min(startPage + size - 1, totalPages - 1) + 1;
+    const startPage = Math.floor(page / size) * 5;
+    const endPage = Math.min(startPage + size - 1, totalPages - 1);
 
     const pages = [];
     for (let i = startPage; i <= endPage; i++) {
@@ -116,13 +120,13 @@ const Notice = () => {
                 onClick={() => handlePageClick(number)}
                 $isCurrent={number === page}
               >
-                {number}
+                {number + 1}
               </PgNumber>
             ))}
           </PageNumbers>
           <PgBtnWrapper
             $isActive={!(page === totalPages - 1)}
-            onClick={() => !(page === totalPages - 1) && handlePageClick(page + 1)}
+            onClick={() => !(page === totalPages - 1) && handlePageClick(page)}
           >
             <CaretRightSVG />
           </PgBtnWrapper>

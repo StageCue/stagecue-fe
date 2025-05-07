@@ -10,7 +10,7 @@ import Button from '@/components/buttons/button';
 import { formatPhoneNumber } from '@/utils/format';
 import CastCard from '../components/castCard';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
+import { getCoordinates } from '@/utils/getCoordinates';
 interface TroupeDetail {
   id: string;
   troupeName: string;
@@ -61,39 +61,12 @@ const TroupeDetail = () => {
     if (result?.addressLat !== null && result?.addressLng !== null) {
       setLocationAddress({ lng: result?.addressLng, lat: result?.addressLat });
     } else {
-      getCoordinates(`${result?.address}`);
+      const { lng, lat } = await getCoordinates(`${result?.address}`);
+      setLocationAddress({ lng, lat });
     }
 
     if (result?.isFollow) {
       setIsFollowing(true);
-    }
-  };
-
-  const getCoordinates = async (address: string) => {
-    const clientId = import.meta.env.VITE_NAVER_CLIENT_ID;
-    const secretId = import.meta.env.VITE_NAVER_SECRET_ID;
-    const url = `/naver-geocode/map-geocode/v2/geocode?query=${encodeURIComponent(address)}`;
-
-    try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'X-NCP-APIGW-API-KEY-ID': clientId,
-          'X-NCP-APIGW-API-KEY': secretId,
-        },
-      });
-
-      const data = await response?.json();
-
-      if (data?.addresses?.length > 0) {
-        const { x: lng, y: lat } = data.addresses[0];
-
-        setLocationAddress({ lng, lat });
-      } else {
-        throw new Error('주소를 찾을 수 없습니다.');
-      }
-    } catch (error) {
-      console.error('Geocoding 에러:', error);
     }
   };
 

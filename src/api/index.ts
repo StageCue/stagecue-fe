@@ -1,8 +1,4 @@
 import axios from 'axios';
-// import axios, { InternalAxiosRequestConfig } from 'axios';
-// import { requestRefreshSession } from './auth';
-// import useSessionStore from '@/store/session';
-
 interface RequestPrams {
   method: 'get' | 'post' | 'put' | 'delete';
   endpoint: string;
@@ -11,38 +7,43 @@ interface RequestPrams {
   params?: object;
 }
 
-// const apiClient = axios.create({
-//   baseURL: '/v1',
-// });
+const apiClient = axios.create({
+  baseURL: '/api/v1/',
+});
 
-// apiClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-//   const sessionStore = useSessionStore.getState();
-//   const refreshToken = sessionStorage.getItem('refreshToken');
-//   const expirationTime = sessionStore.expirationTime;
-//   const currentTime = Date.now();
-//   const timeLeft = expirationTime ? expirationTime - currentTime : 0;
+// apiClient.interceptors.response.use(
+//   response => response,
+//   async error => {
+//     // const originalRequest = error.config;
 
-//   if (timeLeft <= 3 * 60 * 1000) {
-//     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-//       await requestRefreshSession(refreshToken!);
+//     // if (error?.response?.status === 401 && !originalRequest?._retry) {
+//     //   originalRequest._retry = true;
 
-//     sessionStorage.setItem('accessToken', newAccessToken);
-//     sessionStorage.setItem('refreshToken', newRefreshToken);
-//     config.headers['Authorization'] = `Bearer ${newAccessToken}`;
-//   } else {
-//     const currentAccessToken = sessionStorage.getItem('accessToken');
-//     if (currentAccessToken) {
-//       config.headers['Authorization'] = `Bearer ${currentAccessToken}`;
-//     }
+//     //   if (refreshToken) {
+//     //     try {
+//     //       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+//     //         await requestRefreshSession(refreshToken);
+//     //       sessionStorage.setItem('access_token', newAccessToken);
+//     //       sessionStorage.setItem('refresh_token', newRefreshToken);
+//     //       originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+//     //       return apiClient(originalRequest);
+//     //     } catch (refreshError) {
+//     //       console.error('토큰 갱신 실패: ', refreshError);
+//     //       window.location.href = '/login'; // 로그인 페이지로 이동
+//     //     }
+//     //   } else {
+//     //     window.location.href = '/login';
+//     //   }
+//     // }
+
+//     return Promise.reject(error);
 //   }
-
-//   return config;
-// });
+// );
 
 const request = async ({ method, endpoint, data, header = {}, params }: RequestPrams) => {
-  const url = `/api/v1/${endpoint}`;
+  const url = `${endpoint}`;
 
-  return await axios({
+  return await apiClient({
     params,
     method,
     url,

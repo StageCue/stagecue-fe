@@ -326,7 +326,7 @@ const EditRecruit = () => {
   };
 
   const handleAddressComplete = (data: any, input: string) => {
-    let fullAddress = data?.autoJibunAddress;
+    let fullAddress = data?.roadAddress;
     let extraAddress = '';
 
     if (data.addressType === 'R') {

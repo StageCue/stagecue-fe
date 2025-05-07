@@ -57,9 +57,9 @@ const Home = () => {
   };
 
   const getNotices = async () => {
-    const { body: notices } = await requestNotices({ number: 0, size: 6 });
+    const { result } = await requestNotices({ number: 0, size: 6 });
 
-    setNotices(notices);
+    setNotices(result?.body);
   };
 
   useEffect(() => {
