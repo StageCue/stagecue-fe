@@ -40,7 +40,7 @@ export const useManagePost = () => {
 
   const handleDeadlineConfirm = async (endDate: string) => {
     await requestChangeEndDate({
-      recruitIds: selectedRecruitIds,
+      ids: selectedRecruitIds,
       endDate,
     });
 
@@ -49,7 +49,7 @@ export const useManagePost = () => {
 
   const handleConfirmClick = async () => {
     await requestCloseRecruit({
-      recruitIds: selectedRecruitIds,
+      ids: selectedRecruitIds,
       status: 'CLOSED',
     });
 

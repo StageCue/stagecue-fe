@@ -66,8 +66,8 @@ interface ReqChangeRecruitStatusBody {
   status: 'TEMP' | 'RECRUIT' | 'CLOSED';
 }
 
-interface ReqChangeEndDateBody {
-  recruitIds: number[];
+interface ReqChangeEndDateParams {
+  ids: number[];
   endDate: string;
 }
 
@@ -243,11 +243,15 @@ export const requestEditRecruit = (data: ReqEditRecruitParams, recruitId: string
   return res;
 };
 
-export const requestChangeEndDate = async (data: ReqChangeEndDateBody) => {
+export const requestChangeEndDate = async ({ ids, endDate }: ReqChangeEndDateParams) => {
+  const params = new URLSearchParams();
+  ids.forEach(id => params.append('ids', id.toString()));
+  params.append('endDate', endDate);
+
   const res = await request({
     method: 'put',
     endpoint: 'recruits/endDate',
-    data,
+    params,
   });
 
   return res;

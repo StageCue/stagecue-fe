@@ -9,6 +9,8 @@ import Paginator from '@/components/paginator';
 import { useApplicant } from '../../hooks/useApplicant';
 import { useApplicantContext } from '../Context';
 import { useGetApplyStatus } from '../../hooks/useGetApplyStatus';
+import { useEffect, useState } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const Applicants = () => {
   const {
@@ -39,6 +41,12 @@ const Applicants = () => {
   } = useApplicantContext();
 
   const { data: applyStatus } = useGetApplyStatus();
+  const [searchText, setSearchText] = useState('');
+  const debouncedTerm = useDebounce(searchText, 500);
+
+  useEffect(() => {
+    setTerm(debouncedTerm);
+  }, [debouncedTerm]);
 
   return (
     <ApplicantContainer>
@@ -66,7 +74,7 @@ const Applicants = () => {
           <SearchSVG />
           <SearchInput
             value={term}
-            onChange={e => setTerm(e.target.value)}
+            onChange={e => setSearchText(e.target.value)}
             placeholder="지원자명, 공고명으로 검색"
           />
         </Searchbar>

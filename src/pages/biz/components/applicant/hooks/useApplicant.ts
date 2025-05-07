@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { requestChangingApplyState } from '@/api/biz';
 import { ApplyFilter, ApplyStatus, PassType } from '../../../types/applicants';
 import { useApplicantContext } from '../components/Context';
 import { useApplicantListQuery } from './useQuery';
+import { useGetApplyStatus } from './useGetApplyStatus';
 
 export const useApplicant = () => {
-  const queryClient = useQueryClient();
-  const { data } = useApplicantListQuery();
+  const { data, refetch: refetchApplicants } = useApplicantListQuery();
+  const { refetch: refetchApplyStatus } = useGetApplyStatus();
 
   const {
     page,
@@ -57,7 +57,9 @@ export const useApplicant = () => {
     });
 
     setSelectedApplyIds([]);
-    queryClient.invalidateQueries({ queryKey: ['applications', page] });
+
+    refetchApplyStatus();
+    refetchApplicants();
 
     setIsPassModalOpen(false);
     setIsProfileModalOpen(false);
@@ -72,7 +74,9 @@ export const useApplicant = () => {
     });
 
     setSelectedApplyIds([]);
-    queryClient.invalidateQueries({ queryKey: ['applications', page] });
+
+    refetchApplicants();
+    refetchApplyStatus();
 
     setIsFailModalOpen(false);
     setIsProfileModalOpen(false);

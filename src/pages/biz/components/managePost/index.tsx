@@ -11,6 +11,8 @@ import Paginator from '@/components/paginator';
 import { useManagePost } from './hooks/useManagePost';
 import DeleteModal from './components/deleteModal';
 import { usePostListContext } from './components/context';
+import { useEffect, useState } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const ManagePost = () => {
   const {
@@ -35,7 +37,14 @@ const ManagePost = () => {
 
   const recruits = data?.body ?? [];
 
-  const { page, selectedFilter } = usePostListContext();
+  const { page, selectedFilter, setTerm } = usePostListContext();
+
+  const [searchText, setSearchText] = useState('');
+  const debouncedTerm = useDebounce(searchText, 500);
+
+  useEffect(() => {
+    setTerm(debouncedTerm);
+  }, [debouncedTerm]);
 
   return (
     <ManagePostContainer>
@@ -64,7 +73,10 @@ const ManagePost = () => {
         <Title>공고 관리</Title>
         <Searchbar>
           <SearchSVG />
-          <SearchInput placeholder="공고명으로 검색" />
+          <SearchInput
+            onChange={e => setSearchText(e.target.value)}
+            placeholder="공고명으로 검색"
+          />
         </Searchbar>
       </TitleWrapper>
       <FilterWrapper>

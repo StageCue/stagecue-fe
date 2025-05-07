@@ -58,8 +58,12 @@ const Table = ({
   ) => {
     e.stopPropagation();
 
-    await requestPostFavorite(recruit.id, !recruit.isFavorite);
-    refetchPost;
+    try {
+      await requestPostFavorite(recruit.id, !recruit.isFavorite);
+      refetchPost();
+    } catch (error) {
+      alert('즐겨찾기 수정에 실패했어요. 다시 시도해주세요.');
+    }
   };
 
   useEffect(() => {

@@ -98,7 +98,7 @@ const Table = ({
     setFavoriteFilter(!favoriteFilter);
   };
 
-  const handleStarClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, applyId: number) => {
+  const handleStarClick = async (e: React.MouseEvent<HTMLElement, MouseEvent>, applyId: number) => {
     e.stopPropagation();
     const isCurrentlyMarked = starMarkedIds.includes(applyId);
     toggleFavoriteMutate({ applyId, isFavorite: !isCurrentlyMarked });
