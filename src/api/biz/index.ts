@@ -61,8 +61,8 @@ interface ReqDeleteRecruitsBody {
   applyIds: number[];
 }
 
-interface ReqChangeRecruitStatusBody {
-  recruitIds: number[];
+interface ReqChangeRecruitStatusParmas {
+  ids: number[];
   status: 'TEMP' | 'RECRUIT' | 'CLOSED';
 }
 
@@ -201,11 +201,11 @@ export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   return res;
 };
 
-export const requestCloseRecruit = (data: ReqChangeRecruitStatusBody) => {
+export const requestCloseRecruit = (params: ReqChangeRecruitStatusParmas) => {
   const res = request({
     method: 'put',
     endpoint: 'biz/recruits/status',
-    data,
+    params,
     header: {
       'Content-Type': 'multipart/form-data',
     },
