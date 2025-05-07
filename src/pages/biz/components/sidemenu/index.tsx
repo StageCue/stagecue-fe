@@ -9,7 +9,7 @@ type bizMenuOption = '지원자 관리' | '내 극단 관리' | '공고 관리' 
 
 const Sidemenu = () => {
   const navigate = useNavigate();
-  const { name = '극단을 설정해주세요.' } = useGetTroupeInfo() ?? {};
+  const { name = '극단을 설정해주세요.', logoImg } = useGetTroupeInfo() ?? {};
   const [currentMenu, setCurrentMenu] = useState('지원자 관리');
 
   const location = useLocation();
@@ -47,7 +47,9 @@ const Sidemenu = () => {
     <SideMenuContainer>
       <TroupeWrapper>
         <TopArea>
-          <TroupeLogo />
+          <TroupeLogo>
+            <img src={logoImg} alt="Troupe Logo"></img>
+          </TroupeLogo>
           <Button
             variation="outlined"
             btnClass="assistive"
@@ -125,6 +127,13 @@ const TroupeLogo = styled.div`
   height: 56px;
   border-radius: 12px;
   background-color: gray;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const TroupeName = styled.div`

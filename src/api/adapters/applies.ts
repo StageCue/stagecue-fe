@@ -18,7 +18,7 @@ export interface RawApplication {
       isFavorite: boolean;
       applyStatus: ApplyStatus;
     }[];
-    isLastPage: boolean;
+    totalPages: number;
   };
 }
 
@@ -37,7 +37,7 @@ export const toViewApplicationList = (apiData: RawApplication): BizApplicationQu
   }));
 
   return {
-    totalCount: applications.length,
+    totalCount: apiData.result.totalPages,
     applications,
   };
 };

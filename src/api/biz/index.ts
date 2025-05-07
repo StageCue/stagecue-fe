@@ -3,8 +3,9 @@ import request from '..';
 import { toApiPostTroupe, toViewTroupe, toViewTroupePreview } from '../adapters/troupe';
 import { ApplyStatus } from '@/pages/biz/types/applicants';
 import { toViewApplicationList } from '../adapters/applies';
-import { BizRecruitQuery } from '@/pages/biz/components/managePost/hooks/usePost';
+import { BizRecruitQuery } from '@/pages/biz/components/managePost/hooks/useGetPost';
 import { Gender, RecruitStatus, Sort } from '@/types/biz';
+import { PostSortType } from '@/pages/biz/components/managePost/components/context';
 
 interface ReqChangingApplyState {
   applyIds: string;
@@ -27,9 +28,10 @@ export interface ReqRecruitsParams {
   number: number;
   size?: number;
   key?: number;
-  sort?: 'RECENT' | 'VIEW' | 'APPLY_COUNT' | 'END_DATE';
+  sort?: PostSortType;
+  sortDirection?: 'ASC' | 'DESC';
   isFavorite?: boolean;
-  recruitStatus: RecruitStatus | null;
+  recruitStatus?: RecruitStatus | null;
   search?: string;
 }
 
@@ -192,6 +194,7 @@ export const requestRecruits = async (
 
   return res.result;
 };
+
 export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   const res = request({ method: 'post', endpoint: 'recruits', data });
 
@@ -248,4 +251,12 @@ export const requestChangeEndDate = async (data: ReqChangeEndDateBody) => {
   });
 
   return res;
+};
+
+export const requestPostFavorite = (id: number, favorite: boolean) => {
+  return request({
+    method: 'put',
+    endpoint: `recruits/${id}/favorite`,
+    params: { favorite: favorite },
+  });
 };

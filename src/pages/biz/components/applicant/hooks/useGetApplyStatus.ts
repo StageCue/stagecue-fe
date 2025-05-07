@@ -28,7 +28,6 @@ export const useGetApplyStatus = () => {
           TOTAL: 0,
         } as ApplyStatusCounts
       );
-      console.log(counts);
 
       return counts;
     },

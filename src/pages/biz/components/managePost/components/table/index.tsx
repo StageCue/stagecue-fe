@@ -11,6 +11,8 @@ import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
 import CaretUpSVG from '@assets/icons/caret_up.svg?react';
 import { Recruit } from '@/types/biz';
 import { PostSortType, usePostListContext } from '../context';
+import { requestPostFavorite } from '@/api/biz';
+import { useGetBizPost } from '../../hooks/useGetPost';
 
 interface TableProps {
   recruits: Recruit[];
@@ -28,8 +30,9 @@ const Table = ({
   const { sort, setSort, sortDirection, setSortDirection, favoriteFilter, setFavoriteFilter } =
     usePostListContext();
 
+  const { refetch: refetchPost } = useGetBizPost();
+
   const [isCheckedAll, setIsCheckedAll] = useState(false);
-  const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
 
   const handleSortClick = (field: PostSortType) => {
     if (sort !== field) {
@@ -49,13 +52,14 @@ const Table = ({
     setFavoriteFilter(prev => !(prev ?? false));
   };
 
-  const handleStarClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, recruitId: number) => {
+  const handleStarClick = async (
+    e: React.MouseEvent<Element, MouseEvent>,
+    recruit: Recruit
+  ) => {
     e.stopPropagation();
-    if (starMarkedIds.includes(recruitId)) {
-      setStarMarkedIds(prev => prev.filter(id => id !== recruitId));
-    } else {
-      setStarMarkedIds(prev => [...prev, recruitId]);
-    }
+
+    await requestPostFavorite(recruit.id, !recruit.isFavorite);
+    refetchPost;
   };
 
   useEffect(() => {
@@ -65,14 +69,6 @@ const Table = ({
       setIsCheckedAll(false);
     }
   }, [selectedRecruitIds, recruits]);
-
-  useEffect(() => {
-    if (recruits?.length > 0) {
-      const favoriteIds = recruits.filter(recruit => recruit.isFavorite).map(recruit => recruit.id);
-
-      setStarMarkedIds(favoriteIds);
-    }
-  }, [recruits]);
 
   return (
     <TableContainer>
@@ -105,22 +101,15 @@ const Table = ({
         <StateColumn>상태</StateColumn>
       </Header>
       <Body>
-        {recruits?.map(
-          ({ title, id, applyCount, recruitEndDate: recruitEnd, recruitStatus: status }) => (
-            <RecruitRow
-              key={id}
-              title={title}
-              id={id}
-              applyCount={applyCount}
-              recruitEnd={recruitEnd}
-              status={status}
-              isFavorite={starMarkedIds.includes(id)}
-              onClickStar={(e, id) => handleStarClick(e, id)}
-              isSelected={selectedRecruitIds?.includes(id)}
-              onClickCheckbox={onClickCheckbox}
-            />
-          )
-        )}
+        {recruits?.map(recruit => (
+          <RecruitRow
+            key={recruit.id}
+            recruit={recruit}
+            isSelected={selectedRecruitIds?.includes(recruit.id)}
+            onClickStar={e => handleStarClick(e, recruit)}
+            onClickCheckbox={onClickCheckbox}
+          />
+        ))}
         {recruits?.length === 0 && <NoPost />}
       </Body>
     </TableContainer>

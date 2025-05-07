@@ -4,32 +4,19 @@ import CheckboxCheckedSVG from '@assets/icons/checkbox_checked.svg?react';
 import styled from 'styled-components';
 import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
 import Chip from '@/components/chip/chip';
-import { RecruitStatusLabel } from '@/types/biz';
+import { Recruit, RecruitStatusLabel } from '@/types/biz';
 import { useNavigate } from 'react-router-dom';
 
 interface RecruitRowProps {
-  title: string;
-  applyCount: number;
-  recruitEnd: string;
-  status: keyof typeof RecruitStatusLabel;
-  id: number;
-  isFavorite: boolean;
+  recruit: Recruit;
   isSelected: boolean;
+  onClickStar: (e: React.MouseEvent, recruit: { id: number; isFavorite: boolean }) => void;
   onClickCheckbox: (id: number) => void;
-  onClickStar: (e: React.MouseEvent<HTMLElement>, id: number) => void;
 }
 
-const RecruitRow = ({
-  title,
-  applyCount,
-  recruitEnd,
-  id,
-  status,
-  isSelected,
-  isFavorite,
-  onClickCheckbox,
-  onClickStar,
-}: RecruitRowProps) => {
+const RecruitRow = ({ recruit, isSelected, onClickStar, onClickCheckbox }: RecruitRowProps) => {
+  const { id, title, applyCount, recruitEndDate, recruitStatus, isFavorite } = recruit;
+
   const STATUS_THEME_MAP: Record<keyof typeof RecruitStatusLabel, 'red' | 'yellow' | 'green'> = {
     DRAFT: 'yellow',
     OPEN: 'green',
@@ -58,7 +45,7 @@ const RecruitRow = ({
         <StarIconWrapper
           onClick={e => {
             e.stopPropagation();
-            onClickStar(e, id);
+            onClickStar(e, recruit);
           }}
           $isMarked={isFavorite}
         >
@@ -67,9 +54,9 @@ const RecruitRow = ({
       </CheckboxInRow>
       <PostTitle onClick={() => navigate(`/biz/cast/${id}/form`)}>{title}</PostTitle>
       <Applicant>{applyCount}건</Applicant>
-      <Date>{recruitEnd}</Date>
+      <Date>{recruitEndDate}</Date>
       <State>
-        <Chip theme={STATUS_THEME_MAP[status]}>{RecruitStatusLabel[status]}</Chip>
+        <Chip theme={STATUS_THEME_MAP[recruitStatus]}>{RecruitStatusLabel[recruitStatus]}</Chip>
       </State>
     </RecruitRowContainer>
   );

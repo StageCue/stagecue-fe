@@ -14,8 +14,8 @@ export interface BizRecruitQuery {
   };
 }
 
-export const useBizPost = () => {
-  const { page, selectedFilter, favoriteFilter, term, sort } = usePostListContext();
+export const useGetBizPost = () => {
+  const { page, selectedFilter, favoriteFilter, term, sort, sortDirection } = usePostListContext();
 
   return useQuery<BizRecruitQuery['result']>({
     queryKey: ['bizRecruits', page, selectedFilter, favoriteFilter, term, sort],
@@ -23,7 +23,8 @@ export const useBizPost = () => {
       requestRecruits({
         search: term ?? undefined,
         number: page,
-        sort: sort ?? undefined,
+        sort: sort,
+        sortDirection: sortDirection,
         isFavorite: favoriteFilter,
         recruitStatus: selectedFilter === '전체' ? null : selectedFilter,
       }),

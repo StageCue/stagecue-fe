@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { requestChangeEndDate, requestCloseRecruit, requestDeleteRecruit } from '@/api/biz';
 import { RecruitStatus } from '@/types/biz';
-import { useBizPost } from './usePost';
+import { useGetBizPost } from './useGetPost';
 import { usePostListContext } from '../components/context';
 
 export type ManageRecruitFilterType = RecruitStatus | '전체';
@@ -14,7 +14,7 @@ export const useManagePost = () => {
   const [isChangeDeadlieModalOpen, setIsChangeDeadlineModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { data, refetch } = useBizPost();
+  const { data, refetch } = useGetBizPost();
 
   const handleFilterClick = (filter: ManageRecruitFilterType) => {
     setSelectedFilter(filter);

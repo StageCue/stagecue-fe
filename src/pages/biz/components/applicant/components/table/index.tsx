@@ -42,7 +42,6 @@ const Table = ({
 }: TableProps) => {
   const [isCheckedAll, setIsCheckedAll] = useState(false);
   const [isGenderSortShowing, setIsGenderSortShowing] = useState(false);
-  const [isStatusAsc, setIsStatusAsc] = useState(true);
   const [starMarkedIds, setStarMarkedIds] = useState<number[]>([]);
 
   const {
@@ -74,10 +73,6 @@ const Table = ({
     } else {
       setSortDirection(sortDirection === 'ASC' ? 'DESC' : 'ASC');
     }
-  };
-
-  const handleStatusSortClick = () => {
-    setIsStatusAsc(prev => !prev);
   };
 
   const handleCheckboxClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -196,10 +191,7 @@ const Table = ({
             {sort === 'APPLY_DATE' && sortDirection === 'ASC' ? <CaretUpSVG /> : <CaretDownSVG />}
           </CaretWrapper>
         </DateColumn>
-        <StateColumn onClick={handleStatusSortClick}>
-          상태
-          <CaretWrapper>{isStatusAsc ? <CaretDownSVG /> : <CaretUpSVG />}</CaretWrapper>
-        </StateColumn>
+        <StateColumn>상태</StateColumn>
       </Header>
       <Body>
         {applications?.map(
