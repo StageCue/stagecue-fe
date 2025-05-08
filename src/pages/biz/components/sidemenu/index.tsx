@@ -27,6 +27,8 @@ const Sidemenu = () => {
       navigate('/biz/troupe');
     } else if (option === '공고 관리') {
       navigate('/biz/cast');
+    } else if (option === 'My Stage') {
+      navigate('/mypage');
     }
 
     setCurrentMenu(option);
@@ -39,7 +41,7 @@ const Sidemenu = () => {
       setCurrentMenu('내 극단 관리');
     } else if (location.pathname.startsWith('/biz/cast')) {
       setCurrentMenu('공고 관리');
-    } else if (location.pathname.startsWith('/biz/my-stage')) {
+    } else if (location.pathname.startsWith('/mypage')) {
       setCurrentMenu('My Stage');
     }
   }, [location.pathname]);
