@@ -200,9 +200,13 @@ const Log = styled.div`
   gap: 4px;
 `;
 
-const LogName = styled.div``;
+const LogName = styled.div`
+  white-space: nowrap;
+`;
 
-const LogDate = styled.div``;
+const LogDate = styled.div`
+  white-space: nowrap;
+`;
 
 const Divider = styled.div`
   height: 20px;

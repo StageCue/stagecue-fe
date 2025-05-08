@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import ChevronDownSVG from '@/assets/icons/chebron_down_s.svg?react';
 import ApplyList from './components/applyList';
 import { useMyStageData } from '../../hooks/useMyStageData.ts';
+import useHandleClickOutside from '@/hooks/useHandleClickOutside';
 // import { requestApplications } from '@/api/biz/index.ts';
 // import { useQuery } from '@tanstack/react-query';
 
@@ -21,7 +22,23 @@ const ApplyHistory = () => {
 
   const [selectedPhase, setSelectedPhase] = useState<applyPhaseType>('APPLY');
   const [selectedFilter, setSelectedFilter] = useState<filterType>('전체');
-  const [isFilterMenuShowing, setIsFilterMenuShowing] = useState<boolean>(false);
+
+  const buttonWrapperRef = useRef<HTMLDivElement>(null);
+  const { isOpen: isFilterMenuShowing, setIsOpen: setIsFilterMenuShowing } =
+    useHandleClickOutside(buttonWrapperRef);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (buttonWrapperRef.current && !buttonWrapperRef.current.contains(event.target as Node)) {
+        setIsFilterMenuShowing(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const getStatusCount = (status: string) => {
     return recruitsStatus?.result?.find(item => item.applyStatus === status)?.count ?? 0;
@@ -107,7 +124,7 @@ const ApplyHistory = () => {
         <TitleWrapper>
           <ItemTitle>{parsePhase(selectedPhase)}</ItemTitle>
           {(selectedPhase === 'APPLY' || selectedPhase === 'CANCELED') && (
-            <FilterBtnWrapper>
+            <FilterBtnWrapper ref={buttonWrapperRef}>
               <FilterBtn onClick={handleFilterBtnClick}>
                 {parseFilterText(selectedFilter)} <ChevronDownSVG />
               </FilterBtn>

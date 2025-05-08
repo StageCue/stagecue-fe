@@ -13,13 +13,13 @@ interface ReqScrapsParams {
 interface ReqAppliedCastsParams {
   key: number;
   size?: number;
-  applyStatuses:
-    | 'APPLY' // 지원완료
-    | 'OPEN' // 열람
-    | 'PASS' // 서류통과
-    | 'WIN' // 합격
-    | 'LOSE' // 불합격
-    | 'CANCELED'; // 지원취소
+  applyStatuses: string;
+  // | 'APPLY' // 지원완료
+  // | 'OPEN' // 열람
+  // | 'PASS' // 서류통과
+  // | 'WIN' // 합격
+  // | 'LOSE' // 불합격
+  // | 'CANCELED'; // 지원취소
 }
 
 interface ReqChangeProfileData {
