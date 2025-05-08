@@ -1,4 +1,6 @@
 import axios from 'axios';
+import useSessionStore from '@/store/session';
+
 interface RequestPrams {
   method: 'get' | 'post' | 'put' | 'delete';
   endpoint: string;
@@ -11,34 +13,30 @@ const apiClient = axios.create({
   baseURL: '/api/v1/',
 });
 
-// apiClient.interceptors.response.use(
-//   response => response,
-//   async error => {
-//     // const originalRequest = error.config;
+apiClient.interceptors.response.use(
+  response => response,
+  async error => {
+    const response = error?.response?.data?.error?.element;
+    // stagecue.auth.user-empty=로그인이 필요해요.
+    // stagecue.login-user.not-authorized=권한이 없어요.
+    // stagecue.login-user.user-role-missing=권한이 없어요.
+    // stagecue.login-user.token-missing=권한이 없어요.
+    const logoutOptions = [
+      'stagecue.auth.user-empty',
+      'stagecue.login-user.not-authorized',
+      'stagecue.login-user.user-role-missing',
+      'stagecue.login-user.token-missing',
+    ];
 
-//     // if (error?.response?.status === 401 && !originalRequest?._retry) {
-//     //   originalRequest._retry = true;
+    if (logoutOptions?.includes(response?.code?.value)) {
+      useSessionStore.getState().logoutSession();
+      useSessionStore.persist.clearStorage();
+      window.location.href = '/auth/login';
+    }
 
-//     //   if (refreshToken) {
-//     //     try {
-//     //       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-//     //         await requestRefreshSession(refreshToken);
-//     //       sessionStorage.setItem('access_token', newAccessToken);
-//     //       sessionStorage.setItem('refresh_token', newRefreshToken);
-//     //       originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-//     //       return apiClient(originalRequest);
-//     //     } catch (refreshError) {
-//     //       console.error('토큰 갱신 실패: ', refreshError);
-//     //       window.location.href = '/login'; // 로그인 페이지로 이동
-//     //     }
-//     //   } else {
-//     //     window.location.href = '/login';
-//     //   }
-//     // }
-
-//     return Promise.reject(error);
-//   }
-// );
+    return Promise.reject(error);
+  }
+);
 
 const request = async ({ method, endpoint, data, header = {}, params }: RequestPrams) => {
   const url = `${endpoint}`;
