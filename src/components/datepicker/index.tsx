@@ -5,9 +5,9 @@ import CaretRight from '@assets/icons/caret_right_cal.svg?react';
 import 'react-datepicker/dist/react-datepicker.css';
 import styled from 'styled-components';
 import Button from '../buttons/button';
-import { forwardRef } from 'react';
+import { ComponentProps, forwardRef } from 'react';
 
-interface DatepickerProps {
+interface DatepickerProps extends Omit<ComponentProps<typeof DatePicker>, 'ref'> {
   selectedDate: Date | null;
   onChangeDate: (date: Date | null) => void;
   minDate?: Date;
@@ -16,7 +16,7 @@ interface DatepickerProps {
 }
 
 const Datepicker = forwardRef<DatePicker, DatepickerProps>(
-  ({ selectedDate, onChangeDate, pickerText, maxDate }, ref) => {
+  ({ selectedDate, onChangeDate, pickerText, maxDate, ...props }, ref) => {
     const handleApplyClick = () => {
       if (ref && 'current' in ref && ref.current) {
         ref.current.setOpen(false);
@@ -39,11 +39,14 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
           maxDate={maxDate}
           dateFormat="yyyy.MM.dd"
           selected={selectedDate}
+          // @ts-expect-error - Discriminated Union bug
+          selectsRange={false}
           onChange={onChangeDate}
           placeholderText="선택해주세요."
           shouldCloseOnSelect={false}
           disabledKeyboardNavigation
           customInputRef=""
+          {...props}
           renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
             <CustomHeader
               date={date}
@@ -62,7 +65,13 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
 
 export default Datepicker;
 
-const DatePickerContainer = styled.div``;
+const DatePickerContainer = styled.div`
+  && input[disabled] {
+    color: #dadada;
+    background-color: white;
+    cursor: not-allowed;
+  }
+`;
 
 interface CustomHeaderProps {
   date: Date;

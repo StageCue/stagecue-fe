@@ -57,8 +57,8 @@ export interface ReqEditRecruitParams {
   practiceDay: string[];
 }
 
-interface ReqDeleteRecruitsBody {
-  applyIds: number[];
+interface ReqDeleteRecruitsParams {
+  ids: number[];
 }
 
 interface ReqChangeRecruitStatusParmas {
@@ -214,11 +214,13 @@ export const requestCloseRecruit = (params: ReqChangeRecruitStatusParmas) => {
   return res;
 };
 
-export const requestDeleteRecruit = (data: ReqDeleteRecruitsBody) => {
+export const requestDeleteRecruit = ({ ids }: ReqDeleteRecruitsParams) => {
+  const params = new URLSearchParams();
+  ids.forEach(id => params.append('ids', id.toString()));
   const res = request({
     method: 'delete',
     endpoint: `recruits`,
-    data,
+    params,
   });
 
   return res;

@@ -16,7 +16,6 @@ import { convertFileToURL } from '@/utils/file';
 import {
   requestCreateRecruit,
   requestDeleteRecruit,
-  // requestDeleteRecruit,
   requestRecruitFormData,
   requestUploadImage,
 } from '@/api/biz';
@@ -32,6 +31,7 @@ import DeleteModal from '../deleteModal';
 import { daysArrayToDecimal, weekdayStringsToBinary } from '@/utils/daysArrayToDecimal';
 import { RecruitStatus } from '@/pages/biz/types/applicants';
 import { adaptEditRecruitInputsToDTO } from './adapter';
+import { INDEFINITE_DATE } from '@/constants/biz';
 
 export interface EditRecruitInputs {
   title: string;
@@ -147,6 +147,7 @@ const EditRecruit = () => {
 
   const [recruitStatus, setRecruitStatus] = useState<RecruitStatus>('OPEN');
   const [isAlwaysRecruit, setIsAlwaysRecruit] = useState(false);
+  const [isPermanentPerformance, setIsPermanentPerformance] = useState(false);
 
   const recruitEndDatepickerRef = useRef<DatePicker | null>(null);
   const [recruitEnd, setRecruitEnd] = useState<Date | null>(null);
@@ -237,13 +238,18 @@ const EditRecruit = () => {
     if (isLoading) return;
 
     setIsLoading(true);
+
+    const fieldData = adaptEditRecruitInputsToDTO(data);
+
     try {
       const recruitImages = await requestUploadImageFiles();
       const recruitingParts = partsValue?.map(({ value }) => value);
-      const fieldData = adaptEditRecruitInputsToDTO(data);
 
       const { result } = await requestCreateRecruit({
         ...fieldData,
+        recruitEndDate: isAlwaysRecruit ? INDEFINITE_DATE : recruitEndValue,
+        theatreStartDate: isPermanentPerformance ? INDEFINITE_DATE : stgStartValue,
+        theatreEndDate: isPermanentPerformance ? INDEFINITE_DATE : stgEndValue,
         monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
         recruitingParts,
         recruitImages,
@@ -423,7 +429,7 @@ const EditRecruit = () => {
 
   const deleteRecruit = async () => {
     await requestDeleteRecruit({
-      applyIds: [Number(id)],
+      ids: [Number(id)],
     });
 
     setIsDeleteModalOpen(false);
@@ -444,9 +450,22 @@ const EditRecruit = () => {
     if (res.monthlyFee !== 0) {
       setIsMontlyFee(true);
     }
-    setValue('recruitEnd', res.recruitEndDate);
+
+    if (res.recruitEndDate === INDEFINITE_DATE) {
+      setIsAlwaysRecruit(true);
+    } else {
+      handleRecruitEndChange(new Date(res.recruitEndDate));
+    }
+
+    if (res.theatreStartDate === INDEFINITE_DATE) {
+      setIsPermanentPerformance(true);
+    } else {
+      handleStageRangeChange([new Date(res.theatreStartDate), new Date(res.theatreEndDate)]);
+    }
+
     setValue('practice.start', res.practiceStartDate);
     setValue('practice.end', res.practiceEndDate);
+    handlePracticeRangeChange([new Date(res.practiceStartDate), new Date(res.practiceEndDate)]);
     setValue('practice.dayOfWeek', res.practiceDay);
     setPracticeDays(weekdayStringsToBinary(res.practiceDay));
     setValue('practice.address', res.practiceAddress);
@@ -454,15 +473,9 @@ const EditRecruit = () => {
     setValue('category', res.recruitCategory);
     setCategoryText(res.recruitCategory);
     setValue('artworkName', res.artworkName);
-    setValue('stage.start', res.theatreStartDate);
-    setValue('stage.end', res.theatreEndDate);
     setValue('stage.address', res.theatreAddress);
     setValue('stage.addressDetail', res.theatreAddressDetail);
-
-    handleRecruitEndChange(new Date(res.recruitEndDate));
-    handlePracticeRangeChange([new Date(res.practice.start), new Date(res.practiceEndDate)]);
     handleApplyDayClick(weekdayStringsToBinary(res.practiceDay));
-    handleStageRangeChange([new Date(res.theatreStartDate), new Date(res.theatreEndDate)]);
 
     const currentImagesArray: { id: string; url: string }[] = res.recruitImages.map(
       (url: string) => {
@@ -590,10 +603,9 @@ const EditRecruit = () => {
                   lineHeight={146.7}
                   letterSpacing={0.96}
                   onClick={() => setRecruitStatus('DRAFT')}
-                  // TODO: <2025-03-02> 백에서 수정이 필요한 부분이여서 disabled true로 설정
-                  disabled={true}
+                  disabled={isSaveDisabled}
                 >
-                  임시저장
+                  임시등록
                 </Button>
                 <Button
                   type="button"
@@ -611,7 +623,7 @@ const EditRecruit = () => {
                   }}
                   disabled={isSaveDisabled}
                 >
-                  올리기
+                  등록
                 </Button>
               </>
             )}
@@ -674,7 +686,7 @@ const EditRecruit = () => {
             {imageUrlArray?.map(({ url, id }, index) => (
               <ImageWrapper key={id}>
                 {!imageFileArray[index].file ? (
-                  <RecruitImage key={id} src={`https://s3.stagecue.co.kr/stagecue/${url}`} />
+                  <RecruitImage key={id} src={url} />
                 ) : (
                   <RecruitImage key={id} src={url} />
                 )}
@@ -710,6 +722,7 @@ const EditRecruit = () => {
                   handleRecruitEndChange(date);
                 }}
                 pickerText="모집 마감일을 입력해주세요"
+                disabled={isAlwaysRecruit}
               />
               <IconWrapper onClick={handleRecruitCalendarClick}>
                 <CalendarSVG />
@@ -897,25 +910,35 @@ const EditRecruit = () => {
             />
           </InputWrapper>
         </PairInputWrapper>
-        <InputWrapper>
-          <RequiredLabel>
-            공연기간
-            <RequiedRedDot />
-          </RequiredLabel>
-          <WithIconInputWrapper $isDirty={Boolean(dirtyFields.stage?.start)} $isError={false}>
-            <RangeDatepicker
-              ref={stageDatepickerRef}
-              selectedRange={stageDateRange}
-              onChangeDate={(range: [Date | null, Date | null]) => {
-                handleStageRangeChange(range);
-              }}
-              pickerText="공연기간을 입력해주세요"
+        <PairInputWrapper>
+          <InputWrapper>
+            <RequiredLabel>
+              공연기간
+              <RequiedRedDot />
+            </RequiredLabel>
+            <WithIconInputWrapper $isDirty={Boolean(dirtyFields.stage?.start)} $isError={false}>
+              <RangeDatepicker
+                ref={stageDatepickerRef}
+                selectedRange={stageDateRange}
+                onChangeDate={(range: [Date | null, Date | null]) => {
+                  handleStageRangeChange(range);
+                }}
+                pickerText="공연기간을 입력해주세요"
+                disabled={isPermanentPerformance}
+              />
+              <IconWrapper onClick={handleStageCalendarClick}>
+                <CalendarSVG />
+              </IconWrapper>
+            </WithIconInputWrapper>
+          </InputWrapper>
+          <CheckboxWrapper>
+            <Checkbox
+              checked={isPermanentPerformance}
+              onChange={() => setIsPermanentPerformance(!isPermanentPerformance)}
+              label="상설공연"
             />
-            <IconWrapper onClick={handleStageCalendarClick}>
-              <CalendarSVG />
-            </IconWrapper>
-          </WithIconInputWrapper>
-        </InputWrapper>
+          </CheckboxWrapper>
+        </PairInputWrapper>
         <InputWrapper>
           <RequiredLabel>
             공연위치

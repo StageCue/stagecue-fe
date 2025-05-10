@@ -5,7 +5,7 @@ import StarSVG from '@assets/icons/star.svg?react';
 import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
 import CaretDownSVG from '@assets/icons/caret_down.svg?react';
 import CaretUpSVG from '@assets/icons/caret_up.svg?react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import NoApplicant from './components/noApplicant';
 import RadioSVG from '@assets/icons/radio_s.svg?react';
 import RadioCheckedSVG from '@assets/icons/radio_s_checked.svg?react';
@@ -56,7 +56,8 @@ const Table = ({
     setSelectedApplyIds,
   } = useApplicantContext();
 
-  const { applications } = useApplicantListQuery().data!;
+  const { data } = useApplicantListQuery();
+  const applications = useMemo(() => data?.applications ?? [], [data]);
 
   const { mutate: toggleFavoriteMutate } = useMutation({
     mutationFn: ({ applyId, isFavorite }: { applyId: number; isFavorite: boolean }) =>
@@ -83,7 +84,7 @@ const Table = ({
 
     if (isChecking) {
       // 전체 선택
-      const all = applications.map(({ applyId, performerName }) => ({
+      const all = applications?.map(({ applyId, performerName }) => ({
         id: applyId,
         name: performerName,
       }));
@@ -132,7 +133,7 @@ const Table = ({
   }, [selectedApplyIds, applications]);
 
   useEffect(() => {
-    if (applications.length > 0) {
+    if (applications?.length > 0) {
       const favoriteIds = applications
         .filter(application => application.isFavorite)
         .map(application => application.applyId);

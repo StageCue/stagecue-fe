@@ -13,10 +13,11 @@ interface RangeDatepickerProps {
   minDate?: Date;
   maxDate?: Date;
   pickerText: string;
+  disabled?: boolean;
 }
 
 const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
-  ({ selectedRange, onChangeDate, pickerText }, ref) => {
+  ({ selectedRange, onChangeDate, pickerText, disabled }, ref) => {
     const [startDate, endDate] = selectedRange;
 
     const handleApplyClick = () => {
@@ -41,6 +42,7 @@ const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
           onChange={update => onChangeDate(update)}
           shouldCloseOnSelect={false}
           disabledKeyboardNavigation
+          disabled={disabled}
           customInputRef=""
           renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
             <CustomHeader
@@ -61,6 +63,12 @@ const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
 export default RangeDatepicker;
 
 const RangeDatePickerContainer = styled.div`
+  && input[disabled] {
+    color: #dadada;
+    background-color: white;
+    cursor: not-allowed;
+  }
+
   .react-datepicker__day--in-range:not(.react-datepicker__day--range-start) {
     position: relative;
 

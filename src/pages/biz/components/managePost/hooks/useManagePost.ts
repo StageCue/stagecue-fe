@@ -79,7 +79,7 @@ export const useManagePost = () => {
 
   const deleteRecruit = async () => {
     await requestDeleteRecruit({
-      applyIds: selectedRecruitIds,
+      ids: selectedRecruitIds,
     });
 
     setIsDeleteModalOpen(false);
