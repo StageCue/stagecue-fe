@@ -54,7 +54,7 @@ const ProfileModal = ({
               <NameWrapper>
                 <Name>{name}</Name>
                 <SlashSVG />
-                <Age>{detail && calculateKoreanAge(detail.birthday)}</Age>
+                <Age>{detail && calculateKoreanAge(detail.birthDay)}</Age>
                 <StatusTag status={applyStatus} />
               </NameWrapper>
               <ButtonsWrapper>

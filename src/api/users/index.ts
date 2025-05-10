@@ -127,7 +127,7 @@ export const requestProfileList = async () => {
 export const requestProfileDetail = async (profileId: string) => {
   const res = await request({
     method: 'get',
-    endpoint: `profiles/${profileId}`,
+    endpoint: `/troupes/applies/${profileId}/profile`,
   });
 
   return res;

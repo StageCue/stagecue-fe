@@ -10,9 +10,18 @@ import MobileSVG from '@assets/icons/mobile.svg?react';
 import calculateKoreanAge from '@/utils/calculateKoreanAge';
 
 export interface ProfileDetailData {
-  birthday: string;
-  dateCreated: string;
-  duration: string;
+  id: number;
+  birthDay: string;
+  age: number;
+  name: string;
+  height: number;
+  weight: number;
+  phoneNumber: string;
+  email: string;
+  title: string;
+  introduce: string;
+  thumbnail: string;
+  images: string[];
   experiences: {
     artworkName: string;
     artworkPart: string;
@@ -20,13 +29,6 @@ export interface ProfileDetailData {
     startDate: string;
     endDate: string;
   }[];
-  height: number;
-  weight: number;
-  images: string[];
-  introduce: string;
-  isDefault: boolean;
-  thumbnail: string;
-  title: string;
 }
 
 const ProfileDetail = () => {
@@ -89,7 +91,7 @@ const ProfileDetail = () => {
             <NameAge>
               <Name>{sessionStore?.username}</Name>
               <SlashSVG />
-              <Age>{detail && calculateKoreanAge(detail?.birthday)}</Age>
+              <Age>{detail && calculateKoreanAge(detail?.birthDay)}</Age>
             </NameAge>
             <Button
               type="button"
