@@ -25,17 +25,15 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ubuntu
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "dist"
-          target: "/home/ubuntu/"
+          source: 'dist'
+          target: '/home/ubuntu/'
 
-      - name: Restart Docker container
+      - name: Copy dist into container & restart
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ubuntu
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /home/ubuntu
-            rm -rf /usr/share/nginx/html/*
-            cp -r ./dist/* /usr/share/nginx/html/
+            docker cp /home/ubuntu/dist/. stagecue-fe:/usr/share/nginx/html
             docker restart stagecue-fe
