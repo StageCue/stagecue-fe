@@ -20,7 +20,7 @@ const DefaultFooter = () => {
         <TextContainer>
           <TextWrapper>
             <TextRow>
-              (주)노소리 <TextDivder>|</TextDivder> 대표 노영준
+              (주)노소리 <TextDivder>|</TextDivder> 대표 OOO
             </TextRow>
             <TextRow>
               경기도 김포시 통진읍 서암로 325-40 <TextDivder>|</TextDivder>사업자등록번호
