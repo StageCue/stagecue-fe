@@ -31,8 +31,8 @@ const ProfileModal = ({
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
-    const res = await requestProfileDetail(id);
-    setDetail(res);
+    const { result } = await requestProfileDetail(id);
+    setDetail(result);
   };
 
   useEffect(() => {
@@ -89,7 +89,7 @@ const ProfileModal = ({
             <ImagesWrapper>
               <Thumbnail src={detail?.thumbnail} />
               <Images>
-                {detail?.images.map(url => (
+                {detail?.images?.map(url => (
                   <Image src={url} />
                 ))}
               </Images>
@@ -124,7 +124,7 @@ const ProfileModal = ({
             <Information>
               <InformationTitle>경력 (총 개월)</InformationTitle>
               <DataWrapper>
-                {detail?.experiences.map(exp => (
+                {detail?.experiences?.map(exp => (
                   <ExpRow>
                     <RoleAndPeriod>
                       <Role>{exp.artworkPart}</Role>

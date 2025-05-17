@@ -236,7 +236,7 @@ const Table = ({
               </Row>
               {isProfileModalOpen && showingApplicant.id === applyId && (
                 <ProfileModal
-                  id={`${profileId}`}
+                  id={`${applyId}`}
                   onClickPass={onClickPass}
                   onClickFail={onClickFail}
                   onClose={onCloseModal}
