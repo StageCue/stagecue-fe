@@ -602,7 +602,10 @@ const EditRecruit = () => {
                   padding="9px 20px"
                   lineHeight={146.7}
                   letterSpacing={0.96}
-                  onClick={() => setRecruitStatus('DRAFT')}
+                  onClick={() => {
+                    setRecruitStatus('DRAFT');
+                    setIsNewRecruitModalOpen(true);
+                  }}
                   disabled={isSaveDisabled}
                 >
                   임시등록
@@ -958,8 +961,12 @@ const EditRecruit = () => {
           <ModalPortal>
             <Overlay>
               <Modal>
-                <ModalTitle>공고 올리기</ModalTitle>
-                <ModalSubTitle>작성하신 내용으로 공고를 올려볼까요?</ModalSubTitle>
+                <ModalTitle>{recruitStatus === 'DRAFT' ? '임시 저장' : '공고 올리기'}</ModalTitle>
+                <ModalSubTitle>
+                  {recruitStatus === 'DRAFT'
+                    ? '작성하신 내용을 임시저장합니다. \n 공고 노출페이지에는 보이지 않습니다. '
+                    : '작성하신 내용으로 공고를 올려볼까요?'}
+                </ModalSubTitle>
                 <ButtonContainer>
                   <Button
                     type="button"
@@ -1012,6 +1019,7 @@ const ModalTitle = styled.div`
   line-height: 28px;
   color: #171719ff;
   text-align: center;
+  margin-bottom: 8px;
 `;
 
 const ModalSubTitle = styled.div`
@@ -1020,6 +1028,7 @@ const ModalSubTitle = styled.div`
   line-height: 24px;
   color: #2e2f33e0;
   text-align: center;
+  white-space: pre-line;
 `;
 
 const ButtonContainer = styled.div`
