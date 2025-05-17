@@ -128,23 +128,6 @@ const EditRecruit = () => {
     'stage.addressDetail',
   ]);
 
-  const isSaveDisabled =
-    !titleValue ||
-    !partsValue ||
-    !introduceValue ||
-    !recruitEndValue ||
-    !practiceStartValue ||
-    !practiceEndValue ||
-    !practiceDays ||
-    !addressValue ||
-    !addressDetailValue ||
-    !categoryValue ||
-    !artworkNameValue ||
-    !stgStartValue ||
-    !stgEndValue ||
-    !stgAddressValue ||
-    !stgAddressDetailValue;
-
   const [recruitStatus, setRecruitStatus] = useState<RecruitStatus>('OPEN');
   const [isAlwaysRecruit, setIsAlwaysRecruit] = useState(false);
   const [isPermanentPerformance, setIsPermanentPerformance] = useState(false);
@@ -160,6 +143,22 @@ const EditRecruit = () => {
 
   const stageDatepickerRef = useRef<DatePicker | null>(null);
   const [stageDateRange, setStageDateRange] = useState<[Date | null, Date | null]>([null, null]);
+
+  const isSaveDisabled =
+    !titleValue ||
+    !partsValue ||
+    !introduceValue ||
+    !practiceStartValue ||
+    !practiceEndValue ||
+    !practiceDays ||
+    !addressValue ||
+    !addressDetailValue ||
+    !categoryValue ||
+    !artworkNameValue ||
+    (!isPermanentPerformance && (!stgStartValue || !stgEndValue)) ||
+    (!isAlwaysRecruit && !recruitEndValue) ||
+    !stgAddressValue ||
+    !stgAddressDetailValue;
 
   const handleRecruitCalendarClick = () => {
     if (recruitEndDatepickerRef.current) {

@@ -198,7 +198,6 @@ const Table = ({
         {applications?.map(
           ({
             applyId,
-            profileId,
             age,
             gender,
             performerName,
