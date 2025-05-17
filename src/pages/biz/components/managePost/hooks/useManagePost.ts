@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { requestChangeEndDate, requestCloseRecruit, requestDeleteRecruit } from '@/api/biz';
+import { requestChangeEndDate, requestDeleteRecruit } from '@/api/biz';
 import { RecruitStatus } from '@/types/biz';
 import { useGetBizPost } from './useGetPost';
 import { usePostListContext } from '../components/context';
+import { formatDate } from '@/utils/format';
 
 export type ManageRecruitFilterType = RecruitStatus | '전체';
 
@@ -44,18 +45,22 @@ export const useManagePost = () => {
       endDate,
     });
 
-    refetch;
+    setIsChangeDeadlineModalOpen(false);
+    refetch();
   };
 
   const handleConfirmClick = async () => {
-    await requestCloseRecruit({
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    await requestChangeEndDate({
       ids: selectedRecruitIds,
-      status: 'CLOSED',
+      endDate: formatDate(yesterday),
     });
 
     setCloseRecruitModalOpen(false);
 
-    refetch;
+    refetch();
   };
 
   const handleCheckboxClick = (id: number) => {
@@ -83,8 +88,7 @@ export const useManagePost = () => {
     });
 
     setIsDeleteModalOpen(false);
-
-    refetch;
+    refetch();
   };
 
   const handlePageChange = (newPage: number) => {

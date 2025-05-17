@@ -70,7 +70,7 @@ export const useApplicant = () => {
 
     await requestChangingApplyState({
       applyIds: `${idsArray}`,
-      applyStatus: 'CANCELED',
+      applyStatus: 'LOSE',
     });
 
     setSelectedApplyIds([]);

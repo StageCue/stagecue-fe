@@ -9,7 +9,7 @@ import { PostSortType } from '@/pages/biz/components/managePost/components/conte
 
 interface ReqChangingApplyState {
   applyIds: string;
-  applyStatus: 'PASS' | 'WIN' | 'CANCELED';
+  applyStatus: 'PASS' | 'WIN' | 'LOSE';
 }
 
 interface ReqAppliesParams {
@@ -201,7 +201,9 @@ export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   return res;
 };
 
-export const requestCloseRecruit = (params: ReqChangeRecruitStatusParmas) => {
+export const requestCloseRecruit = ({ ids }: ReqChangeRecruitStatusParmas) => {
+  const params = new URLSearchParams();
+  ids.forEach(id => params.append('ids', id.toString()));
   const res = request({
     method: 'put',
     endpoint: 'biz/recruits/status',

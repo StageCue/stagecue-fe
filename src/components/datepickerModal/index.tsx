@@ -1,13 +1,14 @@
-import styled from "styled-components";
-import Overlay from "../modal/overlay";
+import styled from 'styled-components';
+import Overlay from '../modal/overlay';
 
-import DatePicker from "react-datepicker";
-import CaretLeft from "@assets/icons/caret_left_cal.svg?react";
-import CaretRight from "@assets/icons/caret_right_cal.svg?react";
+import DatePicker from 'react-datepicker';
+import CaretLeft from '@assets/icons/caret_left_cal.svg?react';
+import CaretRight from '@assets/icons/caret_right_cal.svg?react';
 
-import "react-datepicker/dist/react-datepicker.css";
-import { useEffect, useState } from "react";
-import Button from "../buttons/button";
+import 'react-datepicker/dist/react-datepicker.css';
+import { useEffect, useState } from 'react';
+import Button from '../buttons/button';
+import { formatDate } from '@/utils/format';
 
 interface DatepickerModalProps {
   defaultValue?: string;
@@ -15,11 +16,7 @@ interface DatepickerModalProps {
   onConfirm: (date: string) => void;
 }
 
-const DatepickerModal = ({
-  onClose,
-  onConfirm,
-  defaultValue,
-}: DatepickerModalProps) => {
+const DatepickerModal = ({ onClose, onConfirm, defaultValue }: DatepickerModalProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>();
 
   const handleDateChange = (date: Date | null) => {
@@ -28,17 +25,9 @@ const DatepickerModal = ({
     }
   };
 
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
-
   const parseDate = (dateString?: string) => {
     if (dateString) {
-      const [year, month, day] = dateString.split("-").map(Number);
+      const [year, month, day] = dateString.split('-').map(Number);
 
       return new Date(year, month - 1, day);
     } else {
@@ -69,7 +58,7 @@ const DatepickerModal = ({
                 date={date}
                 decreaseMonth={decreaseMonth}
                 increaseMonth={increaseMonth}
-                pickerText={""}
+                pickerText={''}
               />
             )}
           />
@@ -150,12 +139,7 @@ interface CustomHeaderProps {
 }
 
 // Header
-const CustomHeader = ({
-  date,
-  decreaseMonth,
-  increaseMonth,
-  pickerText,
-}: CustomHeaderProps) => {
+const CustomHeader = ({ date, decreaseMonth, increaseMonth, pickerText }: CustomHeaderProps) => {
   return (
     <CustomHeaderContainer>
       <HeaderWrapper>
@@ -165,9 +149,7 @@ const CustomHeader = ({
         <IconWrapper onClick={decreaseMonth}>
           <CaretLeft />
         </IconWrapper>
-        <YearMonth>
-          {date.toLocaleString("ko-KR", { year: "numeric", month: "long" })}
-        </YearMonth>
+        <YearMonth>{date.toLocaleString('ko-KR', { year: 'numeric', month: 'long' })}</YearMonth>
         <IconWrapper onClick={increaseMonth}>
           <CaretRight />
         </IconWrapper>
