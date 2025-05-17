@@ -124,6 +124,15 @@ export const requestProfileList = async () => {
   return res;
 };
 
+export const requestUserProfileDetail = async (profileId: string) => {
+  const res = await request({
+    method: 'get',
+    endpoint: `/profiles/${profileId}`,
+  });
+
+  return res;
+};
+
 export const requestProfileDetail = async (profileId: string) => {
   const res = await request({
     method: 'get',

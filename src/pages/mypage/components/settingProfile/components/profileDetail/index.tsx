@@ -1,4 +1,4 @@
-import { requestDeleteProfile, requestProfileDetail } from '@/api/users';
+import { requestDeleteProfile, requestUserProfileDetail } from '@/api/users';
 import Button from '@/components/buttons/button';
 import useSessionStore from '@/store/session';
 import { useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ const ProfileDetail = () => {
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
-    const { result } = await requestProfileDetail(id);
+    const { result } = await requestUserProfileDetail(id);
 
     if (result) {
       setDetail(result);

@@ -1,4 +1,4 @@
-import { requestProfileDetail } from '@/api/users';
+import { requestUserProfileDetail } from '@/api/users';
 import Button from '@/components/buttons/button';
 import Overlay from '@/components/modal/overlay';
 import { ProfileDetailData } from '@/pages/mypage/components/settingProfile/components/profileDetail';
@@ -24,7 +24,7 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
-    const { result } = await requestProfileDetail(id);
+    const { result } = await requestUserProfileDetail(id);
     setDetail(result);
   };
 

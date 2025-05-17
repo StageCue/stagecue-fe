@@ -9,7 +9,7 @@ import TrashSVG from '@assets/icons/trash_lg.svg?react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   requestProfileDefault,
-  requestProfileDetail,
+  requestUserProfileDetail,
   requestSaveProfile,
   requestUploadImage,
   requestUploadThumbnail,
@@ -175,7 +175,7 @@ const ProfileForm = () => {
   };
 
   const getProfileDetail = async (id: string) => {
-    const { result } = await requestProfileDetail(id);
+    const { result } = await requestUserProfileDetail(id);
 
     if (result) {
       setDetail(result);
