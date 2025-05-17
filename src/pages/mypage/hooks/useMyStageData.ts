@@ -23,7 +23,6 @@ export const useMyStageData = () => {
   const { data: recruitsStatus } = useQuery<RecruitStatusResponse>({
     queryKey: ['recruitsStatus'],
     queryFn: requestCastsStatus,
-    staleTime: 1000 * 60 * 5,
   });
 
   const { data: popularRecruits } = useQuery({

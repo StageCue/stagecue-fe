@@ -7,10 +7,12 @@ import Button from '@/components/buttons/button';
 import Cast from '@/pages/home/components/cast';
 import { useNavigate } from 'react-router-dom';
 import { useMyStageData } from '../../hooks/useMyStageData.ts';
+import BookmarkSVG from '@assets/icons/bookmark.svg';
+import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg';
 
 const ScrapRecruits = () => {
   const navigate = useNavigate();
-  const { scraps } = useMyStageData();
+  const { scraps, handleBookmarkClick } = useMyStageData();
 
   const [isFilteredClosedPost, setIsFilteredClosedPost] = useState(false);
 
@@ -44,20 +46,30 @@ const ScrapRecruits = () => {
           </Button>
         </NoScrap>
       ) : (
-        <ScrapList>
-          {scraps?.map(({ castId, imageUrl, castTitle, troupeName, practiceAddress }) => (
-            <Cast
-              key={castId}
-              imgWidth={215}
-              imgHeight={322.5}
-              recruitId={castId}
-              thumbnail={imageUrl}
-              recruitTitle={castTitle}
-              troupeName={troupeName}
-              practiceLocation={practiceAddress}
-            />
-          ))}
-        </ScrapList>
+        <Scraps>
+          {scraps?.map(scrap => {
+            return (
+              <CastWrapper key={scrap?.castId}>
+                <Cast
+                  imgWidth={215}
+                  imgHeight={322.5}
+                  recruitId={scrap?.castId}
+                  thumbnail={scrap?.imageUrl}
+                  recruitTitle={scrap?.castTitle}
+                  troupeName={scrap?.troupeName}
+                  practiceLocation={scrap?.practiceAddress}
+                />
+                <DdayTag>D{scrap?.dday}</DdayTag>
+                <BookmarkWrapper
+                  key={`bookmark-${scrap?.castId}`}
+                  onClick={() => handleBookmarkClick(scrap?.castId)}
+                >
+                  <img src={scrap?.isBookmarked ? BookmarkFilledSVG : BookmarkSVG} alt="Bookmark" />
+                </BookmarkWrapper>
+              </CastWrapper>
+            );
+          })}
+        </Scraps>
       )}
     </ScrapContainer>
   );
@@ -116,8 +128,29 @@ const Text = styled.div`
   line-height: 144.5%;
 `;
 
-const ScrapList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-  row-gap: 40px;
+const Scraps = styled.div`
+  display: flex;
+  gap: 20px;
+`;
+
+const CastWrapper = styled.div`
+  position: relative;
+`;
+
+const DdayTag = styled.div`
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #ff4242;
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 15px;
+`;
+
+const BookmarkWrapper = styled.div`
+  cursor: pointer;
+  position: absolute;
+  top: 3px;
+  right: 3px;
 `;
