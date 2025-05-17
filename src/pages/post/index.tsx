@@ -30,7 +30,7 @@ const List = () => {
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const { query } = useSearchStore();
+  const { query, setSearchQuery } = useSearchStore();
   const { category: selectedGenre, setCategory: setSelectedGenre } = useCategoryStore();
   const [selectedZone, setSelectedZone] = useState(['전체지역']);
   const [selectedDayPicker, setSelectedDayPicker] = useState<string>('전체요일');
@@ -390,7 +390,10 @@ const List = () => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   useEffect(() => {
-    return () => setSelectedGenre('연극');
+    return () => {
+      setSelectedGenre('연극');
+      setSearchQuery('');
+    };
   }, []);
 
   return (

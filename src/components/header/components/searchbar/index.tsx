@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SearchSVG from '@/assets/icons/search.svg?react';
 import { useForm } from 'react-hook-form';
@@ -8,12 +10,18 @@ interface SearchBarInput {
 }
 
 const Searchbar = () => {
-  const { register, handleSubmit } = useForm<SearchBarInput>();
-  const { setSearchQuery } = useSearchStore();
+  const navigate = useNavigate();
+  const { register, handleSubmit, setValue } = useForm<SearchBarInput>();
+  const { query, setSearchQuery } = useSearchStore();
 
   const onSubmitQuery = (data: SearchBarInput) => {
     setSearchQuery(data?.query);
+    navigate('/casts');
   };
+
+  useEffect(() => {
+    setValue('query', query);
+  }, [query, setValue]);
 
   return (
     <SearchbarContainer>
