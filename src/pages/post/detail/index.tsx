@@ -227,7 +227,6 @@ const DdayWrapper = styled.div`
 `;
 
 const Dday = styled.div`
-  width: 50px;
   height: 26px;
   background-color: #000000;
   border-radius: 4px;

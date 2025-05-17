@@ -94,7 +94,7 @@ const App = () => {
           <Route path="troupe/created" element={<CreatedTroupe />} />
           <Route path="cast" element={<ManagePostWrapper />} />
           <Route path="cast/form" element={<EditRecruit />} />
-          <Route path="cast/:id/form" element={<EditRecruit />} />
+          <Route path="cast/:id/form" element={<EditRecruit />} key={window.location.pathname} />
         </Route>
       </Routes>
     </AppContainer>
