@@ -579,7 +579,7 @@ const EditRecruit = () => {
               </>
             ) : (
               <>
-                <Button
+                {/* <Button
                   type="button"
                   variation="text"
                   btnClass="assistive"
@@ -591,7 +591,7 @@ const EditRecruit = () => {
                   letterSpacing={0.96}
                 >
                   미리보기
-                </Button>
+                </Button> */}
                 <Button
                   type="button"
                   variation="outlined"
