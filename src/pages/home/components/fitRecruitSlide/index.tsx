@@ -10,6 +10,8 @@ import { requestCastDetail } from '@/api/cast';
 const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: RecruitDetail[] }) => {
   const [activeSlide, setActiveSlide] = useState<number>(0);
   const [recruits, setRecruits] = useState<RecruitDetail[]>([]);
+  const SWIPER_WIDTH = 1060;
+  const ACTIVE_WIDTH = 668;
 
   const handleSlideClick = (index: number): void => {
     setActiveSlide(index);
@@ -32,13 +34,15 @@ const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: RecruitDeta
   }, [recommendRecruits]);
 
   return (
-    <FitRecruitSlideContainer>
+    <FitRecruitSlideContainer $isWidth={SWIPER_WIDTH}>
       {recruits?.length > 0 ? (
-        <Swiper width={1060} slidesPerView={'auto'}>
+        <Swiper width={SWIPER_WIDTH} slidesPerView={'auto'}>
           {recruits?.map((recruit, index) => (
             <CustomSwiperSlide
               key={recruit?.id}
               $isActive={activeSlide === index}
+              $isActiveWidth={ACTIVE_WIDTH}
+              $isInactiveWidth={(SWIPER_WIDTH - ACTIVE_WIDTH) / (recruits?.length - 1)}
               onClick={() => handleSlideClick(index)}
             >
               <RecruitSlide
@@ -87,7 +91,7 @@ const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: RecruitDeta
           ))}
         </Swiper>
       ) : (
-        <EmptyWrapper width={1060} height={545}>
+        <EmptyWrapper width={SWIPER_WIDTH} height={545}>
           추천 공고가 없습니다.
         </EmptyWrapper>
       )}
@@ -236,13 +240,18 @@ const CardDescription = styled.div``;
 
 // ========================================================================================================================
 
-const FitRecruitSlideContainer = styled.div`
-  width: 1060px;
+const FitRecruitSlideContainer = styled.div<{ $isWidth: number }>`
+  width: ${({ $isWidth }) => `${$isWidth}px`};
   height: 545px;
 `;
 
-const CustomSwiperSlide = styled(SwiperSlide)<{ $isActive: boolean }>`
-  width: ${({ $isActive }) => ($isActive ? '668px' : '98px')};
+const CustomSwiperSlide = styled(SwiperSlide)<{
+  $isActive: boolean;
+  $isActiveWidth: number;
+  $isInactiveWidth: number;
+}>`
+  width: ${({ $isActive, $isActiveWidth, $isInactiveWidth }) =>
+    $isActive ? `${$isActiveWidth}px` : `${$isInactiveWidth}px`};
   height: 545px;
   transition: width 0.3s ease-in-out;
 `;
