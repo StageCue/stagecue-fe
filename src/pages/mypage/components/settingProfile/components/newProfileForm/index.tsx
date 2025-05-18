@@ -220,6 +220,7 @@ const NewProfileForm = () => {
     const thumbnailUrl = await requestUploadThumbnailFile();
 
     return {
+      id: 0,
       birthDay: sessionStore?.birthday as string,
       age: calculateAge(sessionStore?.birthday as string),
       name: sessionStore?.username as string,
@@ -240,7 +241,13 @@ const NewProfileForm = () => {
     try {
       setIsLoading(true);
       const params = await createProfile(data, true);
-      const { result } = await requestCreateProfile(params);
+      const { result, error } = await requestCreateProfile(params);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
       await requestProfileDefault(result);
 
       setIsLoading(false);

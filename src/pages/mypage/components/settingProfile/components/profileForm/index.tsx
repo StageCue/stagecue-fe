@@ -97,6 +97,7 @@ const ProfileForm = () => {
       setImageUrlArray(prev => [...prev, { url, id }]);
     }
   }, []);
+
   const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } = useDropzone({
     onDrop: onDropImages,
   });
@@ -105,14 +106,15 @@ const ProfileForm = () => {
     if (imageFileArray.length !== 0) {
       try {
         const urls: string[] = await Promise.all(
-          imageFileArray.map(async (item, index) => {
+          imageFileArray.map(async item => {
             if (item.file) {
               const formData = new FormData();
               formData.append('file', item.file);
-              const { imageUrl } = await requestUploadImage(formData);
+              const { result: imageUrl } = await requestUploadImage(formData);
               return imageUrl;
             } else {
-              return imageUrlArray[index].url;
+              const url = imageUrlArray.find(item => item.id === item.id)?.url;
+              return url;
             }
           })
         );
@@ -122,6 +124,7 @@ const ProfileForm = () => {
         console.error('Error uploading images:', error);
       }
     }
+    return imageUrlArray.map(item => item.url);
   };
 
   const requestUploadThumbnailFile = async () => {
@@ -271,7 +274,7 @@ const ProfileForm = () => {
     const thumbnailUrl = await requestUploadThumbnailFile();
 
     return {
-      id: id!,
+      id: Number(id!),
       birthDay: sessionStore?.birthday as string,
       age: calculateAge(sessionStore?.birthday as string),
       name: sessionStore?.username as string,

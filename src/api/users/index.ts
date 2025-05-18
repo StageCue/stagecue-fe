@@ -23,7 +23,7 @@ interface ReqAppliedCastsParams {
 }
 
 interface ReqChangeProfileData {
-  id?: string;
+  id?: number;
   birthDay: string;
   age: number;
   name: string;
