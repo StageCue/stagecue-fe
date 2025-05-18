@@ -1,4 +1,4 @@
-export type UserType = "ADMIN" | "PERFORMER" | "TROUPE";
+export type UserType = 'ADMIN' | 'PERFORMER' | 'TROUPE';
 
 export interface LoginInputs {
   email: string;
@@ -28,6 +28,8 @@ export interface ForgotAccountInputs {
 
 export interface ForgotPasswordInput {
   email: string;
+  token: string;
+  newPassowrd: string;
 }
 
 export interface PasswordInputs {
