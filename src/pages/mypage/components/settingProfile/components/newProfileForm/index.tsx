@@ -41,7 +41,7 @@ interface ExpInput {
   id: string;
   artworkName: string;
   artworkPart: string;
-  troupeName: string;
+  troupe: string;
   startDate: string;
   endDate: string;
 }
@@ -149,11 +149,13 @@ const NewProfileForm = () => {
   const [titleValue, weightValue, heightValue, introduceValue, experiencesValue, thumbnailValue] =
     watch(['title', 'weight', 'height', 'introduce', 'experiences', 'thumbnail', 'images']);
 
-  const [artworkNameValue, artworkPartValue, troupeNameValue, startDateValue, endDateValue] =
-    expWatch(['artworkName', 'artworkPart', 'troupeName', 'startDate', 'endDate']);
-
-  const isSaveDisabled =
-    !artworkNameValue || !artworkPartValue || !troupeNameValue || !startDateValue || !endDateValue;
+  const [artworkNameValue, artworkPartValue, troupeValue, startDateValue, endDateValue] = expWatch([
+    'artworkName',
+    'artworkPart',
+    'troupe',
+    'startDate',
+    'endDate',
+  ]);
 
   const handleInfoEditClick = (section: string) => {
     if (section === 'personalInfo') {
@@ -168,7 +170,7 @@ const NewProfileForm = () => {
       id: generateId(),
       artworkName: artworkNameValue,
       artworkPart: artworkPartValue,
-      troupeName: troupeNameValue,
+      troupe: troupeValue,
       startDate: startDateValue,
       endDate: endDateValue,
     };
@@ -213,6 +215,7 @@ const NewProfileForm = () => {
     const { experiences, height, weight, introduce, title } = data;
     const sanitizedExperiences = experiences?.map(({ ...rest }) => ({
       ...rest,
+      troupeName: rest.troupe,
       startDate: `${rest.startDate}-01`,
       endDate: `${rest.endDate}-01`,
     }));
@@ -241,15 +244,9 @@ const NewProfileForm = () => {
     try {
       setIsLoading(true);
       const params = await createProfile(data, true);
-      const { result, error } = await requestCreateProfile(params);
-
-      if (error) {
-        console.error(error);
-        return;
-      }
+      const { result } = await requestCreateProfile(params);
 
       await requestProfileDefault(result);
-
       setIsLoading(false);
 
       if (result) {
@@ -306,13 +303,16 @@ const NewProfileForm = () => {
       expSetValue('artworkPart', exp!.artworkPart);
       expSetValue('startDate', exp!.startDate);
       expSetValue('endDate', exp!.endDate);
-      expSetValue('troupeName', exp!.troupeName);
+      expSetValue('troupe', exp!.troupe);
       expSetValue('id', exp!.id);
     }
   }, [editingExpId, expSetValue, experiencesValue]);
 
   const isDisabled =
     !titleValue || !weightValue || !heightValue || !introduceValue || !experiencesValue?.length;
+
+  const isSaveDisabled =
+    !artworkNameValue || !artworkPartValue || !troupeValue || !startDateValue || !endDateValue;
 
   return (
     <NewProfileFormContainer>
@@ -537,7 +537,7 @@ const NewProfileForm = () => {
                 fontSize={15}
                 letterSpacing={0.96}
                 lineHeight={146.7}
-                disabled={isAddExp}
+                disabled={isAddExp || experiencesValue?.length >= 2}
                 onClick={handleAddExpClick}
               >
                 경력추가
@@ -557,7 +557,7 @@ const NewProfileForm = () => {
                     </DataRow>
                     <DataRow>
                       <Property>극단</Property>
-                      <Value>{exp.troupeName}</Value>
+                      <Value>{exp.troupe}</Value>
                     </DataRow>
                     <DataRow>
                       <Property>기간</Property>
@@ -612,7 +612,7 @@ const NewProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpTextInput
-                          {...expRegister('troupeName', { required: true })}
+                          {...expRegister('troupe', { required: true })}
                           placeholder="활동한 극단 이름을 입력해주세요."
                         />
                       </DataRow>
@@ -638,20 +638,6 @@ const NewProfileForm = () => {
                     </DataRows>
                   </FormLabel>
                   <ExpBtnsWrapper>
-                    {/* <Button
-                      variation="outlined"
-                      btnClass="assistive"
-                      width={53}
-                      height={32}
-                      padding="7px 14px"
-                      fontSize={13}
-                      fontWeight="var(--font-medium)"
-                      lineHeight={138.5}
-                      letterSpacing={1.94}
-                      onClick={handleCancelAddExpClick}
-                    >
-                      취소
-                    </Button> */}
                     <Button
                       type="button"
                       variation="solid"
@@ -677,21 +663,6 @@ const NewProfileForm = () => {
             <InfoTitleWrapper>
               <InfoTitle>이미지</InfoTitle>
             </InfoTitleWrapper>
-            {/* <ImageDropzone {...getImageRootProps()}>
-              파일을 선택하거나 여기다 끌어다 놓으세요.
-              <ImageInput {...getImageInputProps()} />
-            </ImageDropzone>
-            <ImagesBox>
-              {imageUrlArray?.map(({ url, id }) => (
-                <ImageWrapper key={id}>
-                  <CloseIconWrapper onClick={() => handleDeleteImageClick(id)}>
-                    <CloseSVG />
-                  </CloseIconWrapper>
-                  <Image key={url + id} src={url} />
-                </ImageWrapper>
-              ))}
-            </ImagesBox> */}
-
             <ImagesBox {...getImageRootProps()}>
               {!imageUrlArray?.length && (
                 <ImagesBoxDefault>
@@ -699,7 +670,7 @@ const NewProfileForm = () => {
                   <DropzoneText>{`파일을 선택하거나 \n 여기로 끌어다 놓으세요`}</DropzoneText>
                 </ImagesBoxDefault>
               )}
-              <ImageInput {...getImageInputProps()} />
+              {imageUrlArray?.length < 2 && <ImageInput {...getImageInputProps()} />}
               {imageUrlArray?.map(({ url, id }) => (
                 <ImageWrapper key={id}>
                   <CloseIconWrapper

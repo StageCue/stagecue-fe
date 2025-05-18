@@ -43,7 +43,7 @@ interface ExpInput {
   id: string;
   artworkName: string;
   artworkPart: string;
-  troupeName: string;
+  troupe: string;
   startDate: string;
   endDate: string;
 }
@@ -163,8 +163,13 @@ const ProfileForm = () => {
     'images',
   ]);
 
-  const [artworkNameValue, artworkPartValue, troupeNameValue, startDateValue, endDateValue] =
-    expWatch(['artworkName', 'artworkPart', 'troupeName', 'startDate', 'endDate']);
+  const [artworkNameValue, artworkPartValue, troupeValue, startDateValue, endDateValue] = expWatch([
+    'artworkName',
+    'artworkPart',
+    'troupe',
+    'startDate',
+    'endDate',
+  ]);
 
   const addIdtoExps = (expArray: ExpInput[]) => {
     const withIdExpArray = expArray.map((exp: ExpInput) => {
@@ -216,19 +221,37 @@ const ProfileForm = () => {
   };
 
   const handleSaveExpClick = () => {
-    setValue('experiences', [
-      ...experiencesValue,
-      {
-        id: generateId(),
-        artworkName: artworkNameValue,
-        artworkPart: artworkPartValue,
-        troupeName: troupeNameValue,
-        startDate: startDateValue,
-        endDate: endDateValue,
-      },
-    ]);
+    if (editingExpId) {
+      const updatedExps = experiencesValue.map(exp => {
+        if (exp.id === editingExpId) {
+          return {
+            ...exp,
+            artworkName: artworkNameValue,
+            artworkPart: artworkPartValue,
+            troupe: troupeValue,
+            startDate: startDateValue,
+            endDate: endDateValue,
+          };
+        }
+        return exp;
+      });
+      setValue('experiences', updatedExps);
+    } else {
+      setValue('experiences', [
+        ...experiencesValue,
+        {
+          id: generateId(),
+          artworkName: artworkNameValue,
+          artworkPart: artworkPartValue,
+          troupe: troupeValue,
+          startDate: startDateValue,
+          endDate: endDateValue,
+        },
+      ]);
+    }
+
     setIsAddExp(false);
-    expReset();
+    setEditingExpId('');
   };
 
   const handleSaveClick = (section: 'personalInfo' | 'introduce') => {
@@ -267,6 +290,7 @@ const ProfileForm = () => {
     const { experiences, height, weight, introduce, title } = data;
     const sanitizedExperiences = experiences?.map(({ ...rest }) => ({
       ...rest,
+      troupeName: rest.troupe,
       startDate: `${rest.startDate}-01`,
       endDate: `${rest.endDate}-01`,
     }));
@@ -354,21 +378,31 @@ const ProfileForm = () => {
     getProfileDetail(id!);
   }, [id]);
 
+  const toMonthInputFormat = (date: string) => {
+    if (!date) return '';
+    // YYYY.MM.DD → YYYY-MM
+    const [year, month] = date.split(/[.-]/); // . 또는 - 구분자 모두 대응
+    return `${year}-${month.padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     if (editingExpId && experiencesValue.length !== 0) {
       const exp = experiencesValue.find(exp => exp.id === editingExpId);
 
       expSetValue('artworkName', exp!.artworkName);
       expSetValue('artworkPart', exp!.artworkPart);
-      expSetValue('startDate', exp!.startDate);
-      expSetValue('endDate', exp!.endDate);
-      expSetValue('troupeName', exp!.troupeName);
+      expSetValue('startDate', toMonthInputFormat(exp!.startDate));
+      expSetValue('endDate', toMonthInputFormat(exp!.endDate));
+      expSetValue('troupe', exp!.troupe);
       expSetValue('id', exp!.id);
     }
   }, [editingExpId, expSetValue, experiencesValue]);
 
   const isDisabled =
     !titleValue || !weightValue || !heightValue || !introduceValue || !experiencesValue?.length;
+
+  const isSaveDisabled =
+    !artworkNameValue || !artworkPartValue || !troupeValue || !startDateValue || !endDateValue;
 
   return (
     <ProfileFormContainer>
@@ -601,7 +635,7 @@ const ProfileForm = () => {
                 fontSize={15}
                 letterSpacing={0.96}
                 lineHeight={146.7}
-                disabled={isAddExp}
+                disabled={isAddExp || experiencesValue?.length >= 2}
                 onClick={handleAddExpClick}
               >
                 경력추가
@@ -649,7 +683,7 @@ const ProfileForm = () => {
                             </RequiredWrapper>
                           </FormLabel>
                           <ExpTextInput
-                            {...expRegister('troupeName', {
+                            {...expRegister('troupe', {
                               required: true,
                             })}
                             placeholder="활동한 극단 이름을 입력해주세요."
@@ -682,6 +716,7 @@ const ProfileForm = () => {
                     </FormLabel>
                     <ExpBtnsWrapper>
                       <Button
+                        type="button"
                         variation="outlined"
                         btnClass="assistive"
                         width={53}
@@ -696,6 +731,7 @@ const ProfileForm = () => {
                         취소
                       </Button>
                       <Button
+                        type="button"
                         variation="solid"
                         btnClass="primary"
                         width={53}
@@ -706,7 +742,6 @@ const ProfileForm = () => {
                         lineHeight={138.5}
                         letterSpacing={1.94}
                         onClick={handleSaveExpClick}
-                        type="button"
                       >
                         저장
                       </Button>
@@ -725,12 +760,12 @@ const ProfileForm = () => {
                       </DataRow>
                       <DataRow>
                         <Property>극단</Property>
-                        <Value>{exp.troupeName}</Value>
+                        <Value>{exp.troupe}</Value>
                       </DataRow>
                       <DataRow>
                         <Property>기간</Property>
                         <Value>
-                          {exp.startDate} ~ {exp.endDate}
+                          {toMonthInputFormat(exp.startDate)} ~ {toMonthInputFormat(exp.endDate)}
                         </Value>
                       </DataRow>
                     </ExpDataWrapper>
@@ -781,7 +816,7 @@ const ProfileForm = () => {
                           </RequiredWrapper>
                         </FormLabel>
                         <ExpTextInput
-                          {...expRegister('troupeName', { required: true })}
+                          {...expRegister('troupe', { required: true })}
                           placeholder="활동한 극단 이름을 입력해주세요."
                         />
                       </DataRow>
@@ -808,6 +843,7 @@ const ProfileForm = () => {
                   </FormLabel>
                   <ExpBtnsWrapper>
                     <Button
+                      type="button"
                       variation="outlined"
                       btnClass="assistive"
                       width={53}
@@ -822,6 +858,7 @@ const ProfileForm = () => {
                       취소
                     </Button>
                     <Button
+                      type="button"
                       variation="solid"
                       btnClass="primary"
                       width={53}
@@ -832,7 +869,7 @@ const ProfileForm = () => {
                       lineHeight={138.5}
                       letterSpacing={1.94}
                       onClick={handleSaveExpClick}
-                      type="button"
+                      disabled={isSaveDisabled}
                     >
                       저장
                     </Button>
@@ -852,7 +889,7 @@ const ProfileForm = () => {
                   <DropzoneText>{`파일을 선택하거나 \n 여기로 끌어다 놓으세요`}</DropzoneText>
                 </ImagesBoxDefault>
               )}
-              <ImageInput {...getImageInputProps()} />
+              {imageUrlArray?.length < 2 && <ImageInput {...getImageInputProps()} />}
               {imageUrlArray?.map(({ url, id }) => (
                 <ImageWrapper key={id}>
                   <CloseIconWrapper
@@ -1256,7 +1293,7 @@ const ExpTextInput = styled.input`
 `;
 
 const ExpDateInput = styled.input`
-  width: 80px;
+  width: 105px;
   height: 22px;
   outline: none;
   border: none;
