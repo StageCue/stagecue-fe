@@ -230,7 +230,7 @@ export const requestDeleteRecruit = ({ ids }: ReqDeleteRecruitsParams) => {
 export const requestRecruitFormData = async (recruitId: string) => {
   const res = await request({
     method: 'get',
-    endpoint: `recruits/${recruitId}`,
+    endpoint: `recruits/${recruitId}/edit`,
   });
 
   return res;
