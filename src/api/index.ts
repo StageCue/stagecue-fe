@@ -31,8 +31,6 @@ apiClient.interceptors.response.use(
 
     if (logoutOptions?.includes(response?.code?.value)) {
       useSessionStore.getState().logoutSession();
-      useSessionStore.persist.clearStorage();
-      window.location.href = '/auth/login';
     }
 
     if (response.code.value === 'stagecue.troupe.not-found') {

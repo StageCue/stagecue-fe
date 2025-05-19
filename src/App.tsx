@@ -45,12 +45,10 @@ const App = () => {
   const sessionStore = useSessionStore();
 
   const isAuthenticated = sessionStore.isLoggined;
-  useEffect(() => {
-    setNavigator(navigate);
-  }, [navigate]);
 
   useEffect(() => {
     setQueryClient(queryClient);
+    setNavigator(navigate);
   }, []);
 
   return (
