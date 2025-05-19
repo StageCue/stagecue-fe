@@ -6,11 +6,12 @@ import useSessionStore from '@/store/session';
 import CaretDownSVG from '@assets/icons/caret_down.svg?react';
 import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
 import { useGetTroupeInfo } from '@/pages/biz/components/manageTroupe/hooks/useGetTroupe';
+import { useQueryClient } from '@tanstack/react-query';
 
 const BizHeader = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
-  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
+  const queryClient = useQueryClient();
 
   const { name = '극단을 설정해주세요.' } = useGetTroupeInfo() ?? {};
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
@@ -24,9 +25,7 @@ const BizHeader = () => {
   };
 
   const handleLogoutClick = () => {
-    sessionStore.logoutSession();
-    clearUserSessionStorage();
-    navigate('/');
+    sessionStore.logoutSession(queryClient);
   };
 
   return (

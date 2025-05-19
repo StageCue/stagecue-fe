@@ -1,10 +1,8 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
 import TroupeDetail from './components/troupeDetail';
-import { requestTroupeInfo } from '@/api/biz';
 import Button from '@/components/buttons/button';
 import { useNavigate } from 'react-router-dom';
-import { AxiosError } from 'axios';
+import { useGetTroupeInfo } from './hooks/useGetTroupe';
 
 export interface TroupeInfo {
   name: string;
@@ -22,20 +20,8 @@ export interface TroupeInfo {
 
 const ManageTroupe = () => {
   const navigate = useNavigate();
-  const [troupeInfo, setTroupeInfo] = useState<TroupeInfo | null>(null);
 
-  const getTroupeInfo = async () => {
-    const res = await requestTroupeInfo();
-    if (res instanceof AxiosError) {
-      return;
-    } else {
-      setTroupeInfo(res);
-    }
-  };
-
-  useEffect(() => {
-    getTroupeInfo();
-  }, []);
+  const troupeInfo  = useGetTroupeInfo();
 
   const handleRegisterTroupeClick = () => {
     navigate('/biz/troupe/form/new');
@@ -77,10 +63,10 @@ const ManageTroupeContainer = styled.div`
 
 const NoTroupeInfo = styled.div`
   width: 100%;
-  height: 932px;
+  height: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 421px;
+  align-items: center;
 `;
 
 const RegisterWrapper = styled.div`

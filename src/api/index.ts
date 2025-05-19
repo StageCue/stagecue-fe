@@ -1,5 +1,6 @@
 import axios from 'axios';
 import useSessionStore from '@/store/session';
+import { navigateTo } from '@/utils/navigator';
 
 interface RequestPrams {
   method: 'get' | 'post' | 'put' | 'delete';
@@ -32,6 +33,11 @@ apiClient.interceptors.response.use(
       useSessionStore.getState().logoutSession();
       useSessionStore.persist.clearStorage();
       window.location.href = '/auth/login';
+    }
+
+    if (response.code.value === 'stagecue.troupe.not-found') {
+      console.log('response', response.code.value);
+      navigateTo('/biz/troupe');
     }
 
     return Promise.reject(error);

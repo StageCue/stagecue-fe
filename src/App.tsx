@@ -34,6 +34,7 @@ import PrivacyPolicy from './pages/privacy-policy';
 import ApplicantPage from './pages/biz/components/applicant';
 import BizLayout from './components/layout/biz';
 import { ManagePostWrapper } from './pages/biz/components/managePost/components/context/Wrapper';
+import { setNavigator } from './utils/navigator';
 
 const App = () => {
   const navigate = useNavigate();
@@ -42,18 +43,9 @@ const App = () => {
   const sessionStore = useSessionStore();
 
   const isAuthenticated = sessionStore.isLoggined;
-
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      sessionStore.logoutSession();
-
-      navigate('/auth/login');
-    }, 1000 * 60 * 30);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [sessionStore]);
+    setNavigator(navigate);
+  }, [navigate]);
 
   return (
     <AppContainer>

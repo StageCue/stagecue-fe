@@ -1,3 +1,5 @@
+import { navigateTo } from '@/utils/navigator';
+import { useQueryClient } from '@tanstack/react-query';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -20,7 +22,7 @@ interface LoginParams {
 }
 
 interface SessionAction {
-  logoutSession: () => void;
+  logoutSession: (queryClient: ReturnType<typeof useQueryClient>) => void;
   loginSession: ({ username, email, phoneNumber, birthday, userType }: LoginParams) => void;
   setUserType: (userType: 'TROUPE' | 'PERFORMER' | null) => void;
 }
@@ -40,7 +42,7 @@ const useSessionStore = create(
     set => ({
       ...defaultState,
 
-      logoutSession: () => {
+      logoutSession: (queryClient: ReturnType<typeof useQueryClient>) => {
         set(() => ({
           isLoggined: false,
           username: null,
@@ -50,8 +52,9 @@ const useSessionStore = create(
           userType: null,
         }));
         sessionStorage.clear();
-
+        queryClient.clear();
         useSessionStore.persist.clearStorage();
+        navigateTo('/auth/login');
       },
 
       loginSession: ({ username, phoneNumber, email, birthday, userType }: LoginParams) => {
