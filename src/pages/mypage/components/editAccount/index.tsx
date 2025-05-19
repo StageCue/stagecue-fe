@@ -10,7 +10,6 @@ import Button from '@/components/buttons/button';
 import Overlay from '@/components/modal/overlay';
 import ModalPortal from '@/components/modal/portal';
 import useSessionStore from '@/store/session';
-import { QueryClient } from '@tanstack/react-query';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
@@ -18,7 +17,6 @@ import styled from 'styled-components';
 type accountDataType = '이메일' | '휴대폰 번호';
 
 const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
-
   const [selectedData, setSelectedData] = useState<accountDataType>(accountType ?? '이메일');
   const sessionStore = useSessionStore();
   const [isChangeMail, setIsChangeMail] = useState(false);
@@ -172,7 +170,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   };
 
   const handleLogoutClick = () => {
-    sessionStore.logoutSession(new QueryClient());
+    sessionStore.logoutSession();
     setIsChangeConfirmed(false);
   };
 

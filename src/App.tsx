@@ -35,6 +35,8 @@ import ApplicantPage from './pages/biz/components/applicant';
 import BizLayout from './components/layout/biz';
 import { ManagePostWrapper } from './pages/biz/components/managePost/components/context/Wrapper';
 import { setNavigator } from './utils/navigator';
+import { setQueryClient } from './utils/queryClientAccessor';
+import { queryClient } from './lib/queryClient';
 
 const App = () => {
   const navigate = useNavigate();
@@ -46,6 +48,10 @@ const App = () => {
   useEffect(() => {
     setNavigator(navigate);
   }, [navigate]);
+
+  useEffect(() => {
+    setQueryClient(queryClient);
+  }, []);
 
   return (
     <AppContainer>

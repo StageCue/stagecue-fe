@@ -7,7 +7,6 @@ import ChevronDownSVG from '@assets/icons/chebron_down_s.svg?react';
 import BlackLogoSVG from '@assets/icons/black_logo.svg?react';
 import { useEffect, useRef } from 'react';
 import useHandleClickOutside from '@/hooks/useHandleClickOutside';
-import { QueryClient } from '@tanstack/react-query';
 
 const DefaultHeader = () => {
   const navigate = useNavigate();
@@ -50,7 +49,7 @@ const DefaultHeader = () => {
   };
 
   const handleLogoutClick = () => {
-    sessionStore.logoutSession(new QueryClient());
+    sessionStore.logoutSession();
   };
 
   const handleMyStageClick = () => {

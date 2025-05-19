@@ -6,7 +6,6 @@ import useSessionStore from '@/store/session';
 import { ResetPasswordInputs } from '@/types/user';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface CurrentPasswordInput {
@@ -14,9 +13,7 @@ interface CurrentPasswordInput {
 }
 
 const ResetPassword = () => {
-  const navigate = useNavigate();
   const sessionStore = useSessionStore();
-  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
   const {
     register,
@@ -86,8 +83,6 @@ const ResetPassword = () => {
 
   const handleMoveToLoginPage = () => {
     sessionStore.logoutSession();
-    clearUserSessionStorage();
-    navigate('/auth/starting');
   };
 
   return (
