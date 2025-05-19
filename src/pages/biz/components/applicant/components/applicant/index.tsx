@@ -32,6 +32,7 @@ const Applicants = () => {
     page,
     selectedFilter,
     selectedApplyIds,
+    setSelectedApplyIds,
     term,
     setTerm,
     isPassModalOpen,
@@ -47,6 +48,8 @@ const Applicants = () => {
   useEffect(() => {
     setTerm(debouncedTerm);
   }, [debouncedTerm]);
+
+  useEffect(() => setSelectedApplyIds([]), [selectedFilter]);
 
   return (
     <ApplicantContainer>
@@ -159,7 +162,6 @@ const Applicants = () => {
                 </IconWrapper>
                 합격
               </Button>
-
               <Button
                 variation="outlined"
                 btnClass="assistive"
