@@ -282,7 +282,7 @@ const ButtonContainer = styled.button<{
     }};
   }
 
-  /* focused */
+  /* focused
   &:focus {
     border: ${({ $variation, $btnClass }) => {
       if ($variation === 'solid' && $btnClass === 'primary') {
@@ -331,7 +331,7 @@ const ButtonContainer = styled.button<{
         return '#7e7f81';
       }
     }};
-  }
+  } */
 
   /* pressed */
   &:active {
