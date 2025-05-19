@@ -97,6 +97,7 @@ export const useManagePost = () => {
     isChangeDeadlieModalOpen,
     isDeleteModalOpen,
     data,
+    setSelectedRecruitIds,
     setCloseRecruitModalOpen,
     setIsChangeDeadlineModalOpen,
     setIsDeleteModalOpen,

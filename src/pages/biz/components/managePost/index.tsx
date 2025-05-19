@@ -22,6 +22,7 @@ const ManagePost = () => {
     isDeleteModalOpen,
     data,
     setIsDeleteModalOpen,
+    setSelectedRecruitIds,
     handleFilterClick,
     handleChangeDeadlineClick,
     handleCloseChangeDeadlineClick,
@@ -46,13 +47,17 @@ const ManagePost = () => {
     setTerm(debouncedTerm);
   }, [debouncedTerm]);
 
+  useEffect(() => {
+    setSelectedRecruitIds([]);
+  }, [selectedFilter]);
+
   return (
     <ManagePostContainer>
       {isDeleteModalOpen && (
         <DeleteModal
           onConfirm={deleteRecruit}
           onClose={() => setIsDeleteModalOpen(false)}
-          targetLength={1}
+          targetLength={selectedRecruitIds.length}
         />
       )}
       {isCloseRecruitModalOpen && (
@@ -145,7 +150,7 @@ const ManagePost = () => {
             lineHeight={138.5}
             letterSpacing={1.94}
             padding="8px 14px"
-            onClick={() => setIsDeleteModalOpen(false)}
+            onClick={() => setIsDeleteModalOpen(true)}
           >
             <IconWrapper>
               <TrashSVG />
