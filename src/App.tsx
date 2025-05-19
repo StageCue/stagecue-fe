@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Login from './pages/auth/login';
 import Welcome from './pages/welcome';
@@ -37,6 +37,8 @@ import { ManagePostWrapper } from './pages/biz/components/managePost/components/
 
 const App = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const sessionStore = useSessionStore();
 
   const isAuthenticated = sessionStore.isLoggined;
@@ -93,8 +95,8 @@ const App = () => {
           <Route path="troupe/form/new" element={<EditTroupe isInitial={true} />} />
           <Route path="troupe/created" element={<CreatedTroupe />} />
           <Route path="cast" element={<ManagePostWrapper />} />
-          <Route path="cast/form" element={<EditRecruit />} />
-          <Route path="cast/:id/form" element={<EditRecruit />} key={window.location.pathname} />
+          <Route path="cast/form" element={<EditRecruit key={location.pathname} />} />
+          <Route path="cast/:id/form" element={<EditRecruit />} />
         </Route>
       </Routes>
     </AppContainer>
