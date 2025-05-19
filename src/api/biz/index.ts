@@ -63,7 +63,7 @@ interface ReqDeleteRecruitsParams {
 
 interface ReqChangeRecruitStatusParmas {
   ids: number[];
-  status: 'TEMP' | 'RECRUIT' | 'CLOSED';
+  status: RecruitStatus;
 }
 
 interface ReqChangeEndDateParams {
@@ -201,16 +201,15 @@ export const requestCreateRecruit = (data: ReqEditRecruitParams) => {
   return res;
 };
 
-export const requestCloseRecruit = ({ ids }: ReqChangeRecruitStatusParmas) => {
+export const requestCloseRecruit = ({ ids, status }: ReqChangeRecruitStatusParmas) => {
   const params = new URLSearchParams();
   ids.forEach(id => params.append('ids', id.toString()));
+  params.append('status', status);
+
   const res = request({
     method: 'put',
-    endpoint: 'biz/recruits/status',
+    endpoint: 'recruits/status',
     params,
-    header: {
-      'Content-Type': 'multipart/form-data',
-    },
   });
 
   return res;

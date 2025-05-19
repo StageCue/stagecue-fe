@@ -14,3 +14,11 @@ export const weekdayStringsToBinary = (days: string[]): string[] => {
 
   return dayOrder.map(day => (days.includes(day) ? '1' : '0'));
 };
+
+export const binaryToWeekdayStrings = (binary: string[]): string[] => {
+  const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+
+  return binary
+    .map((bit, index) => (bit === '1' ? dayOrder[index] : null))
+    .filter((day): day is string => day !== null);
+};

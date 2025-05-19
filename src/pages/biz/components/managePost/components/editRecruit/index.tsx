@@ -14,6 +14,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { generateId } from '@/utils/dev';
 import { convertFileToURL } from '@/utils/file';
 import {
+  requestCloseRecruit,
   requestCreateRecruit,
   requestDeleteRecruit,
   requestRecruitFormData,
@@ -28,7 +29,11 @@ import ModalPortal from '@/components/modal/portal';
 import Overlay from '@/components/modal/overlay';
 import Datepicker from '@/components/datepicker';
 import DeleteModal from '../deleteModal';
-import { daysArrayToDecimal, weekdayStringsToBinary } from '@/utils/daysArrayToDecimal';
+import {
+  binaryToWeekdayStrings,
+  daysArrayToDecimal,
+  weekdayStringsToBinary,
+} from '@/utils/daysArrayToDecimal';
 import { RecruitStatus } from '@/pages/biz/types/applicants';
 import { adaptEditRecruitInputsToDTO } from './adapter';
 import { INDEFINITE_DATE } from '@/constants/biz';
@@ -253,6 +258,7 @@ const EditRecruit = () => {
         recruitingParts,
         recruitImages,
         recruitStatus,
+        practiceDay: binaryToWeekdayStrings(practiceDays),
       });
 
       setIsNewRecruitModalOpen(false);
@@ -436,6 +442,8 @@ const EditRecruit = () => {
 
   const getRecruitFormData = async (id: string) => {
     const { result: res } = await requestRecruitFormData(id);
+
+    setRecruitStatus(res.recruitStatus);
     setValue('title', res.title);
     setValue('introduce', res.recruitIntroduce);
     setValue(
@@ -469,8 +477,8 @@ const EditRecruit = () => {
     setPracticeDays(weekdayStringsToBinary(res.practiceDay));
     setValue('practice.address', res.practiceAddress);
     setValue('practice.addressDetail', res.practiceAddressDetail);
-    setValue('category', res.recruitCategory);
-    setCategoryText(res.recruitCategory);
+    setValue('category', res.category);
+    setCategoryText(res.category);
     setValue('artworkName', res.artworkName);
     setValue('stage.address', res.theatreAddress);
     setValue('stage.addressDetail', res.theatreAddressDetail);
@@ -546,20 +554,42 @@ const EditRecruit = () => {
                 >
                   삭제
                 </Button>
-                <Button
-                  type="submit"
-                  variation="outlined"
-                  btnClass="primary"
-                  width={94}
-                  height={40}
-                  fontSize={15}
-                  padding="9px 20px"
-                  lineHeight={146.7}
-                  letterSpacing={0.96}
-                  onClick={() => setRecruitStatus('DRAFT')}
-                >
-                  공고마감
-                </Button>
+                {recruitStatus === 'OPEN' && (
+                  <Button
+                    type="button"
+                    variation="outlined"
+                    btnClass="primary"
+                    width={94}
+                    height={40}
+                    fontSize={15}
+                    padding="9px 20px"
+                    lineHeight={146.7}
+                    letterSpacing={0.96}
+                    onClick={() => requestCloseRecruit({ ids: [Number(id)], status: 'CLOSED' })}
+                  >
+                    공고마감
+                  </Button>
+                )}
+                {recruitStatus === 'DRAFT' && (
+                  <Button
+                    type="button"
+                    variation="outlined"
+                    btnClass="primary"
+                    width={94}
+                    height={40}
+                    fontSize={15}
+                    padding="9px 20px"
+                    lineHeight={146.7}
+                    letterSpacing={0.96}
+                    onClick={() => {
+                      setRecruitStatus('DRAFT');
+                      setIsNewRecruitModalOpen(true);
+                    }}
+                    disabled={isSaveDisabled}
+                  >
+                    임시등록
+                  </Button>
+                )}
                 <Button
                   type="submit"
                   variation="solid"
@@ -719,6 +749,7 @@ const EditRecruit = () => {
             <WithIconInputWrapper $isDirty={Boolean(dirtyFields.practice?.start)} $isError={false}>
               <Datepicker
                 ref={recruitEndDatepickerRef}
+                minDate={new Date()}
                 selectedDate={recruitEnd}
                 onChangeDate={(date: Date | null) => {
                   handleRecruitEndChange(date);
@@ -747,6 +778,7 @@ const EditRecruit = () => {
             </RequiredLabel>
             <WithIconInputWrapper $isDirty={Boolean(dirtyFields.practice?.start)} $isError={false}>
               <RangeDatepicker
+                minDate={new Date()}
                 ref={practiceDatepickerRef}
                 selectedRange={practiceDataRange}
                 onChangeDate={(range: [Date | null, Date | null]) => {
