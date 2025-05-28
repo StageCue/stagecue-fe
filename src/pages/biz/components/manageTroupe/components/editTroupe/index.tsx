@@ -11,6 +11,8 @@ import Datepicker from '@/components/datepicker';
 import InvalidFileModal from '../invalidFileModal';
 import { useEditTroupe } from './hooks/useEditTroupe';
 import Tooltip from '@/components/tooltip';
+import Tip from '@/components/icons/Tip';
+import IconTip from '@/components/icons/Tip';
 
 interface EditTroupeProps {
   isInitial: boolean;
@@ -92,7 +94,7 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
                 }
                 placement="bottom"
               >
-                <TipSVG />
+                <IconTip />
               </Tooltip>
             </LabelWrapper>
             <FileGuide>극단 프로필을 설정해보세요.</FileGuide>
@@ -136,7 +138,7 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
                 }
                 placement="bottom"
               >
-                <TipSVG />
+                <IconTip />
               </Tooltip>
             </LabelWrapper>
             <FileGuide>극단을 표현하는 이미지를 설정해보세요.</FileGuide>

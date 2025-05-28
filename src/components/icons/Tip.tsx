@@ -1,0 +1,50 @@
+// components/icons/TipIcon.tsx
+import styled from 'styled-components';
+
+export function TipIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <mask
+        id="mask0_2551_65568"
+        mask-type="alpha"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="16"
+        height="16"
+      >
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M7.99991 1.3999C4.35482 1.3999 1.3999 4.35482 1.3999 7.9999C1.3999 11.645 4.35482 14.5999 7.99991 14.5999C11.645 14.5999 14.5999 11.645 14.5999 7.9999C14.5999 4.35482 11.645 1.3999 7.99991 1.3999ZM7.99991 2.5999C5.01757 2.5999 2.5999 5.01756 2.5999 7.9999C2.5999 10.9822 5.01757 13.3999 7.99991 13.3999C10.9822 13.3999 13.3999 10.9822 13.3999 7.9999C13.3999 5.01756 10.9822 2.5999 7.99991 2.5999ZM7.33324 5.33324C7.33324 4.96505 7.63172 4.66657 7.99991 4.66657C8.3681 4.66657 8.66657 4.96505 8.66657 5.33324C8.66657 5.70143 8.3681 5.9999 7.99991 5.9999C7.63172 5.9999 7.33324 5.70143 7.33324 5.33324ZM7.39991 6.9999V11.3332H8.59991V6.9999H7.39991Z"
+          fill="#171719"
+        />
+      </mask>
+      <g mask="url(#mask0_2551_65568)">
+        <rect className="tip-fill" width="16" height="16" />
+      </g>
+    </svg>
+  );
+}
+
+const IconTip = styled(TipIcon)`
+  .tip-fill {
+    fill: #c7c7c7;
+    transition: fill 0.1s ease;
+  }
+
+  &:hover .tip-fill {
+    fill: #171719;
+  }
+
+  cursor: pointer;
+`;
+
+export default IconTip;
