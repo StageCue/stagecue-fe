@@ -456,7 +456,6 @@ const InputError = styled.div`
   font-size: 13px;
   font-weight: var(--font-regular);
   letter-spacing: 1.94%;
-  letter-spacing: 138.5%;
 `;
 
 const SuccessCert = styled.div`
@@ -464,7 +463,6 @@ const SuccessCert = styled.div`
   font-size: 13px;
   font-weight: var(--font-regular);
   letter-spacing: 1.94%;
-  letter-spacing: 138.5%;
 `;
 
 const FoundAccountBox = styled.div`

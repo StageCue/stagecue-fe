@@ -310,6 +310,8 @@ const Signup = () => {
   useEffect(() => {
     if (ageCheckValue && agreePrivatePolicyValue && agreeServicePolicyValue) {
       setIsAllAgree(true);
+    } else {
+      setIsAllAgree(false);
     }
   }, [ageCheckValue, agreePrivatePolicyValue, agreeServicePolicyValue]);
 
@@ -732,7 +734,6 @@ const InputError = styled.div`
   font-size: 13px;
   font-weight: var(--font-regular);
   letter-spacing: 1.94%;
-  letter-spacing: 138.5%;
 `;
 
 const CertInputWrapper = styled.div<{
@@ -856,7 +857,6 @@ const SuccessCert = styled.div`
   font-size: 13px;
   font-weight: var(--font-regular);
   letter-spacing: 1.94%;
-  letter-spacing: 138.5%;
 `;
 
 const VerifyWrapper = styled.div`

@@ -9,6 +9,7 @@ import HideSVG from '@assets/icons/hide.svg?react';
 import ShowSVG from '@assets/icons/show.svg?react';
 import Lottie from 'react-lottie';
 import AppliedGIF from '@assets/images/appliedLottie.json';
+import { Spinner } from '@/components/spinner';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const ForgotPassword = () => {
     formState: { errors },
     clearErrors,
   } = useForm<ForgotPasswordInput>();
+  const [isLoading, setIsLoading] = useState(false);
   const [isSentEmail, setIsSentEmail] = useState(false);
   const [foundAccount, setFoundAccount] = useState<boolean>(true);
   const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
@@ -28,15 +30,19 @@ const ForgotPassword = () => {
   const [emailValue, tokenValue, newPasswordValue] = watch(['email', 'token', 'newPassowrd']);
 
   const onSubmitEmail = async (data: ForgotPasswordInput) => {
-    setIsSentEmail(true);
+    setIsLoading(true);
     const { result, error } = await requestResetPasswordEmail(data.email);
 
     if (result) {
+      setIsSentEmail(true);
+      setFoundAccount(true);
+      setIsLoading(false);
       return;
     }
 
     if (error) {
       setFoundAccount(false);
+      setIsLoading(false);
       return;
     }
   };
@@ -147,7 +153,7 @@ const ForgotPassword = () => {
                 width={340}
                 disabled={!emailValue || !!errors?.email?.message}
               >
-                비밀번호 변경
+                {isLoading ? <Spinner /> : '비밀번호 변경'}
               </Button>
             </Form>
           ) : (

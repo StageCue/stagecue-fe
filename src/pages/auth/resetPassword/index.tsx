@@ -248,5 +248,4 @@ const InputError = styled.div`
   font-size: 13px;
   font-weight: var(--font-regular);
   letter-spacing: 1.94%;
-  letter-spacing: 138.5%;
 `;

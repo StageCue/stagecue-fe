@@ -222,7 +222,7 @@ export default ResetPassword;
 
 const UpdatedModal = styled.div`
   width: 100%;
-  height: 100%;
+  height: 200px;
   display: inline-block;
   width: 340px;
   min-height: 200px;

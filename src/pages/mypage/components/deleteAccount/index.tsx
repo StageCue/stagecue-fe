@@ -2,7 +2,7 @@ import Button from '@/components/buttons/button';
 import styled from 'styled-components';
 import RadioSVG from '@/assets/icons/radio.svg?react';
 import RadioCheckedSVG from '@/assets/icons/radio_checked.svg?react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   requestDeleteAccount,
@@ -25,6 +25,7 @@ const DeleteAccount = () => {
   const sessionStore = useSessionStore();
   const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
+  const [certTime, setCertTime] = useState<number>(300);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [deleteUpdateToken, setDeleteUpdateToken] = useState('');
@@ -61,8 +62,25 @@ const DeleteAccount = () => {
 
     if (result) {
       setIsCodeSent(true);
+      setCertTime(300);
     }
   };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  };
+
+  useEffect(() => {
+    if (certTime === 0 || !isCodeSent) return;
+
+    const timer = setInterval(() => {
+      setCertTime(prevTime => prevTime - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [certTime, isCodeSent]);
 
   const handleVerifyEmail = async () => {
     const { result: updateToken } = await requestVerifyDeleteAccount(codeValue);
@@ -174,6 +192,7 @@ const DeleteAccount = () => {
                 $isError={!isVerified && Boolean(dirtyFields.code)}
               >
                 <VerifyInput {...register('code')} />
+                {isCodeSent && !isVerified ? <Timer>{formatTime(certTime)}</Timer> : null}
                 <Button
                   type="button"
                   variation="text"
@@ -470,4 +489,17 @@ const Inputs = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+`;
+
+const Timer = styled.div`
+  font-size: 16px;
+  font-weight: var(--font-regular);
+  letter-spacing: 0.57%;
+  line-height: 150%;
+  width: 43px;
+  height: 24px;
+  color: #c7c7c8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
