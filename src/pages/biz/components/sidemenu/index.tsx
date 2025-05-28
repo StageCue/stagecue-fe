@@ -1,6 +1,7 @@
 import Button from '@/components/buttons/button';
 import styled from 'styled-components';
 import PlusSVG from '@assets/icons/plus_red.svg?react';
+import DefaultProfile from '@assets/icons/default_profile.svg?react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useGetTroupeInfo } from '../manageTroupe/hooks/useGetTroupe';
@@ -50,7 +51,7 @@ const Sidemenu = () => {
       <TroupeWrapper>
         <TopArea>
           <TroupeLogo>
-            <img src={logoImg} alt="Troupe Logo"></img>
+            {logoImg ? <img src={logoImg} alt="Troupe Logo"></img> : <DefaultProfile width={40} />}
           </TroupeLogo>
           <Button
             variation="outlined"
@@ -130,6 +131,9 @@ const TroupeLogo = styled.div`
   border-radius: 12px;
   background-color: gray;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   img {
     width: 100%;

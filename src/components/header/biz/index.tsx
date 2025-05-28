@@ -10,7 +10,6 @@ import { useGetTroupeInfo } from '@/pages/biz/components/manageTroupe/hooks/useG
 const BizHeader = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
-  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
   const { name = '극단을 설정해주세요.' } = useGetTroupeInfo() ?? {};
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
@@ -25,8 +24,6 @@ const BizHeader = () => {
 
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
-    clearUserSessionStorage();
-    navigate('/');
   };
 
   return (

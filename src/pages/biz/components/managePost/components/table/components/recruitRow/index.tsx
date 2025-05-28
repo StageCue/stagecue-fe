@@ -6,6 +6,7 @@ import StarMarkedSVG from '@assets/icons/star_marked.svg?react';
 import Chip from '@/components/chip/chip';
 import { Recruit, RecruitStatusLabel } from '@/types/biz';
 import { useNavigate } from 'react-router-dom';
+import { INDEFINITE_DATE } from '@/constants/biz';
 
 interface RecruitRowProps {
   recruit: Recruit;
@@ -54,7 +55,7 @@ const RecruitRow = ({ recruit, isSelected, onClickStar, onClickCheckbox }: Recru
       </CheckboxInRow>
       <PostTitle onClick={() => navigate(`/biz/cast/${id}/form`)}>{title}</PostTitle>
       <Applicant>{applyCount}건</Applicant>
-      <Date>{recruitEndDate}</Date>
+      <Date>{recruitEndDate === INDEFINITE_DATE ? '상시모집' : recruitEndDate}</Date>
       <State>
         <Chip theme={STATUS_THEME_MAP[recruitStatus]}>{RecruitStatusLabel[recruitStatus]}</Chip>
       </State>
@@ -96,6 +97,7 @@ const PostTitle = styled.div`
 const Applicant = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 120px;
   height: 36px;
 `;
@@ -103,6 +105,7 @@ const Applicant = styled.div`
 const Date = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 120px;
   height: 36px;
 `;
@@ -110,6 +113,7 @@ const Date = styled.div`
 const State = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100px;
   height: 36px;
 `;

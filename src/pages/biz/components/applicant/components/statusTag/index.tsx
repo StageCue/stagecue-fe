@@ -28,6 +28,7 @@ const StatusTag = ({ status }: StateTagProps) => {
 export default StatusTag;
 
 const StatusTagContainer = styled.div<{ $status: string }>`
+  margin: 0 auto;
   height: 24px;
   border-radius: 4px;
   padding: 4px 9px;

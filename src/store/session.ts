@@ -1,3 +1,5 @@
+import { navigateTo } from '@/utils/navigator';
+import { getQueryClient } from '@/utils/queryClientAccessor';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -50,8 +52,9 @@ const useSessionStore = create(
           userType: null,
         }));
         sessionStorage.clear();
-
+        getQueryClient().clear();
         useSessionStore.persist.clearStorage();
+        navigateTo('/auth/login');
       },
 
       loginSession: ({ username, phoneNumber, email, birthday, userType }: LoginParams) => {

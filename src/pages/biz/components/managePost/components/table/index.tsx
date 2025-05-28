@@ -178,6 +178,7 @@ const PostTitleColumn = styled.div`
 const ApplicantColumn = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 120px;
   height: 36px;
   cursor: pointer;
@@ -186,6 +187,7 @@ const ApplicantColumn = styled.div`
 const DateColumn = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 120px;
   height: 36px;
   cursor: pointer;
@@ -194,6 +196,7 @@ const DateColumn = styled.div`
 const StateColumn = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100px;
   height: 36px;
   cursor: pointer;

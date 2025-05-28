@@ -196,15 +196,7 @@ const Table = ({
       </Header>
       <Body>
         {applications?.map(
-          ({
-            applyId,
-            age,
-            gender,
-            performerName,
-            recruitTitle,
-            applyDate,
-            applyStatus,
-          }) => (
+          ({ applyId, age, gender, performerName, recruitTitle, applyDate, applyStatus }) => (
             <div key={applyId}>
               <Row onClick={() => onClickRow(applyId, performerName)}>
                 <CheckboxInRow>
@@ -299,10 +291,13 @@ const StarWrapper = styled.div`
   cursor: pointer;
 `;
 
-const CaretWrapper = styled.div``;
+const CaretWrapper = styled.div`
+  width: 10px;
+`;
 
 const NameColumn = styled.div`
   display: flex;
+  justify-content: center;
   align-items: center;
   width: 100px;
   height: 36px;
@@ -312,6 +307,7 @@ const NameColumn = styled.div`
 const AgeColumn = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 80px;
   height: 36px;
   cursor: pointer;
@@ -320,6 +316,7 @@ const AgeColumn = styled.div`
 const GenderColumn = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 80px;
   height: 36px;
   position: relative;
@@ -337,6 +334,8 @@ const PostTitleColumn = styled.div`
 const DateColumn = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
+  justify-content: center;
   width: 120px;
   height: 36px;
   cursor: pointer;
@@ -345,6 +344,7 @@ const DateColumn = styled.div`
 const StateColumn = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100px;
   height: 36px;
   cursor: pointer;
@@ -409,6 +409,7 @@ const CheckboxInRow = styled.div`
 const Name = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100px;
   height: 36px;
 `;
@@ -416,6 +417,7 @@ const Name = styled.div`
 const Age = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 80px;
   height: 36px;
 `;
@@ -423,6 +425,7 @@ const Age = styled.div`
 const Gender = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 80px;
   height: 36px;
 `;
@@ -437,6 +440,7 @@ const PostTitle = styled.div`
 const Date = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 120px;
   height: 36px;
 `;

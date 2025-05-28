@@ -246,6 +246,8 @@ const Property = styled.div`
 
 const Value = styled.div`
   margin-left: 24px;
+  word-break: break-all;
+  white-space: normal;
 `;
 
 const Divider = styled.div`

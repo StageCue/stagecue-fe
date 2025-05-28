@@ -113,10 +113,10 @@ const ProfileModal = ({
                 </DataRow>
                 <DataRow>
                   <ValueWrapper>
-                    <MailSVG />
+                    <MailSVG /> <Value>{detail?.email}</Value>
                   </ValueWrapper>
                   <ValueWrapper>
-                    <MobileSVG />
+                    <MobileSVG /> <Value>{detail?.phoneNumber}</Value>
                   </ValueWrapper>
                 </DataRow>
               </DataWrapper>

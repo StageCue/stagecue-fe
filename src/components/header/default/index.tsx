@@ -11,7 +11,6 @@ import useHandleClickOutside from '@/hooks/useHandleClickOutside';
 const DefaultHeader = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
-  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
   const buttonWrapperRef = useRef<HTMLDivElement>(null);
   const { isOpen: isMyMenuShowing, setIsOpen: setIsMyMenuShowing } =
     useHandleClickOutside(buttonWrapperRef);
@@ -51,8 +50,6 @@ const DefaultHeader = () => {
 
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
-    clearUserSessionStorage();
-    navigate('/');
   };
 
   const handleMyStageClick = () => {

@@ -11,7 +11,6 @@ import {
 } from '@/api/users';
 import ModalPortal from '@/components/modal/portal';
 import Overlay from '@/components/modal/overlay';
-import { useNavigate } from 'react-router-dom';
 import useSessionStore from '@/store/session';
 
 interface DeleteAccountInputs {
@@ -21,9 +20,7 @@ interface DeleteAccountInputs {
 }
 
 const DeleteAccount = () => {
-  const navigate = useNavigate();
   const sessionStore = useSessionStore();
-  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
   const [certTime, setCertTime] = useState<number>(300);
   const [isVerified, setIsVerified] = useState<boolean>(false);
@@ -116,8 +113,6 @@ const DeleteAccount = () => {
 
   const handleMoveToLoginPage = () => {
     sessionStore.logoutSession();
-    clearUserSessionStorage();
-    navigate('/');
   };
 
   return (

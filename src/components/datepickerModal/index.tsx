@@ -9,6 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useEffect, useState } from 'react';
 import Button from '../buttons/button';
 import { formatDate } from '@/utils/format';
+import { INDEFINITE_DATE } from '@/constants/biz';
 
 interface DatepickerModalProps {
   defaultValue?: string;
@@ -36,6 +37,10 @@ const DatepickerModal = ({ onClose, onConfirm, defaultValue }: DatepickerModalPr
   };
 
   useEffect(() => {
+    if (defaultValue === INDEFINITE_DATE) {
+      setSelectedDate(new Date(Date.now()));
+      return;
+    }
     setSelectedDate(parseDate(defaultValue));
   }, [defaultValue]);
   return (
@@ -48,6 +53,7 @@ const DatepickerModal = ({ onClose, onConfirm, defaultValue }: DatepickerModalPr
           </TextWrapper>
           <DatePicker
             inline
+            minDate={new Date()}
             dateFormat="yyyy.MM.dd"
             selected={selectedDate}
             onChange={handleDateChange}

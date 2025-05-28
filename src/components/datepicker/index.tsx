@@ -10,13 +10,11 @@ import { ComponentProps, forwardRef } from 'react';
 interface DatepickerProps extends Omit<ComponentProps<typeof DatePicker>, 'ref'> {
   selectedDate: Date | null;
   onChangeDate: (date: Date | null) => void;
-  minDate?: Date;
-  maxDate?: Date;
   pickerText: string;
 }
 
 const Datepicker = forwardRef<DatePicker, DatepickerProps>(
-  ({ selectedDate, onChangeDate, pickerText, maxDate, ...props }, ref) => {
+  ({ selectedDate, onChangeDate, pickerText, ...props }, ref) => {
     const handleApplyClick = () => {
       if (ref && 'current' in ref && ref.current) {
         ref.current.setOpen(false);
@@ -36,7 +34,6 @@ const Datepicker = forwardRef<DatePicker, DatepickerProps>(
       <DatePickerContainer>
         <DatePicker
           ref={ref}
-          maxDate={maxDate}
           dateFormat="yyyy.MM.dd"
           selected={selectedDate}
           // @ts-expect-error - Discriminated Union bug

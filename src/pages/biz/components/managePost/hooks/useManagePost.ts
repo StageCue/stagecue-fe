@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { requestChangeEndDate, requestDeleteRecruit } from '@/api/biz';
+import { requestChangeEndDate, requestCloseRecruit, requestDeleteRecruit } from '@/api/biz';
 import { RecruitStatus } from '@/types/biz';
 import { useGetBizPost } from './useGetPost';
 import { usePostListContext } from '../components/context';
-import { formatDate } from '@/utils/format';
 
 export type ManageRecruitFilterType = RecruitStatus | '전체';
 
@@ -50,12 +49,9 @@ export const useManagePost = () => {
   };
 
   const handleConfirmClick = async () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    await requestChangeEndDate({
+    await requestCloseRecruit({
       ids: selectedRecruitIds,
-      endDate: formatDate(yesterday),
+      status: 'CLOSED',
     });
 
     setCloseRecruitModalOpen(false);
@@ -101,6 +97,7 @@ export const useManagePost = () => {
     isChangeDeadlieModalOpen,
     isDeleteModalOpen,
     data,
+    setSelectedRecruitIds,
     setCloseRecruitModalOpen,
     setIsChangeDeadlineModalOpen,
     setIsDeleteModalOpen,

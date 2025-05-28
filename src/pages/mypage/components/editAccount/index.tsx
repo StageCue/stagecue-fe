@@ -12,13 +12,11 @@ import ModalPortal from '@/components/modal/portal';
 import useSessionStore from '@/store/session';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 type accountDataType = '이메일' | '휴대폰 번호';
 
 const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
-  const navigate = useNavigate();
   const [selectedData, setSelectedData] = useState<accountDataType>(accountType ?? '이메일');
   const sessionStore = useSessionStore();
   const [isChangeMail, setIsChangeMail] = useState(false);
@@ -35,7 +33,6 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
   const [isVerifiedPhoneCode, setIsVerifiedPhoneCode] = useState(false);
   const [isErrorPhoneVerify, setIsErrorPhoneVerify] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const clearUserSessionStorage = useSessionStore.persist.clearStorage;
 
   const { register: emailRegister, handleSubmit: emailHandleSubmit, watch: emailWatch } = useForm();
 
@@ -174,9 +171,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
 
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
-    clearUserSessionStorage();
     setIsChangeConfirmed(false);
-    navigate('/');
   };
 
   const formatPhoneNumber = (value: string) => {
