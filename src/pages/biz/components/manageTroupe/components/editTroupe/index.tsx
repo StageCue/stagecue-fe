@@ -10,6 +10,7 @@ import CompanySVG from '@assets/icons/company.svg?react';
 import Datepicker from '@/components/datepicker';
 import InvalidFileModal from '../invalidFileModal';
 import { useEditTroupe } from './hooks/useEditTroupe';
+import Tooltip from '@/components/tooltip';
 
 interface EditTroupeProps {
   isInitial: boolean;
@@ -48,7 +49,8 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
     onSubmitEdit,
   } = useEditTroupe(isInitial);
 
-  if (isLoading) return <>loading</>;
+  //TODO: loading 제작
+  if (isLoading) return <></>;
 
   return (
     <EditTroupeContainer>
@@ -81,7 +83,17 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
                 프로필 이미지
                 <RequiedRedDot />
               </RequiredLabel>
-              <TipSVG />
+              <Tooltip
+                message={
+                  <>
+                    1MB 이하의 <br />
+                    jpg, jpeg, png 파일
+                  </>
+                }
+                placement="bottom"
+              >
+                <TipSVG />
+              </Tooltip>
             </LabelWrapper>
             <FileGuide>극단 프로필을 설정해보세요.</FileGuide>
             {logoPreview ? (
@@ -115,7 +127,17 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
           <ImageFileInputWrapper>
             <LabelWrapper>
               <Label>커버 이미지</Label>
-              <TipSVG />
+              <Tooltip
+                message={
+                  <>
+                    3MB 이하의 <br />
+                    jpg, jpeg, png 파일
+                  </>
+                }
+                placement="bottom"
+              >
+                <TipSVG />
+              </Tooltip>
             </LabelWrapper>
             <FileGuide>극단을 표현하는 이미지를 설정해보세요.</FileGuide>
             <CoverFileName>{coverFileName}</CoverFileName>

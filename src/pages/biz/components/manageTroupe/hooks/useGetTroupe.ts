@@ -2,9 +2,9 @@ import { requestTroupeInfo } from '@/api/biz';
 import { useQuery } from '@tanstack/react-query';
 
 export const useGetTroupeInfo = () => {
-  const { data } = useQuery({
+  return useQuery({
     queryKey: ['troupe'],
     queryFn: () => requestTroupeInfo(),
+    select: (data) => data,
   });
-  return data;
 };

@@ -10,7 +10,8 @@ type bizMenuOption = '지원자 관리' | '내 극단 관리' | '공고 관리' 
 
 const Sidemenu = () => {
   const navigate = useNavigate();
-  const { name = '극단을 설정해주세요.', logoImg } = useGetTroupeInfo() ?? {};
+  const { data } = useGetTroupeInfo();
+  const { name = '극단을 설정해주세요.', logoImg } = data ?? {};
   const [currentMenu, setCurrentMenu] = useState('지원자 관리');
 
   const location = useLocation();

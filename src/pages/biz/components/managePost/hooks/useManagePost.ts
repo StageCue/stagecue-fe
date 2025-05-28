@@ -84,7 +84,6 @@ export const useManagePost = () => {
     await requestDeleteRecruit({
       ids: selectedRecruitIds,
     });
-    console.log('삭제 완료');
 
     setIsDeleteModalOpen(false);
     refetch();
