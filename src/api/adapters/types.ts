@@ -37,7 +37,7 @@ export interface TroupePreviewResponse {
   result: {
     id: number;
     userId: number;
-    troupeName: string;
+    name: string;
     description: string;
     address: string;
     addressDetail: string;

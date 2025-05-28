@@ -60,7 +60,7 @@ const request = async ({ method, endpoint, data, header = {}, params }: RequestP
       return res.data;
     })
     .catch(error => {
-      return error?.response?.data;
+      throw error;
     });
 };
 

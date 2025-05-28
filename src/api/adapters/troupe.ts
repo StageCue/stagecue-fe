@@ -48,7 +48,7 @@ export const toViewTroupe = ({ result }: TroupeResponse): EditTroupeInputs => {
 
 export const toViewTroupePreview = ({ result }: TroupePreviewResponse): TroupeInfo => {
   return {
-    name: result.troupeName,
+    name: result.name,
     description: result.description,
     logoImg: result.logoImage,
     coverImg: result.bgImage,
