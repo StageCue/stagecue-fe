@@ -22,10 +22,9 @@ export const toApiPostTroupe = (viewData: EditTroupeInputs): ReqEditTroupe => {
     address: viewData.address,
     addressDetail: viewData.addressDetail,
     verifyNumber: viewData.registrationNumber,
-    verifyFile: viewData.registrationFile,
+    verifyFile: viewData.registrationFile ?? '',
     logoImage: viewData.logoImg,
     publishDate: formatDate(viewData.publishDate),
-    followerCount: 0,
   };
 };
 

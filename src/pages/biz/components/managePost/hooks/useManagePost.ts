@@ -3,11 +3,13 @@ import { requestChangeEndDate, requestCloseRecruit, requestDeleteRecruit } from 
 import { RecruitStatus } from '@/types/biz';
 import { useGetBizPost } from './useGetPost';
 import { usePostListContext } from '../components/context';
+import { useNavigate } from 'react-router-dom';
 
 export type ManageRecruitFilterType = RecruitStatus | '전체';
 
 export const useManagePost = () => {
   const { setPage, setSelectedFilter } = usePostListContext();
+  const navigate = useNavigate();
 
   const [selectedRecruitIds, setSelectedRecruitIds] = useState<number[]>([]);
   const [isCloseRecruitModalOpen, setCloseRecruitModalOpen] = useState(false);
@@ -82,9 +84,11 @@ export const useManagePost = () => {
     await requestDeleteRecruit({
       ids: selectedRecruitIds,
     });
+    console.log('삭제 완료');
 
     setIsDeleteModalOpen(false);
     refetch();
+    navigate('/biz/cast');
   };
 
   const handlePageChange = (newPage: number) => {

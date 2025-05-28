@@ -9,7 +9,6 @@ export interface ReqEditTroupe {
   managerName: string;
   managerCell: string;
   email: string;
-  followerCount: number;
   publishDate: string;
   verifyNumber: string;
   verifyFile: string;
