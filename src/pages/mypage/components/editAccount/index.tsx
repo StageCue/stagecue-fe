@@ -377,7 +377,7 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
                       fontWeight="var(--font-medium)"
                       padding="12px 26px"
                       onClick={handleSendPhoneCodeClick}
-                      disabled={false}
+                      disabled={!phoneNumberValue}
                     >
                       인증번호 받기
                     </Button>
@@ -414,7 +414,13 @@ const EditAccount = ({ accountType }: { accountType?: accountDataType }) => {
                 </WithMessageWrapper>
               )}
             </Inputs>
-            <Button type="submit" variation="solid" btnClass="primary" width={340}>
+            <Button
+              type="submit"
+              variation="solid"
+              btnClass="primary"
+              width={340}
+              disabled={!isVerifiedPhoneCode}
+            >
               변경완료
             </Button>
           </Form>
