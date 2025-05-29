@@ -9,7 +9,7 @@ import { PostSortType } from '@/pages/biz/components/managePost/components/conte
 
 interface ReqChangingApplyState {
   applyIds: string;
-  applyStatus: 'PASS' | 'WIN' | 'LOSE';
+  applyStatus: 'OPEN' | 'PASS' | 'WIN' | 'LOSE';
 }
 
 interface ReqAppliesParams {

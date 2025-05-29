@@ -190,8 +190,6 @@ const Applicants = () => {
           onClickCheckbox={handleCheckboxClick}
           selectedApplyIds={selectedApplyIds}
           onClickRow={handleApplicantRowClick}
-          onClickPass={handlePassClick}
-          onClickFail={handleFailClick}
           onCloseModal={handleCloseProfileClick}
           isProfileModalOpen={isProfileModalOpen}
           showingApplicant={showingApplicant!}

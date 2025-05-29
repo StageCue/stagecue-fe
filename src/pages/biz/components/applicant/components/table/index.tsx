@@ -23,8 +23,6 @@ interface TableProps {
   onClickCheckbox: (e: React.MouseEvent<HTMLElement, MouseEvent>, id: number, name: string) => void;
   selectedApplyIds: { id: number; name: string }[];
   onClickRow: (id: number, name: string) => void;
-  onClickPass: () => void;
-  onClickFail: () => void;
   onCloseModal: () => void;
   isProfileModalOpen: boolean;
   showingApplicant: { id: number; name: string };
@@ -34,8 +32,6 @@ const Table = ({
   onClickCheckbox,
   selectedApplyIds,
   onClickRow,
-  onClickPass,
-  onClickFail,
   onCloseModal,
   isProfileModalOpen,
   showingApplicant,
@@ -228,8 +224,6 @@ const Table = ({
               {isProfileModalOpen && showingApplicant.id === applyId && (
                 <ProfileModal
                   id={`${applyId}`}
-                  onClickPass={onClickPass}
-                  onClickFail={onClickFail}
                   onClose={onCloseModal}
                   name={performerName}
                   applyStatus={applyStatus}

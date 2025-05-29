@@ -10,24 +10,23 @@ import MailSVG from '@assets/icons/mail_lg.svg?react';
 import MobileSVG from '@assets/icons/mobile.svg?react';
 import StatusTag from '../statusTag';
 import calculateKoreanAge from '@/utils/calculateKoreanAge';
+import { requestChangingApplyState } from '@/api/biz';
+import { useApplicantListQuery } from '../../hooks/useQuery';
+import { useGetApplyStatus } from '../../hooks/useGetApplyStatus';
+import { useApplicantContext } from '../Context';
 
 interface ProfileModalProps {
   id: string;
   onClose: () => void;
-  onClickPass: () => void;
-  onClickFail: () => void;
   name: string;
   applyStatus: string;
 }
 
-const ProfileModal = ({
-  id,
-  onClose,
-  onClickPass,
-  onClickFail,
-  name,
-  applyStatus,
-}: ProfileModalProps) => {
+const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => {
+  const { refetch: refetchApplicants } = useApplicantListQuery();
+  const { refetch: refetchApplyStatus } = useGetApplyStatus();
+  const { setIsProfileModalOpen, setIsFailModalOpen } = useApplicantContext();
+
   const [detail, setDetail] = useState<ProfileDetailData>();
 
   const getProfileDetail = async (id: string) => {
@@ -35,9 +34,42 @@ const ProfileModal = ({
     setDetail(result);
   };
 
+  const handleFailConfirm = async () => {
+    await requestChangingApplyState({
+      applyIds: `${id}`,
+      applyStatus: 'LOSE',
+    });
+
+    refetchApplicants();
+    refetchApplyStatus();
+
+    setIsFailModalOpen(false);
+    setIsProfileModalOpen(false);
+  };
+
   useEffect(() => {
     getProfileDetail(id!);
   }, [id]);
+
+  const handleSuccessConfirm = () => {
+    setIsProfileModalOpen(false);
+    requestChangingApplyState({
+      applyIds: id,
+      applyStatus: 'PASS',
+    });
+    refetchApplicants();
+    refetchApplyStatus();
+  };
+
+  useEffect(() => {
+    if (applyStatus !== 'OPEN') return;
+    requestChangingApplyState({
+      applyIds: id,
+      applyStatus: 'OPEN',
+    });
+    refetchApplicants();
+    refetchApplyStatus();
+  }, []);
 
   return (
     <ProfileModalContainer>
@@ -67,7 +99,7 @@ const ProfileModal = ({
                   lineHeight={138.5}
                   letterSpacing={1.94}
                   fontWeight="var(--font-semibold)"
-                  onClick={onClickPass}
+                  onClick={handleSuccessConfirm}
                 >
                   합격
                 </Button>
@@ -80,7 +112,7 @@ const ProfileModal = ({
                   lineHeight={138.5}
                   letterSpacing={1.94}
                   fontWeight="var(--font-semibold)"
-                  onClick={onClickFail}
+                  onClick={handleFailConfirm}
                 >
                   불합격
                 </Button>
