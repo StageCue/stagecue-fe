@@ -48,7 +48,7 @@ const Detail = () => {
   };
 
   const getTroupeDetail = async () => {
-    console.log(recruitDetail);
+    console.log('recruitDetail : ', recruitDetail);
     if (
       recruitDetail?.practiceAddress &&
       !recruitDetail?.practiceLocationLat &&
@@ -75,9 +75,10 @@ const Detail = () => {
   };
 
   const getCastDetail = async () => {
+    console.log('id : ', id);
     if (id) {
       const { result } = await requestCastDetail(id);
-      console.log(result);
+      console.log('result : ', result);
       setRecruitDetail(result);
 
       if (result?.isScrap) {
