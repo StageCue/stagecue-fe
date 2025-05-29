@@ -36,7 +36,7 @@ interface ApplicantContextValue {
   setFavoriteFilter: (v: boolean | undefined) => void;
 
   gender?: Gender;
-  setGender: (v: Gender | undefined) => void;
+  setGender: Dispatch<React.SetStateAction<Gender | undefined>>;
   sort?: Sort;
   setSort: (v: Sort | undefined) => void;
   sortDirection?: 'ASC' | 'DESC' | undefined;

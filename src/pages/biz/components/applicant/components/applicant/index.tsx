@@ -213,7 +213,7 @@ const Applicants = () => {
 export default Applicants;
 
 const ApplicantContainer = styled.div`
-  width: 1180px;
+  max-width: 1180px;
   padding: 24px 40px;
 `;
 

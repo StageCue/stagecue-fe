@@ -128,12 +128,14 @@ export default DefaultHeader;
 
 const DefaultHeaderContainer = styled.div`
   width: 100%;
+  min-width: 900px;
   height: 60px;
   background-color: white;
   position: fixed;
   left: 0;
   z-index: 400;
   border-bottom: 1px solid #e1e2e4;
+  padding: 0 50px;
 `;
 
 const HeaderContainer = styled.div`
