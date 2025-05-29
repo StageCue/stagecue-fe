@@ -52,70 +52,6 @@ const Detail = () => {
     navigate(`/troupe/${recruitDetail?.troupeName}`);
   };
 
-  // const getCastDetail = async () => {
-  //   if (id) {
-  //     const { result } = await requestCastDetail(id);
-
-  //     if (result?.isScrap) {
-  //       setIsBookmarked(true);
-  //     }
-
-  //     return result;
-  //   }
-  //   return null;
-  // };
-
-  // const getTroupeDetail = async (recruitDetail: RecruitDetail) => {
-  //   if (!recruitDetail) return;
-
-  //   let practiceLocationLat = 0;
-  //   let practiceLocationLng = 0;
-  //   let theatreLocationLat = 0;
-  //   let theatreLocationLng = 0;
-
-  //   if (
-  //     recruitDetail?.practiceAddress &&
-  //     !recruitDetail?.practiceLocationLat &&
-  //     !recruitDetail?.practiceLocationLng
-  //   ) {
-  //     const address = cleanAddress(recruitDetail?.practiceAddress);
-  //     const { lng, lat } = await getCoordinates(address);
-  //     practiceLocationLat = lat;
-  //     practiceLocationLng = lng;
-  //   }
-
-  //   if (
-  //     recruitDetail?.theatreAddress &&
-  //     (!recruitDetail?.theatreLocationLat || !recruitDetail?.theatreLocationLng)
-  //   ) {
-  //     const address = cleanAddress(recruitDetail?.theatreAddress);
-  //     const { lng, lat } = await getCoordinates(address);
-  //     theatreLocationLat = lat;
-  //     theatreLocationLng = lng;
-  //   }
-
-  //   if (recruitDetail?.troupeName) {
-  //     const { result } = await requestTroupeDetail(recruitDetail?.troupeName);
-  //     setTroupeImage(result?.logoImage);
-  //   }
-
-  //   setRecruitDetail({
-  //     ...recruitDetail,
-  //     practiceLocationLat,
-  //     practiceLocationLng,
-  //     theatreLocationLat,
-  //     theatreLocationLng,
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   getCastDetail().then(response => {
-  //     if (response) {
-  //       getTroupeDetail(response);
-  //     }
-  //   });
-  // }, []);
-
   const getCastDetail = async () => {
     if (!id) return null;
 
@@ -145,6 +81,7 @@ const Detail = () => {
     try {
       const cleanedAddress = cleanAddress(address);
       const { lng, lat } = await getCoordinates(cleanedAddress);
+
       return { lat, lng };
     } catch (error) {
       console.error('좌표 조회 실패:', error);
