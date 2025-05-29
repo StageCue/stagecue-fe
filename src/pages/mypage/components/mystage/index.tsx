@@ -44,12 +44,12 @@ const MyStage = () => {
           <Divider />
           <MyStageItem>
             <ItemName>최종 합격</ItemName>
-            <Value>{getStatusCount('FINAL_ACCEPTED')}</Value>
+            <Value>{getStatusCount('WIN')}</Value>
           </MyStageItem>
           <Divider />
           <MyStageItem>
             <ItemName>불합격</ItemName>
-            <Value>{getStatusCount('FAILED')}</Value>
+            <Value>{getStatusCount('LOSE')}</Value>
           </MyStageItem>
         </Dashboard>
       </MyStageStatus>
