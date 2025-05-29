@@ -17,6 +17,7 @@ import { RecruitDetail } from '@/types/recruitDetail';
 import { getDday } from '@/utils/getDday';
 import { getCoordinates } from '@/utils/getCoordinates';
 import { cleanAddress } from '@/utils/cleanAddress';
+import { INDEFINITE_DATE } from '@/constants/biz';
 
 const Detail = () => {
   const { id } = useParams();
@@ -157,7 +158,11 @@ const Detail = () => {
         <Header>
           <TitleWrapper>
             <DdayWrapper>
-              <Dday>D{getDday(recruitDetail?.recruitEndDate as string)}</Dday>
+              <Dday>
+                {recruitDetail?.recruitEndDate === INDEFINITE_DATE
+                  ? '상시모집'
+                  : `D${getDday(recruitDetail?.recruitEndDate as string)}`}
+              </Dday>
               {isLoggined && (
                 <BookmarkWrapper onClick={handleBookmarkClick}>
                   {isBookmarked ? <BookmarkFilledSVG /> : <BookmarkSVG />}
