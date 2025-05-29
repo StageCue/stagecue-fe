@@ -22,10 +22,9 @@ export const toApiPostTroupe = (viewData: EditTroupeInputs): ReqEditTroupe => {
     address: viewData.address,
     addressDetail: viewData.addressDetail,
     verifyNumber: viewData.registrationNumber,
-    verifyFile: viewData.registrationFile,
+    verifyFile: viewData.registrationFile ?? '',
     logoImage: viewData.logoImg,
     publishDate: formatDate(viewData.publishDate),
-    followerCount: 0,
   };
 };
 
@@ -49,7 +48,7 @@ export const toViewTroupe = ({ result }: TroupeResponse): EditTroupeInputs => {
 
 export const toViewTroupePreview = ({ result }: TroupePreviewResponse): TroupeInfo => {
   return {
-    name: result.troupeName,
+    name: result.name,
     description: result.description,
     logoImg: result.logoImage,
     coverImg: result.bgImage,

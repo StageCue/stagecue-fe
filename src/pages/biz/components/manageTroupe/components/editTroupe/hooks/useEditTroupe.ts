@@ -11,6 +11,8 @@ import {
   requestUploadRegistration,
 } from '@/api/biz';
 import { convertFileToURL, seperateFileNameFromPath } from '@/utils/file';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import { useGetTroupeInfo } from '../../../hooks/useGetTroupe';
 
 export interface EditTroupeInputs {
   name: string;
@@ -47,6 +49,7 @@ const getCoverFileName = (path: string) => {
 export const useEditTroupe = (isInitial: boolean) => {
   const navigate = useNavigate();
   const open = useDaumPostcodePopup();
+  const { refetch: refetchTroupInfo } = useGetTroupeInfo();
 
   const {
     register,
@@ -258,10 +261,10 @@ export const useEditTroupe = (isInitial: boolean) => {
         coverImg,
         registrationFile,
       });
+      refetchTroupInfo();
       navigate('/biz/troupe/created');
     } catch (error) {
-      console.error('에러 발생:', error);
-      alert('다시 시도해주세요.');
+      alert(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

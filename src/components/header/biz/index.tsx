@@ -11,7 +11,8 @@ const BizHeader = () => {
   const navigate = useNavigate();
   const sessionStore = useSessionStore();
 
-  const { name = '극단을 설정해주세요.' } = useGetTroupeInfo() ?? {};
+  const { data } = useGetTroupeInfo();
+  const { name = '극단을 설정해주세요.' } = data ?? {};
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
   const handleLogoClick = () => {

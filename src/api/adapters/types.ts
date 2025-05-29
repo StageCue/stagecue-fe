@@ -9,7 +9,6 @@ export interface ReqEditTroupe {
   managerName: string;
   managerCell: string;
   email: string;
-  followerCount: number;
   publishDate: string;
   verifyNumber: string;
   verifyFile: string;
@@ -38,7 +37,7 @@ export interface TroupePreviewResponse {
   result: {
     id: number;
     userId: number;
-    troupeName: string;
+    name: string;
     description: string;
     address: string;
     addressDetail: string;

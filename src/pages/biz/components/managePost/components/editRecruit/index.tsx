@@ -37,6 +37,7 @@ import {
 import { RecruitStatus } from '@/pages/biz/types/applicants';
 import { adaptEditRecruitInputsToDTO } from './adapter';
 import { INDEFINITE_DATE } from '@/constants/biz';
+import { queryClient } from '@/lib/queryClient';
 
 export interface EditRecruitInputs {
   title: string;
@@ -436,8 +437,11 @@ const EditRecruit = () => {
     await requestDeleteRecruit({
       ids: [Number(id)],
     });
-
     setIsDeleteModalOpen(false);
+    navigate('/biz/cast');
+    queryClient.invalidateQueries({
+      predicate: query => query.queryKey[0] === 'bizRecruits',
+    });
   };
 
   const getRecruitFormData = async (id: string) => {
