@@ -3,7 +3,6 @@ import TroupeDetail from './components/troupeDetail';
 import Button from '@/components/buttons/button';
 import { useNavigate } from 'react-router-dom';
 import { useGetTroupeInfo } from './hooks/useGetTroupe';
-import { useEffect } from 'react';
 
 export interface TroupeInfo {
   name: string;
@@ -28,7 +27,6 @@ const ManageTroupe = () => {
     navigate('/biz/troupe/form/new');
   };
 
-  useEffect(() => console.log(troupeInfo), [troupeInfo]);
   return (
     <ManageTroupeContainer>
       {troupeInfo?.name ? (
