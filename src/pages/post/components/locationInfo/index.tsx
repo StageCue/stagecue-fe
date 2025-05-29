@@ -42,7 +42,9 @@ const LocationInfo = ({ address, addressDetail, lat, lng }: LocationInfoProps) =
           </TextWrapper>
         </LocationData>
         <Map
-          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=633&h=452&center=${lng},${lat}&level=16&scale=2&X-NCP-APIGW-API-KEY-ID=7sn0mkl4n4`}
+          src={`https://naveropenapi.apigw.ntruss.com/map-static/v2/raster-cors?w=633&h=452&center=${lng},${lat}&level=16&scale=2&X-NCP-APIGW-API-KEY-ID=${
+            import.meta.env.VITE_NAVER_CLIENT_ID
+          }`}
         />
       </InfoWrapper>
     </LocationInfoContainer>
