@@ -29,30 +29,32 @@ const BizHeader = () => {
 
   return (
     <BizHeaderContainer>
-      <LeftSideWrapper>
-        <Logo onClick={handleLogoClick}>
-          <BlackLogoSVG />
-        </Logo>
-        <Title>극단주 서비스</Title>
-      </LeftSideWrapper>
-      <RightSideWrapper>
-        <ButtonWrapper onClick={handleMymenuClick}>
-          <AuthMenuBtn>
-            {name}
-            <CaretDownSVG />
-          </AuthMenuBtn>
-        </ButtonWrapper>
-        {isMymenuShowing && (
-          <MyMenu>
-            <UserWrapper>
-              <Name>{sessionStore.username}</Name>
-              <Email>{sessionStore.email}</Email>
-            </UserWrapper>
-            <Divider />
-            <Option onClick={handleLogoutClick}>로그아웃</Option>
-          </MyMenu>
-        )}
-      </RightSideWrapper>
+      <BizHeaderContent>
+        <LeftSideWrapper>
+          <Logo onClick={handleLogoClick}>
+            <BlackLogoSVG />
+          </Logo>
+          <Title>극단주 서비스</Title>
+        </LeftSideWrapper>
+        <RightSideWrapper>
+          <ButtonWrapper onClick={handleMymenuClick}>
+            <AuthMenuBtn>
+              {name}
+              <CaretDownSVG />
+            </AuthMenuBtn>
+          </ButtonWrapper>
+          {isMymenuShowing && (
+            <MyMenu>
+              <UserWrapper>
+                <Name>{sessionStore.username}</Name>
+                <Email>{sessionStore.email}</Email>
+              </UserWrapper>
+              <Divider />
+              <Option onClick={handleLogoutClick}>로그아웃</Option>
+            </MyMenu>
+          )}
+        </RightSideWrapper>
+      </BizHeaderContent>
     </BizHeaderContainer>
   );
 };
@@ -61,17 +63,24 @@ export default BizHeader;
 
 const BizHeaderContainer = styled.div`
   width: 100%;
+  min-width: 800px;
   height: 60px;
   padding: 14px 24px;
-  display: flex;
-  align-items: center;
+
   position: fixed;
-  justify-content: space-between;
+
   border-bottom: 1px solid #e1e2e4;
   background-color: white;
   z-index: 400;
 `;
 
+const BizHeaderContent = styled.div`
+  width: 100%;
+  max-width: 1440px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 const LeftSideWrapper = styled.div`
   display: flex;
   align-items: center;

@@ -120,7 +120,7 @@ const Table = ({
     gender: Gender
   ) => {
     event.stopPropagation();
-    setGender(gender);
+    setGender(prev => (prev === gender ? undefined : gender));
     setIsGenderSortShowing(false);
   };
 

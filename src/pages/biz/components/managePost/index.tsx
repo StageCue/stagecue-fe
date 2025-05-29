@@ -183,7 +183,7 @@ const ManagePost = () => {
 export default ManagePost;
 
 const ManagePostContainer = styled.div`
-  width: 1180px;
+  max-width: 1180px;
   padding: 24px 40px;
 `;
 

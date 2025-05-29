@@ -95,4 +95,5 @@ const HomeContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 24px 0 100px 0;
+  margin: 0 50px;
 `;
