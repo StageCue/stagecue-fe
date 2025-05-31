@@ -30,20 +30,18 @@ const ForgotPassword = () => {
   const [emailValue, tokenValue, newPasswordValue] = watch(['email', 'token', 'newPassowrd']);
 
   const onSubmitEmail = async (data: ForgotPasswordInput) => {
-    setIsLoading(true);
-    const { result, error } = await requestResetPasswordEmail(data.email);
+    try {
+      setIsLoading(true);
+      const { result } = await requestResetPasswordEmail(data.email);
 
-    if (result) {
-      setIsSentEmail(true);
-      setFoundAccount(true);
-      setIsLoading(false);
-      return;
-    }
-
-    if (error) {
+      if (result) {
+        setIsSentEmail(true);
+        setFoundAccount(true);
+      }
+    } catch (error) {
       setFoundAccount(false);
+    } finally {
       setIsLoading(false);
-      return;
     }
   };
 
