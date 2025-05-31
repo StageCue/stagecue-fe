@@ -34,7 +34,6 @@ apiClient.interceptors.response.use(
     }
 
     if (response.code.value === 'stagecue.troupe.not-found') {
-      console.log('response', response.code.value);
       navigateTo('/biz/troupe');
     }
 

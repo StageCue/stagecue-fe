@@ -132,10 +132,10 @@ const ProfileForm = () => {
       try {
         const formData = new FormData();
         formData.append('file', thumbnailFile);
-        const { imageUrl } = await requestUploadThumbnail(formData);
-        setValue('thumbnail', imageUrl);
+        const { result } = await requestUploadThumbnail(formData);
+        setValue('thumbnail', result);
 
-        return imageUrl;
+        return result;
       } catch (error) {
         console.error('Error uploading images:', error);
       }
@@ -288,12 +288,16 @@ const ProfileForm = () => {
 
   const createProfile = async (data: ProfileInput, isDefault: boolean) => {
     const { experiences, height, weight, introduce, title } = data;
-    const sanitizedExperiences = experiences?.map(({ ...rest }) => ({
-      ...rest,
-      troupeName: rest.troupe,
-      startDate: `${rest.startDate}-01`,
-      endDate: `${rest.endDate}-01`,
-    }));
+    const sanitizedExperiences = experiences?.map(
+      ({ artworkName, artworkPart, troupe, startDate, endDate }) => ({
+        artworkName,
+        artworkPart,
+        troupeName: troupe,
+        startDate: `${startDate}`,
+        endDate: `${endDate}`,
+      })
+    );
+
     const imageUrls = await requestUploadImageFiles();
     const thumbnailUrl = await requestUploadThumbnailFile();
 
@@ -318,6 +322,7 @@ const ProfileForm = () => {
   const handleConfirmClick = async (data: ProfileInput) => {
     try {
       setIsLoading(true);
+
       const params = await createProfile(data, true);
       const { result } = await requestSaveProfile(params);
       await requestProfileDefault(id!);

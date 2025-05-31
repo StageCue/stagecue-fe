@@ -4,14 +4,12 @@ import Button from '@/components/buttons/button';
 import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
 import CalendarSVG from '@assets/icons/calendar.svg?react';
-import TipSVG from '@assets/icons/tip.svg?react';
 import CompanySVG from '@assets/icons/company.svg?react';
 
 import Datepicker from '@/components/datepicker';
 import InvalidFileModal from '../invalidFileModal';
 import { useEditTroupe } from './hooks/useEditTroupe';
 import Tooltip from '@/components/tooltip';
-import Tip from '@/components/icons/Tip';
 import IconTip from '@/components/icons/Tip';
 
 interface EditTroupeProps {
@@ -269,7 +267,7 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
               type="file"
               {...register('registrationFile')}
               ref={inputRegistrationFileRef}
-              accept=".jpg,.png,.pdf"
+              accept=".pdf"
               onChange={handleRegistrationFileChange}
             />
             <Button
@@ -287,7 +285,7 @@ export default function EditTroupe({ isInitial }: EditTroupeProps) {
               파일 선택
             </Button>
           </WithBtnInputWrapper>
-          <FileGuide>jpg, png, pdf 파일로 업로드해주세요.</FileGuide>
+          <FileGuide>pdf 파일로 업로드해주세요.</FileGuide>
         </InputWrapper>
         <Divider />
         <TwoInputWrapper>

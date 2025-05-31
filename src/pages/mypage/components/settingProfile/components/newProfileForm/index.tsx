@@ -213,12 +213,15 @@ const NewProfileForm = () => {
 
   const createProfile = async (data: ProfileInput, isDefault: boolean) => {
     const { experiences, height, weight, introduce, title } = data;
-    const sanitizedExperiences = experiences?.map(({ ...rest }) => ({
-      ...rest,
-      troupeName: rest.troupe,
-      startDate: `${rest.startDate}-01`,
-      endDate: `${rest.endDate}-01`,
-    }));
+    const sanitizedExperiences = experiences?.map(
+      ({ artworkName, artworkPart, troupe, startDate, endDate }) => ({
+        artworkName,
+        artworkPart,
+        troupeName: troupe,
+        startDate: `${startDate}-01`,
+        endDate: `${endDate}-01`,
+      })
+    );
     const imageUrls = (await requestUploadImageFiles()) ?? [];
     const thumbnailUrl = await requestUploadThumbnailFile();
 
