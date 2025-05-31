@@ -1049,7 +1049,7 @@ const Modal = styled.div`
 `;
 
 const ModalTitle = styled.div`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 20px;
   line-height: 28px;
   color: #171719ff;

@@ -653,7 +653,7 @@ const ChangeConfirmedModal = styled.div`
 `;
 
 const ModalTitle = styled.div`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 20px;
   line-height: 140%;
   letter-spacing: -1.2%;

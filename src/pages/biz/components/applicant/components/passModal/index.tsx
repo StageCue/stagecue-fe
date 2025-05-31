@@ -91,7 +91,7 @@ const SubText = styled.div`
 `;
 
 const Strong = styled.span`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
 `;
 
 const ButtonWrapper = styled.div`

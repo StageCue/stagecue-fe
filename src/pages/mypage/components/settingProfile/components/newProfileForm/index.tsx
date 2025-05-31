@@ -630,12 +630,14 @@ const NewProfileForm = () => {
                           {...expRegister('startDate', { required: true })}
                           placeholder="YYYY.MM"
                           type="month"
+                          max={new Date().toISOString().slice(0, 7)}
                         />
                         ~
                         <ExpDateInput
                           {...expRegister('endDate', { required: true })}
                           placeholder="YYYY.MM"
                           type="month"
+                          max={new Date().toISOString().slice(0, 7)}
                         />
                       </DataRow>
                     </DataRows>

@@ -341,7 +341,7 @@ const ModalContent = styled.div`
 `;
 
 const ContentTitle = styled.div`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 20px;
   color: #171719ff;
   text-align: center;

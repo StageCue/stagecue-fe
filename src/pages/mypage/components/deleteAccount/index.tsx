@@ -311,7 +311,7 @@ const DeleteModalContent = styled.div`
 
 const DeleteModalTitle = styled.div`
   text-align: center;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 20px;
   line-height: 28px;
   letter-spacing: -1.2%;

@@ -582,7 +582,7 @@ const NoCasts = styled.div`
 
 const NoCastsTitle = styled.div`
   color: #000000ff;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 18px;
   line-height: 145%;
   letter-spacing: -0.02%;

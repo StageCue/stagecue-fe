@@ -123,7 +123,7 @@ const LocationIcon = () => {
 };
 
 const ShowDetailsTitle = styled.div`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 18px;
   line-height: 26px;
   color: #ffffffff;
@@ -192,7 +192,7 @@ const Divider = styled.div`
 `;
 
 const CartTitle = styled.div`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 20px;
   line-height: 28px;
 `;

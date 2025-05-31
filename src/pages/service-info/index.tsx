@@ -293,7 +293,7 @@ const ContentSubTitle = styled.div<{ $fontWeight: number; $fontSize: number; $li
   line-height: ${({ $lineHeight }) => `${$lineHeight}px`};
 
   span {
-    font-weight: 600;
+    font-weight: var(--font-semibold);
   }
 `;
 
@@ -317,7 +317,7 @@ const HeadSectionContent = styled.div`
 `;
 
 const HeadSectionTitle = styled.div`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 48px;
   line-height: 62px;
 `;
@@ -477,14 +477,14 @@ const CardType = styled.div`
   border-radius: 3px;
   background-color: #000000ff;
 
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 12px;
   line-height: 17px;
   color: #ffffffff;
 `;
 
 const CardTitle = styled.div`
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 16px;
   line-height: 24px;
 `;
