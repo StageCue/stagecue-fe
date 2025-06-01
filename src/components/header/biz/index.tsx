@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -12,6 +12,7 @@ const BizHeader = () => {
   const sessionStore = useSessionStore();
 
   const { data } = useGetTroupeInfo();
+  const setUserType = useSessionStore(state => state.setUserType);
   const { name = '극단을 설정해주세요.' } = data ?? {};
   const [isMymenuShowing, setIsMymenuShowing] = useState<boolean>(false);
 
@@ -26,6 +27,12 @@ const BizHeader = () => {
   const handleLogoutClick = () => {
     sessionStore.logoutSession();
   };
+
+  useEffect(() => {
+    if (data) {
+      setUserType('TROUPE');
+    }
+  }, [data, setUserType]);
 
   return (
     <BizHeaderContainer>
