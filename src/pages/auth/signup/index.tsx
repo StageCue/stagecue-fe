@@ -174,7 +174,7 @@ const Signup = () => {
         userType: 'PERFORMER',
         birthday: birthday,
       });
-      navigate('/auth/welcome');
+      navigate('/');
     }
   };
 
