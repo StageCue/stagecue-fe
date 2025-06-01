@@ -24,8 +24,6 @@ apiClient.interceptors.response.use(
     // stagecue.login-user.token-missing=권한이 없어요.
     const logoutOptions = [
       'stagecue.auth.user-empty',
-      'stagecue.login-user.not-authorized',
-      'stagecue.login-user.user-role-missing',
       'stagecue.login-user.token-missing',
     ];
 
