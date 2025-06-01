@@ -35,7 +35,7 @@ interface AddressData {
   addressType: string;
   bname: string;
   buildingName: string;
-  autoJibunAddress: string;
+  roadAddress: string;
 }
 
 const getCoverFileName = (path: string) => {
@@ -182,7 +182,7 @@ export const useEditTroupe = (isInitial: boolean) => {
   };
 
   const handleAddressComplete = (data: AddressData) => {
-    let fullAddress = data?.autoJibunAddress;
+    let fullAddress = data?.roadAddress;
     let extraAddress = '';
 
     if (data.addressType === 'R') {
