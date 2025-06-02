@@ -188,7 +188,7 @@ const ProfileForm = () => {
     if (result) {
       setDetail(result);
       setValue('title', result?.title);
-      setValue('birthday', result?.birthday);
+      setValue('birthday', result?.birthDay);
       setValue('weight', result?.weight);
       setValue('height', result?.height);
       setValue('introduce', result?.introduce);
@@ -473,7 +473,9 @@ const ProfileForm = () => {
                   <DataRows>
                     <DataRow>
                       <Property>생년월일</Property>
-                      <Value>{birthdayValue}</Value>
+                      <Value>
+                        {birthdayValue} ({calculateAge(birthdayValue)}세)
+                      </Value>
                     </DataRow>
                     <DataRow>
                       <Property>이름</Property>

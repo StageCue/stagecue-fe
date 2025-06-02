@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import LocationSVG from '@/assets/icons/location.svg?react';
 import { useNavigate } from 'react-router-dom';
+import useSearchStore from '@/store/search';
 
 interface RecruitProps {
   imgWidth: number;
@@ -22,8 +23,10 @@ const Recruit = ({
   troupeName,
 }: RecruitProps) => {
   const navigate = useNavigate();
+  const { setSearchQuery } = useSearchStore();
 
   const handleCastClick = () => {
+    setSearchQuery('');
     navigate(`/casts/${recruitId}`);
   };
 

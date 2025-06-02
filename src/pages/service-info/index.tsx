@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import WhiteLogoSVG from '@assets/icons/white_logo.svg?react';
 import HalfBulbSVG from '@assets/icons/half_bulb.svg?react';
@@ -5,7 +6,6 @@ import FullBulbSVG from '@assets/icons/full_bulb.svg?react';
 import LocationGraySVG from '@assets/icons/location_gray.svg?react';
 import BulbImage from '@assets/images/bulb.png';
 import Button from '@/components/buttons/button';
-import { Link, useNavigate } from 'react-router-dom';
 
 const ServiceInfo = () => {
   const navigate = useNavigate();
@@ -212,10 +212,12 @@ const ServiceInfo = () => {
 export default ServiceInfo;
 
 const ServiceInfoContainer = styled.div`
-  width: 1440px;
+  width: 100%;
+  min-width: 1440px;
   height: fit-content;
   min-height: inherit;
   background-color: black;
+  box-sizing: border-box;
 `;
 
 const Section = styled.div<{ $height: number; $imageURL?: string }>`

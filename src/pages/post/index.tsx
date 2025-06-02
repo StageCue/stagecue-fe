@@ -207,6 +207,11 @@ const List = () => {
   };
 
   const onChangeMaxCost = (cost: string) => {
+    // if (Number(cost) > 500000) {
+    //   setMaxCost('500000');
+    //   return;
+    // }
+
     setMaxCost(cost);
   };
 

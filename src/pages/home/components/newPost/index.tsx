@@ -23,7 +23,7 @@ const NewPost = ({ recruits }: NewPostProps) => {
     <NewPostContainer>
       <TitleWrapper>
         <Title>
-          <Strong>새로 등록된 공고</Strong>를 확인해보세요!
+          <Strong>새로 등록된 공고</Strong>를 확인해 보세요!
           <Higliting />
         </Title>
         <Button

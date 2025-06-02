@@ -13,14 +13,15 @@ import { requestCasts, requestPopularCasts } from '@/api/cast';
 import { requestRecommendRecruits } from '@/api/recommendRecruits';
 import { requestNotices } from '@/api/notice';
 import { requestBanners } from '@/api/ads';
+import { PopularRecruitDetail } from './components/popularPost';
 import useSessionStore from '@/store/session';
 
 const Home = () => {
   const { isLoggined } = useSessionStore();
 
   const [recommendRecruits, setRecommendRecruits] = useState([]);
-  const [newestRecruits, setNewestRecruits] = useState([]);
-  const [popularRecruits, setPopularRecruits] = useState([]);
+  const [newestRecruits, setNewestRecruits] = useState<PopularRecruitDetail[]>([]);
+  const [popularRecruits, setPopularRecruits] = useState<PopularRecruitDetail[]>([]);
   const [notices, setNotices] = useState([]);
   const [banners, setBanners] = useState([]);
 
@@ -37,23 +38,61 @@ const Home = () => {
   };
 
   const getNewestCasts = async () => {
-    const { result } = await requestCasts({
-      size: 5,
-      category: 'THEATER',
-      sort: 'RECENT',
-    });
+    const newRecruits: PopularRecruitDetail[] = (
+      await Promise.all(
+        [
+          requestCasts({
+            size: 5,
+            category: 'THEATER',
+            sort: 'RECENT',
+          }),
+          requestCasts({
+            size: 5,
+            category: 'DANCE',
+            sort: 'RECENT',
+          }),
+          requestCasts({
+            size: 5,
+            category: 'MUSICAL',
+            sort: 'RECENT',
+          }),
+        ].map(async request => {
+          const { result } = await request;
+          return result?.body;
+        })
+      )
+    ).flatMap(item => item);
 
-    setNewestRecruits(result?.body);
+    setNewestRecruits(newRecruits);
   };
 
   const getPopularCasts = async () => {
-    const { result } = await requestPopularCasts({
-      size: 5,
-      category: 'THEATER',
-      sort: 'VIEW',
-    });
+    const popularRecruits: PopularRecruitDetail[] = (
+      await Promise.all(
+        [
+          requestPopularCasts({
+            size: 5,
+            category: 'THEATER',
+            sort: 'VIEW',
+          }),
+          requestPopularCasts({
+            size: 5,
+            category: 'DANCE',
+            sort: 'VIEW',
+          }),
+          requestPopularCasts({
+            size: 5,
+            category: 'MUSICAL',
+            sort: 'VIEW',
+          }),
+        ].map(async request => {
+          const { result } = await request;
+          return result?.body;
+        })
+      )
+    ).flatMap(item => item);
 
-    setPopularRecruits(result?.body);
+    setPopularRecruits(popularRecruits);
   };
 
   const getNotices = async () => {

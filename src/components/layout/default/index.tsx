@@ -14,7 +14,7 @@ const DefaultLayout = () => {
   }, [pathname]);
 
   return (
-    <DefaultLayoutContainer $backgroundColor={isServicePage ? 'black' : 'white'}>
+    <DefaultLayoutContainer $isServicePage={isServicePage}>
       {!isServicePage && <DefaultHeader />}
       <Body $paddingTop={isServicePage ? 0 : 60}>
         <Outlet />
@@ -26,15 +26,16 @@ const DefaultLayout = () => {
 
 export default DefaultLayout;
 
-const DefaultLayoutContainer = styled.div<{ $backgroundColor: string }>`
+const DefaultLayoutContainer = styled.div<{ $isServicePage: boolean }>`
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  min-width: ${({ $isServicePage }) => ($isServicePage ? '1440px' : '100%')};
 
-  background-color: ${({ $backgroundColor }) => `${$backgroundColor}`};
+  background-color: ${({ $isServicePage }) => ($isServicePage ? 'black' : 'white')};
 `;
 
 const Body = styled.div<{ $paddingTop: number }>`

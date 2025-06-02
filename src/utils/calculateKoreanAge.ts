@@ -1,17 +1,18 @@
-const calculateKoreanAge = (birthDateString: string) => {
-  if (!birthDateString) return;
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1;
-  const currentDay = new Date().getDate();
-  const [birthYear, birthMonth, birthDay] = birthDateString.split('-').map(Number);
+const calculateKoreanAge = (birthday: string) => {
+  if (!birthday) return;
 
-  let koreanAge = currentYear - birthYear + 1;
+  const birthDate = new Date(birthday);
+  const today = new Date();
 
-  if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
-    koreanAge--;
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  // 생일이 아직 지나지 않은 경우 1을 빼줍니다
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
   }
 
-  return `${birthYear}년생 (${koreanAge}세)`;
+  return `${birthDate.getFullYear()}년생 (${age}세)`;
 };
 
 export default calculateKoreanAge;

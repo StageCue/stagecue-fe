@@ -5,12 +5,13 @@ import DotMenuSvg from '@assets/icons/dotmenu.svg?react';
 import { useEffect, useRef, useState } from 'react';
 import ModalPortal from '@/components/modal/portal';
 import Overlay from '@/components/modal/overlay';
+import useSessionStore from '@/store/session';
+import { calculateAge } from '@/utils/calculateAge';
 
 interface ProfileProps {
   id: string | number;
   title: string;
   duration: string;
-  birthday: string;
   dateCreated: string;
   height: number;
   weight: number;
@@ -24,7 +25,6 @@ const Profile = ({
   id,
   title,
   duration,
-  birthday,
   dateCreated,
   height,
   weight,
@@ -33,6 +33,7 @@ const Profile = ({
   handleRemoveProfile,
   handleProfileClick,
 }: ProfileProps) => {
+  const session = useSessionStore();
   const menuRef = useRef<HTMLDivElement>(null);
   const [openMenuId, setOpenMenuId] = useState<string | number | null>(null);
   const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -118,7 +119,9 @@ const Profile = ({
             </ItemWrapper>
             <ItemWrapper>
               <Property>생년월일</Property>
-              <Value>{birthday} (30세)</Value>
+              <Value>
+                {session.birthday} ({calculateAge(session.birthday!)}세)
+              </Value>
             </ItemWrapper>
             <ItemWrapper>
               <Property>신체정보</Property>

@@ -22,7 +22,6 @@ import CloseSVG from '@assets/icons/close_black.svg?react';
 import ImageSVG from '@assets/icons/image.svg?react';
 import { generateId } from '@/utils/dev';
 import LoadingModal from '@/components/modal/\bLoading/Loading';
-import calculateKoreanAge from '@/utils/calculateKoreanAge';
 import { calculateAge } from '@/utils/calculateAge';
 
 export interface ProfileInput {
@@ -374,7 +373,9 @@ const NewProfileForm = () => {
                   <DataRows>
                     <DataRow>
                       <Property>생년월일</Property>
-                      <Value>{calculateKoreanAge(sessionStore.birthday as string)}</Value>
+                      <Value>
+                        {sessionStore.birthday} ({calculateAge(sessionStore.birthday!)}세)
+                      </Value>
                     </DataRow>
                     <DataRow>
                       <Property>이름</Property>

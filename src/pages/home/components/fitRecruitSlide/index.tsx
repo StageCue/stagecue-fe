@@ -6,14 +6,21 @@ import SmallImage from './components/SmallImage';
 import EmptyWrapper from '@/components/emptyWrapper';
 import { RecruitDetail } from '@/types/recruitDetail';
 import { requestCastDetail } from '@/api/cast';
+import { useNavigate } from 'react-router-dom';
 
 const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: RecruitDetail[] }) => {
+  const navigate = useNavigate();
   const [activeSlide, setActiveSlide] = useState<number>(0);
   const [recruits, setRecruits] = useState<RecruitDetail[]>([]);
   const SWIPER_WIDTH = 1060;
   const ACTIVE_WIDTH = 668;
 
   const handleSlideClick = (index: number): void => {
+    if (activeSlide === index) {
+      navigate(`/casts/${recruits?.[index]?.id}`);
+      return;
+    }
+
     setActiveSlide(index);
   };
 
@@ -21,10 +28,17 @@ const FitRecruitSlide = ({ recommendRecruits }: { recommendRecruits: RecruitDeta
     if (recommendRecruits?.length > 0) {
       const recruits = await Promise.all(
         recommendRecruits.map(async recruit => {
-          const { result } = await requestCastDetail(recruit?.id?.toString());
-          return result;
+          try {
+            if (!recruit?.id) return null;
+
+            const { result } = await requestCastDetail(recruit.id.toString());
+            return result;
+          } catch (error) {
+            return null;
+          }
         })
-      );
+      ).then(results => results.filter(Boolean));
+
       setRecruits(recruits);
     }
   };
@@ -243,6 +257,8 @@ const CardDescription = styled.div``;
 const FitRecruitSlideContainer = styled.div<{ $isWidth: number }>`
   width: ${({ $isWidth }) => `${$isWidth}px`};
   height: 545px;
+  border-radius: 8px;
+  overflow: hidden;
 `;
 
 const CustomSwiperSlide = styled(SwiperSlide)<{
@@ -272,9 +288,6 @@ const RecruitSlide = styled.div<{
   cursor: pointer;
   box-shadow: ${({ $isActive }) => ($isActive ? '0px 4px 10px rgba(0, 0, 0, 0.3)' : 'none')};
   overflow: hidden;
-
-  border-radius: ${({ $isFirst, $isLast }) =>
-    $isFirst ? '8px 0 0 8px' : $isLast ? '0 8px 8px 0' : '0'};
 
   background: ${({ $isActive }) => ($isActive ? '#000000b2' : '#ddd')};
   background-image: url(${({ $imageURL }) => $imageURL});

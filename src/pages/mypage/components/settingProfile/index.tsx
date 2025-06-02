@@ -81,7 +81,6 @@ const SettingProfile = () => {
               id={profile.id}
               title={profile.title}
               duration={profile.duration}
-              birthday={profile.birthday}
               dateCreated={profile.dateCreated}
               height={profile.height}
               weight={profile.weight}

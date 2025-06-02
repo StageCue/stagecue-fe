@@ -20,7 +20,7 @@ const PopularPost = ({ recruits }: PopularRecruitProps) => {
     <PopularPostContainer>
       <TitleWrapper>
         <Title>
-          이번주
+          이번주&nbsp;
           <Strong>인기 공고</Strong>입니다🏆
           <Higliting />
         </Title>
@@ -74,7 +74,7 @@ const Strong = styled.div`
 
 const Higliting = styled.div`
   position: absolute;
-  left: 73px;
+  left: 79px;
   bottom: 7px;
   width: 104px;
   height: 4px;

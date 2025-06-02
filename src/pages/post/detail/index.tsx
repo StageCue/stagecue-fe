@@ -18,6 +18,7 @@ import { getDday } from '@/utils/getDday';
 import { getCoordinates } from '@/utils/getCoordinates';
 import { cleanAddress } from '@/utils/cleanAddress';
 import { INDEFINITE_DATE } from '@/constants/biz';
+import DetailSkeleton from './components/skeleton';
 
 const Detail = () => {
   const { id } = useParams();
@@ -152,6 +153,10 @@ const Detail = () => {
     getCastAndTroupeDetail();
   }, [id]);
 
+  if (!recruitDetail) {
+    return <DetailSkeleton />;
+  }
+
   return (
     <DetailContainer>
       <ContentWrapper>
@@ -252,6 +257,7 @@ export default Detail;
 
 const DetailContainer = styled.div`
   width: 100%;
+  min-width: 1060px;
   height: 100%;
   min-height: inherit;
   display: flex;
@@ -272,8 +278,6 @@ const Header = styled.div`
   flex-direction: column;
   gap: 24px;
 `;
-
-const Content = styled.div``;
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -344,10 +348,19 @@ const Divider = styled.div`
   background-color: #f4f4f5;
 `;
 
+const Content = styled.div``;
+
 const ContentTab = styled.div`
   display: flex;
   gap: 20px;
   border-bottom: 2px solid #f4f4f5;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+`;
+
+const ContentBody = styled.div`
+  width: 689px;
+  padding: 24px 0;
 `;
 
 const Option = styled.div<{ $isSelected: boolean }>`
@@ -367,10 +380,6 @@ const SelectedBorder = styled.div`
   width: 118px;
   background-color: #b82824;
   bottom: -2px;
-`;
-
-const ContentBody = styled.div`
-  width: 689px;
 `;
 
 const BookmarkWrapper = styled.div`
