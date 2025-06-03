@@ -6,6 +6,16 @@ import FullBulbSVG from '@assets/icons/full_bulb.svg?react';
 import LocationGraySVG from '@assets/icons/location_gray.svg?react';
 import BulbImage from '@assets/images/bulb.png';
 import Button from '@/components/buttons/button';
+import ServiceInfoBackground from '@assets/images/service-info-background.png';
+import ServiceInfo1 from '@assets/images/service-info-1.jpg';
+import ServiceInfo2 from '@assets/images/service-info-2.jpg';
+import ServiceInfoItem1 from '@assets/images/service-info-item1.png';
+import ServiceInfoItem2 from '@assets/images/service-info-item2.png';
+import ServiceInfoItem3 from '@assets/images/service-info-item3.png';
+import ServiceInfoItem4 from '@assets/images/service-info-item4.png';
+import ServiceInfoItem5 from '@assets/images/service-info-item5.png';
+import ServiceInfoItem6 from '@assets/images/service-info-item6.png';
+import ServiceInfoFooter from '@assets/images/service-info-footer.png';
 
 const ServiceInfo = () => {
   const navigate = useNavigate();
@@ -46,7 +56,7 @@ const ServiceInfo = () => {
       </Section>
 
       <Section $height={2430}>
-        <ImageSection />
+        <ImageSection $imageURL={ServiceInfoBackground} />
         <SectionItemContainer>
           <SectionItem $paddingY={120} $backgroundColor="#070707e5">
             <Item>
@@ -66,11 +76,11 @@ const ServiceInfo = () => {
                   <span>문제점들을 보완하려</span>&nbsp;많은 고민을 했어요.
                 </ContentSubTitle>
               </ItemContent>
-              <ItemImage src="https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg" />
+              <ItemImage src={ServiceInfo1} />
             </Item>
 
             <Item>
-              <ItemImage src="https://s3.stagecue.co.kr/stagecue/recruits/70f32853-d396-4291-b841-4931537d154d.jpg" />
+              <ItemImage src={ServiceInfo2} />
               <ItemContent>
                 <SvgPosition $top="-25%" $left="-30%">
                   <FullBulbSVG />
@@ -107,7 +117,7 @@ const ServiceInfo = () => {
             <ChardContainer>
               <Chard $marginTop={60}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/1dd7/ba01/9edadd877ae2f5f1016a39372b3d9285?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=D4rWMr4DB25I~76E3X6qO1qOcb0IMDnhssYAvxGV0bqDPl9Eiwcnr3GUYkPPFus04HPnvo8efvuD1BV1dfHVBltyYb5kgSZYL8sYIgg2Z1gyBhsSID2SyUtcg6Yqr5wt6mqsUckn-BPqBQ3W62SbBO8RV7TkKrUkeA4jwae1IArGhrhv3vqy6CSq4srfyqoxdhm49erMPv73gVvap3GM2K0sC91IcPantJKujMuPfgdMBjV7hDx9R1mlklueguAOe~ORmiAVwM9ln10XF1eDNHRQu1NShzGENYE8xMLvXfXnrtIzvu6fM7GXJmZwGIDDvb10lrfBXY1BNWex-gvpjA__" />
+                  <CardImage src={ServiceInfoItem1} />
                   <CardType>댄스</CardType>
                 </ChardImageContainer>
                 <CardTitle>서울문화재단과 함께할 발레리나 모집합니다.</CardTitle>
@@ -119,7 +129,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={0}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/3eae/3f3b/0defa6e544ab7d12f573d8a5fbd78224?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=eGqrlivt3xME~CaVqhFYnKCRvODWAwo9VqI9B6l~FIhTQp64SXzSx1WZINw-3gV3nPp0mXj493ugwkUuRaMxiLkhsRKmjlJlKU-hgACj1WgxWwiYF1znxiOmp80NoeWH35hvum037PooqtCnWmFi0xx2RDOJSAXr3MNRoWd9hhcotYFSEIAMhYwy8pMiPoWjoyTqgmmkZXctCgUyHRQ-fT4DRO4vFBSN3KEzamTzQeNWBHdzj6XgnKkiGzXI-C5Jc3L3M8gLKgrcFBrBh0umY84JGFMLNwi9i-ffCwFdSka4Gn-kGH3-cFh2WpDegOR2IywCFEO2VfURkEg1a3OFsg__" />
+                  <CardImage src={ServiceInfoItem2} />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>연극 옥탑방 고양이의 배우를 모집합니다.</CardTitle>
@@ -131,7 +141,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={60}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/262c/ede8/b336c35af4aabda66c205e2886a4fe59?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=iEgMnBpS0ppvtL~G1niNqv-ZNzajObCckhSTdxI8Zp1dzOv3fqEt0uN-L3TVoJ5G6Z-YdOILiRKdNDJrg08ToODHwOsTf5oxlKugfxHmET1Ly3OHQYVkehYVOsJTNyStftPeK7ObI0cWLzZOSfGwmISiaY1aBLNmuFty766Cx8AhE1~J~iDSiIPfmVFqDbzorMgryAYqPRMSMXKoK4g1G9JKDd1Sox~fPuGkLQcJecjhbG4ps428tX32loxBvNAlY6T-RZfhGAORQlzfzaUPcGgZFTPB3pI9S7nZVgDWQ7H7BDqNsfMKRNDwv35LqRoZalR1EN0F0ePOHsi9x0aC3Q__" />
+                  <CardImage src={ServiceInfoItem3} />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>배우를 찾습니다.</CardTitle>
@@ -143,7 +153,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={118}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/5c71/4597/ec579622c6bb36d5c7270b2f69325607?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=mLjJedUJnc4FWBlpJv0LgCAXrhSyYHfgvI3i8U~7j42GzFGxNWHiCR6f5jTDVTtP-5bV8pnp4otWuGijfamTR8Xz3nqzdWKHGAyE3fpv8HBbTz18-PeZKAqiMLvdBfLrnP~WQbXcqiUe8U6aAfGP4JsQ1qvPxo1OGwNx0CZMKiFkAOr7LinrojwE9nRYT6O25FlzQqSu00zYbOly0j-UEjPNja2YMc48rMbxaMzhk~rMYo5Ccc9~95k-2qlJsmxQOeEITO7R7-nUKJDdFsYFwk0-uPO-b8YHUvqDRAfNoo9J809kGLph63m5zcaIkXOioBnp4yk~cdCFoOb9xd~fAA__" />
+                  <CardImage src={ServiceInfoItem4} />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>함께갈 배우를 애타게 찾습니다.</CardTitle>
@@ -155,7 +165,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={60}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/d789/03e3/7e6bd40c5bbdaed6001a43918a96d91a?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=mmXwt6y55V2lYb3Hd7JySCb5Gt540RRhkPu-6pNBpjmia1FMOx5A81r4~WK5q4BMmS7uiw9h3PvzfMC2mCbeO3eDdB-BNpP7pEZ3KNZp1k38V0lORmjRIF3gXwRSJp7i6OAnjO161SknwAlu4IZHVKtpuI0tlZWYYkClj418J5pZ-ngdkBpUkSdlVJXJkLNR3DnnUbwkL~FIHu3AJeNXP7BDo1M-VE1SYuTZkKeRSnaImnAew4ZbRBL4GFBBTxrmCDwfVijdqpBjlFJH7MDmCQKdqkvQ6ij6XEDfw2BVtOS9ziUNUXhlWKjZqzAVYISW02tAin8O-eyHfGaaN8av7w__" />
+                  <CardImage src={ServiceInfoItem5} />
                   <CardType>뮤지컬</CardType>
                 </ChardImageContainer>
                 <CardTitle>랑데부에 출연하실 전문 배우를 모집합니다.</CardTitle>
@@ -167,7 +177,7 @@ const ServiceInfo = () => {
               </Chard>
               <Chard $marginTop={40}>
                 <ChardImageContainer>
-                  <CardImage src="https://s3-alpha-sig.figma.com/img/c28e/18a1/85bd82b9f9cbc21841f731a460d02fe9?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=AZjhMNuzH2ihw9ozaJtRQzAUx9OC3-aGkXRiNpDEunyS18kYziu2Q~O-ug45e9FiQezj5ijIhV1EJnPs8Lx4jDydL1dTpub8KTP5UAyGsGR6Ld0Jcb8J99xmUQo2K224ExARpo6lRNzb7nnyuIJFpgO2sl8a7V3CstTDhL3IPPvKN9Uf38bJLMGS18EZw2nbVBESi2Fb020-7JBzuvDjfbf08eOkewz7~gBJi7ZpMxxi9kJQYuyaxkrDKQtp7eFReIjkIPViIMsHW3VHNW1dqiSr3RQ4e~t6nvFztCT3a5uPf363X68wi-z88Uh5-x~LsSMv3VfP1zBDPS-Ud-pZeg__" />
+                  <CardImage src={ServiceInfoItem6} />
                   <CardType>연극</CardType>
                 </ChardImageContainer>
                 <CardTitle>열정적인 배우분을 모집합니다.</CardTitle>
@@ -182,12 +192,7 @@ const ServiceInfo = () => {
         </SectionItemContainer>
       </Section>
 
-      <Section
-        $height={580}
-        $imageURL={
-          'https://s3-alpha-sig.figma.com/img/14b0/8390/936d40d7b92750887dccffb7f2c6ff25?Expires=1742774400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=HCmnweJ0AAoj53znZQnVBsMsSFkEIGjwSTd2JHeM5vduoXvjN9jK1FsjeTXsEPVU8OaFthUDK9OCDhfH4AWSdqZHmwuRwcUALbp9MpK0SEHPo~3MKvc3SAic3ajv9s9zyKTklSF0iSvzCYtLzHoPid1U1AujaKfllfoZRrUonZzaJaXTe8NNK-x02VYMBkDrWoeM4w~F-xBSyOGWXjJeKCznzLrEFWtYEOZ6dZmgoznL1HIOpLDELkjD3IkyFPbNBU8aIpoqrlvfGV3wHtKRn8GO47CDAXLJZGdkKIiFPE0jbk08URZsIFDdaaQB-kdZB3Zf62UbKOLtyDtmhtx9Mg__'
-        }
-      >
+      <Section $height={580} $imageURL={ServiceInfoFooter}>
         <Content $gap={36} $paddingTop={120}>
           <SubTitle>
             단원을 찾거나, 실시간으로 모집중인 공고를 확인하고 싶다면
@@ -305,6 +310,7 @@ const ItemImage = styled.img`
   border-radius: 11px;
   box-shadow: 0px 0px 4px 0px #ffffff1e;
   backdrop-filter: blur(4px);
+  object-fit: cover;
 `;
 
 const HeadSectionContent = styled.div`
@@ -374,12 +380,12 @@ const BoldText = styled.span`
   font-weight: 700;
 `;
 
-const ImageSection = styled.div`
+const ImageSection = styled.div<{ $imageURL: string }>`
   position: sticky;
   top: 0;
   width: 100%;
   height: 100vh;
-  background-image: url('https://s3-alpha-sig.figma.com/img/1bb1/6147/68860600b49b9fb24172b9e5cf590419?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=lTrX4U-pB7eS0AsGqNVLStcszCVt0ko5srWHVQv5vZlV9IjSIx99n743-bRdSE3ZqAe0rYUhQcRnsEmlUzyXzn2NUwxJjp70GHzTpcCyQpx4k4OxNFelFFQdiw7Okq1cP2XXxZo95z4RbR-9f9sToPyaMH5UgOMZ~-p55fG4ZnH8ayWv1xQqdCf6YC9cqWFNNVFL8a6ksxPatq46SxM2f4LHIRidAXNBIMPFbMgT57rUIXBSdZhOq0XE~O5GgBoTw4~kYjCVWGf2eGQBFVsl6fylGSFB8dYyabZbyBQ9K9qn4FFo1byJCwYQqXE3W5kGb5L7-LfLsBldIAWjUmcS2w__');
+  background-image: url(${({ $imageURL }) => $imageURL});
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -464,6 +470,7 @@ const CardImage = styled.img`
   width: 100%;
   height: 294px;
   border-radius: 8px;
+  object-fit: cover;
 `;
 const CardType = styled.div`
   position: absolute;
