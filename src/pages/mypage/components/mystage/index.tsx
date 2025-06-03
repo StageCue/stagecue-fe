@@ -10,6 +10,7 @@ import { Recruit } from '../../types/data';
 
 import EmptyWrapper from '@/components/emptyWrapper';
 import { useMyStageData } from '../../hooks/useMyStageData.ts';
+import { INDEFINITE_DATE } from '@/constants/biz.ts';
 
 const MyStage = () => {
   const { recruitsStatus, popularRecruits, scraps, handleBookmarkClick } = useMyStageData();
@@ -87,7 +88,9 @@ const MyStage = () => {
                     troupeName={scrap?.troupeName}
                     practiceLocation={scrap?.practiceAddress}
                   />
-                  <DdayTag>D{scrap?.dday}</DdayTag>
+                  <DdayTag>
+                    {scrap?.dday === INDEFINITE_DATE ? '상시모집' : `D${scrap?.dday}`}
+                  </DdayTag>
                   <BookmarkWrapper
                     key={`bookmark-${scrap?.castId}`}
                     onClick={() => handleBookmarkClick(scrap?.castId)}

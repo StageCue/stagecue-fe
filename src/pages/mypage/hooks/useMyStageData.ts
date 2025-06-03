@@ -3,6 +3,7 @@ import { requestCastsStatus, requestScraps } from '@/api/users';
 import { requestCasts, requestDeleteScrapCast, requestScrapCast } from '@/api/cast';
 import { Scrap } from '../types/data';
 import { getDday } from '@/utils/getDday';
+import { INDEFINITE_DATE } from '@/constants/biz';
 
 interface RecruitStatusCount {
   applyStatus:
@@ -23,6 +24,7 @@ export const useMyStageData = () => {
   const { data: recruitsStatus } = useQuery<RecruitStatusResponse>({
     queryKey: ['recruitsStatus'],
     queryFn: requestCastsStatus,
+    staleTime: 1000 * 60 * 5,
   });
 
   const { data: popularRecruits } = useQuery({
@@ -60,7 +62,8 @@ export const useMyStageData = () => {
             imageUrl: scrap.imageUrl,
             troupeName: scrap.troupeName,
             practiceAddress: scrap.shortAddress,
-            dday: getDday(scrap.dateExpired),
+            dday:
+              scrap.dateExpired === INDEFINITE_DATE ? INDEFINITE_DATE : getDday(scrap.dateExpired),
             isBookmarked: true,
           })
         ) ?? []

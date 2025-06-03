@@ -14,11 +14,11 @@ const DetailSkeleton = () => {
           </TitleWrapper>
           <Divider />
           <TroupeWrapper>
-            <SkeletonBox width="40px" height="40px" borderRadius="8px" />
+            <SkeletonBox width="40px" height="40px" $borderRadius="8px" />
             <SkeletonBox width="120px" height="24px" />
           </TroupeWrapper>
           {/* 이미지 슬라이드 스켈레톤 */}
-          <SkeletonBox width="689px" height="300px" borderRadius="8px" />
+          <SkeletonBox width="689px" height="300px" $borderRadius="8px" />
         </Header>
         <Content>
           <ContentTab>
@@ -27,14 +27,14 @@ const DetailSkeleton = () => {
             <SkeletonBox width="118px" height="24px" />
           </ContentTab>
           <ContentBody>
-            <SkeletonBox width="100%" height="20px" marginBottom="12px" />
-            <SkeletonBox width="80%" height="20px" marginBottom="12px" />
-            <SkeletonBox width="90%" height="20px" marginBottom="12px" />
-            <SkeletonBox width="70%" height="20px" marginBottom="24px" />
+            <SkeletonBox width="100%" height="20px" $marginBottom="12px" />
+            <SkeletonBox width="80%" height="20px" $marginBottom="12px" />
+            <SkeletonBox width="90%" height="20px" $marginBottom="12px" />
+            <SkeletonBox width="70%" height="20px" $marginBottom="24px" />
 
-            <SkeletonBox width="100%" height="20px" marginBottom="12px" />
-            <SkeletonBox width="85%" height="20px" marginBottom="12px" />
-            <SkeletonBox width="95%" height="20px" marginBottom="12px" />
+            <SkeletonBox width="100%" height="20px" $marginBottom="12px" />
+            <SkeletonBox width="85%" height="20px" $marginBottom="12px" />
+            <SkeletonBox width="95%" height="20px" $marginBottom="12px" />
           </ContentBody>
         </Content>
       </ContentWrapper>
@@ -55,13 +55,13 @@ const shimmer = keyframes`
 const SkeletonBox = styled.div<{
   width: string;
   height: string;
-  borderRadius?: string;
-  marginBottom?: string;
+  $borderRadius?: string;
+  $marginBottom?: string;
 }>`
   width: ${({ width }) => width};
   height: ${({ height }) => height};
-  border-radius: ${({ borderRadius }) => borderRadius || '4px'};
-  margin-bottom: ${({ marginBottom }) => marginBottom || '0'};
+  border-radius: ${({ $borderRadius }) => $borderRadius || '4px'};
+  margin-bottom: ${({ $marginBottom }) => $marginBottom || '0'};
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: ${shimmer} 1.5s infinite;

@@ -22,7 +22,7 @@ export interface Scrap {
   isBookmarked: boolean;
   practiceAddress: string;
   dateExpired: string;
-  dday: number;
+  dday: number | string;
 }
 
 export interface Recruit {

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMyStageData } from '../../hooks/useMyStageData.ts';
 import BookmarkSVG from '@assets/icons/bookmark.svg';
 import BookmarkFilledSVG from '@assets/icons/bookmark_filled.svg';
+import { INDEFINITE_DATE } from '@/constants/biz.ts';
 
 const ScrapRecruits = () => {
   const navigate = useNavigate();
@@ -59,7 +60,9 @@ const ScrapRecruits = () => {
                   troupeName={scrap?.troupeName}
                   practiceLocation={scrap?.practiceAddress}
                 />
-                <DdayTag>D{scrap?.dday}</DdayTag>
+                <DdayTag>
+                  {scrap?.dday === INDEFINITE_DATE ? '상시모집' : `D${scrap?.dday}`}
+                </DdayTag>
                 <BookmarkWrapper
                   key={`bookmark-${scrap?.castId}`}
                   onClick={() => handleBookmarkClick(scrap?.castId)}

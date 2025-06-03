@@ -11,6 +11,7 @@ import MobileSVG from '@assets/icons/mobile.svg?react';
 import CloseSVG from '@assets/icons/close_black.svg?react';
 import { useNavigate } from 'react-router-dom';
 import calculateKoreanAge from '@/utils/calculateKoreanAge';
+import { calculateMonth } from '@/utils/calculateMonth';
 
 interface ProfileModalProps {
   id: string;
@@ -105,7 +106,14 @@ const ProfileModal = ({ id, isDefault, onClose }: ProfileModalProps) => {
               </DataWrapper>
             </Information>
             <Information>
-              <InformationTitle>경력 (총 개월)</InformationTitle>
+              <InformationTitle>
+                경력 (총{' '}
+                {calculateMonth(
+                  detail?.experiences?.[0]?.startDate as string,
+                  detail?.experiences?.[0]?.endDate as string
+                )}
+                개월)
+              </InformationTitle>
               <DataWrapper>
                 {detail?.experiences?.map(exp => (
                   <ExpRow key={exp?.artworkName + exp?.artworkPart}>

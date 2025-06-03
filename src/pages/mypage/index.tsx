@@ -13,6 +13,7 @@ import ScrapRecruits from './components/scrapRecruits';
 import SettingProfile from './components/settingProfile';
 
 import useSessionStore from '@/store/session';
+import { queryClient } from '@/lib/queryClient';
 
 export type mypageMenuType =
   | 'my stage'
@@ -39,6 +40,12 @@ const MyPage = () => {
   const handleOptionClick = (option: mypageMenuType) => {
     setSelectedMenu(option);
   };
+
+  useEffect(() => {
+    ['recruitsStatus', 'popularRecruits'].forEach(key => {
+      queryClient.invalidateQueries({ queryKey: [key] });
+    });
+  }, []);
 
   return (
     <MyPageContainer>
