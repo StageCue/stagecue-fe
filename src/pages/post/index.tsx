@@ -207,11 +207,6 @@ const List = () => {
   };
 
   const onChangeMaxCost = (cost: string) => {
-    // if (Number(cost) > 500000) {
-    //   setMaxCost('500000');
-    //   return;
-    // }
-
     setMaxCost(cost);
   };
 
@@ -431,24 +426,6 @@ const List = () => {
               : `${appliedZone[0]} 외 ${appliedZone.length}`}
             <ChevronDownSSVG />
           </ZoneFilterBtn>
-          <DayFilterBtn
-            onClick={handleDayButtonClick}
-            $isDirty={isAppliedDay}
-            $isOpen={isDayFilterShowing}
-            ref={dayButtonRef}
-          >
-            {isAppliedDay ? selectedDayPicker : '전체요일'}
-            <ChevronDownSSVG />
-          </DayFilterBtn>
-          <CostFilterBtn
-            onClick={handleCostButtonClick}
-            $isDirty={isAppliedCost}
-            $isOpen={isCostFilterShowing}
-            ref={costButtonRef}
-          >
-            월회비
-            <ChevronDownSSVG />
-          </CostFilterBtn>
           {isZoneFilterShowing && (
             <FilterMenu ref={popupMenuRef}>
               <Chips>
@@ -480,6 +457,15 @@ const List = () => {
               </FilterMenuFooter>
             </FilterMenu>
           )}
+          <DayFilterBtn
+            onClick={handleDayButtonClick}
+            $isDirty={isAppliedDay}
+            $isOpen={isDayFilterShowing}
+            ref={dayButtonRef}
+          >
+            {isAppliedDay ? selectedDayPicker : '전체요일'}
+            <ChevronDownSSVG />
+          </DayFilterBtn>
           {isDayFilterShowing && (
             <FilterMenu ref={popupMenuRef}>
               <PickerWrapper>
@@ -523,6 +509,16 @@ const List = () => {
               </FilterMenuFooter>
             </FilterMenu>
           )}
+          <CostFilterBtn
+            onClick={handleCostButtonClick}
+            $isDirty={isAppliedCost}
+            $isOpen={isCostFilterShowing}
+            ref={costButtonRef}
+          >
+            월회비
+            <ChevronDownSSVG />
+          </CostFilterBtn>
+
           {isCostFilterShowing && (
             <FilterMenu ref={popupMenuRef}>
               <RangeInput

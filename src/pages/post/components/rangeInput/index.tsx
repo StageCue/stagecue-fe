@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 interface RangeInputProps {
@@ -15,23 +15,119 @@ const RangeInput = ({ minCost, maxCost, onChangeMinCost, onChangeMaxCost }: Rang
   const maxThumbRef = useRef<HTMLDivElement | null>(null);
   const rangeRef = useRef<HTMLDivElement | null>(null);
 
+  const [tempMinCost, setTempMinCost] = useState(minCost);
+  const [tempMaxCost, setTempMaxCost] = useState(maxCost);
+
   const formatWon = (cost: string) => {
     return new Intl.NumberFormat('ko-KR').format(Number(cost));
   };
 
+  const validateAndAdjustValues = (
+    newMinCost: string,
+    newMaxCost: string,
+    changedType: 'min' | 'max'
+  ) => {
+    const minValue =
+      Number(newMinCost.replace(/,/g, '')) > 500000 ? 500000 : Number(newMinCost.replace(/,/g, ''));
+    const maxValue =
+      Number(newMaxCost.replace(/,/g, '')) > 500000 ? 500000 : Number(newMaxCost.replace(/,/g, ''));
+
+    if (minValue >= maxValue) {
+      if (changedType === 'min') {
+        return {
+          adjustedMin: (Number(newMaxCost) - 5).toString(),
+          adjustedMax: newMaxCost,
+        };
+      } else {
+        return {
+          adjustedMin: newMinCost,
+          adjustedMax: (Number(newMinCost) + 5).toString(),
+        };
+      }
+    }
+
+    return {
+      adjustedMin: newMinCost,
+      adjustedMax: newMaxCost,
+    };
+  };
+
   const handleMinCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const validatedValue = event.target.value.replace(/[^0-9]/g, '');
-    const minValue = Math.min(Number(validatedValue), Number(maxCost) - 40000);
-
-    onChangeMinCost(minValue.toString());
+    setTempMinCost(validatedValue);
   };
 
   const handleMaxCostChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const validatedValue = event.target.value.replace(/[^0-9]/g, '');
-    const maxValue = Math.max(Number(validatedValue), Number(minCost) + 40000);
-
-    onChangeMaxCost(maxValue.toString());
+    setTempMaxCost(validatedValue);
   };
+
+  const handleMinCostBlur = () => {
+    const { adjustedMin, adjustedMax } = validateAndAdjustValues(tempMinCost, maxCost, 'min');
+
+    if (adjustedMin !== minCost) {
+      onChangeMinCost(adjustedMin);
+    }
+    if (adjustedMax !== maxCost) {
+      onChangeMaxCost(adjustedMax);
+    }
+
+    setTempMinCost(adjustedMin);
+    setTempMaxCost(adjustedMax);
+  };
+
+  const handleMaxCostBlur = () => {
+    const { adjustedMin, adjustedMax } = validateAndAdjustValues(minCost, tempMaxCost, 'max');
+
+    if (adjustedMin !== minCost) {
+      onChangeMinCost(adjustedMin);
+    }
+    if (adjustedMax !== maxCost) {
+      onChangeMaxCost(adjustedMax);
+    }
+
+    setTempMinCost(adjustedMin);
+    setTempMaxCost(adjustedMax);
+  };
+
+  const handleMinCostKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.currentTarget.blur();
+    }
+  };
+
+  const handleMaxCostKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.currentTarget.blur();
+    }
+  };
+
+  const handleMinRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    const maxValue = Number(maxCost.replace(/,/g, ''));
+
+    if (Number(newValue) > maxValue) {
+      onChangeMaxCost(newValue);
+    }
+    onChangeMinCost(newValue);
+    setTempMinCost(newValue);
+  };
+
+  const handleMaxRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    const minValue = Number(minCost.replace(/,/g, ''));
+
+    if (Number(newValue) < minValue) {
+      onChangeMinCost(newValue);
+    }
+    onChangeMaxCost(newValue);
+    setTempMaxCost(newValue);
+  };
+
+  useEffect(() => {
+    setTempMinCost(minCost);
+    setTempMaxCost(maxCost);
+  }, [minCost, maxCost]);
 
   useEffect(() => {
     if (rangeRef.current) {
@@ -54,12 +150,24 @@ const RangeInput = ({ minCost, maxCost, onChangeMinCost, onChangeMaxCost }: Rang
     <RangeInputContainer>
       <CostFilter>
         <InputWrapper>
-          <CostInput type="text" onChange={handleMinCostChange} value={formatWon(minCost)} />
+          <CostInput
+            type="text"
+            onChange={handleMinCostChange}
+            onBlur={handleMinCostBlur}
+            onKeyDown={handleMinCostKeyDown}
+            value={formatWon(tempMinCost)}
+          />
           <Won>원</Won>
         </InputWrapper>
         <Dash />
         <InputWrapper>
-          <CostInput type="text" onChange={handleMaxCostChange} value={formatWon(maxCost)} />
+          <CostInput
+            type="text"
+            onChange={handleMaxCostChange}
+            onBlur={handleMaxCostBlur}
+            onKeyDown={handleMaxCostKeyDown}
+            value={formatWon(tempMaxCost)}
+          />
           <Won>원</Won>
         </InputWrapper>
       </CostFilter>
@@ -71,7 +179,7 @@ const RangeInput = ({ minCost, maxCost, onChangeMinCost, onChangeMaxCost }: Rang
             min={0}
             value={parseInt(minCost.replace(/,/g, ''), 10)}
             max={500000}
-            onChange={handleMinCostChange}
+            onChange={handleMinRangeChange}
           />
           <MaxRangeInput
             type="range"
@@ -79,7 +187,7 @@ const RangeInput = ({ minCost, maxCost, onChangeMinCost, onChangeMaxCost }: Rang
             min={0}
             value={parseInt(maxCost.replace(/,/g, ''), 10)}
             max={500000}
-            onChange={handleMaxCostChange}
+            onChange={handleMaxRangeChange}
           />
           <Slider>
             <Track />

@@ -26,7 +26,7 @@ const StageCue = ({ notices }: StageCueProps) => {
             <PlusSVG />
           </IconWrapper>
         </TitleWrapper>
-        <Posts>
+        <Posts $isEmpty={notices?.length === 0}>
           {notices?.map(({ title, createdAt }, index) => (
             <Post key={index}>
               <PostTitle>{title}</PostTitle>
@@ -92,9 +92,9 @@ const Higliting = styled.div`
   z-index: -10;
 `;
 
-const Posts = styled.div`
+const Posts = styled.div<{ $isEmpty: boolean }>`
   flex: 1;
-  overflow-y: scroll;
+  overflow-y: ${({ $isEmpty }) => ($isEmpty ? 'hidden' : 'scroll')};
 `;
 
 const Post = styled.div`
