@@ -17,7 +17,7 @@ interface RangeDatepickerProps {
 }
 
 const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
-  ({ selectedRange, onChangeDate, pickerText, disabled }, ref) => {
+  ({ selectedRange, onChangeDate, pickerText, disabled, ...props }, ref) => {
     const [startDate, endDate] = selectedRange;
 
     const handleApplyClick = () => {
@@ -44,6 +44,7 @@ const RangeDatepicker = forwardRef<DatePicker, RangeDatepickerProps>(
           disabledKeyboardNavigation
           disabled={disabled}
           customInputRef=""
+          {...props}
           renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => (
             <CustomHeader
               date={date}

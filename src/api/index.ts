@@ -43,7 +43,7 @@ apiClient.interceptors.response.use(
 
           setTimeout(() => {
             alertShown = false;
-          }, 3000);
+          }, 1000);
         }
       }
     }
