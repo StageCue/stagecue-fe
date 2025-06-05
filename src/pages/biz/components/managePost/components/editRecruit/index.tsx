@@ -17,6 +17,7 @@ import {
   requestCloseRecruit,
   requestCreateRecruit,
   requestDeleteRecruit,
+  requestEditRecruit,
   requestRecruitFormData,
   requestUploadImage,
 } from '@/api/biz';
@@ -38,6 +39,7 @@ import { RecruitStatus } from '@/pages/biz/types/applicants';
 import { adaptEditRecruitInputsToDTO } from './adapter';
 import { INDEFINITE_DATE } from '@/constants/biz';
 import { queryClient } from '@/lib/queryClient';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 export interface EditRecruitInputs {
   title: string;
@@ -239,7 +241,48 @@ const EditRecruit = () => {
   };
 
   const [isLoading, setIsLoading] = useState(false);
+
   const onSubmitEditRecruit = async (data: EditRecruitInputs) => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    const fieldData = adaptEditRecruitInputsToDTO(data);
+
+    try {
+      const recruitImages = await requestUploadImageFiles();
+
+      const ediedImages = [...imageUrlArray.map(({ url }) => url), ...(recruitImages || [])];
+
+      const recruitingParts = partsValue?.map(({ value }) => value);
+
+      const { result } = await requestEditRecruit(
+        {
+          ...fieldData,
+          recruitEndDate: isAlwaysRecruit ? INDEFINITE_DATE : recruitEndValue,
+          theatreStartDate: isPermanentPerformance ? INDEFINITE_DATE : stgStartValue,
+          theatreEndDate: isPermanentPerformance ? INDEFINITE_DATE : stgEndValue,
+          monthlyFee: !isMontlyFee ? 0 : monthlyFeeValue,
+          recruitingParts,
+          recruitImages: ediedImages,
+          recruitStatus: 'OPEN',
+          practiceDay: binaryToWeekdayStrings(practiceDays),
+        },
+        id!
+      );
+
+      setIsNewRecruitModalOpen(false);
+
+      if (result) {
+        navigate(`/biz/cast`);
+      }
+    } catch (error) {
+      alert(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const onSubmitCreateRecruit = async (data: EditRecruitInputs) => {
     if (isLoading) return;
 
     setIsLoading(true);
@@ -268,13 +311,14 @@ const EditRecruit = () => {
         navigate(`/casts/${result}`);
       }
     } catch (error) {
-      console.log(error);
+      alert(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
   };
 
   const requestUploadImageFiles = async () => {
+    if (!imageFileArray[0].file) return;
     try {
       const urls = await Promise.all(
         imageFileArray.map(async item => {
@@ -533,7 +577,7 @@ const EditRecruit = () => {
           targetLength={1}
         />
       )}
-      <Form onSubmit={handleSubmit(onSubmitEditRecruit)}>
+      <Form onSubmit={handleSubmit(isDetailRecruit ? onSubmitEditRecruit : onSubmitCreateRecruit)}>
         <TitleWrapper>
           <Title>
             <Text>{isDetailRecruit ? '공고 상세정보' : '새 모집 공고 올리기'}</Text>
@@ -595,7 +639,7 @@ const EditRecruit = () => {
                   </Button>
                 )}
                 <Button
-                  type="submit"
+                  type="button"
                   variation="solid"
                   btnClass="primary"
                   width={81}
@@ -604,10 +648,13 @@ const EditRecruit = () => {
                   padding="9px 20px"
                   lineHeight={146.7}
                   letterSpacing={0.96}
-                  onClick={() => setRecruitStatus('OPEN')}
+                  onClick={() => {
+                    setRecruitStatus('OPEN');
+                    setIsNewRecruitModalOpen(true);
+                  }}
                   disabled={isSaveDisabled}
                 >
-                  저장
+                  등록
                 </Button>
               </>
             ) : (
@@ -1019,7 +1066,9 @@ const EditRecruit = () => {
                     btnClass="primary"
                     width={146}
                     height={48}
-                    onClick={handleSubmit(onSubmitEditRecruit)}
+                    onClick={handleSubmit(
+                      isDetailRecruit ? onSubmitEditRecruit : onSubmitCreateRecruit
+                    )}
                   >
                     올리기
                   </Button>

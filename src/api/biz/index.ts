@@ -239,7 +239,7 @@ export const requestRecruitFormData = async (recruitId: string) => {
 export const requestEditRecruit = (data: ReqEditRecruitParams, recruitId: string) => {
   const res = request({
     method: 'put',
-    endpoint: `biz/recruits?recruitId=${recruitId}`,
+    endpoint: `/recruits/${recruitId}`,
     data,
   });
 
