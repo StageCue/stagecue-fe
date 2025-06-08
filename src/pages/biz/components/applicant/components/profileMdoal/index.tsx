@@ -48,28 +48,33 @@ const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => 
     setIsPassModalOpen(true);
   };
 
-  const handleConfirmClick = () => {
+  const handleConfirmClick = async () => {
     if (!decisionType) return;
 
     setIsProfileModalOpen(false);
     setIsPassModalOpen(false);
 
-    requestChangingApplyState({
+    await requestChangingApplyState({
       applyIds: id,
       applyStatus: decisionType,
     });
-    refetchApplicants();
-    refetchApplyStatus();
+
+    await Promise.all([refetchApplicants(), refetchApplyStatus()]);
   };
 
   useEffect(() => {
     if (applyStatus !== 'APPLY') return;
-    requestChangingApplyState({
-      applyIds: id,
-      applyStatus: 'OPEN',
-    });
-    refetchApplicants();
-    refetchApplyStatus();
+
+    const run = async () => {
+      await requestChangingApplyState({
+        applyIds: id,
+        applyStatus: 'OPEN',
+      });
+
+      await Promise.all([refetchApplicants(), refetchApplyStatus()]);
+    };
+
+    run();
   }, []);
 
   useEffect(() => {
