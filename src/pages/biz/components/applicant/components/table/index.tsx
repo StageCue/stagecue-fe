@@ -11,7 +11,7 @@ import RadioSVG from '@assets/icons/radio_s.svg?react';
 import RadioCheckedSVG from '@assets/icons/radio_s_checked.svg?react';
 import ProfileModal from '../profileMdoal';
 import StatusTag from '../statusTag';
-import { Application } from '@/pages/biz/types/applicants';
+import { Application, ApplyStatus } from '@/pages/biz/types/applicants';
 import { useMutation } from '@tanstack/react-query';
 import type { Gender, Sort } from '@/types/biz';
 import { useApplicantContext } from '../Context';
@@ -20,7 +20,12 @@ import { requestFavorite } from '@/api/biz';
 
 interface TableProps {
   applications: Application[];
-  onClickCheckbox: (e: React.MouseEvent<HTMLElement, MouseEvent>, id: number, name: string) => void;
+  onClickCheckbox: (
+    e: React.MouseEvent<HTMLElement, MouseEvent>,
+    id: number,
+    name: string,
+    applyStatus: ApplyStatus
+  ) => void;
   selectedApplyIds: { id: number; name: string }[];
   onClickRow: (id: number, name: string) => void;
   onCloseModal: () => void;
@@ -80,9 +85,10 @@ const Table = ({
 
     if (isChecking) {
       // 전체 선택
-      const all = applications?.map(({ applyId, performerName }) => ({
+      const all = applications?.map(({ applyId, performerName, applyStatus }) => ({
         id: applyId,
         name: performerName,
+        applyStatus,
       }));
       setSelectedApplyIds(all);
     } else {
@@ -196,7 +202,9 @@ const Table = ({
             <div key={applyId}>
               <Row onClick={() => onClickRow(applyId, performerName)}>
                 <CheckboxInRow>
-                  <CheckIconWrapper onClick={e => onClickCheckbox(e, applyId, performerName)}>
+                  <CheckIconWrapper
+                    onClick={e => onClickCheckbox(e, applyId, performerName, applyStatus)}
+                  >
                     {selectedApplyIds.some(apply => apply.id === applyId) ? (
                       <CheckedIconWrapper $isChecked={true}>
                         <CheckboxCheckedSVG />

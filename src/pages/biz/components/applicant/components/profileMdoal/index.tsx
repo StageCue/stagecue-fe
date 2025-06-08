@@ -14,55 +14,56 @@ import { requestChangingApplyState } from '@/api/biz';
 import { useApplicantListQuery } from '../../hooks/useQuery';
 import { useGetApplyStatus } from '../../hooks/useGetApplyStatus';
 import { useApplicantContext } from '../Context';
+import PassLoseConfirmModal from '../PassLoseConfirmModal';
+import { ApplyStatus, decisionLabelMap, DecisionType } from '@/pages/biz/types/applicants';
 
 interface ProfileModalProps {
   id: string;
   onClose: () => void;
   name: string;
-  applyStatus: string;
+  applyStatus: ApplyStatus;
 }
 
 const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => {
   const { refetch: refetchApplicants } = useApplicantListQuery();
   const { refetch: refetchApplyStatus } = useGetApplyStatus();
-  const { setIsProfileModalOpen, setIsFailModalOpen } = useApplicantContext();
+  const { setIsProfileModalOpen, isPassModalOpen, setIsPassModalOpen } = useApplicantContext();
 
   const [detail, setDetail] = useState<ProfileDetailData>();
+  const [decisionType, setDecisionType] = useState<DecisionType>();
+
+  const isDecisionType = (status: ApplyStatus): status is DecisionType => {
+    return ['WIN', 'LOSE'].includes(status as DecisionType);
+  };
+  const isDecided = isDecisionType(applyStatus);
+  const nextPassStatus = applyStatus === 'OPEN' ? 'PASS' : 'WIN';
 
   const getProfileDetail = async (id: string) => {
     const { result } = await requestProfileDetail(id);
     setDetail(result);
   };
 
-  const handleFailConfirm = async () => {
-    await requestChangingApplyState({
-      applyIds: `${id}`,
-      applyStatus: 'LOSE',
-    });
-
-    refetchApplicants();
-    refetchApplyStatus();
-
-    setIsFailModalOpen(false);
-    setIsProfileModalOpen(false);
+  const handleDecision = (type: DecisionType) => {
+    setDecisionType(type);
+    setIsPassModalOpen(true);
   };
 
-  useEffect(() => {
-    getProfileDetail(id!);
-  }, [id]);
+  const handleConfirmClick = () => {
+    if (!decisionType) return;
 
-  const handleSuccessConfirm = () => {
     setIsProfileModalOpen(false);
+    setIsPassModalOpen(false);
+
     requestChangingApplyState({
       applyIds: id,
-      applyStatus: 'PASS',
+      applyStatus: decisionType,
     });
     refetchApplicants();
     refetchApplyStatus();
   };
 
   useEffect(() => {
-    if (applyStatus !== 'OPEN') return;
+    if (applyStatus !== 'APPLY') return;
     requestChangingApplyState({
       applyIds: id,
       applyStatus: 'OPEN',
@@ -70,6 +71,10 @@ const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => 
     refetchApplicants();
     refetchApplyStatus();
   }, []);
+
+  useEffect(() => {
+    getProfileDetail(id!);
+  }, [id]);
 
   return (
     <ProfileModalContainer>
@@ -89,34 +94,35 @@ const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => 
                 <Age>{detail && calculateKoreanAge(detail.birthDay)}</Age>
                 <StatusTag status={applyStatus} />
               </NameWrapper>
-              <ButtonsWrapper>
-                <Button
-                  variation="outlined"
-                  btnClass="secondary"
-                  width={71}
-                  height={32}
-                  padding="8px 14px"
-                  lineHeight={138.5}
-                  letterSpacing={1.94}
-                  fontWeight="var(--font-semibold)"
-                  onClick={handleSuccessConfirm}
-                >
-                  합격
-                </Button>
-                <Button
-                  variation="outlined"
-                  btnClass="secondary"
-                  width={83}
-                  height={32}
-                  padding="8px 14px"
-                  lineHeight={138.5}
-                  letterSpacing={1.94}
-                  fontWeight="var(--font-semibold)"
-                  onClick={handleFailConfirm}
-                >
-                  불합격
-                </Button>
-              </ButtonsWrapper>
+              {!isDecided && (
+                <ButtonsWrapper>
+                  <Button
+                    variation="outlined"
+                    btnClass="secondary"
+                    height={32}
+                    padding="8px 14px"
+                    lineHeight={138.5}
+                    letterSpacing={1.94}
+                    fontWeight="var(--font-semibold)"
+                    onClick={() => handleDecision(nextPassStatus)}
+                  >
+                    {decisionLabelMap[nextPassStatus as DecisionType]}
+                  </Button>
+                  <Button
+                    variation="outlined"
+                    btnClass="secondary"
+                    width={83}
+                    height={32}
+                    padding="8px 14px"
+                    lineHeight={138.5}
+                    letterSpacing={1.94}
+                    fontWeight="var(--font-semibold)"
+                    onClick={() => handleDecision('LOSE')}
+                  >
+                    불합격
+                  </Button>
+                </ButtonsWrapper>
+              )}
             </NameAgeBox>
             <ImagesWrapper>
               <Thumbnail src={detail?.thumbnail} />
@@ -178,6 +184,15 @@ const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => 
           </Body>
         </ModalBox>
       </Overlay>
+      {isPassModalOpen && decisionType && (
+        <PassLoseConfirmModal
+          type={decisionType}
+          onConfirm={handleConfirmClick}
+          onClose={() => setIsPassModalOpen(false)}
+          name={name}
+          cnt={1}
+        />
+      )}
     </ProfileModalContainer>
   );
 };

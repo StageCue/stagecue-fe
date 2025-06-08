@@ -24,6 +24,15 @@ export const useApplicant = () => {
     setShowingApplicant,
   } = useApplicantContext();
 
+  const decisionTargets = {
+    forPass: selectedApplyIds.filter(
+      item => item.applyStatus === 'APPLY' || item.applyStatus === 'PASS'
+    ),
+    forLose: selectedApplyIds.filter(
+      item => item.applyStatus === 'APPLY' || item.applyStatus === 'LOSE'
+    ),
+  };
+
   useEffect(() => {
     if (selectedFilter === 'APPLY') {
       setPassType('PASS');
@@ -37,7 +46,10 @@ export const useApplicant = () => {
   };
 
   const handlePassClick = async (passType?: PassType) => {
-    if (selectedApplyIds.length === 0) return;
+    if (decisionTargets.forPass.length === 0) {
+      return;
+    }
+
     setIsPassModalOpen(true);
     if (selectedFilter === '전체') {
       setPassType(passType);
@@ -49,11 +61,11 @@ export const useApplicant = () => {
   };
 
   const handlePassConfirm = async () => {
-    const idsArray = selectedApplyIds.map(item => item.id);
+    if (!passType) return;
 
     await requestChangingApplyState({
-      applyIds: `${idsArray}`,
-      applyStatus: passType!,
+      applyIds: `${decisionTargets.forPass}`,
+      applyStatus: passType,
     });
 
     setSelectedApplyIds([]);
@@ -66,10 +78,8 @@ export const useApplicant = () => {
   };
 
   const handleFailConfirm = async () => {
-    const idsArray = selectedApplyIds.map(item => item.id);
-
     await requestChangingApplyState({
-      applyIds: `${idsArray}`,
+      applyIds: `${decisionTargets.forLose}`,
       applyStatus: 'LOSE',
     });
 
@@ -98,7 +108,8 @@ export const useApplicant = () => {
   const handleCheckboxClick = (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
     id: number,
-    name: string
+    name: string,
+    applyStatus: ApplyStatus
   ) => {
     e.stopPropagation();
     if (selectedApplyIds.some(apply => apply.id === id)) {
@@ -107,7 +118,7 @@ export const useApplicant = () => {
         return newArray;
       });
     } else {
-      setSelectedApplyIds([...selectedApplyIds, { id, name }]);
+      setSelectedApplyIds([...selectedApplyIds, { id, name, applyStatus }]);
     }
   };
 
@@ -133,6 +144,7 @@ export const useApplicant = () => {
     selectedApplyIds,
     passType,
     data,
+    decisionTargets,
     handleFilterClick,
     handlePassClick,
     handleFailClick,

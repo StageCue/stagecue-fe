@@ -1,4 +1,4 @@
-import { ApplyFilter, PassType } from '@/pages/biz/types/applicants';
+import { ApplyFilter, ApplyStatus, PassType } from '@/pages/biz/types/applicants';
 import { Gender, Sort } from '@/types/biz';
 import {
   createContext,
@@ -20,8 +20,10 @@ interface ApplicantContextValue {
   setPage: (n: number) => void;
   selectedFilter: ApplyFilter;
   setSelectedFilter: (f: ApplyFilter) => void;
-  selectedApplyIds: { id: number; name: string }[];
-  setSelectedApplyIds: Dispatch<SetStateAction<{ id: number; name: string }[]>>;
+  selectedApplyIds: { id: number; name: string; applyStatus: ApplyStatus }[];
+  setSelectedApplyIds: Dispatch<
+    SetStateAction<{ id: number; name: string; applyStatus: ApplyStatus }[]>
+  >;
   passType?: PassType;
   setPassType: (type?: PassType) => void;
   isPassModalOpen: boolean;
@@ -55,7 +57,9 @@ export const ApplicantProvider = ({ children }: { children: ReactNode }) => {
   const [term, setTerm] = useState<string>();
   const [selectedFilter, setSelectedFilter] = useState<ApplyFilter>('전체');
   const [favoriteFilter, setFavoriteFilter] = useState<boolean | undefined>();
-  const [selectedApplyIds, setSelectedApplyIds] = useState<{ id: number; name: string }[]>([]);
+  const [selectedApplyIds, setSelectedApplyIds] = useState<
+    { id: number; name: string; applyStatus: ApplyStatus }[]
+  >([]);
   const [passType, setPassType] = useState<PassType>();
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
   const [isFailModalOpen, setIsFailModalOpen] = useState(false);

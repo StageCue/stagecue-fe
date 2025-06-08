@@ -2,19 +2,21 @@ import styled from 'styled-components';
 import SearchSVG from '@assets/icons/search.svg?react';
 import Button from '@/components/buttons/button';
 import Table from '../table';
+import SmileSVG from '@assets/icons/smile.svg?react';
 import PassSVG from '@assets/icons/pass.svg?react';
 import FailSVG from '@assets/icons/fail.svg?react';
-import PassModal from '../passModal';
 import Paginator from '@/components/paginator';
 import { useApplicant } from '../../hooks/useApplicant';
 import { useApplicantContext } from '../Context';
 import { useGetApplyStatus } from '../../hooks/useGetApplyStatus';
-import { useEffect, useState } from 'react';
-import { useDebounce } from '@/hooks/useDebounce';
+import { useEffect } from 'react';
+import PassLoseConfirmModal from '../PassLoseConfirmModal';
 
 const Applicants = () => {
   const {
     data,
+    decisionTargets,
+    filterByApplyStatus,
     handleFilterClick,
     handlePassClick,
     handleFailClick,
@@ -25,11 +27,11 @@ const Applicants = () => {
     handlePageChange,
     handleCheckboxClick,
     handleApplicantRowClick,
-    filterByApplyStatus,
   } = useApplicant();
 
   const {
     page,
+    passType,
     selectedFilter,
     selectedApplyIds,
     setSelectedApplyIds,
@@ -42,33 +44,27 @@ const Applicants = () => {
   } = useApplicantContext();
 
   const { data: applyStatus } = useGetApplyStatus();
-  const [searchText, setSearchText] = useState('');
-  const debouncedTerm = useDebounce(searchText, 500);
-
-  useEffect(() => {
-    setTerm(debouncedTerm);
-  }, [debouncedTerm]);
 
   useEffect(() => setSelectedApplyIds([]), [selectedFilter]);
 
   return (
     <ApplicantContainer>
-      {isPassModalOpen && (
-        <PassModal
+      {isPassModalOpen && passType && (
+        <PassLoseConfirmModal
           onConfirm={handlePassConfirm}
           onClose={handleCancelClick}
-          type="합격"
-          cnt={isProfileModalOpen ? 1 : selectedApplyIds.length}
-          name={isProfileModalOpen ? showingApplicant!.name : selectedApplyIds[0].name}
+          type={passType}
+          cnt={isProfileModalOpen ? 1 : decisionTargets.forPass.length}
+          name={isProfileModalOpen ? showingApplicant!.name : decisionTargets.forPass[0].name}
         />
       )}
-      {isFailModalOpen && (
-        <PassModal
+      {isFailModalOpen && passType && (
+        <PassLoseConfirmModal
           onConfirm={handleFailConfirm}
           onClose={handleCancelClick}
-          type="반려"
-          cnt={isProfileModalOpen ? 1 : selectedApplyIds.length}
-          name={isProfileModalOpen ? showingApplicant!.name : selectedApplyIds[0].name}
+          type={passType}
+          cnt={isProfileModalOpen ? 1 : decisionTargets.forLose.length}
+          name={isProfileModalOpen ? showingApplicant!.name : decisionTargets.forLose[0].name}
         />
       )}
       <TitleWrapper>
@@ -77,7 +73,7 @@ const Applicants = () => {
           <SearchSVG />
           <SearchInput
             value={term}
-            onChange={e => setSearchText(e.target.value)}
+            onChange={e => setTerm(e.target.value)}
             placeholder="지원자명, 공고명으로 검색"
           />
         </Searchbar>
@@ -122,7 +118,7 @@ const Applicants = () => {
                 padding="8px 14px"
               >
                 <IconWrapper>
-                  <PassSVG />
+                  <SmileSVG />
                 </IconWrapper>
                 서류합격
               </Button>
@@ -141,6 +137,22 @@ const Applicants = () => {
                   <PassSVG />
                 </IconWrapper>
                 최종합격
+              </Button>
+              <Button
+                variation="outlined"
+                btnClass="assistive"
+                onClick={handleFailClick}
+                width={71}
+                height={32}
+                fontSize={13}
+                lineHeight={138.5}
+                letterSpacing={1.94}
+                padding="8px 14px"
+              >
+                <IconWrapper>
+                  <FailSVG />
+                </IconWrapper>
+                반려
               </Button>
             </>
           )}
