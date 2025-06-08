@@ -40,6 +40,8 @@ const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => 
 
   const getProfileDetail = async (id: string) => {
     const { result } = await requestProfileDetail(id);
+
+    if (!result) return;
     setDetail(result);
   };
 
@@ -80,6 +82,22 @@ const ProfileModal = ({ id, onClose, name, applyStatus }: ProfileModalProps) => 
   useEffect(() => {
     getProfileDetail(id!);
   }, [id]);
+  if (!detail) {
+    return (
+      <Overlay>
+        <ModalBox>
+          <CloseIconWrapper onClick={onClose}>
+            <CloseSVG />
+          </CloseIconWrapper>
+          <Body>
+            <Introduce style={{ textAlign: 'center', fontSize: 16, color: '#858688' }}>
+              삭제된 프로필입니다.
+            </Introduce>
+          </Body>
+        </ModalBox>
+      </Overlay>
+    );
+  }
 
   return (
     <ProfileModalContainer>
