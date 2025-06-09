@@ -59,16 +59,26 @@ const ApplyCast = ({
     switch (status) {
       case 'APPLY':
         return '지원일자';
-      case 'OPEN':
-        return '열람일자';
+      case 'PASS':
+        return '서류통과';
       case 'WIN':
-        return '최종 합격';
+        return '최종합격';
       case 'LOSE':
-        return '열람일자';
+        return '불합격';
       case 'CANCELED':
         return '취소일자';
     }
   };
+
+  const dedupedLogs = Object.values(
+    applyStatusLogs.reduce((acc, log) => {
+      const { applyStatus, changeDate } = log;
+      if (!acc[applyStatus] || new Date(changeDate) < new Date(acc[applyStatus].changeDate)) {
+        acc[applyStatus] = log;
+      }
+      return acc;
+    }, {} as Record<string, { applyStatus: string; changeDate: string }>)
+  );
 
   return (
     <ApplyCastContainer>
@@ -84,13 +94,13 @@ const ApplyCast = ({
         </TagsWrapper>
         <Title>{recruitTitle}</Title>
         <LogWrapper>
-          {applyStatusLogs.map(({ applyStatus, changeDate }, index) => (
+          {dedupedLogs.map(({ applyStatus, changeDate }, index) => (
             <LogContainer key={index}>
               <Log>
-                <LogName>{parseLogname(applyStatus)}</LogName>
+                <LogName>{parseLogname(applyStatus as applyPhaseType)}</LogName>
                 <LogDate>{formatDateWithDots(changeDate)}</LogDate>
               </Log>
-              {index !== applyStatusLogs.length - 1 && <Divider />}
+              {index !== dedupedLogs.length - 1 && <Divider />}
             </LogContainer>
           ))}
         </LogWrapper>
